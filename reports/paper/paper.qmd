@@ -377,15 +377,44 @@ and below 0.03% elsewhere. Pooling the four years by month of year sharpens the 
 exceedances in total across January–July** (out of ≈1.9 × 10⁹ values in those months). November
 corresponds to the dry-to-wet transition in this region **[SME: confirm regional seasonality]**.
 
-*The concentration is sharper than a smooth seasonal mechanism predicts.* This is important for
-interpretation. Because the selected day-of-year windows are wide (*h* = 45 modal, i.e. ±45 days),
-any smoothly varying seasonal effect should be **smeared across October–December** rather than
-confined to a single month. The observed near-binary October→November→December contrast is therefore
-difficult to attribute to gradual regime blending alone, and points to something specific to the
-November day-of-year recipes or fitted coefficients in the affected zones. The discriminating
-diagnostic — not yet run — is to inspect the selected features, chosen *h*, and training residuals
-for day-of-year ≈ 305–334 in the Amazon zones concerned, and to compare them with adjacent
-day-of-year bands. **[TODO]**
+*Why a single month, despite ±45-day pooling.* The concentration is initially puzzling: with
+*h* = 45 a smoothly varying seasonal effect should be **smeared across October–December**, not
+confined to one month. We propose that the sharpness is not evidence against a seasonal mechanism
+but a direct consequence of one, for four reasons.
+
+1. **The physical transition is an event, not a smooth cycle.** The Amazonian dry-to-wet transition
+   is a well-characterised regime shift rather than a gradual sinusoid: it is initiated by
+   late-dry-season rainforest transpiration activating shallow convection [@wright2017], driven by
+   increases in surface latent heat flux that *rapidly* reduce convective inhibition [@fu2004], with
+   an accompanying reorganisation of the large-scale circulation and surface fluxes [@li2004]. Onset
+   is routinely dated to a specific pentad [@marengo2017].
+2. **The onset date moves between years.** Its timing is modulated non-linearly by Pacific and
+   Atlantic sea-surface temperatures [@yin2014] and by the Madden–Julian Oscillation, shifting by
+   several pentads from year to year — 2–3 pentads later than normal in 2014/15, for instance
+   [@marengo2017].
+3. **A day-of-year-indexed model can only place that event at a fixed climatological date.** Fitting
+   by day of year across 36 years necessarily represents onset as a smooth climatological ramp
+   centred on the *mean* onset date, whereas in any individual year the true transition is displaced
+   from it. The fitted Tmin–Td relationship is therefore systematically mismatched in the window
+   around climatological onset — which for this region is November. This is the classical failure of
+   nonparametric smoothing when the underlying function is not smooth: such methods "require the
+   crucial assumption that the underlying trend function is smooth", and jumps must be handled
+   explicitly rather than absorbed [@zhang2016].
+4. **Tail exceedance amplifies a modest shift.** We measure an exceedance *rate* above a fixed
+   threshold, not a mean error. Exceedance counts respond non-linearly to the error distribution, so
+   a moderate increase in bias and variance localised at the transition can move the >35 °C rate by
+   a factor of 58 while barely perturbing the monthly mean — which is what we observe, since annual
+   means remain stable to 0.21 °C.
+
+This account also makes a falsifiable prediction that our own data can test: if the failure is
+driven by misalignment between the fixed climatological onset date and each year's actual onset,
+then its severity should track that year's onset anomaly, which is SST- and MJO-modulated
+[@yin2014]. November 2019 being roughly seven times weaker than November 2017 is consistent with
+this but does not establish it. **[TODO]** The discriminating internal diagnostic — also not yet
+run — is to inspect the selected features, chosen *h*, and *training* residuals for day-of-year
+≈ 305–334 in the affected zones against adjacent bands: the mechanism above predicts elevated
+in-sample residuals there, whereas a purely structural defect in the November recipes would not
+require them.
 
 *Not autoregressive drift.* Annual incidence is **non-monotonic** (0.2015%, 0.1696%, 0.0293%,
 0.1299% for 2017–2020), and exceedances occur in short episodes — 40.6% are isolated single days,
@@ -416,9 +445,9 @@ against the 3.0 °C typical excess. A bound on the *excess* (Td ≤ Tmin + k) or
 temperature is therefore worth evaluating, as is refitting the affected zones with explicit wet/dry
 stratification. **[TODO]**
 
-*Open question.* November 2019 incidence is roughly seven times lower than November 2017, pointing
-to modulation by interannual climate variability (ENSO is the obvious candidate); this is untested.
-**[TODO]**
+*Open question.* The interannual spread (November 2019 roughly seven times weaker than November
+2017) points to modulation by interannual climate variability, plausibly through its control on
+onset timing [@yin2014]; testing this against onset-date indices is left for future work. **[TODO]**
 
 No correction is applied in the product as it stands (@fig-warmtail, @fig-warmtail-month).
 

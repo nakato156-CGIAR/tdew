@@ -1,0 +1,623 @@
+{
+  "artifacts": [
+    {
+      "artifactId": "extraction-schema-1",
+      "description": "Extract any mentions of (1) Amazon wet-season onset and associated abrupt transitions in humidity/clouds/temperature coupling, and (2) statistical/ML reconstruction or regression of dew point (or humidity proxies) from minimum temperature (or related predictors), including evidence for regime switching, bimodality, decoupling, and seasonal/boundary artifacts that could concentrate errors into a narrow calendar window.",
+      "metadata": {
+        "type": "extraction-schema"
+      },
+      "name": "Extraction Schema",
+      "parts": [
+        {
+          "data": {
+            "id": "extraction-schema-1",
+            "name": "Extraction Schema",
+            "description": "Extract any mentions of (1) Amazon wet-season onset and associated abrupt transitions in humidity/clouds/temperature coupling, and (2) statistical/ML reconstruction or regression of dew point (or humidity proxies) from minimum temperature (or related predictors), including evidence for regime switching, bimodality, decoupling, and seasonal/boundary artifacts that could concentrate errors into a narrow calendar window.",
+            "subtype": "extraction-schema",
+            "entities": {},
+            "annotations": {},
+            "content": [
+              {
+                "id": "c_001",
+                "type": "SECTION",
+                "title": "Schema",
+                "childIds": [
+                  "c_002"
+                ],
+                "annotationIds": []
+              },
+              {
+                "id": "c_002",
+                "type": "MARKDOWN",
+                "text": "| Field | Type | Description |\n| --- | --- | --- |\n| study_region | str | Geographic region of the study (e.g., northeastern Amazon Peru, Madre de Dios, Ucayali, western/southwestern Amazon). Include coordinates/elevation if stated. |\n| data_type_and_source | str | Observation/reanalysis/model data used (station, flux tower, radiosonde, satellite, ERA5, MERRA-2, etc.), including temporal resolution (daily/subdaily) and period. |\n| wet_season_onset_definition | str | How wet-season onset is defined/diagnosed (rainfall threshold, accumulated precipitation, moisture flux convergence, OLR, pentads, RH jump, etc.). |\n| wet_season_onset_timing | str | Reported timing of onset and/or transition season (months/dates; e.g., Oct\u2013Nov), including interannual variability if available. |\n| evidence_of_abrupt_transition | str | Any reported evidence that the dry-to-wet transition is abrupt/discontinuous (step change in humidity, cloud cover, rainfall, boundary-layer properties, etc.). Include quantitative magnitudes if given. |\n| humidity_distribution_features | str | Any discussion/results about bimodality, regime switching, mixtures, or strongly non-Gaussian humidity/dew point distributions during transition months. |\n| tmin_humidity_coupling | str | Findings on the relationship between minimum temperature (Tmin/nighttime temperature) and humidity/dew point/vapor pressure (strength, sign, seasonality). Include correlation/regression coefficients if reported. |\n| mechanism_cloud_nocturnal_cooling | str | Mechanistic claims/evidence that cloud cover, longwave radiation, or nocturnal boundary-layer processes alter Tmin independently of humidity (decoupling). |\n| mechanism_land_atmosphere_coupling | str | Mechanistic claims/evidence about evapotranspiration, moisture recycling, soil moisture thresholds, and land\u2013atmosphere coupling/discontinuities at wet-season onset. |\n| boundary_layer_and_stability_changes | str | Evidence about changes in boundary-layer depth, stability, inversions, fog, or cold pools across transition season that could affect Tmin\u2013dew point relationships. |\n| dew_point_reconstruction_method | str | Any empirical/statistical method used to estimate dew point/humidity from temperature (e.g., regression, LOESS/LOWESS, kernel smoothing, GAM, quantile regression, machine learning). Include predictors and target variable. |\n| seasonal_smoothing_or_dayofyear_modeling | str | If the paper uses day-of-year climatologies, cyclic smoothers, windowed pooling, or seasonal models: specify the approach (window size/bandwidth, cyclic constraints, weighting). |\n| reported_model_failure_or_extreme_errors | str | Any mention of model breakdowns, extreme bias/outliers, physically impossible estimates (e.g., dew point > 35\u00b0C), or large residuals concentrated in specific months/seasons. |\n| heteroscedasticity_or_seasonal_error_structure | str | Evidence that residual variance changes by season/transition (heteroscedasticity), including diagnostics or error breakdowns. |\n| boundary_effects_and_calendar_artifacts | str | Mentions of day-of-year boundary issues, edge effects, wrap-around/cyclic smoothing concerns, or artifacts due to windowing across seasonal transitions. |\n| extreme_event_leverage | str | Any discussion that a small number of anomalous events (e.g., unusual warm nights, extreme humidity, ENSO-related anomalies) can dominate local regression/smoothers and create localized bias. |\n| ENSO_or_large_scale_controls | str | Reported large-scale drivers (ENSO, Atlantic SST gradient, SACZ, monsoon circulation) affecting onset timing, humidity, clouds, or Tmin in the region. |\n| key_quantitative_results | str | Most relevant quantitative findings (e.g., onset shift magnitude, step-change in RH/dew point, correlation changes across months, radiative flux changes). Keep as numbers with units when possible. |\n| authors_explanation_hypotheses | str | Any hypotheses or explanations offered by the authors that connect transition-season physics to statistical relationships between temperature and humidity/dew point. |",
+                "annotationIds": []
+              }
+            ]
+          },
+          "kind": "data",
+          "metadata": {
+            "contentType": "application/vnd.asta.extraction-schema+json"
+          }
+        }
+      ]
+    },
+    {
+      "artifactId": "gen-20260907-a72f0e5a-theory-store-raw",
+      "description": "Build a theory of how applying a day-of-year-windowed weighted local linear regression with WIDE smoothing windows (half-window h = 45 days, i.e. +/- 45 days of pooling) to reconstruct daily dew-point temperature from daily minimum temperature produces extreme over-prediction errors (dew points above 35 C) that are confined almost entirely to a SINGLE calendar month (November), with essentially zero errors in adjacent months (October 0.027%, November 1.556%, December 0.018%, and only 50 exceedances in total across January to July), in the north-eastern Amazon lowlands of Peru. The puzzle is the sharpness: a smoothing window spanning +/- 45 days should smear any smoothly varying seasonal effect across October to December, so how can the failure be confined to one month? Consider in particular whether an ABRUPT physical transition - the onset of the Amazonian wet season, which occurs around October-November - can produce a sharp single-month failure in a model whose smoothing window is deliberately broad, because the underlying transition is discontinuous while the fitted model is smooth. Also consider alternative mechanisms that could concentrate error into one month: regime switching or bimodal humidity distributions at onset, discontinuous land-atmosphere coupling and evapotranspiration recycling at wet-season onset, rapid changes in cloud cover and nocturnal cooling that decouple minimum temperature from moisture, and statistical artefacts such as day-of-year boundary effects, leverage of extreme training anomalies, or heteroscedastic residuals concentrated at the transition.",
+      "metadata": {
+        "type": "theory_store",
+        "merge_format": "json-merge-patch-rfc7396",
+        "schema_version": "1"
+      },
+      "name": "Theory Store",
+      "parts": [
+        {
+          "data": {
+            "extraction_schemas": {
+              "extraction-schema-1": {
+                "id": "extraction-schema-1",
+                "schema": [
+                  {
+                    "name": "study_region",
+                    "type": "str",
+                    "description": "Geographic region of the study (e.g., northeastern Amazon Peru, Madre de Dios, Ucayali, western/southwestern Amazon). Include coordinates/elevation if stated."
+                  },
+                  {
+                    "name": "data_type_and_source",
+                    "type": "str",
+                    "description": "Observation/reanalysis/model data used (station, flux tower, radiosonde, satellite, ERA5, MERRA-2, etc.), including temporal resolution (daily/subdaily) and period."
+                  },
+                  {
+                    "name": "wet_season_onset_definition",
+                    "type": "str",
+                    "description": "How wet-season onset is defined/diagnosed (rainfall threshold, accumulated precipitation, moisture flux convergence, OLR, pentads, RH jump, etc.)."
+                  },
+                  {
+                    "name": "wet_season_onset_timing",
+                    "type": "str",
+                    "description": "Reported timing of onset and/or transition season (months/dates; e.g., Oct\u2013Nov), including interannual variability if available."
+                  },
+                  {
+                    "name": "evidence_of_abrupt_transition",
+                    "type": "str",
+                    "description": "Any reported evidence that the dry-to-wet transition is abrupt/discontinuous (step change in humidity, cloud cover, rainfall, boundary-layer properties, etc.). Include quantitative magnitudes if given."
+                  },
+                  {
+                    "name": "humidity_distribution_features",
+                    "type": "str",
+                    "description": "Any discussion/results about bimodality, regime switching, mixtures, or strongly non-Gaussian humidity/dew point distributions during transition months."
+                  },
+                  {
+                    "name": "tmin_humidity_coupling",
+                    "type": "str",
+                    "description": "Findings on the relationship between minimum temperature (Tmin/nighttime temperature) and humidity/dew point/vapor pressure (strength, sign, seasonality). Include correlation/regression coefficients if reported."
+                  },
+                  {
+                    "name": "mechanism_cloud_nocturnal_cooling",
+                    "type": "str",
+                    "description": "Mechanistic claims/evidence that cloud cover, longwave radiation, or nocturnal boundary-layer processes alter Tmin independently of humidity (decoupling)."
+                  },
+                  {
+                    "name": "mechanism_land_atmosphere_coupling",
+                    "type": "str",
+                    "description": "Mechanistic claims/evidence about evapotranspiration, moisture recycling, soil moisture thresholds, and land\u2013atmosphere coupling/discontinuities at wet-season onset."
+                  },
+                  {
+                    "name": "boundary_layer_and_stability_changes",
+                    "type": "str",
+                    "description": "Evidence about changes in boundary-layer depth, stability, inversions, fog, or cold pools across transition season that could affect Tmin\u2013dew point relationships."
+                  },
+                  {
+                    "name": "dew_point_reconstruction_method",
+                    "type": "str",
+                    "description": "Any empirical/statistical method used to estimate dew point/humidity from temperature (e.g., regression, LOESS/LOWESS, kernel smoothing, GAM, quantile regression, machine learning). Include predictors and target variable."
+                  },
+                  {
+                    "name": "seasonal_smoothing_or_dayofyear_modeling",
+                    "type": "str",
+                    "description": "If the paper uses day-of-year climatologies, cyclic smoothers, windowed pooling, or seasonal models: specify the approach (window size/bandwidth, cyclic constraints, weighting)."
+                  },
+                  {
+                    "name": "reported_model_failure_or_extreme_errors",
+                    "type": "str",
+                    "description": "Any mention of model breakdowns, extreme bias/outliers, physically impossible estimates (e.g., dew point > 35\u00b0C), or large residuals concentrated in specific months/seasons."
+                  },
+                  {
+                    "name": "heteroscedasticity_or_seasonal_error_structure",
+                    "type": "str",
+                    "description": "Evidence that residual variance changes by season/transition (heteroscedasticity), including diagnostics or error breakdowns."
+                  },
+                  {
+                    "name": "boundary_effects_and_calendar_artifacts",
+                    "type": "str",
+                    "description": "Mentions of day-of-year boundary issues, edge effects, wrap-around/cyclic smoothing concerns, or artifacts due to windowing across seasonal transitions."
+                  },
+                  {
+                    "name": "extreme_event_leverage",
+                    "type": "str",
+                    "description": "Any discussion that a small number of anomalous events (e.g., unusual warm nights, extreme humidity, ENSO-related anomalies) can dominate local regression/smoothers and create localized bias."
+                  },
+                  {
+                    "name": "ENSO_or_large_scale_controls",
+                    "type": "str",
+                    "description": "Reported large-scale drivers (ENSO, Atlantic SST gradient, SACZ, monsoon circulation) affecting onset timing, humidity, clouds, or Tmin in the region."
+                  },
+                  {
+                    "name": "key_quantitative_results",
+                    "type": "str",
+                    "description": "Most relevant quantitative findings (e.g., onset shift magnitude, step-change in RH/dew point, correlation changes across months, radiative flux changes). Keep as numbers with units when possible."
+                  },
+                  {
+                    "name": "authors_explanation_hypotheses",
+                    "type": "str",
+                    "description": "Any hypotheses or explanations offered by the authors that connect transition-season physics to statistical relationships between temperature and humidity/dew point."
+                  }
+                ],
+                "extraction_query": "Extract any mentions of (1) Amazon wet-season onset and associated abrupt transitions in humidity/clouds/temperature coupling, and (2) statistical/ML reconstruction or regression of dew point (or humidity proxies) from minimum temperature (or related predictors), including evidence for regime switching, bimodality, decoupling, and seasonal/boundary artifacts that could concentrate errors into a narrow calendar window.",
+                "supporting_theory_ids": [],
+                "model_str": "gpt-5.2"
+              }
+            }
+          },
+          "kind": "data",
+          "metadata": {
+            "contentType": "application/vnd.asta.theory_store+json"
+          }
+        },
+        {
+          "data": {
+            "paperstore": {
+              "paper-07a3b5e2ccb7faca8b5ffd94bbf5ea5e3ae5bd8e": {
+                "id": "paper-07a3b5e2ccb7faca8b5ffd94bbf5ea5e3ae5bd8e",
+                "status": "metadata-only",
+                "s2_id": "07a3b5e2ccb7faca8b5ffd94bbf5ea5e3ae5bd8e",
+                "corpus_id": "280083605",
+                "title": "A multivariate and space-time stochastic weather generator using a latent Gaussian framework",
+                "publication_year": 2025,
+                "publication_month": 7,
+                "s2_metadata": {
+                  "paperId": "07a3b5e2ccb7faca8b5ffd94bbf5ea5e3ae5bd8e",
+                  "externalIds": {
+                    "DOI": "10.1007/s00477-024-02897-8",
+                    "CorpusId": 280083605
+                  },
+                  "corpusId": 280083605,
+                  "publicationVenue": {
+                    "id": "51bea470-a0b1-451c-9120-ba5a796fb13a",
+                    "name": "Stochastic environmental research and risk assessment (Print)",
+                    "type": "journal",
+                    "alternate_names": [
+                      "Stoch Environ Res Risk Assess",
+                      "Stochastic Environmental Research and Risk Assessment",
+                      "Stoch environ res risk assess (print"
+                    ],
+                    "issn": "1436-3240",
+                    "url": "https://www.springer.com/environment/environmental+engineering+and+physics/journal/477"
+                  },
+                  "url": "https://www.semanticscholar.org/paper/07a3b5e2ccb7faca8b5ffd94bbf5ea5e3ae5bd8e",
+                  "title": "A multivariate and space-time stochastic weather generator using a latent Gaussian framework",
+                  "venue": "Stochastic environmental research and risk assessment (Print)",
+                  "year": 2025,
+                  "referenceCount": 64,
+                  "citationCount": 7,
+                  "influentialCitationCount": 0,
+                  "isOpenAccess": true,
+                  "openAccessPdf": {
+                    "url": "https://doi.org/10.1007/s00477-024-02897-8",
+                    "status": "HYBRID",
+                    "license": "CCBY",
+                    "disclaimer": "Notice: Paper or abstract available at https://api.unpaywall.org/v2/10.1007/s00477-024-02897-8?email=<INSERT_YOUR_EMAIL> or https://doi.org/10.1007/s00477-024-02897-8, which is subject to the license by the author or copyright owner provided with this content. Please go to the source to verify the license and copyright information for your use."
+                  },
+                  "fieldsOfStudy": null,
+                  "s2FieldsOfStudy": [
+                    {
+                      "category": "Environmental Science",
+                      "source": "s2-fos-model"
+                    },
+                    {
+                      "category": "Computer Science",
+                      "source": "s2-fos-model"
+                    },
+                    {
+                      "category": "Mathematics",
+                      "source": "s2-fos-model"
+                    }
+                  ],
+                  "tldr": {
+                    "model": "tldr@v2.0.0",
+                    "text": "A new multivariate space-time weather generator designed for regional-scale applications at a daily resolution, called MSTWeatherGen, which takes advantage of the recent development of multivariate space-time covariance functions to model and simulate different weather variables across space and time."
+                  },
+                  "publicationTypes": [
+                    "JournalArticle"
+                  ],
+                  "publicationDate": "2025-07-09",
+                  "journal": {
+                    "name": "Stochastic Environmental Research and Risk Assessment",
+                    "pages": "3677 - 3701",
+                    "volume": "39"
+                  },
+                  "authors": [
+                    {
+                      "authorId": "2088927598",
+                      "name": "Said Obakrim"
+                    },
+                    {
+                      "authorId": "2364686246",
+                      "name": "Lionel Benoit"
+                    },
+                    {
+                      "authorId": "2364685479",
+                      "name": "Denis Allard"
+                    }
+                  ],
+                  "citations": [
+                    {
+                      "paperId": "6081343805ab64dc4344f398ed4f8cca2afff925",
+                      "title": "A non-stationary trans-Gaussian model for daily rainfall over complex topography"
+                    },
+                    {
+                      "paperId": "be975ecffb5a76fedc8e1dc8dba1ec59cb0188fd",
+                      "title": "Transformer-based Diffusion models for Hydrological Time Series Probabilistic Imputation and Forecasting"
+                    },
+                    {
+                      "paperId": "654b7f84751a62e830c93a84c8372a9243207758",
+                      "title": "Combining machine learning quantile regression and Gaussian random fields: A general framework for modeling and simulating space-time processes"
+                    },
+                    {
+                      "paperId": "ae3796f1b38c20a8e7fd707fe3e7fb61dda5079e",
+                      "title": "Simulating spatial multi-hazards with generative deep learning"
+                    },
+                    {
+                      "paperId": "d6b22de901c7e8acbc9b917e11811bedaff30cfe",
+                      "title": "The future is in the past? A flexible resampling approach to generate multivariate time series"
+                    },
+                    {
+                      "paperId": "d7e9ace8d682019f3781edfb626d0575ac1751d9",
+                      "title": "Stochastic Modelling of Daily Precipitation in Semi\u2010Arid Regions Using Markov Chains and Parametric Distributions"
+                    },
+                    {
+                      "paperId": "80047ba38a3372b5be79338e6c84a8b4b5770a15",
+                      "title": "Growth of spatial statistics for agriculture and environment: The example of BioSP at INRAE"
+                    }
+                  ],
+                  "abstract": "Stochastic weather generators are probabilistic tools used to simulate synthetic weather data whose statistics resemble those observed. These tools face difficulties when it comes to accurately simulating multiple meteorological variables in space and time, because they necessitate models that can capture the complex inter-variable and space-time dependencies. We propose a new multivariate space-time weather generator designed for regional-scale applications at a daily resolution, called MSTWeatherGen. This stochastic weather generator takes advantage of the recent development of multivariate space-time covariance functions to model and simulate different weather variables, including temperature, precipitation, wind speed, humidity, and solar radiation, across space and time. Specifically, we employ an approach that involves a non-linear and non-stationary marginal transformation of a multivariate Gaussian random field, characterized by a stationary and non-separable spatio-temporal multivariate cross-covariance function. To further address the time-varying nature of the weather variables, we split the time domain into states called weather types. The method is assessed on the Provence-Alpes-C\u00f4te-d\u2019Azur region in France, which is characterized by heterogeneous topography and meteorological conditions. Evaluation results demonstrate the effectiveness of this new stochastic weather generator in reproducing a wide range of weather statistics, including highly non-linear indicators such as heat wave or fire weather index.",
+                  "references": [
+                    {
+                      "paperId": "30f80053565fc1d5a1d6e0a6c1c5e16755007ea1",
+                      "title": "A meta-Gaussian distribution for sub-hourly rainfall"
+                    },
+                    {
+                      "paperId": "037fd6dfe7757feb63f61530682e2114c4affbd6",
+                      "title": "Characterization theorems for pseudo cross-variograms"
+                    },
+                    {
+                      "paperId": "fb5ab635f82fcca1c5e0293160203f4eaab60b88",
+                      "title": "Advancing research on compound weather and climate events via large ensemble model simulations"
+                    },
+                    {
+                      "paperId": "6f9f6512032aef9eee2c47e8eb019d1185818f06",
+                      "title": "Simulation of evapotranspiration and yield of maize: An Inter-comparison among 41 maize models"
+                    },
+                    {
+                      "paperId": "9851b7b0126297b0ad7f62d4a926c02ec19b50ac",
+                      "title": "Model-Based Clustering, Classification, and Density Estimation Using mclust in R"
+                    },
+                    {
+                      "paperId": "5539cd0280b2c4355722065e284d2dc50425eb80",
+                      "title": "Fully nonseparable Gneiting covariance functions for multivariate space\u2013time data"
+                    },
+                    {
+                      "paperId": "276ea13ef323f24bdb65cb430f63b8b15c527e76",
+                      "title": "Comprehensive study of the wet and dry spells and their extremes in the Mediterranean climate basin Northern Tunisia"
+                    },
+                    {
+                      "paperId": "386a615e3b65df8325ebd574b3a4e2d27c9d6b76",
+                      "title": "Discussion on \u201cCompetition on Spatial Statistics for Large Datasets\u201d"
+                    },
+                    {
+                      "paperId": "2e0bd35e08f9e08075f307f8ca31a5c4d3be319a",
+                      "title": "Space-Time Covariance Structures and Models"
+                    },
+                    {
+                      "paperId": "13b5e4b1bb1c166fefbfdb45be522e27d2ffb788",
+                      "title": "Stochastic weather generator for the design and reliability evaluation of desalination systems with Renewable Energy Sources"
+                    },
+                    {
+                      "paperId": "7e6420de21c7b81ba92bfad7eb482161ce82455d",
+                      "title": "30\u2009Years of space\u2013time covariance functions"
+                    },
+                    {
+                      "paperId": "98796ba960f44846df2b312bf86de489e1f65506",
+                      "title": "Simulation of extreme heat waves with empirical importance sampling"
+                    },
+                    {
+                      "paperId": "3b8e9f40f5ba380cccfd793bbd9179e8f1c58bf5",
+                      "title": "Simulating isotropic vector-valued Gaussian random fields on the sphere through finite harmonics approximations"
+                    },
+                    {
+                      "paperId": "d10adf6ee18aeaa784a4233897a8f400fdc859a1",
+                      "title": "Choosing suitable linear coregionalization models for spatio-temporal data"
+                    },
+                    {
+                      "paperId": "cad2a3e9ba866e9a45c64573854896fcee6356e8",
+                      "title": "Ordered quantile normalization: a semiparametric transformation built for the cross-validation era"
+                    },
+                    {
+                      "paperId": "e428f8580d6c8d691fd5b866108c747caa507c61",
+                      "title": "Spatially distributed crop model based on remote sensing"
+                    },
+                    {
+                      "paperId": "88f3a6e43282efacd847e4a5969b07a6c479413f",
+                      "title": "BayGEN: A Bayesian Space\u2010Time Stochastic Weather Generator"
+                    },
+                    {
+                      "paperId": "3208201405d8f8e7a2a12606f57c5b37eeac5ba2",
+                      "title": "Ensemble size: How suboptimal is less than infinity?"
+                    },
+                    {
+                      "paperId": "731ef5198e90dab2762beb26111f00da880a7631",
+                      "title": "Stochastic Rainfall Modeling at Sub\u2010kilometer Scale"
+                    },
+                    {
+                      "paperId": "84e5bad1d81847bb63815c8059ae24bf1fc8b455",
+                      "title": "Very short-term spatio-temporal wind power prediction using a censored Gaussian field"
+                    },
+                    {
+                      "paperId": "a852774f47821a7c8c529b9afbd545cadf31514c",
+                      "title": "IMAGE: a multivariate multi-site stochastic weather generator for European weather and climate"
+                    },
+                    {
+                      "paperId": "8d41085e226b861db1ea46fb467b4514e826a449",
+                      "title": "An advanced stochastic weather generator for simulating 2\u2010D high\u2010resolution climate variables"
+                    },
+                    {
+                      "paperId": "d07ebfefd80ddd99c6f27cb455feb3d852fb9f5a",
+                      "title": "Generating synthetic rainfall with geostatistical simulations"
+                    },
+                    {
+                      "paperId": "97e144c3db0787145338b8dcd0ebed87e73bc489",
+                      "title": "cffdrs: an R package for the Canadian Forest Fire Danger Rating System"
+                    },
+                    {
+                      "paperId": "dce92cd279ca3d970e9b93c49a9b5190e6d651d5",
+                      "title": "Heat waves analysis over France in present and future climate: Application of a new method on the EURO-CORDEX ensemble"
+                    },
+                    {
+                      "paperId": "a7026af1450be299829e401d04bec3582c9bf859",
+                      "title": "An overview of current applications, challenges, and future trends in distributed process-based models in hydrology"
+                    },
+                    {
+                      "paperId": "b5b38b993f5b0f58c0c9b6b81b2aba74a137059f",
+                      "title": "A Flexible Class of Non-separable Cross-Covariance Functions for Multivariate Space-Time Data"
+                    },
+                    {
+                      "paperId": "e6f5e5dc00e0dca0edc6d01325335a46293c98e5",
+                      "title": "Cross-Covariance Functions for Multivariate Geostatistics"
+                    },
+                    {
+                      "paperId": "387ec6a06967104af4a2d8b5e48dbe416cd848ce",
+                      "title": "A spatiotemporal precipitation generator based on a censored latent Gaussian field"
+                    },
+                    {
+                      "paperId": "eb13cd0a96889b82c92062b65531aad0884fe7de",
+                      "title": "Stochastic weather generators: an overview of weather type models"
+                    },
+                    {
+                      "paperId": "197a717b2c136292dd209ee3ea386f61d14d4b53",
+                      "title": "Coupled stochastic weather generation using spatial and generalized linear models"
+                    },
+                    {
+                      "paperId": "ee469d5a3e1f15a0f3f98cc3dc80ad6c3677e97e",
+                      "title": "Disaggregating daily precipitations into hourly values with a transformed censored latent Gaussian process"
+                    },
+                    {
+                      "paperId": "e3616a7f984685c1a797579038001b4b0817b2f9",
+                      "title": "A stochastic model for high\u2010resolution space\u2010time precipitation simulation"
+                    },
+                    {
+                      "paperId": "7da2a806c5ae065555f4937be10bafd7f82c1837",
+                      "title": "Comprehensive Monitoring of Wildfires in Europe: The European Forest Fire Information System (EFFIS)"
+                    },
+                    {
+                      "paperId": "f2e5f5b7233ccef381f1ebffbdc4694845e2239b",
+                      "title": "Mat\u00e9rn Cross-Covariance Functions for Multivariate Random Fields"
+                    },
+                    {
+                      "paperId": "9696640b82bf0264e1cbee9f1124ebecf7ffb935",
+                      "title": "A stochastic daily weather generator for skewed data"
+                    },
+                    {
+                      "paperId": "b09087768ecbaad060e03be7e5176c9f84af3102",
+                      "title": "Cross-covariance functions for multivariate random fields based on latent dimensions"
+                    },
+                    {
+                      "paperId": "6e173c62a43df2e68b773561d06c1c51330f63e3",
+                      "title": "Space\u2013time modelling of precipitation by using a hidden Markov model and censored Gaussian distributions"
+                    },
+                    {
+                      "paperId": "824f90b4122df96ebddcb988fc02564c0a20d710",
+                      "title": "Some Truncated Distributions"
+                    },
+                    {
+                      "paperId": "ed29e66d3a01a643083710923e01178cb06a6dca",
+                      "title": "Generalized linear modeling approach to stochastic weather generators"
+                    },
+                    {
+                      "paperId": "cab0ee490222d55d4392f0489f6d1785bf463aab",
+                      "title": "Global scale climate\u2013crop yield relationships and the impacts of recent warming"
+                    },
+                    {
+                      "paperId": "0b15b3819319200ea32c30b87752371441b82eaa",
+                      "title": "A simple statistical\u2010dynamical downscaling scheme based on weather types and conditional resampling"
+                    },
+                    {
+                      "paperId": "bd43e0712996659e55be11a5293b3e27beaf5f21",
+                      "title": "Warming and Earlier Spring Increase Western U.S. Forest Wildfire Activity"
+                    },
+                    {
+                      "paperId": "265f499870ec7055d135cb8a37f4f034ed835544",
+                      "title": "Global pattern of trends in streamflow and water availability in a changing climate"
+                    },
+                    {
+                      "paperId": "39e567ece3cf9c5dbeb14738d70df6998625c56e",
+                      "title": "A latent Gaussian Markov random\u2010field model for spatiotemporal rainfall disaggregation"
+                    },
+                    {
+                      "paperId": "c51f841b17cbb5b521f0a6709597c5dd86127ff7",
+                      "title": "Nonseparable, Stationary Covariance Functions for Space\u2013Time Data"
+                    },
+                    {
+                      "paperId": "a02b59dea479fac7c584f192a3b730994624450d",
+                      "title": "Comparison of Agricultural Impacts of Climate Change Calculated from High and Low Resolution Climate Change Scenarios: Part I. The Uncertainty Due to Spatial Scale"
+                    },
+                    {
+                      "paperId": "1879b62eb6378d9e03c7b707b6745ada1cf485a7",
+                      "title": "North Atlantic Oscillation \u2013 Concepts And Studies"
+                    },
+                    {
+                      "paperId": "0d193dd1943f79640c46e4bf86bebc6e75389667",
+                      "title": "The weather generation game: a review of stochastic weather models"
+                    },
+                    {
+                      "paperId": "0911fe9b74fb58dbbd5738db87ae9299f12a8b3c",
+                      "title": "Comparison of the WGEN and LARS-WG stochastic weather generators for diverse climates"
+                    },
+                    {
+                      "paperId": "f176cd0948be438e4c5c30b277ffd86f5a7567ae",
+                      "title": "Statistics for Spatial Data: Cressie/Statistics"
+                    },
+                    {
+                      "paperId": "a89af2451d1a2bbb00ae2a9c5400586d171c1531",
+                      "title": "Stochastic simulation of daily precipitation, temperature, and solar radiation"
+                    },
+                    {
+                      "paperId": "6e820cf11712b9041bb625634612a535476f0960",
+                      "title": "An Analysis of Transformations"
+                    },
+                    {
+                      "paperId": "a8f436eee2e2f6a97449f0b5c8c74098747b6fa4",
+                      "title": "The use of transformations."
+                    },
+                    {
+                      "paperId": null,
+                      "title": ") Simulation of stationary Gaussian random fields with a Gneiting spatio-temporal covari - ance"
+                    },
+                    {
+                      "paperId": "ceec277e118343fda50feedf9eb360ab8c6409d4",
+                      "title": "Evaluation of a stochastic weather generator in simulating univariate and multivariate climate extremes in different climate zones across Europe"
+                    },
+                    {
+                      "paperId": "00243ae582e06e7274522b5c81371e72b72bcf7d",
+                      "title": "Geostatistics : Modeling Spatial Uncertainty Ed. 2"
+                    },
+                    {
+                      "paperId": "2c9bb30a136e7970ab1505039222b3ff33ddd7ce",
+                      "title": "AN OVERVIEW OF COMPOSITE LIKELIHOOD METHODS"
+                    },
+                    {
+                      "paperId": "cf30ec1215527cf21341671fe08bdc3bcfd45771",
+                      "title": "Analysis of Near-Surface Atmospheric Variables: Validation of the SAFRAN Analysis over France"
+                    },
+                    {
+                      "paperId": "7821894d36ebd0333487d5107731c80616c5ab9c",
+                      "title": "Geostatistical Space-Time Models, Stationarity, Separability, and Full Symmetry"
+                    },
+                    {
+                      "paperId": "a37997bff1420be041282dc23a7685d2774296c0",
+                      "title": "on the Predictability"
+                    },
+                    {
+                      "paperId": null,
+                      "title": "A singular value decomposition of a k-way array for a principal component analysis of multiway data"
+                    },
+                    {
+                      "paperId": "5145e78acc8fabac336cee7e51dc0c01ec7654e5",
+                      "title": "Development and structure of the Canadian Forest Fire Weather Index System"
+                    },
+                    {
+                      "paperId": null,
+                      "title": "limit of midlatitude"
+                    }
+                  ]
+                },
+                "paper_urls": [
+                  "https://doi.org/10.1007/s00477-024-02897-8"
+                ],
+                "fetch_channel": null,
+                "license_class": null,
+                "license_url": null,
+                "source_type": null,
+                "llm_usable": null
+              }
+            },
+            "paperstore_lut": {
+              "paper-07a3b5e2ccb7faca8b5ffd94bbf5ea5e3ae5bd8e": "paper-07a3b5e2ccb7faca8b5ffd94bbf5ea5e3ae5bd8e"
+            }
+          },
+          "kind": "data",
+          "metadata": {
+            "contentType": "application/vnd.asta.theory_store+json"
+          }
+        },
+        {
+          "data": {
+            "all_ids": [
+              "extraction-schema-1"
+            ],
+            "next_ids": {
+              "theory": 0,
+              "extraction-schema": 1,
+              "extraction-result": 0,
+              "theory-evaluation": 0
+            }
+          },
+          "kind": "data",
+          "metadata": {
+            "contentType": "application/vnd.asta.theory_store+json"
+          }
+        }
+      ]
+    }
+  ],
+  "contextId": "38856d5c-fcc3-4d0a-a304-504a69ef3f4b",
+  "history": [
+    {
+      "contextId": "38856d5c-fcc3-4d0a-a304-504a69ef3f4b",
+      "kind": "message",
+      "messageId": "510afa89-ebc3-4e5a-8680-5324aca476d5",
+      "parts": [
+        {
+          "kind": "text",
+          "text": "Task accepted"
+        }
+      ],
+      "role": "agent",
+      "taskId": "b0e9a0cb-2afe-45e8-a6ef-759d751be707"
+    }
+  ],
+  "id": "b0e9a0cb-2afe-45e8-a6ef-759d751be707",
+  "kind": "task",
+  "metadata": {
+    "run_id": "gen-20260907-a72f0e5a",
+    "workflow_id": "gen-20260907-a72f0e5a",
+    "cost": 0.0356,
+    "time": 233.1
+  },
+  "status": {
+    "message": {
+      "contextId": "38856d5c-fcc3-4d0a-a304-504a69ef3f4b",
+      "kind": "message",
+      "messageId": "a5250211-1062-4dff-8b62-811c8925b660",
+      "parts": [
+        {
+          "kind": "text",
+          "text": "Found 1 paper for this query, but none had accessible full text to extract from, so no theories were generated. This often happens for very recent or paywalled literature.\n\n<artifact id=\"gen-20260907-a72f0e5a-theory-store-raw\">Theory Store</artifact>"
+        }
+      ],
+      "role": "agent",
+      "taskId": "b0e9a0cb-2afe-45e8-a6ef-759d751be707"
+    },
+    "state": "completed",
+    "timestamp": "2026-09-07T15:02:01.218194+00:00"
+  }
+}
