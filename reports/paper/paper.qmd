@@ -140,7 +140,9 @@ day-of-year** (41 × 366 = 15,006 recipes), following the multitask MultiLLR des
 predictors are chosen jointly across grid points within a zone, while coefficients are fitted per
 grid point. Selection is by **backward-stepwise elimination** under a **leave-one-year-out
 cross-validated (LOYOCV) cosine-skill** objective, with $h$ searched over $\{7, 11, 15, 21, 31,
-45\}$ days.
+45\}$ days. The approach has since been benchmarked against other machine-learning methods for
+subseasonal forecasting [@he2020] and applied to precipitation forecasting elsewhere [@wang2021];
+we adapt it here to a reconstruction rather than a forecasting task.
 
 Selection runs on a stratified sample of **66,534 cells** (target 2,000 per zone) — sufficient to
 *choose* a recipe, since LOYOCV skill sums are additive across cell chunks — not on the full grid.
@@ -382,6 +384,13 @@ and below 0.03% elsewhere. Pooling the four years by month of year sharpens the 
 exceedances in total across January–July** (out of ≈1.9 × 10⁹ values in those months). November
 corresponds to the dry-to-wet transition in this region **[SME: confirm regional seasonality]**.
 
+*Not autoregressive drift.* Annual incidence is **non-monotonic** (0.2015%, 0.1696%, 0.0293% and
+0.1299% for 2017–2020), and exceedances occur in short episodes — 40.6% are isolated single days,
+mean run length 3.42 days, longest 36 days. Progressive error accumulation of the kind reported for
+free-running autoregressive models [@gallusser2025] would produce growth with lead time and
+lengthening runs; neither appears. This is consistent with the exogenous-forcing and
+climatological-anchoring argument in @sec-discussion.
+
 *Why a single month: diagnosis.* We ran three internal diagnostics to discriminate between
 candidate explanations. They rule out our initial hypothesis and support a different one.
 
@@ -425,6 +434,14 @@ calendar defect would not: the peak day-of-year is 313 (9 Nov) in 2017, 331 (27 
 Onset timing is itself modulated non-linearly by Pacific and Atlantic sea-surface temperatures and
 by the MJO [@yin2014; @marengo2017], which offers a route to explaining the sevenfold interannual
 range in severity — though we have not tested against onset indices directly. **[TODO]**
+
+*A published precedent, and a non-stationary target.* This class of artefact is not new:
+@chabotcouture2014 report interpolated dew point exceeding interpolated air temperature (implying
+RH > 100%) in a day-of-year-parameterised dew-point interpolation, and recommend capping. The
+affected regime is also changing over time, which compounds the difficulty of fitting it from a
+1981–2016 sample: dry-season vapour pressure deficit over the Amazon has been rising [@mu2025] and
+vertical drying has been observed over deforested Amazonia [@hierro2025]. We did not test for
+non-stationarity in our training window. **[TODO]**
 
 *Remedy implied by the diagnosis.* Because the mechanism is variance inflation from window
 shrinkage, the targeted fix is to **constrain the minimum window** (or otherwise regularise the
