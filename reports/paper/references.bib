@@ -1,0 +1,158 @@
+% TODO [VERIFY]: identifiers (arXiv ID, DOI) are taken from the project's own records
+% (PAPER_PLAN.md §1, §4); author lists and page numbers below were drafted from
+% recollection and MUST be checked against the actual publications before submission.
+
+@inproceedings{hwang2019,
+  title     = {Improving Subseasonal Forecasting in the Western {U.S.} with Machine Learning},
+  author    = {Hwang, Jessica and Orenstein, Paulo and Cohen, Judah and Pfeiffer, Karl and Mackey, Lester},
+  booktitle = {Proceedings of the 25th {ACM} {SIGKDD} International Conference on Knowledge Discovery and Data Mining},
+  year      = {2019},
+  eprint    = {1809.07394},
+  archivePrefix = {arXiv},
+  note      = {Source of the MultiLLR multitask local-linear-regression selection design}
+}
+
+@article{huerta2022,
+  title   = {{PISCOeo\_pm}, a reference evapotranspiration gridded database based on {FAO} {Penman--Monteith} in {Peru}},
+  author  = {Huerta, Adrian and Aybar, Cesar and Lavado-Casimiro, Waldo and others},
+  journal = {Scientific Data},
+  volume  = {9},
+  year    = {2022},
+  doi     = {10.1038/s41597-022-01373-8},
+  note    = {Construction of the PISCO gridded fields (LST + DEM covariates, regression kriging)}
+}
+
+@techreport{allen1998,
+  title       = {Crop Evapotranspiration: Guidelines for Computing Crop Water Requirements},
+  author      = {Allen, Richard G. and Pereira, Luis S. and Raes, Dirk and Smith, Martin},
+  institution = {Food and Agriculture Organization of the United Nations},
+  type        = {{FAO} Irrigation and Drainage Paper},
+  number      = {56},
+  address     = {Rome},
+  year        = {1998},
+  note        = {Source of the Td $\approx$ Tmin approximation used as a baseline}
+}
+
+% ---------------------------------------------------------------------------
+% Entries below added 2026-09-07 from Asta paper-finder / Theorizer results.
+% Author lists, years, venues and DOIs were read from the retrieved Semantic
+% Scholar metadata (see .asta/literature/threads/ and .asta/theories/), NOT
+% from recollection. Page numbers/volumes still to be completed at submission.
+% ---------------------------------------------------------------------------
+
+@article{kimball1997,
+  title   = {An improved method for estimating surface humidity from daily minimum temperature},
+  author  = {Kimball, J. S. and Running, S. W. and Nemani, R.},
+  journal = {Agricultural and Forest Meteorology},
+  year    = {1997},
+  note    = {Aridity-based correction to the Tmin dew-point proxy; corpusId 84499623}
+}
+
+@article{eccel2012,
+  title   = {Estimating air humidity from temperature and precipitation measures for modelling applications},
+  author  = {Eccel, E.},
+  journal = {Meteorological Applications},
+  year    = {2012},
+  note    = {Tmin dew-point bias corrected with temperature and precipitation; alpine station evaluation; corpusId 60878010}
+}
+
+@article{forster2016,
+  title   = {An open-source {MEteoroLOgical} observation time series {DISaggregation} Tool ({MELODIST} v0.1.1)},
+  author  = {F{\"o}rster, Kristian and Hanzer, F. and Winter, Benjamin and Marke, T. and Strasser, U.},
+  journal = {Geoscientific Model Development},
+  volume  = {9},
+  pages   = {2315--2333},
+  year    = {2016},
+  doi     = {10.5194/gmd-9-2315-2016},
+  note    = {Humidity disaggregation methods H1 (Tdew=Tmin) through H4; documents decoupling of Tmin from ambient moisture}
+}
+
+@article{althoff2022,
+  title   = {Improvement of reference crop evapotranspiration estimates using limited data for the Brazilian Cerrado},
+  author  = {Althoff, Daniel and Rodrigues, L.},
+  journal = {Scientia Agricola},
+  year    = {2022},
+  note    = {Opposite-signed seasonal Tmin-to-Tdew corrections in a tropical seasonal biome: wet season -0.93 C, dry season +0.57 C; corpusId 250155510}
+}
+
+@article{chabotcouture2014,
+  title   = {An Environmental Data Set for Vector-Borne Disease Modeling and Epidemiology},
+  author  = {Chabot-Couture, G. and Nigmatulina, Karima R. and Eckhoff, P.},
+  journal = {PLoS ONE},
+  year    = {2014},
+  doi     = {10.1371/journal.pone.0094741},
+  note    = {Dew-point interpolation with day-of-year-dependent parameterisation and 31-day smoothing; documents interpolated Tdew exceeding Tair (RH>100%) and recommends capping}
+}
+
+@inproceedings{he2020,
+  title     = {Sub-Seasonal Climate Forecasting via Machine Learning: Challenges, Analysis, and Advances},
+  author    = {He, Sijie and Li, Xinyan and DelSole, T. and Ravikumar, Pradeep and Banerjee, A.},
+  booktitle = {AAAI Conference on Artificial Intelligence},
+  year      = {2020},
+  note      = {MultiLLR multitask feature selection benchmarked against other ML methods; corpusId 219686759}
+}
+
+@article{wang2021,
+  title   = {Improving the Accuracy of Subseasonal Forecasting of China Precipitation With a Machine Learning Approach},
+  author  = {Wang, Cen and Jia, Zhaoying and Yin, Z. and Liu, Fei and Lu, G. and Zheng, Jianqiu},
+  journal = {Frontiers in Earth Science},
+  volume  = {9},
+  year    = {2021},
+  doi     = {10.3389/feart.2021.659310},
+  note    = {MultiLLR with local linear regression applied to China precipitation}
+}
+
+@article{gallusser2025,
+  title   = {Exploring Design Choices for Autoregressive Deep Learning Climate Models},
+  author  = {Gallusser, Florian and Hentschel, Simon and Krause, Anna and Hotho, Andreas},
+  journal = {arXiv preprint},
+  year    = {2025},
+  doi     = {10.48550/arXiv.2505.02506},
+  note    = {Long-rollout stability and error growth in autoregressive climate models; multi-step training improves stability}
+}
+
+@article{kilibarda2014,
+  title   = {Spatio-temporal interpolation of daily temperatures for global land areas at 1 km resolution},
+  author  = {Kilibarda, M. and Hengl, T. and Heuvelink, G. and Gr{\"a}ler, Benedikt and Pebesma, E. and Per{\v c}ec Tadi{\'c}, Melita},
+  journal = {Journal of Geophysical Research: Atmospheres},
+  year    = {2014},
+  note    = {Spatio-temporal regression kriging of daily temperature, validated by spatial leave-one-out; corpusId 128411698}
+}
+
+@article{serranonotivoli2019,
+  title   = {{STEAD}: a high-resolution daily gridded temperature dataset for Spain},
+  author  = {Serrano-Notivoli, Roberto and Beguer{\'i}a, S. and de Luis, M.},
+  journal = {Earth System Science Data},
+  volume  = {11},
+  pages   = {1171--1188},
+  year    = {2019},
+  doi     = {10.5194/essd-11-1171-2019},
+  note    = {Gridded daily temperature with local-regression reconstruction of station gaps}
+}
+
+@article{mu2025,
+  title   = {Increasing dry-season vapor pressure deficit in the Amazon Basin: historical trends, future projections, and links to deforestation},
+  author  = {Mu, Ye and Hu, Yiwen and Jones, Charles and Biggs, Trent and Domingues, T. and Funk, Chris},
+  journal = {Environmental Research Communications},
+  year    = {2025},
+  note    = {Rising dry-season VPD driven primarily by warming-induced saturation vapour pressure; corpusId 281622763}
+}
+
+@article{hierro2025,
+  title   = {Observational Evidence of Vertical Drying Over Deforested Amazonia From {GPS-RO} Data},
+  author  = {Hierro, R.},
+  journal = {International Journal of Climatology},
+  year    = {2025},
+  note    = {GPS radio occultation humidity profiles show vertical drying over deforested Amazonia; corpusId 283024444}
+}
+
+@article{huang2024,
+  title   = {Satellite-based near-real-time global daily terrestrial evapotranspiration estimates},
+  author  = {Huang, Lei and Luo, Yong and Chen, Jing M. and Tang, Qiu-hong and Steenhuis, T. and Cheng, Wei},
+  journal = {Earth System Science Data},
+  volume  = {16},
+  pages   = {3993--4019},
+  year    = {2024},
+  doi     = {10.5194/essd-16-3993-2024},
+  note    = {Applies the FAO-56 Tmin dew-point proxy with a 2 C arid/semi-arid correction}
+}

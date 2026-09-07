@@ -1,0 +1,18 @@
+{
+  "thread_id": "3ccb6323-b2f9-4393-b8d5-c9839fe77f05",
+  "created_at": "2026-09-04T23:04:35.856766+00:00",
+  "updated_at": "2026-09-04T23:04:35.856825+00:00",
+  "turns": [
+    {
+      "turn": 1,
+      "ts": "2026-09-04T23:04:35.856786+00:00",
+      "file": "local-regression-selection.001.json",
+      "summary": {
+        "query": "Local linear regression on climate anomalies with region specific and season specific selection of predictors and smoothing bandwidth, multitask feature selection for subseasonal climate forecasting such as MultiLLR, and error growth in autoregressive multi step prediction of climate variables.",
+        "mode": "infer",
+        "narrative": "The search identified recent and highly relevant papers addressing your three topics:\n\n1. **Local linear regression and multitask feature selection for climate anomalies and subseasonal forecasting:**\n   - Papers such as <paper corpusid=\"219686759\">Sub-Seasonal Climate Forecasting via Machine Learning: Challenges, Analysis, and Advances</paper> (2020), <paper corpusid=\"52308154\">Improving Subseasonal Forecasting in the Western U.S. with Machine Learning</paper> (2018), and <paper corpusid=\"234365737\">Improving the Accuracy of Subseasonal Forecasting of China Precipitation With a Machine Learning Approach</paper> (2021) introduce and apply MultiLLR and related multitask feature selection methods, with region- and season-specific predictors and bandwidths.\n\n2. **Error growth in autoregressive multi-step prediction of climate variables:**\n   - Recent works such as <paper corpusid=\"290466870\">Nipping the Butterfly Effect in the Bud: Self-Output Fine-Tuning for Autoregressive Weather Prediction</paper> (2026), <paper corpusid=\"278327193\">Exploring Design Choices for Autoregressive Deep Learning Climate Models</paper> (2025), and <paper corpusid=\"289361597\">Interactive Climate Projection via Conditional Generative AI</paper> (2026) analyze error growth and propose methods to mitigate error accumulation in multi-step climate forecasting.\n\nThese results provide a comprehensive and up-to-date overview of the requested methods and challenges. Confidence is very high\u2014key methods (including MultiLLR) and recent error growth analyses are well represented. If you need a more detailed synthesis or a structured report, specify which aspect to focus on.",
+        "paper_count": 135
+      }
+    }
+  ]
+}
