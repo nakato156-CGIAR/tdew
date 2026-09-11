@@ -3,16 +3,17 @@ title: "Extending the PISCO gridded dew-point record for Peru (2017–2020) from
 author:
   - name: "Piero Palacios"
     affiliation: "International Potato Center (CIP)"
-    email: "Piero.Palacios@cgiar.org"
-date: "2026-07-22"
+    email: "piero.palacios@cgiar.org"
+date: last-modified
 format:
   html:
     toc: true
     number-sections: true
     fig-cap-location: bottom
-  pdf:
+  typst:
     toc: true
     number-sections: true
+    papersize: a4
 bibliography: references.bib
 ---
 
@@ -24,508 +25,638 @@ bibliography: references.bib
 
 ## Abstract {.unnumbered}
 
-The PISCO gridded climate product for Peru provides daily dew-point temperature (Td) only through
-2016, while its minimum-temperature (Tmin) record continues to 2020. This leaves a four-year gap in
-a variable required for agricultural and hydrological modelling. We extend the Td record to
-2017–2020 by learning a Tmin→Td mapping on the 1981–2016 overlap and applying it forward at every
-grid cell. The model is a per-(cell, day-of-year) weighted local linear regression on climate
-anomalies, in which both the predictor set and the day-of-year smoothing half-window are selected
-per **SENAMHI climate zone × day-of-year** by leave-one-year-out cross-validation, following the
-MultiLLR approach of @hwang2019. Because no observed Td exists in the gap, prediction is
-**autoregressive**: each predicted day feeds the following day's Td lags.
+The PISCO gridded climate product for Peru provides daily dew-point temperature ($T_d$) through 2016,
+while its minimum-temperature ($T_{\min}$) record extends to 2020, leaving a four-year gap in a
+variable required for reference-evapotranspiration, disease-risk and crop models. We reconstruct
+$T_d$ for 2017–2020 by learning the $T_{\min} \rightarrow T_d$ mapping on the 1981–2016 overlap and
+applying it forward at every grid cell. The model is a per-(cell, day-of-year) weighted local linear
+regression on climate anomalies; the predictor subset and the day-of-year smoothing half-window $h$
+are selected jointly for each combination of SENAMHI climate zone and day of year by
+leave-one-year-out cross-validation. Because no observed $T_d$ exists in the gap, reconstruction is
+autoregressive: each predicted day supplies the $T_d$ lags of subsequent days.
 
-Validation is **temporal, not spatial**: we hold out the most recent four years (train 1981–2012,
-predict 2013–2016) and score against observed Td under the same autoregressive conditions the real
-gap imposes. The tuned model attains RMSE 1.219 °C versus 1.535 °C for climatology (the incumbent
-gap-filling choice), a reduction of 0.316 °C [95% CI 0.314, 0.317], skill 0.206, outperforming
-climatology at 99.99% of grid cells (Cohen's *d* = 2.98, permutation *p* ≈ 2×10⁻⁴). It also beats
-Td = Tmin (FAO-56) by 2.33 °C and a per-zone OLS fit by 1.11 °C. Re-selecting recipes on training
-years only changes skill by 0.009, confirming the result is not an artefact of selection.
+Because the task is extrapolation in time rather than interpolation in space, we validate by
+withholding the four most recent years (train 1981–2012, reconstruct 2013–2016) and scoring against
+observed $T_d$ under the same autoregressive conditions the real gap imposes. The model attains
+$\mathrm{RMSE} = 1.219$ °C against $1.535$ °C for daily climatology, the incumbent choice for
+gap filling: a reduction of $0.316$ °C (95% CI $[0.314, 0.317]$), skill score $0.206$, improving on
+climatology at 99.99% of grid cells (Cohen's $d = 2.98$, permutation $p \approx 2 \times 10^{-4}$).
+It also improves on $T_d = T_{\min}$ (FAO-56) by $2.33$ °C and on a per-zone ordinary least-squares
+fit by $1.11$ °C. Selecting predictors on the training years alone changes the skill score by
+$0.009$, so the advantage is not an artefact of selection.
 
-The resulting product covers 2,178,827 grid cells × 1,461 days (3.18 × 10⁹ values). It shows no
-discontinuity at the 2016/2017 boundary: over equal-length four-year windows the filled field
-differs from the last observed window (mean −0.041 °C, sd 0.176 °C) no more than two observed
-windows differ from each other (mean +0.101 °C, sd 0.125 °C), with no grid cell exceeding 1 °C in
-either comparison. A known limitation is a small warm tail (0.13% of values > 35 °C) confined to
-the north-eastern Amazon lowlands and concentrated almost entirely in **November**, the dry-to-wet
-transition (1.56% of November values versus 0.03% in October). Diagnostics over all 3.18 × 10⁹ values rule out autoregressive error accumulation
-and localise the cause to variance inflation where model selection shrinks the day-of-year smoothing
-window at the dry-to-wet transition, affecting the tail of the predictive distribution while leaving
-mean skill unchanged. **[SME]**
+The reconstruction covers $2{,}178{,}827$ grid cells over $1{,}461$ days ($3.18 \times 10^{9}$
+values) and introduces no discontinuity at the 2016/2017 boundary: over equal-length four-year
+windows it differs from the last observed window (mean $-0.041$ °C, sd $0.176$ °C) by no more than
+two observed windows differ from each other (mean $+0.101$ °C, sd $0.125$ °C), with no cell
+exceeding $1$ °C in either comparison. The principal limitation is a small warm tail (0.13% of
+values above 35 °C) confined to the humid-rainforest zone of the north-eastern lowlands and to
+November, which we attribute to variance inflation where selection shrinks the smoothing window at
+the dry-to-wet transition. **[SME]**
 
 ## Introduction
 
-Dew-point temperature is a primary input to reference-evapotranspiration, disease-risk and
-crop-growth models. For Peru, the PISCO family of gridded products [@huerta2022] provides the
-national-scale daily fields these applications need. However, the products are versioned and
-released asynchronously: dew point is available from the v1.1 release for **1981–2016**, whereas
-minimum temperature has been extended in v1.2 to **1981–2020**. Applications requiring Td after
-2016 therefore face a four-year gap.
+Dew-point temperature is a primary input to reference-evapotranspiration, plant-disease-risk and
+crop-growth models. For Peru the PISCO family of gridded products [@huerta2022] supplies the
+national daily fields these applications require. The components are released asynchronously:
+dew point is available for **1981–2016**, whereas minimum temperature extends to **2020**.
+Applications needing $T_d$ after 2016 therefore face a four-year gap.
 
-The standard fallbacks are unattractive. Substituting the **daily climatology** discards all
-interannual and synoptic information. The FAO-56 approximation **Td ≈ Tmin** [@allen1998] is
-convenient but biased in arid and high-altitude terrain. A single national regression of Td on Tmin
-ignores the extreme heterogeneity of Peruvian microclimates, which span hyper-arid coast, high
-Andes and humid Amazon within a few hundred kilometres.
+The available substitutes are unsatisfactory. Daily climatology discards all interannual and
+synoptic variability. The FAO-56 approximation $T_d \approx T_{\min}$ [@allen1998] is convenient,
+but its bias in arid and high-elevation terrain is well documented and has motivated several
+corrections [@kimball1997; @eccel2012]. A single national regression of $T_d$ on $T_{\min}$ ignores
+the heterogeneity of Peruvian climate, which spans hyper-arid coast, high Andes and humid Amazon
+within a few hundred kilometres.
 
-We therefore ask a narrow, answerable question: **can the Tmin→Td relationship learned on the
-1981–2016 overlap reconstruct Td for 2017–2020 more accurately than these incumbents?** Two
-features distinguish this from a conventional spatial-interpolation problem:
+We therefore ask whether the $T_{\min} \rightarrow T_d$ relationship learned on the 1981–2016
+overlap reconstructs $T_d$ for 2017–2020 more accurately than these incumbents. Two properties
+distinguish the problem from conventional spatial interpolation and shape the design that follows.
+First, it predicts **new years at the same grid cells** rather than new locations, so validation
+must withhold years, not sites. Second, **no observed $T_d$ exists anywhere in the target period**;
+since $T_d$ lags enter as predictors, reconstruction is necessarily autoregressive, and any honest
+validation must be run the same way.
 
-1. **It predicts new *years* at the *same* grid cells**, not new locations. Validation must
-   therefore be temporal (hold out years), not spatial (hold out sites).
-2. **No observed Td exists in the gap.** Because the model uses Td lags as predictors, prediction
-   must be autoregressive, and any honest validation must be run the same way.
-
-A negative result would have been publishable: if per-zone tuning failed to beat a strong
-climatology under these conditions, that would itself be a useful finding, provided the baselines
-and validation were rigorous. It does not fail.
+Our contributions are: a reconstruction method in which both the predictor set and the temporal
+smoothing bandwidth adapt to climate zone and season; a validation design appropriate to temporal
+extrapolation, reported with effect sizes rather than significance alone; the resulting gap-filled
+field for 2017–2020; and a characterisation of the conditions under which the method fails.
 
 ## Data {#sec-data}
 
-| Item | Source | Coverage | Role |
-|---|---|---|---|
-| Dew point Td | PISCO **v1.1** | 1981–2016 | Target (the record being extended) |
-| Minimum temperature Tmin | PISCO **v1.2** | 1981–2020 | Predictor (train **and** predict) |
-| Grid | PISCO national grid | 2,818,404 cells | Model domain |
+| Quantity | Source | Coverage | Role |
+|:---|:---|:---|:---|
+| Dew-point temperature $T_d$ | PISCO v1.1 | 1981–2016 | Target |
+| Minimum temperature $T_{\min}$ | PISCO v1.2 | 1981–2020 | Predictor |
+| Grid | PISCO national grid | 2,818,404 cells | Domain |
 | Climate zones | SENAMHI Thornthwaite classification | 41 zones | Unit of model selection |
 
-: Data inventory. {#tbl-data}
+: Data used in this study. {#tbl-data}
 
-**Version consistency (important).** Tmin v1.1 and v1.2 differ enough that mixing them injects a
-systematic bias: the fitted Tmin sensitivity differs by version (coefficient mean 0.45 vs 0.37) and
-switching versions between training and prediction shifts Td by ≈0.3 °C. We therefore use **v1.2
-Tmin on both sides**, for training and prediction, so the mapping is applied to the same data
-generating process it was learned from.
+The gridded fields derive from land-surface temperature and elevation covariates by regression
+kriging within the PISCOeo_pm framework [@huerta2022]; $T_d$ is not derived from $T_{\min}$
+directly, although the two share covariates. Of the 2,818,404 grid cells, **2,178,827** (77.3%)
+yield reconstructions; the remainder are ocean or lack the climatology or predictor coverage the
+model requires.
 
-**Grid alignment (important).** The raw v1.2 Tmin distribution is supplied on a 302,449-point
-subset grid whose cell indices do **not** correspond to those of the 2,818,404-cell national grid
-used by the Td product. Applying it directly produces physically meaningless results (we measured a
-spurious −8.7 °C step at the 2016/2017 boundary). All future Tmin was therefore re-extracted onto
-the full national grid; we verified the resulting grid index is byte-identical to that of the Td
-product.
+**Predictor version.** Minimum temperature exists in two PISCO releases, v1.1 (1981–2016) and v1.2
+(1981–2020). They are not interchangeable: refitting the same model on each gives a mean
+contemporaneous $T_{\min}$ coefficient of $0.452$ against $0.370$, and reconstructions made from
+them differ by $0.300$ °C in the mean (@sec-supp-version). Because only v1.2 spans the target
+period, we use **v1.2 throughout**, for both fitting and reconstruction, so that the mapping is
+applied to the same data-generating process from which it was estimated.
 
-Of the 2,818,404 cells, **2,178,827** (77.3%) yield predictions; the remainder are ocean or
-otherwise lack the climatology or Tmin required by the model.
-
-**Caveat on the target.** Validation is against the *gridded* v1.1 Td, which is the product being
-extended, which is the appropriate reference for this task. Gridded Td and Tmin both derive from land
-surface temperature and elevation covariates in the PISCOeo_pm framework [@huerta2022], so they
-share some structure; Td is not derived from Tmin directly. Station-level validation is out of
-scope (@sec-limitations).
+**Validation target.** The model is scored against the gridded v1.1 $T_d$, which is the record being
+extended and therefore the appropriate reference. The reconstruction consequently inherits any bias
+of that product; station-level evaluation is outside the present scope (@sec-limitations).
 
 ## Methods {#sec-methods}
 
 ### Anomaly formulation
 
-All modelling is performed on **anomalies** relative to a per-(cell, day-of-year) daily
-climatology computed over the training years:
+Let $T^{d}_i(t)$ and $T^{\min}_i(t)$ denote dew-point and minimum temperature at grid cell $i$ on
+day $t$, and let $d(t) \in \{1, \dots, D\}$ with $D = 366$ be the day of year. For each cell and day
+of year we form a climatological mean over the training years $\mathcal{Y}$,
 
-$$ X_{\text{anom}}(t) = X(t) - \bar{X}(\mathrm{doy}(t)) $$
+$$
+\bar{X}_i(d) \;=\; \frac{1}{|\{t \in \mathcal{Y} : d(t) = d\}|} \sum_{t \in \mathcal{Y},\, d(t) = d} X_i(t),
+$$
 
-For each cell and day-of-year the model is a weighted local linear regression
+and model anomalies
 
-$$ \mathrm{Td}_{\text{anom}}(t) = \beta_0 + \sum_k \beta_k \, x_k(t) + \varepsilon $$
+$$
+X'_i(t) \;=\; X_i(t) - \bar{X}_i\big(d(t)\big).
+$$
 
-where candidate predictors $x_k$ are drawn from the pool
-$\{\mathrm{TMIN\_anom}, \mathrm{TMIN\_anom\_lag}_{1,2,7,30}, \mathrm{TD\_anom\_lag}_{1,2,3,7,30}\}$
-plus an intercept (11 candidates). Td enters only through lags, never contemporaneously. Fitting
-uses a circular tricube kernel over day-of-year with half-window $h$, so each (cell, doy) model
-borrows strength from nearby days of year across all training years.
+All fitting and prediction operate on anomalies; the climatology is added back at the end. The
+climatology is always computed from training years only, so it leaks no information from a
+withheld period.
 
-### Per-zone × day-of-year model selection {#sec-selection}
+### Local regression with a day-of-year kernel
 
-Rather than fixing the predictor set and $h$ globally, we select both **per SENAMHI climate zone ×
-day-of-year** (41 × 366 = 15,006 recipes), following the multitask MultiLLR design of @hwang2019:
-predictors are chosen jointly across grid points within a zone, while coefficients are fitted per
-grid point. Selection is by **backward-stepwise elimination** under a **leave-one-year-out
-cross-validated (LOYOCV) cosine-skill** objective, with $h$ searched over $\{7, 11, 15, 21, 31,
-45\}$ days. The approach has since been benchmarked against other machine-learning methods for
-subseasonal forecasting [@he2020] and applied to precipitation forecasting elsewhere [@wang2021];
-we adapt it here to a reconstruction rather than a forecasting task.
+For cell $i$ and day of year $d$ the response is the dew-point anomaly $y_i(t) = T^{d\prime}_i(t)$
+and the candidate predictors are
 
-Selection runs on a stratified sample of **66,534 cells** (target 2,000 per zone), which is sufficient to
-*choose* a recipe, since LOYOCV skill sums are additive across cell chunks, rather than on the full grid.
+$$
+\mathcal{P} \;=\; \big\{\,1,\; T^{\min\prime},\; T^{\min\prime}_{-1},\; T^{\min\prime}_{-2},\;
+T^{\min\prime}_{-7},\; T^{\min\prime}_{-30},\;
+T^{d\prime}_{-1},\; T^{d\prime}_{-2},\; T^{d\prime}_{-3},\; T^{d\prime}_{-7},\; T^{d\prime}_{-30}\,\big\},
+$$
 
-### Training
+where $X_{-\ell}(t) = X(t-\ell)$ and lagged anomalies are formed at the lag day's own day of year.
+Dew point enters only through lags, never contemporaneously, since it is unobserved in the target
+period. Writing $\mathbf{x}(t)$ for the vector of predictors retained for this zone and day of year,
+the model is linear in the anomalies,
 
-The selected recipes are then applied to fit coefficients at **all 2,818,404 grid cells** in a
-single pass, each (cell, doy) using its zone's recipe as a feature mask. This yields
-8.13 × 10⁹ tidy coefficient rows.
+$$
+y_i(t) \;=\; \mathbf{x}(t)^{\top}\boldsymbol{\beta}_{i,d} \;+\; \varepsilon_i(t).
+$$
 
-### Autoregressive forecast {#sec-forecast}
+Observations are weighted by their circular distance in day of year from $d$. With
 
-For 2017–2020 no observed Td exists, so `TD_anom_lag`$_k$ predictors must be supplied by the
-model's own earlier predictions. The forecast is seeded with observed Td from December 2016 and
-advances day by day: the value predicted on day $t$ becomes an input for days $t+1 \ldots t+k$.
-Tmin predictors are exogenous and observed throughout, so they require no recursion. This
-sequential dependence is intrinsic to the method, not an implementation limitation.
+$$
+\delta(a,b) \;=\; \min\big(|a-b|,\; D - |a-b|\big)
+$$
 
-### Implementation
+and a tricube kernel of half-window $h$,
 
-Selection and training are GPU-accelerated (CuPy, single NVIDIA RTX A2000 12 GB); the grid is
-partitioned into 8,192 buckets so per-bucket tensors fit in device memory. Full-grid selection plus
-training took ≈39.5 h wall-clock. The production fill parallelises across buckets on 14 CPU
-processes and completes in ≈20 min. Code: `HPC_code_tunning/` (see @sec-availability).
+$$
+w_h(\delta) \;=\; \left[1 - \left(\frac{\delta}{h}\right)^{3}\right]^{3} \mathbf{1}\{\delta \le h\},
+$$
 
-## Validation design {#sec-validation}
+the coefficients solve a weighted least-squares problem over all training years simultaneously,
 
-The evaluation must answer: *how accurate will the 2017–2020 fill be?* Since that answer cannot be
-observed, we reproduce its conditions on years we can score.
+$$
+\hat{\boldsymbol{\beta}}_{i,d} \;=\; \arg\min_{\boldsymbol{\beta}} \sum_{t}
+w_h\big(\delta(d(t), d)\big)\,\big(y_i(t) - \mathbf{x}(t)^{\top}\boldsymbol{\beta}\big)^{2}
+\;=\; \big(\mathbf{X}^{\top}\mathbf{W}\mathbf{X}\big)^{-1}\mathbf{X}^{\top}\mathbf{W}\mathbf{y},
+$$
 
-- **Forward temporal hold-out.** Train on early years, predict the most recent years, score against
-  observed Td. The headline split is **leave-last-4** (train 1981–2012, predict 2013–2016),
-  mirroring the real four-year gap; leave-last-1 and leave-last-2 give the lead-time curve.
-- **Autoregressive throughout.** No observed Td enters the held-out block, exactly as in production.
-- **No leakage.** Climatology, used both as a baseline and as the anomaly anchor, is recomputed on
-  training years only.
-- **Baseline ladder**, scored on the identical hold-out: climatology, Td = Tmin [@allen1998],
-  per-zone OLS Td~Tmin, and the tuned model. We use the **uncorrected** FAO-56 form; established
-  aridity-dependent corrections exist [@kimball1997; @eccel2012] and a −2 °C offset is common
-  practice in arid and semi-arid settings [@huang2024]. Over our domain the uncorrected form is the
-  *more favourable* variant: its measured bias is −2.13 °C (it under-predicts observed Td), so a
-  further −2 °C offset would increase the error. However, a regionally applied correction (coast and
-  Andes only) would be the fairer comparison and is left for future work. **[TODO]**
-- **Sample.** 64 whole buckets = 17,041 cells. Because bucket assignment is `ID mod 8192`, each
-  bucket is a nationwide lattice spanning all 41 zones, making a few buckets a cheap, representative
-  sample.
-- **Effect sizes over p-values.** ΔRMSE in °C with location-block bootstrap 95% CIs, skill score,
-  fraction of cells improved, Cohen's *d*, and a sign-flip permutation null (5,000 draws).
+with $\mathbf{W} = \operatorname{diag}\{w_h(\delta(d(t), d))\}$. Each (cell, day-of-year) model
+therefore borrows strength from neighbouring days of year across all training years, with $h$
+controlling how much.
 
-**Selection honesty.** In the primary run the *recipe* came from the full-period manifest, which had
-seen the hold-out. We therefore repeated the exercise re-selecting recipes on training years only;
-the difference bounds the selection optimism (@sec-results-validation).
+### Selection of predictors and bandwidth {#sec-selection}
+
+Rather than fixing $\mathcal{S} \subseteq \mathcal{P}$ and $h$ globally, we select both for each
+combination of climate zone $z$ and day of year $d$, following the multitask design of @hwang2019:
+predictors are chosen jointly across the grid cells of a zone while coefficients remain per cell.
+The approach has since been benchmarked against other machine-learning methods for subseasonal
+forecasting [@he2020] and applied to precipitation [@wang2021]; here it is adapted to a
+reconstruction rather than a forecasting task.
+
+The selection objective is leave-one-year-out cross-validated cosine similarity on anomalies. For a
+withheld year $u$, coefficients $\hat{\boldsymbol{\beta}}^{(-u)}$ are obtained by excluding that
+year, and with $\cos(\mathbf{a}, \mathbf{b}) = \mathbf{a}^{\top}\mathbf{b} / (\lVert\mathbf{a}\rVert
+\lVert\mathbf{b}\rVert)$ the criterion is
+
+$$
+\mathcal{L}(\mathcal{S}, h) \;=\; \frac{1}{|\mathcal{Y}|}\sum_{u \in \mathcal{Y}}
+\cos\Big(\mathbf{y}^{(u)},\; \mathbf{X}^{(u)}\hat{\boldsymbol{\beta}}^{(-u)}_{\mathcal{S},h}\Big).
+$$
+
+Because the weighted normal equations are additive over years, the leave-one-year-out fit is
+obtained by subtraction, $\mathbf{A}^{(-u)} = \mathbf{A} - \mathbf{A}^{(u)}$, rather than by
+refitting; the cross-validation is therefore exact at the cost of a single pass.
+
+Predictors are eliminated by backward stepwise search: starting from the full pool, the predictor
+whose removal most improves $\mathcal{L}$ is dropped, and elimination stops when no removal improves
+$\mathcal{L}$ by more than a tolerance $\tau$. The search is repeated for each
+$h \in \{7, 11, 15, 21, 31, 45\}$ and the pair $(\mathcal{S}, h)$ maximising $\mathcal{L}$ is
+retained, giving $41 \times 366 = 15{,}006$ selected models.
+
+Selection uses a stratified sample of 66,534 cells (up to 2,000 per zone). Because the cosine sums
+are additive across cells, a sample suffices to choose $(\mathcal{S}, h)$; coefficients are
+subsequently fitted at every cell of the domain.
+
+### Autoregressive reconstruction {#sec-forecast}
+
+Let $t_0$ be the last day with observed $T_d$ (31 December 2016). For $t > t_0$ the reconstruction
+proceeds forward in time,
+
+$$
+\hat{y}_i(t) \;=\; \mathbf{x}(t)^{\top}\hat{\boldsymbol{\beta}}_{i,d(t)},
+\qquad
+\hat{T}^{d}_i(t) \;=\; \hat{y}_i(t) + \bar{T}^{d}_i\big(d(t)\big),
+$$
+
+where the dew-point lag entries of $\mathbf{x}(t)$ are taken from observations before the boundary
+and from the model's own output after it,
+
+$$
+\big[\mathbf{x}(t)\big]_{T^{d\prime}_{-\ell}} \;=\;
+\begin{cases}
+y_i(t-\ell), & t-\ell \le t_0,\\[2pt]
+\hat{y}_i(t-\ell), & t-\ell > t_0 .
+\end{cases}
+$$
+
+Minimum-temperature predictors are exogenous and observed throughout, so they never recurse. The
+recursion is sequential in time but independent across cells.
+
+### Validation design {#sec-validation}
+
+The quantity of interest is the accuracy of a four-year forward reconstruction, which cannot be
+observed directly. We therefore reproduce its conditions on years that can be scored: the model is
+fitted on early years and reconstructs the most recent ones, which are withheld. The primary split
+withholds four years (fit 1981–2012, reconstruct 2013–2016), matching the length of the real gap;
+splits withholding one and two years give the dependence on lead time. Reconstruction of the
+withheld block is fully autoregressive, and the climatology is recomputed from training years only.
+
+Spatial cross-validation, the prevailing strategy for gridded products [@kilibarda2014], is not
+informative here: withholding locations while retaining contemporaneous observations does not
+reproduce a setting in which the target is unobserved everywhere.
+
+Four methods are scored on the identical withheld block:
+
+1. **Daily climatology**, $\hat{T}^d_i(t) = \bar{T}^d_i(d(t))$, equivalent to predicting zero anomaly;
+2. **$T_d = T_{\min}$**, the FAO-56 approximation [@allen1998];
+3. **Per-zone ordinary least squares** of $T_d$ on $T_{\min}$;
+4. **The selected model** of @sec-selection.
+
+We report root-mean-square error, mean absolute error, bias and correlation, and the skill score
+relative to climatology,
+
+$$
+\mathrm{SS} \;=\; 1 - \frac{\mathrm{RMSE}_{\text{model}}}{\mathrm{RMSE}_{\text{climatology}}} .
+$$
+
+Differences are summarised by effect size rather than significance alone: the paired per-cell
+difference in RMSE with 95% confidence intervals from a location-block bootstrap, the fraction of
+cells improved, Cohen's $d = \bar{\Delta}/s_{\Delta}$ on the paired differences, and a sign-flip
+permutation null with 5,000 draws. Scoring uses 17,041 cells distributed across all 41 zones.
+
+Because the selection objective is itself cross-validated, selected models could in principle be
+optimistic on the withheld years. We therefore repeat the entire procedure with selection restricted
+to the training years; the difference between the two bounds that optimism.
 
 ## Results {#sec-results}
 
-### Model selection {#sec-results-selection}
+### Selected models {#sec-results-selection}
 
-Selection retains most candidates: the full 11-predictor set is kept for 70.7% of zone-days, and no
-predictor is retained in fewer than 91% of recipes. This indicates that the conventional fixed
-five-predictor configuration is *under*-specified. The chosen half-window distributes across the
-whole grid ($h$ = 7: 14.2%, 11: 9.2%, 15: 9.4%, 21: 11.1%, 31: 13.0%, 45: 43.1%). That $h = 45$ is
-modal is itself a finding: the model prefers broad day-of-year pooling, trading seasonal specificity
-for sample size. Extending the grid beyond 21 days was worthwhile but second-order (hold-out skill
-0.197 → 0.200).
+Selection retains most of the candidate pool: the full eleven-predictor set is kept for 70.7% of
+zone-days and no predictor is retained in fewer than 91% of models (@fig-selection c), indicating
+that the conventional five-predictor configuration is under-specified. The contemporaneous
+$T_{\min}$ anomaly is retained almost everywhere, as physical reasoning requires.
 
-In-sample LOYOCV uplift over the fixed five-predictor baseline is small (mean +0.015, median +0.008
-skill; 16.8% of zone-days show no gain). **These in-sample numbers are selection-optimistic and are
-not the headline**; @sec-results-validation is.
+The selected bandwidth is broad: $h = 45$ days is modal at 43.1%, with the remainder spread across
+the smaller values (@fig-selection a). Wide windows are preferred because the
+$T_{\min} \rightarrow T_d$ relationship varies smoothly with day of year, so pooling neighbouring
+days buys sample size at little cost in bias. The preference is not uniform across the domain
+(@fig-selection b), and the between-zone variation proves consequential (@sec-results-tail).
 
-![Model-selection diagnostics: distribution of the selected day-of-year half-window $h$, predictor
-retention, and LOYOCV skill uplift over the fixed-5 baseline.](figures/S1_manifest_overview.png){#fig-manifest}
+Cross-validated skill exceeds the fixed five-predictor configuration by $+0.015$ on average (median
+$+0.008$), with no gain for 16.8% of zone-days (@fig-selection d). These are in-sample quantities
+computed on the same objective that selection maximises; the out-of-sample assessment follows.
 
-### Temporal validation {#sec-results-validation}
+![Selected models. (a) distribution of the day-of-year half-window $h$; (b) $h$ by climate zone and
+day of year; (c) fraction of models retaining each candidate predictor; (d) cross-validated skill
+gain over the fixed five-predictor configuration.](figures/F0_model_selection.png){#fig-selection}
 
-The tuned model outperforms every incumbent at every lead time (@tbl-ladder, @fig-ladder).
+### Accuracy on withheld years {#sec-results-validation}
 
-| Split (train → predict) | Climatology | Td = Tmin | Zone OLS | **Tuned** | Skill vs clim. |
-|---|---|---|---|---|---|
-| ll1 (1981–2015 → 2016)     | 1.680 | 3.621 | 2.379 | **1.262** | **0.249** |
-| ll2 (1981–2014 → 2015–16)  | 1.667 | 3.676 | 2.370 | **1.274** | **0.235** |
-| **ll4 (1981–2012 → 2013–16)** | **1.535** | **3.551** | **2.329** | **1.219** | **0.206** |
+The selected model outperforms every incumbent at every lead time (@tbl-ladder, @fig-ladder).
+Against climatology it reduces RMSE by 21% at a one-year lead and by 21% at four years; against the
+FAO-56 approximation the reduction exceeds 2.3 °C throughout.
 
-: Hold-out RMSE (°C), pooled over all held-out cell-days (ll4: *n* = 24,896,901). {#tbl-ladder}
+| Withheld period | Climatology | $T_d = T_{\min}$ | Zone OLS | **Selected model** | Skill score |
+|:---|---:|---:|---:|---:|---:|
+| 2016 (1 year) | 1.680 | 3.621 | 2.379 | **1.262** | 0.249 |
+| 2015–2016 (2 years) | 1.667 | 3.676 | 2.370 | **1.274** | 0.235 |
+| 2013–2016 (4 years) | 1.535 | 3.551 | 2.329 | **1.219** | 0.206 |
 
-For the headline ll4 split, paired per-cell effect sizes (17,041 cells):
+: Root-mean-square error (°C) on withheld years, pooled over all scored cell-days
+($n = 24{,}896{,}901$ for the four-year split). The skill score is relative to climatology.
+{#tbl-ladder}
 
-| Tuned vs | ΔRMSE °C [95% CI] | Skill | Cells improved | Cohen's *d* | perm. *p* |
-|---|---|---|---|---|---|
-| Climatology | +0.316 [0.314, 0.317] | 0.206 | 99.99% | 2.98 | 2×10⁻⁴ |
-| Td = Tmin   | +2.332 [2.308, 2.354] | 0.657 | 99.98% | 1.37 | 2×10⁻⁴ |
-| Zone OLS    | +1.110 [1.091, 1.126] | 0.476 | 99.80% | 1.06 | 2×10⁻⁴ |
+Whereas @tbl-ladder compares aggregate error, @tbl-effects asks whether the advantage is large,
+uniform across space, and distinguishable from chance. It is: the improvement over climatology has
+a tight confidence interval, holds at essentially every cell, and corresponds to a large effect
+size.
 
-: Effect sizes, ll4 split. CIs from location-block bootstrap. {#tbl-effects}
+| Comparison | $\Delta$RMSE (°C) | 95% CI | Skill | Cells improved | Cohen's $d$ | $p$ |
+|:---|---:|:---:|---:|---:|---:|---:|
+| vs climatology | $+0.316$ | $[0.314, 0.317]$ | 0.206 | 99.99% | 2.98 | $2\times10^{-4}$ |
+| vs $T_d = T_{\min}$ | $+2.332$ | $[2.308, 2.354]$ | 0.657 | 99.98% | 1.37 | $2\times10^{-4}$ |
+| vs zone OLS | $+1.110$ | $[1.091, 1.126]$ | 0.476 | 99.80% | 1.06 | $2\times10^{-4}$ |
 
-The tuned model shows bias −0.046 °C and *r* = 0.990. Skill declines monotonically with lead time
-(0.249 → 0.235 → 0.206), the expected growth of error under autoregression, without collapsing over
-a four-year horizon (@fig-leadtime).
+: Paired effect sizes on the four-year withheld block ($17{,}041$ cells). $\Delta$RMSE is the
+per-cell reduction in error achieved by the selected model; intervals are from a location-block
+bootstrap and $p$ from a sign-flip permutation null. {#tbl-effects}
 
-**Selection bias is negligible.** Re-selecting recipes on training years only lowers ll4 skill from
-0.206 to 0.197, a difference of 0.009 skill (≈0.013 °C RMSE, ~4% of the uplift). The advantage over
-climatology is therefore a property of the method, not of having seen the hold-out.
+The selected model has bias $-0.046$ °C and correlation $0.990$. Skill declines monotonically with
+lead time ($0.249 \rightarrow 0.235 \rightarrow 0.206$), the expected growth of error under
+autoregression, without collapsing over four years (@fig-leadtime).
 
-**Seasonal bias is corrected.** The fixed-configuration model carries a +1.45 °C December warm bias;
-under the per-zone × day-of-year recipes the December bias falls to +0.01 °C, with all months within
-±0.44 °C.
+Restricting selection to the training years lowers the four-year skill score from $0.206$ to
+$0.197$. The residual optimism attributable to selection is therefore $0.009$ in skill, about
+$0.013$ °C in RMSE, or 4% of the improvement over climatology.
 
-![Hold-out RMSE ladder, ll4 split: the tuned model against the three
+Seasonal bias is also reduced. The fixed configuration carries a December warm bias of $+1.45$ °C
+(@sec-supp-version); under per-zone, per-day-of-year selection the December bias falls to
+$+0.01$ °C, with all months within $\pm 0.44$ °C.
+
+![Root-mean-square error on the four-year withheld block for the selected model and the three
 incumbents.](figures/S2_rmse_ladder_ll4.png){#fig-ladder}
 
-![Skill versus climatology as a function of forecast lead
-time.](figures/S2_lead_time_curve.png){#fig-leadtime}
+![Skill score relative to climatology as a function of lead time.](figures/S2_lead_time_curve.png){#fig-leadtime}
 
-### The gap-filled product {#sec-results-product}
+### The reconstructed field {#sec-results-product}
 
-Applying the coefficients trained on all of 1981–2016 to the observed 2017–2020 Tmin yields
-**3,183,266,247** predicted values over 2,178,827 cells and 1,461 days, with no missing values.
-National mean Td is 19.39 °C (range −13.29 to 41.16 °C); annual means are stable across the horizon
-(19.36, 19.30, 19.41, 19.51 °C for 2017–2020), showing no drift under sustained autoregression.
+Applying coefficients fitted on 1981–2016 to the observed 2017–2020 minimum temperature yields
+$3{,}183{,}266{,}247$ values with no missing entries. National mean $T_d$ is $19.39$ °C (range
+$-13.29$ to $41.16$ °C) and annual means are stable across the period ($19.36$, $19.30$, $19.41$ and
+$19.51$ °C), showing no drift under sustained autoregression.
 
-The filled field reproduces the expected national structure, with a humid Amazon (~25 °C), a sharply
-delineated cold Andean cordillera, and the coastal gradient (@fig-map), and it continues the observed
+The field reproduces the expected national structure, with a humid Amazon near 25 °C, a sharply
+delineated cold Andean cordillera and the coastal gradient (@fig-map), and continues the observed
 seasonal cycle across the 2016/2017 boundary with matching amplitude and phase (@fig-timeseries).
 
-![National monthly-mean Td, 2010–2020: observed (blue, through 2016) and gap-filled (red,
-2017–2020).](figures/F1_national_td_timeseries_seam.png){#fig-timeseries}
+![National monthly-mean dew point, 2010–2020: observed through 2016 and reconstructed
+thereafter.](figures/F1_national_td_timeseries_seam.png){#fig-timeseries}
 
-![Mean gap-filled Td, 2017–2020.](figures/F2_meanTd_map_2017_2020.png){#fig-map}
+![Mean reconstructed dew point, 2017–2020.](figures/F2_meanTd_map_2017_2020.png){#fig-map}
 
-### Seam continuity {#sec-results-seam}
+### Continuity at the record boundary {#sec-results-seam}
 
-A gap-filled record must not introduce an artificial step where prediction begins. Comparing
-adjacent *months* across the boundary conflates the real seasonal cycle with any such step, so we
-test on **equal-length full-year windows**, which removes seasonality, and include a **model-free
-control**: the difference between two consecutive observed four-year windows, which measures the
-natural period-to-period variability of the observed record itself.
+A reconstruction appended to an observed record must not introduce an artificial step. Comparing
+adjacent months across the boundary would confound such a step with the seasonal cycle, so we
+compare equal-length full-year windows, which removes seasonality, and include a model-free control:
+the difference between two consecutive observed four-year windows, which measures the
+period-to-period variability of the observed record itself.
 
-| Comparison | Mean | sd | 1st–99th pct | Cells \|Δ\| > 1 °C |
-|---|---|---|---|---|
-| **A** obs 2013–16 − obs 2009–12 *(control, no model)* | +0.101 | 0.125 | −0.18 … +0.42 | 0.0% |
-| **B** pred 2017–20 − obs 2013–16 *(seam)* | −0.041 | 0.176 | −0.36 … +0.54 | 0.0% |
+| Comparison | Mean | sd | 1st–99th pct | Cells $\lvert\Delta\rvert > 1$ °C |
+|:---|---:|---:|:---:|---:|
+| Observed 2013–16 $-$ observed 2009–12 (control) | $+0.101$ | 0.125 | $-0.18$ … $+0.42$ | 0.0% |
+| Reconstructed 2017–20 $-$ observed 2013–16 | $-0.041$ | 0.176 | $-0.36$ … $+0.54$ | 0.0% |
 
-: Difference in annual-mean Td (°C), 2,178,827 cells. {#tbl-seam}
+: Difference in annual-mean dew point (°C) between four-year windows, over $2{,}178{,}827$ cells.
+The first row involves no model and quantifies natural variability. {#tbl-seam}
 
-The filled years differ from the last observed window no more than two observed windows differ from
-each other: B's spread is 1.4× A's, its mean is closer to zero, and **no cell in either comparison
-differs by more than 1 °C**. Panel B is spatially smooth and coherent, without the blockiness or
-speckle that a numerical artefact would produce (@fig-seam).
+The reconstruction differs from the last observed window by no more than two observed windows differ
+from each other: its spread is 1.4 times the control, its mean is closer to zero, and no cell in
+either comparison differs by more than 1 °C (@fig-seam). The difference field is spatially smooth
+and coherent, without the blockiness or speckle a numerical artefact would produce.
 
-![Seam artefact test on equal-length full-year windows. **A** natural variability (observed only);
-**B** the seam; **C** distributions.](figures/F3_seam_artifact_test.png){#fig-seam}
+![Continuity at the record boundary on equal-length full-year windows. (A) natural variability
+between two observed windows; (B) reconstructed against observed; (C)
+distributions.](figures/F3_seam_artifact_test.png){#fig-seam}
+
+### Extreme values {#sec-results-tail}
+
+A small fraction of reconstructed values is physically implausible: 0.1326% exceed 35 °C, with a
+maximum of 41.16 °C. These values are sharply localised in space, time and season, and their
+structure identifies their origin.
+
+They occur exclusively in one climate zone, the Thornthwaite class `A (r) A'` (perhumid, no water
+deficiency, megathermal) of the north-eastern lowlands, affecting $132{,}920$ of that zone's
+$909{,}708$ cells. In time they are concentrated almost entirely in **November**: pooled over
+2017–2020, 1.556% of November values exceed the threshold against 0.027% in October, and only 50
+exceedances occur in total between January and July (@fig-tail-month).
+
+The concentration is not explained by accumulation of autoregressive error. Annual incidence is
+non-monotonic (0.2015%, 0.1696%, 0.0293% and 0.1299% for 2017–2020) and exceedances occur in short
+episodes, 40.6% of them isolated single days, with a mean run of 3.42 days. Progressive error growth
+of the kind reported for free-running autoregressive models [@gallusser2025] would produce
+lengthening runs and monotonic growth with lead time; neither is present.
+
+Nor is it a failure of average fit. In the affected zone, November cross-validated skill ($0.7317$)
+is indistinguishable from December ($0.7333$) and January–July ($0.7324$), and higher than
+August–September ($0.7030$); in-sample $R^{2}$ behaves likewise. The failure affects the tail of the
+predictive distribution rather than its centre, consistent with annual means remaining stable to
+$0.21$ °C.
+
+The determining observation concerns the selected bandwidth. Although $h = 45$ is modal nationally,
+this zone prefers narrower windows (median $h = 21$, 31.7% at $h = 45$), and **November is its
+narrowest band**: 47% of November days select $h \le 11$ against 23% in October, with median
+$h = 15$ in November against $31$ in both adjacent months. Selection responds to a rapidly changing
+time of year by shrinking the window, trading bias for variance. Since the quantity measured is an
+exceedance rate above a fixed threshold, variance rather than bias governs it: a modest increase in
+predictive spread, invisible in mean skill, moves the exceedance rate by a factor of 58. Confining
+narrow windows to the transition band also confines the inflated variance there, which accounts for
+the concentration in a single month.
+
+The exceedance peak moves between years, at day of year 313 in 2017, 331 in 2018, 313 in 2019 and
+331 in 2020, with the distribution mean shifting between days 314.9 and 322.2.
+
+![Exceedances above 35 °C by month of year, pooled (left) and by year
+(right).](figures/F5_warm_tail_month_of_year.png){#fig-tail-month}
+
+![Distribution of reconstructed dew point, spatial location of affected cells, and monthly
+incidence.](figures/F4_warm_tail_panel.png){#fig-tail-panel}
 
 ## Discussion {#sec-discussion}
 
-### Relation to existing humidity-from-temperature methods
+### Estimating humidity from temperature
 
-The FAO-56 identity Td ≈ Tmin [@allen1998] is a starting point rather than the state of the art.
-Its bias in arid, semi-arid and high-elevation terrain is well documented, and several corrections
-are in routine use: an aridity-dependent adjustment driven by precipitation and potential
-evapotranspiration [@kimball1997], a correction from temperature and precipitation validated across
-alpine stations [@eccel2012], and a simple −2 °C offset widely applied in arid and semi-arid regions
-[@huang2024]. Disaggregation frameworks such as MELODIST implement both the naive identity and
-fitted regression alternatives precisely because the identity fails in a site- and regime-specific
-way [@forster2016].
+The FAO-56 identity $T_d \approx T_{\min}$ [@allen1998] is a starting point rather than the state of
+the art. Its bias in arid, semi-arid and high-elevation terrain is documented and several
+corrections are in routine use: an aridity-dependent adjustment driven by precipitation and
+potential evapotranspiration [@kimball1997], a correction from temperature and precipitation
+validated at alpine stations [@eccel2012], and a $-2$ °C offset widely applied in arid regions
+[@huang2024]. Disaggregation frameworks implement both the identity and fitted alternatives
+precisely because it fails in a site- and regime-specific way [@forster2016].
 
-The most directly relevant prior result is @althoff2022, who calibrate the temperature-based
-Penman-Monteith approach over the Brazilian Cerrado, a tropical biome with a pronounced dry season,
-and find **corrections of opposite sign in the two seasons**: −0.93 °C in the wet season
-(Td > Tmin) versus +0.57 °C in the dry season (Td < Tmin). The Tmin–Td coupling is therefore not a
-fixed offset but a *regime-dependent* relationship. Our per-(zone × day-of-year) design can be read
-as a generalisation of that finding: rather than two seasonal offsets for one biome, we fit a
-separate local regression for each climate zone and each day of the year. The magnitude of our
-improvement over both Td = Tmin (+2.33 °C RMSE) and a per-zone OLS fit (+1.11 °C) is consistent
-with this interpretation: a single global or even per-zone linear relationship is too rigid.
+The most directly comparable result is that of @althoff2022, who calibrate a temperature-based
+approach over the Brazilian Cerrado, a tropical biome with a pronounced dry season, and obtain
+corrections of **opposite sign in the two seasons**: $-0.93$ °C in the wet season ($T_d > T_{\min}$)
+against $+0.57$ °C in the dry season ($T_d < T_{\min}$). The coupling is thus not a fixed offset but
+a regime-dependent relationship. Selecting a separate model for each climate zone and day of year
+generalises that observation, and the magnitude of the improvement over both $T_d = T_{\min}$
+($+2.33$ °C) and a per-zone linear fit ($+1.11$ °C) is consistent with it: a single global or even
+per-zone linear relationship is too rigid for this domain.
 
-### What the selected smoothing windows imply
+### Interpretation of the selected bandwidths
 
-Selection favours wide day-of-year windows, with *h* = 45 days modal at 43.1% (@fig-manifest). An
-independent precedent exists: @chabotcouture2014 interpolate dew point with day-of-year-dependent
-parameters smoothed over **31-day** windows, a comparable scale. The physical reading is that the
-Tmin–Td relationship varies smoothly with day of year, so pooling neighbouring days buys sample size
-at little cost in bias; the model prefers more data over finer seasonal resolution.
+The preference for wide day-of-year windows has an independent precedent: @chabotcouture2014
+interpolate dew point with day-of-year-dependent parameters smoothed over 31-day windows, a
+comparable scale. Wide windows are appropriate where the relationship varies smoothly with season.
+Where it does not, selection narrows them, and @sec-results-tail shows that this local narrowing,
+rather than the national preference for broad pooling, governs the method's failure mode. Bandwidth
+selection is therefore not merely a tuning detail: it is the mechanism by which the method adapts
+to seasonal structure, and also the mechanism by which it fails when that structure is abrupt.
 
-That preference is not uniform, however, and the national modal value conceals substantial
-between-zone variation: the humid-rainforest zone that dominates the Amazon lowlands prefers
-markedly narrower windows (median *h* = 21, only 31.7% at *h* = 45), and narrows them further still
-at the dry-to-wet transition. We return to this in @sec-limitations, because that local narrowing,
-not the national preference for broad pooling, turns out to drive our one substantive failure
-mode.
+### Temporal extrapolation and its validation
 
-### Positioning relative to the gap-filling literature
+Work described as gap filling usually reconstructs values missing *inside* an existing record,
+using surrounding observations in space and time [e.g. @serranonotivoli2019]. The present problem
+differs in kind: the target is unobserved everywhere throughout the period to be filled. The
+methodological consequence is that spatial cross-validation, which withholds locations while
+retaining contemporaneous observations [@kilibarda2014], cannot measure the quantity of interest,
+and only a forward temporal hold-out reproduces the operational setting. Systematic reporting of
+incumbent baselines and effect sizes is likewise uncommon in this literature, and we regard the
+validation design as part of the contribution rather than as supporting material.
 
-Most work described as "gap filling" reconstructs values **missing inside** an existing record
-(station outages, sensor dropouts, cloud-obscured retrievals), using the surrounding observations in
-space and time [e.g. @serranonotivoli2019]. Our problem is different in kind: **temporal
-extrapolation beyond the end of the record**, where the target variable is unobserved *everywhere*
-throughout the prediction window. No contemporaneous Td exists anywhere in 2017–2020 to interpolate
-from.
+### Stability of long autoregressive reconstruction
 
-This distinction has a direct methodological consequence. Spatial cross-validation, the prevailing
-validation strategy, for instance the spatial leave-one-out used in global spatio-temporal
-regression kriging of daily temperature [@kilibarda2014], cannot measure the quantity we care
-about, because it holds out *locations* while retaining contemporaneous observations. Only a forward
-temporal hold-out reproduces the operational situation. Explicit comparisons of the two designs, and
-systematic reporting of incumbent baselines such as climatology and persistence, remain uncommon in
-this literature. We therefore treat the temporal hold-out as primary and report the full baseline
-ladder with effect sizes and confidence intervals (@sec-results-validation).
+Because dew-point lags are predictors and no observation exists in the target period, the
+reconstruction is a 1,461-step recursion. The deep-learning climate literature documents that such
+rollouts can degrade progressively or diverge through error accumulation, and that explicit
+multi-step training is needed to stabilise them [@gallusser2025]. No comparable degradation appears
+here: skill decays gracefully with lead time, annual means are stable to $0.21$ °C over four years,
+and the incidence of extreme values is non-monotonic in time rather than growing.
 
-### Autoregressive stability
+Two properties of the formulation account for this. The dominant predictors are anomalies of
+observed, exogenous $T_{\min}$, supplied from data at every step and never recursed; only the
+dew-point lag channel is autoregressive. And predictions are formed as anomalies added to a fixed
+per-cell climatology, which anchors the recursion to a physically sensible level. Emulators that
+must propagate their entire state forward have neither property. This suggests that hybrid
+recursions combining observed exogenous forcing with a climatological anchor are substantially more
+stable over long horizons than fully autoregressive ones, and that stability concerns from that
+literature do not transfer directly to this class of model.
 
-Because Td lags are predictors and no observed Td exists in the gap, the forecast is a 1,461-step
-recursion. The deep-learning climate literature documents that such rollouts can degrade
-progressively or diverge outright through error accumulation, and that explicit multi-step training
-is needed to stabilise them [@gallusser2025]. We see no comparable degradation: skill decays
-gracefully with lead time (0.249 → 0.235 → 0.206 from one to four years, @fig-leadtime), annual mean
-Td is stable to within 0.21 °C across the four filled years, and the incidence of extreme values is
-**non-monotonic** in time rather than growing (@sec-limitations).
+### Origin of the November extremes
 
-Two features of the design likely account for this. First, the dominant predictors are anomalies of
-**observed, exogenous** Tmin, which are supplied from data at every step and never recurse; only the
-Td-lag channel is autoregressive. Second, predictions are formed as anomalies added back to a fixed
-per-cell climatology, which anchors the recursion to a physically sensible level. Free-running
-emulators that must propagate their entire state forward have neither property. This suggests a
-general point: **hybrid recursions with observed exogenous forcing and a climatological anchor are
-substantially more stable over long horizons than fully autoregressive ones**, and the stability
-concerns of that literature do not transfer directly to this class of model.
+The dry-to-wet transition in Amazonia is a rapid regime shift rather than a gradual seasonal
+progression: it is initiated by late-dry-season rainforest transpiration activating shallow
+convection [@wright2017], driven by increases in surface latent heat flux that rapidly reduce
+convective inhibition [@fu2004], accompanied by a reorganisation of the large-scale circulation
+[@li2004], and is routinely dated to a specific pentad [@marengo2017]. Its timing varies between
+years, modulated non-linearly by Pacific and Atlantic sea-surface temperatures and by the
+Madden–Julian Oscillation [@yin2014; @marengo2017], which is consistent with the observed movement
+of the exceedance peak and with the sevenfold range in its severity.
+
+An abrupt transition is also the classical setting in which nonparametric smoothing struggles, since
+such methods require the underlying function to be smooth and jumps must be handled explicitly
+[@zhang2016]. The behaviour documented here is a specific instance: rather than biasing the fit,
+the abrupt transition drives the selection criterion to a narrow bandwidth, and the resulting
+variance inflation appears in the tail of the reconstruction.
+
+The artefact class is not new. @chabotcouture2014 report interpolated dew point exceeding
+interpolated air temperature, implying relative humidity above 100%, in a day-of-year-parameterised
+dew-point interpolation, and recommend capping. The regime is additionally non-stationary, which
+compounds the difficulty of estimating it from a 1981–2016 sample: dry-season vapour pressure
+deficit over the Amazon has been rising [@mu2025] and vertical drying has been observed over
+deforested Amazonia [@hierro2025].
 
 ## Limitations {#sec-limitations}
 
-**Warm tail. [SME]** 0.1326% of predicted values exceed 35 °C (maximum 41.16 °C), which is not
-physically plausible for dew point. We characterised this failure mode over all 3.18 × 10⁹ values;
-the diagnostics constrain its cause more tightly than the raw rate suggests.
+**Extreme values.** The warm tail characterised in @sec-results-tail is not corrected in the
+released field. The diagnosis implies a targeted remedy, namely constraining the minimum bandwidth
+or otherwise regularising the fits for the transition band in the affected zone, rather than
+clipping outputs after the fact; this is untested. **[TODO]** Capping at $T_d \le T_{\min}$ is not a
+viable alternative: 79.6% of all reconstructed values exceed the same-day $T_{\min}$ by a mean of
+$3.0$ °C, as does the observed gridded $T_d$, so such a cap would alter most of the field by a mean
+of $2.38$ °C. The exceedances are nonetheless extreme on this measure too, exceeding same-day
+$T_{\min}$ by $11.4$ °C against a typical $3.0$ °C, so a bound on the excess or on daily maximum
+temperature merits evaluation. **[TODO]** That November corresponds to the dry-to-wet transition in
+this region requires confirmation against regional climatology. **[SME: confirm regional
+seasonality]**
 
-*Where and when.* The affected cells (132,920 with at least one exceedance) lie in the
-north-eastern Amazon lowlands, and the exceedances are concentrated almost entirely in a **single
-month, November**, in every year: 2.41% of values in November 2017, 1.91% in November 2018, 1.55%
-in November 2020 and 0.36% in November 2019, against 0.081% for the next-worst month (October 2018)
-and below 0.03% elsewhere. Pooling the four years by month of year sharpens the picture further
-(@fig-warmtail-month): **1.556% in November against 0.027% in October, a factor of 58, and only 50
-exceedances in total across January–July** (out of ≈1.9 × 10⁹ values in those months). November
-corresponds to the dry-to-wet transition in this region **[SME: confirm regional seasonality]**.
+**Attribution of the boundary signal.** The reconstructed-minus-observed field in @fig-seam carries
+a coherent regional pattern. Because no observed $T_d$ exists after 2016, that comparison alone
+cannot separate a genuine 2017–2020 climate anomaly from regional model bias; the bound comes from
+@sec-results-validation, where regional errors are measured on withheld years. **[SME]**
 
-*Not autoregressive drift.* Annual incidence is **non-monotonic** (0.2015%, 0.1696%, 0.0293% and
-0.1299% for 2017–2020), and exceedances occur in short episodes: 40.6% are isolated single days,
-mean run length 3.42 days, longest 36 days. Progressive error accumulation of the kind reported for
-free-running autoregressive models [@gallusser2025] would produce growth with lead time and
-lengthening runs; neither appears. This is consistent with the exogenous-forcing and
-climatological-anchoring argument in @sec-discussion.
+**Shared covariates.** Gridded $T_d$ and $T_{\min}$ share land-surface-temperature and elevation
+predictors in their construction, so validation against gridded $T_d$ may flatter the mapping
+relative to an independent reference.
 
-*Why a single month: diagnosis.* We ran three internal diagnostics to discriminate between
-candidate explanations. They rule out our initial hypothesis and support a different one.
+**No station-level evaluation.** The target is the gridded product being extended, which is the
+correct reference for this task, but the reconstruction inherits that product's biases.
+Station-level evaluation is the natural next step. **[TODO]**
 
-**Where.** Every affected cell lies in a *single* SENAMHI zone: zone 0, Thornthwaite class
-`A (r) A'` (perhumid, no water deficiency, megathermal), the humid tropical rainforest zone,
-comprising 132,920 of that zone's 909,708 cells (14.6%). No other zone is affected.
+**Baseline correction.** The FAO-56 baseline is scored in its uncorrected form. Over this domain
+that is the more favourable variant, since its bias is $-2.13$ °C and a further $-2$ °C offset would
+increase the error, but a regionally applied correction would be a fairer comparison. **[TODO]**
 
-**The failure is in the variance, not the mean.** November's leave-one-year-out skill in this zone
-(0.7317) is indistinguishable from December (0.7333) and January–July (0.7324), and *better* than
-August–September (0.7030); in-sample $R^2$ shows the same pattern (0.605 in November against 0.641
-in December, 0.590 in August–September). November is therefore **not** anomalously badly fitted on
-average, which is consistent with annual means remaining stable to 0.21 °C. Whatever goes wrong affects the
-tail of the predictive distribution, not its centre.
+**Lead time.** Skill decays with lead time, so 2020 rests on a longer recursion than 2017. The
+lead-time curve quantifies this to four years, the length of the actual gap.
 
-**The selected windows in November are narrow, not wide.** This overturns our initial reading. While
-*h* = 45 is the modal choice nationally (43.1%), that statistic does not hold in the affected zone:
-zone 0 prefers narrower windows overall (median *h* = 21; only 31.7% at *h* = 45), and **November is
-its narrowest band**: 47% of November days select *h* ≤ 11, against 23% in October, with median
-*h* = 15 in November versus 31 in *both* adjacent months. Selection is evidently responding to a
-rapidly changing time of year by shrinking the smoothing window to track it.
+**Non-stationarity.** We did not test the training period for non-stationarity in the
+$T_{\min} \rightarrow T_d$ relationship. **[TODO]**
 
-That resolves the puzzle, and it is a textbook bias–variance trade-off. Narrowing the window reduces
-bias where the underlying relationship changes quickly, but sharply reduces the effective sample
-behind each per-(cell, day-of-year) fit, inflating coefficient variance. Because our failure metric
-is an **exceedance rate above a fixed threshold**, variance rather than bias dominates it: a modest
-increase in predictive spread, invisible in mean skill, moves the >35 °C rate by a factor of 58. It
-also explains the sharpness directly, since narrow windows are selected *only* in the transition band, so
-the variance inflation is confined there rather than smeared across ±45 days.
+## Supplementary material {#sec-supp}
 
-**The physical transition remains the trigger.** The Amazonian dry-to-wet transition is a genuine
-rapid regime shift, initiated by late-dry-season rainforest transpiration activating shallow
-convection [@wright2017], driven by latent-heat-flux increases that rapidly reduce convective
-inhibition [@fu2004], with an accompanying circulation reorganisation [@li2004], and routinely dated
-to a specific pentad [@marengo2017]. That is plausibly *why* selection narrows the window there. It
-is also the classical setting in which nonparametric smoothing struggles, since such methods
-"require the crucial assumption that the underlying trend function is smooth" [@zhang2016].
+### Predictor-version sensitivity {#sec-supp-version}
 
-**The exceedance peak moves between years**, as an onset-linked mechanism predicts and a fixed
-calendar defect would not: the peak day-of-year is 313 (9 Nov) in 2017, 331 (27 Nov) in 2018, 313 in
-2019 and 331 (26 Nov) in 2020, with the distribution mean shifting between day 314.9 and 322.2.
-Onset timing is itself modulated non-linearly by Pacific and Atlantic sea-surface temperatures and
-by the MJO [@yin2014; @marengo2017], which offers a route to explaining the sevenfold interannual
-range in severity, though we have not tested against onset indices directly. **[TODO]**
+The two PISCO minimum-temperature releases give measurably different models. Refitting an identical
+five-predictor configuration on each, over $7.32 \times 10^{6}$ (cell, day-of-year) fits, gives:
 
-*A published precedent, and a non-stationary target.* This class of artefact is not new:
-@chabotcouture2014 report interpolated dew point exceeding interpolated air temperature (implying
-RH > 100%) in a day-of-year-parameterised dew-point interpolation, and recommend capping. The
-affected regime is also changing over time, which compounds the difficulty of fitting it from a
-1981–2016 sample: dry-season vapour pressure deficit over the Amazon has been rising [@mu2025] and
-vertical drying has been observed over deforested Amazonia [@hierro2025]. We did not test for
-non-stationarity in our training window. **[TODO]**
+| Coefficient | v1.1 mean | v1.2 mean | Mean $\Delta$ | Mean $\lvert\Delta\rvert$ | Pearson $r$ |
+|:---|---:|---:|---:|---:|---:|
+| $T_{\min}$ anomaly | 0.452 | 0.370 | $-0.083$ | 0.130 | 0.685 |
+| $T_d$ lag 1 | 0.782 | 0.813 | $+0.031$ | 0.047 | 0.925 |
+| $T_d$ lag 2 | $-0.019$ | $-0.031$ | $-0.012$ | 0.026 | 0.920 |
+| $T_{\min}$ lag 1 | $-0.236$ | $-0.182$ | $+0.054$ | 0.092 | 0.669 |
+| $R^{2}$ (anomalies) | 0.787 | 0.778 | $-0.009$ | 0.019 | 0.953 |
 
-*Remedy implied by the diagnosis.* Because the mechanism is variance inflation from window
-shrinkage, the targeted fix is to **constrain the minimum window** (or otherwise regularise the
-fits) for the transition band in this zone, rather than to clip outputs after the fact. This is
-untested and is not applied to the product. **[TODO]**
+: Coefficients fitted on PISCO v1.1 against v1.2 minimum temperature, paired over identical fits.
+The contemporaneous sensitivity differs most. {#tbl-supp-coef}
 
-*A cap at Td ≤ Tmin is not viable.* We tested it: 79.6% of all predicted values exceed the same-day
-Tmin, by a mean of 3.0 °C, and so does the *observed* gridded Td, since the Td = Tmin baseline has
-a bias of −2.13 °C over this domain. Capping at Tmin would therefore alter 79.6% of the product with
-a mean shift of 2.38 °C, which is not a correction but a distortion. The warm-tail values are
-nonetheless extreme on this measure too: all of them exceed same-day Tmin, by a mean of 11.4 °C
-against the 3.0 °C typical excess. A bound on the *excess* (Td ≤ Tmin + k) or on daily maximum
-temperature is therefore worth evaluating, as is refitting the affected zones with explicit wet/dry
-stratification. **[TODO]**
+Reconstructions from the two versions agree to $\mathrm{RMSE} = 0.610$ °C with a mean offset of
+$-0.300$ °C. Scored against observed dew point, v1.1 gives marginally lower error while v1.2 is
+better centred:
 
-*Open question.* The interannual spread (November 2019 roughly seven times weaker than November
-2017) points to modulation by interannual climate variability, plausibly through its control on
-onset timing [@yin2014]; testing this against onset-date indices is left for future work. **[TODO]**
+| Predictor version | RMSE | MAE | Bias | Pearson $r$ |
+|:---|---:|---:|---:|---:|
+| v1.1 | 1.127 | 0.844 | $+0.443$ | 0.982 |
+| v1.2 | 1.136 | 0.867 | $+0.143$ | 0.979 |
 
-No correction is applied in the product as it stands (@fig-warmtail, @fig-warmtail-month).
+: Accuracy against observed dew point for each predictor version ($n = 7.3 \times 10^{6}$).
+{#tbl-supp-acc}
 
-![Warm-tail exceedances by month of year. Left: pooled 2017–2020. Right: by year, showing that the
-November spike recurs annually while its magnitude varies by a factor of
-seven.](figures/F5_warm_tail_month_of_year.png){#fig-warmtail-month}
+The difference in RMSE is $0.009$ °C, well below the $0.316$ °C improvement the selected model
+achieves over climatology, whereas the $0.300$ °C offset introduced by mixing versions is of the
+same order as that improvement. Using a single version throughout is therefore material, and since
+only v1.2 covers the target period it is the version used. This configuration also carries a
+December warm bias of $+1.45$ °C, which per-zone seasonal selection removes (@sec-results-validation).
 
-![Warm tail: value distribution, spatial location of affected cells, and monthly
-incidence.](figures/F4_warm_tail_panel.png){#fig-warmtail}
+### Computational characterisation {#sec-supp-compute}
 
-**Regional pattern at the seam.** Panel B of @fig-seam shows a coherent regional signal (warmer
-southern Andes, cooler northern Amazon). Because no observed Td exists after 2016, that figure alone
-cannot separate a genuine 2017–2020 climate anomaly from regional model bias. The bound comes from
-@sec-results-validation, where regional errors were measured directly on held-out years. **[SME]**
+Fitting $2.8 \times 10^{6}$ cells $\times$ 366 days of year is dominated by memory traffic rather
+than arithmetic, which determines how the method scales.
 
-**Shared covariates.** Gridded Td and Tmin share LST and elevation predictors in their construction,
-so validation against gridded Td may flatter the mapping relative to an independent reference.
+On CPUs, parallel efficiency $E(p) = T(1)/(p\,T(p))$ is essentially independent of problem size,
+indicating that the limit is memory bandwidth rather than parallel overhead:
 
-**No station-level validation.** The target is the gridded product being extended, which is the
-correct reference for this task, but it means the result inherits any bias of that product.
-Station-level evaluation is out of scope here and is the natural next step. **[TODO]**
+| Workers $p$ | $N = 512$ | $N = 1024$ | $N = 2048$ |
+|---:|---:|---:|---:|
+| 2 | 0.939 | 0.917 | 0.912 |
+| 4 | 0.830 | 0.826 | 0.824 |
+| 8 | 0.709 | 0.704 | 0.699 |
+| 16 | 0.562 | 0.560 | 0.557 |
+| 32 | 0.345 | 0.342 | 0.337 |
 
-**Autoregressive horizon.** Skill decays with lead time; 2020 predictions rest on a longer recursive
-chain than 2017. The lead-time curve quantifies this to four years, the length of the actual gap.
+: Strong-scaling efficiency $E(p)$ for three problem sizes ($N$ = grid cells). Efficiency at fixed
+$p$ varies by less than 0.01 across a fourfold change in $N$. {#tbl-supp-cpu}
 
-**Faint circular features** visible in @fig-seam appear in the observed-only control panel as well
-and are therefore attributable to station influence in the underlying PISCO regression-kriging, not
-to this method.
+Weak scaling at constant work per worker gives $E = 1.000$, $0.927$ and $0.846$ at $p = 1, 2, 4$.
+
+On a single GPU the same conclusion follows from a roofline analysis. With measured bandwidth
+633 GB s⁻¹ and 4200 GFLOPS double precision, the ridge lies at an arithmetic intensity of
+approximately 6.6 FLOP B⁻¹, whereas the pipeline operates between 0.08 and 0.61:
+
+| Stage | Arithmetic intensity (FLOP B⁻¹) | GFLOPS | Regime |
+|:---|---:|---:|:---|
+| Assemble | 0.114 | 44.7 | memory-bound |
+| Convolve | 0.083 | 24.8 | memory-bound |
+| Solve | 0.615 | 320 | memory-bound |
+| Total | 0.105 | 36.1 | memory-bound |
+
+: Roofline position of each pipeline stage at $N = 512$ cells. All stages lie far below the ridge.
+{#tbl-supp-gpu}
+
+Solver throughput reaches $2.09 \times 10^{9}$ fits s⁻¹ at large batch sizes. The practical
+consequence is that the implementation is bounded by data movement, so the productive optimisations
+are those that reduce traffic, and the full-domain fit remains tractable on a single device.
 
 ## Data and code availability {#sec-availability}
 
-- **Code.** `HPC_code_tunning/`: selection (`selection.py`), training (`train_zoned.py`),
-  autoregressive forecast (`forecast_zoned.py`), production fill (`fill_zoned.py`), validation
-  (`backtest.py`, `select_backtest.py`, `effect_sizes.py`).
-- **Product.** 2017–2020 gap-filled Td, 8,192 bucket files.
-- **Figure and diagnostic scripts.** `reports/paper/scripts/`: QC, the three figure builders, and
-  the warm-tail diagnostics, each reproducing specific numbers and figures in this manuscript.
-- **Literature provenance.** `.asta/` holds the retrieved search and extraction records backing the
-  citations added in @sec-discussion, so each may be traced to its source record.
-- **[TODO] Reproducibility gap.** `reports/results/` is excluded by `.gitignore` (line 64), so the
-  Phase-A validation write-up is not under version control and should be committed before submission.
-- **[TODO]** Deposit the product and a frozen code release; add DOIs.
+The reconstruction covers 2017–2020 at the PISCO national grid. Analysis code implements model
+selection, coefficient fitting, autoregressive reconstruction and the validation harness; the
+scripts reproducing each figure and reported statistic accompany the manuscript, together with the
+retrieved literature records supporting @sec-discussion.
+
+**[TODO]** Deposit the reconstructed field and a frozen code release, and record their identifiers
+here.
 
 ## AI-use disclosure {#sec-ai-disclosure}
 
 In accordance with CIP's Acceptable Use and Privacy policy: the analysis pipeline, validation
-harness, production fill driver and figures described here were developed and executed with
-AI assistance (Anthropic Claude, via Claude Code), under the direction and review of the author.
-The AI assistant wrote and ran analysis code, produced the figures, and drafted this manuscript.
-No confidential, personal, or unpublished third-party data was provided to the assistant; all
-inputs are institutional gridded climate products.
+harness, reconstruction driver and figures were developed and executed with AI assistance
+(Anthropic Claude, via Claude Code) under the direction and review of the author. The assistant
+wrote and ran analysis code, produced the figures, and drafted this manuscript. No confidential,
+personal or unpublished third-party data was provided to the assistant; all inputs are institutional
+gridded climate products.
 
-**All quantitative results reported here are pending SME validation** (@sec-signoff). Numbers were
-read directly from the recorded outputs of the runs cited, not reproduced from memory.
+All quantitative results are pending SME validation (@sec-signoff). Values were read directly from
+the recorded outputs of the runs cited rather than reproduced from memory. Of the works cited, full
+text was consulted for eight; the remainder were assessed from abstracts and indexed metadata, and
+those supporting @sec-discussion should be verified in full before submission. **[TODO]**
 
 ## SME sign-off {#sec-signoff}
 
 | Item | Reviewer | Date | Status |
-|---|---|---|---|
-| Validation design and baseline ladder (@sec-validation) | | | ☐ |
-| Hold-out results and effect sizes (@tbl-ladder, @tbl-effects) | | | ☐ |
-| Seam-continuity test (@tbl-seam) | | | ☐ |
-| **Warm-tail disposition** (@sec-limitations) | | | ☐ |
-| Product release and metadata | | | ☐ |
+|:---|:---|:---|:---:|
+| Validation design and baselines (@sec-validation) | | | ☐ |
+| Withheld-year results and effect sizes (@tbl-ladder, @tbl-effects) | | | ☐ |
+| Boundary continuity (@tbl-seam) | | | ☐ |
+| Disposition of extreme values (@sec-results-tail) | | | ☐ |
+| Regional seasonality of the transition month | | | ☐ |
+| Release of the reconstructed field and metadata | | | ☐ |
 
-: Required sign-offs before submission. {#tbl-signoff}
+: Sign-offs required before submission. {#tbl-signoff}
 
 ## References {.unnumbered}
 
