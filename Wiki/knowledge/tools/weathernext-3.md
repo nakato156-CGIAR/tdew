@@ -5,7 +5,7 @@ description: Modelo de IA de Google DeepMind para pronóstico meteorológico glo
 resource: https://deepmind.google/science/weathernext/
 tags: [weather-forecasting, deep-learning, google-deepmind, satellite-data]
 timestamp: 2026-09-11T00:00:00Z
-status: draft
+status: reviewed
 contributed_by: [claude]
 sources: ["[[sources/deepmind-weathernext]]"]
 ---

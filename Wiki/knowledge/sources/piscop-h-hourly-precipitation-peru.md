@@ -5,7 +5,7 @@ description: Paper de Huerta, Lavado-Casimiro y Felipe-Obando (SENAMHI, Data in 
 resource: https://doi.org/10.1016/j.dib.2022.108570
 tags: [precipitation, hydrology, peru, gridded-dataset, temporal-disaggregation, senamhi, netcdf]
 timestamp: 2026-09-11T00:00:00Z
-status: draft
+status: reviewed
 contributed_by: [claude]
 sources: []
 ---

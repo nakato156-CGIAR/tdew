@@ -5,7 +5,7 @@ description: Página de producto de Google DeepMind sobre WeatherNext 3, modelo 
 resource: https://deepmind.google/science/weathernext/
 tags: [weather-forecasting, deep-learning, google-deepmind, ai-for-science]
 timestamp: 2026-09-11T00:00:00Z
-status: draft
+status: reviewed
 contributed_by: [claude]
 sources: []
 ---

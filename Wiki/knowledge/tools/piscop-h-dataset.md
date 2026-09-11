@@ -5,7 +5,7 @@ description: Dataset grillado de precipitación horaria para Perú (0.1°, 2015�
 resource: https://doi.org/10.6084/m9.figshare.c.5743166
 tags: [precipitation, gridded-dataset, peru, netcdf, senamhi]
 timestamp: 2026-09-11T00:00:00Z
-status: draft
+status: reviewed
 contributed_by: [claude]
 sources: ["[[sources/piscop-h-hourly-precipitation-peru]]"]
 ---

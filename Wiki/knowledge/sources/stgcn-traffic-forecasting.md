@@ -5,7 +5,7 @@ description: Paper de Yu, Yin y Zhu (IJCAI-18) que propone STGCN, un framework p
 resource: https://www.ijcai.org/proceedings/2018/0505.pdf
 tags: [deep-learning, graph-neural-networks, traffic-forecasting, time-series, convolutional-networks]
 timestamp: 2026-09-11T00:00:00Z
-status: draft
+status: reviewed
 contributed_by: [claude]
 sources: []
 ---

@@ -5,7 +5,7 @@ description: WeatherNext 3 reporta pronósticos globales cada hora y buena gener
 resource: https://deepmind.google/science/weathernext/
 tags: [weather-forecasting, deep-learning, benchmarks]
 timestamp: 2026-09-11T00:00:00Z
-status: draft
+status: reviewed
 contributed_by: [claude]
 sources: ["[[sources/deepmind-weathernext]]"]
 ---

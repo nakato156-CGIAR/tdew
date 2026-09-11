@@ -5,7 +5,7 @@ description: Arquitectura puramente convolucional (sin RNN/LSTM) que combina con
 resource: https://www.ijcai.org/proceedings/2018/0505.pdf
 tags: [graph-neural-networks, convolutional-networks, time-series, spatio-temporal, traffic-forecasting]
 timestamp: 2026-09-11T00:00:00Z
-status: draft
+status: reviewed
 contributed_by: [claude]
 sources: ["[[sources/stgcn-traffic-forecasting]]"]
 ---

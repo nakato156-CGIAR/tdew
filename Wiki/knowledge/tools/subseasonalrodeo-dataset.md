@@ -5,7 +5,7 @@ description: Dataset abierto que combina temperatura/precipitación CPC, SST/hie
 resource: https://arxiv.org/abs/1809.07394
 tags: [dataset, climate, forecasting]
 timestamp: 2026-09-11T15:57:37Z
-status: draft
+status: reviewed
 contributed_by: [claude]
 sources: ["[[sources/subseasonal-forecasting-western-us-ml]]"]
 ---

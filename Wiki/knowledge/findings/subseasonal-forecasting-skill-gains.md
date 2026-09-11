@@ -5,7 +5,7 @@ description: El ensemble de Hwang et al. mejora 40-50% (temperatura) y 129-169% 
 resource: https://arxiv.org/abs/1809.07394
 tags: [benchmark, forecasting, evaluation]
 timestamp: 2026-09-11T15:57:37Z
-status: draft
+status: reviewed
 contributed_by: [claude]
 sources: ["[[sources/subseasonal-forecasting-western-us-ml]]"]
 ---

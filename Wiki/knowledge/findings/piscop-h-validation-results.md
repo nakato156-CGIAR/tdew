@@ -5,7 +5,7 @@ description: PISCOp_h tiene buen desempeño en el centro/sur andino peruano y pe
 resource: https://doi.org/10.1016/j.dib.2022.108570
 tags: [precipitation, validation, peru, bias]
 timestamp: 2026-09-11T00:00:00Z
-status: draft
+status: reviewed
 contributed_by: [claude]
 sources: ["[[sources/piscop-h-hourly-precipitation-peru]]"]
 ---

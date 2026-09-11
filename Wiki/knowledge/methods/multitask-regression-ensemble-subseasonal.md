@@ -5,7 +5,7 @@ description: Ensemble de regresión local lineal multitarea (MultiLLR) y autoreg
 resource: https://arxiv.org/abs/1809.07394
 tags: [regression, ensemble, k-nn, feature-selection, forecasting]
 timestamp: 2026-09-11T15:57:37Z
-status: draft
+status: reviewed
 contributed_by: [claude]
 sources: ["[[sources/subseasonal-forecasting-western-us-ml]]"]
 ---

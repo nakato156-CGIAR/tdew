@@ -5,7 +5,7 @@ description: En BJER4 y PeMSD7(M/L), STGCN supera con significancia estadística
 resource: https://www.ijcai.org/proceedings/2018/0505.pdf
 tags: [benchmark, traffic-forecasting, graph-neural-networks, training-efficiency]
 timestamp: 2026-09-11T00:00:00Z
-status: draft
+status: reviewed
 contributed_by: [claude]
 sources: ["[[sources/stgcn-traffic-forecasting]]"]
 ---
