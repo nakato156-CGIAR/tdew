@@ -332,6 +332,28 @@ Restricting selection to the training years lowers the four-year skill score fro
 $0.197$. The residual optimism attributable to selection is therefore $0.009$ in skill, about
 $0.013$ °C in RMSE, or 4% of the improvement over climatology.
 
+**Corrected forms of the FAO-56 baseline.** Established practice applies an offset to
+$T_d = T_{\min}$ in arid and semi-arid regions [@kimball1997; @eccel2012; @huang2024]. That
+correction does not transfer to this domain (@tbl-fao). The gridded $T_d$ lies systematically
+*above* $T_{\min}$ here (bias $-2.13$ °C), which is the opposite of the regime the offset addresses,
+so subtracting 2 °C increases the error in every Thornthwaite moisture class, including the
+semi-arid and arid classes for which it was devised: RMSE rises from $2.634$ to $3.760$ °C in class
+D and from $2.089$ to $2.797$ °C in class E. Scanning the offset continuously, the best-fitting
+single value is $+2.25$ °C, of opposite sign to the convention, and yields RMSE $2.848$ °C. Even
+that optimal member of the offset family remains far behind the selected model.
+
+| Baseline variant | RMSE | MAE | Bias |
+|:---|---:|---:|---:|
+| $T_d = T_{\min}$ (uncorrected) | 3.551 | 2.735 | $-2.126$ |
+| $T_{\min} - 2$ °C in arid and semi-arid classes | 3.634 | 2.855 | $-2.367$ |
+| $T_{\min} - 2$ °C everywhere | 5.011 | 4.263 | $-4.126$ |
+| $T_{\min} + 2.25$ °C (best single offset) | 2.848 | | |
+| *Selected model, for reference* | *1.219* | *0.874* | *$-0.046$* |
+
+: Corrected forms of the FAO-56 baseline, scored on the identical withheld observations
+($n = 24{,}896{,}901$). The conventional arid-region offset increases error over this domain.
+{#tbl-fao}
+
 Seasonal bias is also reduced. The fixed configuration carries a December warm bias of $+1.45$ °C
 (@sec-supp-version); under per-zone, per-day-of-year selection the December bias falls to
 $+0.01$ °C, with all months within $\pm 0.44$ °C.
@@ -435,7 +457,11 @@ corrections are in routine use: an aridity-dependent adjustment driven by precip
 potential evapotranspiration [@kimball1997], a correction from temperature and precipitation
 validated at alpine stations [@eccel2012], and a $-2$ °C offset widely applied in arid regions
 [@huang2024]. Disaggregation frameworks implement both the identity and fitted alternatives
-precisely because it fails in a site- and regime-specific way [@forster2016].
+precisely because it fails in a site- and regime-specific way [@forster2016]. Those corrections are
+nonetheless regime-specific themselves: over the present domain the conventional arid-region offset
+increases error in every moisture class, and the best-fitting offset has the opposite sign
+(@tbl-fao). Reported corrections should not be transferred between products and regions without
+re-estimation.
 
 The most directly comparable result is that of @althoff2022, who calibrate a temperature-based
 approach over the Brazilian Cerrado, a tropical biome with a pronounced dry season, and obtain
@@ -512,16 +538,35 @@ deforested Amazonia [@hierro2025].
 ## Limitations {#sec-limitations}
 
 **Extreme values.** The warm tail characterised in @sec-results-tail is not corrected in the
-released field. The diagnosis implies a targeted remedy, namely constraining the minimum bandwidth
-or otherwise regularising the fits for the transition band in the affected zone, rather than
-clipping outputs after the fact; this is untested. **[TODO]** Capping at $T_d \le T_{\min}$ is not a
-viable alternative: 79.6% of all reconstructed values exceed the same-day $T_{\min}$ by a mean of
-$3.0$ °C, as does the observed gridded $T_d$, so such a cap would alter most of the field by a mean
-of $2.38$ °C. The exceedances are nonetheless extreme on this measure too, exceeding same-day
-$T_{\min}$ by $11.4$ °C against a typical $3.0$ °C, so a bound on the excess or on daily maximum
-temperature merits evaluation. **[TODO]** That November corresponds to the dry-to-wet transition in
-this region requires confirmation against regional climatology. **[SME: confirm regional
-seasonality]**
+released field. The diagnosis implies a targeted remedy at the point of fitting, namely constraining
+the minimum bandwidth or otherwise regularising the fits for the transition band in the affected
+zone; this is untested. **[TODO]**
+
+A post-hoc bound is also available, and the appropriate form is a bound on the *excess* over
+same-day minimum temperature rather than on $T_{\min}$ itself. Capping at $T_d \le T_{\min}$ is not
+viable, because 79.6% of reconstructed values exceed same-day $T_{\min}$ by a mean of $3.0$ °C, as
+does the observed gridded $T_d$; such a cap would alter most of the field by a mean of $2.38$ °C.
+The exceedances are extreme on this measure too, exceeding same-day $T_{\min}$ by $11.4$ °C against
+a typical $3.0$ °C, and are therefore separable from the bulk of the distribution (@tbl-bound). A
+bound of $T_d \le T_{\min} + 8$ °C removes 99.1% of them while altering 2.2% of values by a mean of
+$0.030$ °C over the field, three orders of magnitude less perturbation than a cap at $T_{\min}$.
+Whether to apply such a bound to the released field is a judgement about whether a small targeted
+perturbation is preferable to retaining known-implausible values. **[SME]**
+
+| Bound | Values altered | Mean shift over all values (°C) | Exceedances removed |
+|:---|---:|---:|---:|
+| $T_d \le T_{\min}$ | 79.6% | 2.38 | 100% |
+| $T_d \le T_{\min} + 5$ | 13.31% | 0.222 | 100.0% |
+| $T_d \le T_{\min} + 6$ | 7.67% | 0.120 | 99.98% |
+| $T_d \le T_{\min} + 8$ | 2.23% | 0.030 | 99.07% |
+| $T_d \le T_{\min} + 10$ | 0.54% | 0.006 | 89.60% |
+| $T_d \le T_{\min} + 12$ | 0.09% | 0.0007 | 30.83% |
+
+: Effect of bounding the dew-point excess over same-day minimum temperature, evaluated over all
+$3.18 \times 10^{9}$ reconstructed values. {#tbl-bound}
+
+That November corresponds to the dry-to-wet transition in this region requires confirmation against
+regional climatology. **[SME: confirm regional seasonality]**
 
 **Attribution of the boundary signal.** The reconstructed-minus-observed field in @fig-seam carries
 a coherent regional pattern. Because no observed $T_d$ exists after 2016, that comparison alone
@@ -536,9 +581,10 @@ relative to an independent reference.
 correct reference for this task, but the reconstruction inherits that product's biases.
 Station-level evaluation is the natural next step. **[TODO]**
 
-**Baseline correction.** The FAO-56 baseline is scored in its uncorrected form. Over this domain
-that is the more favourable variant, since its bias is $-2.13$ °C and a further $-2$ °C offset would
-increase the error, but a regionally applied correction would be a fairer comparison. **[TODO]**
+**Baseline correction.** The FAO-56 baseline is reported in its uncorrected form because, over this
+domain, the conventional arid-region offset increases its error whether applied regionally or
+globally (@tbl-fao). We have not evaluated the aridity-dependent formulations of @kimball1997 or
+@eccel2012, which use precipitation as well as temperature and may behave differently. **[TODO]**
 
 **Lead time.** Skill decays with lead time, so 2020 rests on a longer recursion than 2017. The
 lead-time curve quantifies this to four years, the length of the actual gap.
