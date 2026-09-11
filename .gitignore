@@ -37,6 +37,12 @@ env/
 .codex
 .agents
 
+# Wiki: command/prompt definitions are content, not local agent settings
+!/Wiki/.claude/
+!/Wiki/.claude/**
+!/Wiki/.codex/
+!/Wiki/.codex/**
+
 # Jupyter / notebooks
 .ipynb_checkpoints/
 .notebook/
