@@ -11,8 +11,13 @@ The offset is applied to classes D and E.
 import numpy as np
 import pandas as pd
 
-RES = "/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning"
-PRED = f"{RES}/tuning/backtest/ll4/predictions.parquet"
+import os
+
+RES = os.environ.get("RES", "/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning")
+# Scored on the leak-free backtest (selection restricted to training years), which is the
+# run the manuscript reports. Override with BACKTEST_ROOT to score a different run.
+ROOT = os.environ.get("BACKTEST_ROOT", f"{RES}/tuning/backtest_clean")
+PRED = f"{ROOT}/ll4/predictions.parquet"
 
 lab = (pd.read_parquet(f"{RES}/tuning/manifest.parquet")[["zone_id", "zone_label"]]
        .drop_duplicates().set_index("zone_id")["zone_label"])

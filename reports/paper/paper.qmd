@@ -41,12 +41,13 @@ autoregressive: each predicted day supplies the $T_d$ lags of subsequent days.
 Because the task is extrapolation in time rather than interpolation in space, we validate by
 withholding the four most recent years (train 1981–2012, reconstruct 2013–2016) and scoring against
 observed $T_d$ under the same autoregressive conditions the real gap imposes. The model attains
-$\mathrm{RMSE} = 1.219$ °C against $1.535$ °C for daily climatology, the incumbent choice for
-gap filling: a reduction of $0.316$ °C (95% CI $[0.314, 0.317]$), skill score $0.206$, improving on
-climatology at 99.99% of grid cells (Cohen's $d = 2.98$, permutation $p \approx 2 \times 10^{-4}$).
-It also improves on $T_d = T_{\min}$ (FAO-56) by $2.33$ °C and on a per-zone ordinary least-squares
-fit by $1.11$ °C. Selecting predictors on the training years alone changes the skill score by
-$0.009$, so the advantage is not an artefact of selection.
+$\mathrm{RMSE} = 1.228$ °C against $1.535$ °C for daily climatology, the incumbent choice for
+gap filling: a reduction of $0.307$ °C (95% CI $[0.306, 0.309]$), skill score $0.200$, improving on
+climatology at 99.99% of grid cells (Cohen's $d = 2.93$, permutation $p \approx 2 \times 10^{-4}$).
+It also improves on $T_d = T_{\min}$ (FAO-56) by $2.32$ °C and on a per-zone ordinary least-squares
+fit by $1.10$ °C. Predictors and bandwidths are selected on the training years alone; allowing
+selection to see the withheld years would inflate the skill score by $0.009$, which bounds the
+optimism such leakage introduces.
 
 The reconstruction covers $2{,}178{,}827$ grid cells over $1{,}461$ days ($3.18 \times 10^{9}$
 values) and introduces no discontinuity at the 2016/2017 boundary: over equal-length four-year
@@ -273,17 +274,19 @@ $$
 Differences are summarised by effect size rather than significance alone: the paired per-cell
 difference in RMSE with 95% confidence intervals from a location-block bootstrap, the fraction of
 cells improved, Cohen's $d = \bar{\Delta}/s_{\Delta}$ on the paired differences, and a sign-flip
-permutation null with 5,000 draws. Scoring uses 17,041 cells distributed across all 41 zones.
+permutation null with 5,000 draws. Scoring uses 17,027 cells distributed across all 41 zones.
 
-Model selection itself can inflate the result, through two distinct routes. The selection score is
-computed over all fitting years, so recipes chosen on the full 1981–2016 period have already been
+Model selection itself can inflate the result, through two distinct routes. If the selection score
+is computed over all fitting years, recipes chosen on the full 1981–2016 period have already been
 exposed to the years that are later withheld for scoring. Independently, choosing the best of many
 candidate recipes favours those whose score is high partly by chance, so the winning score exceeds
 the model's true skill even when each individual score is unbiased.
 
-We therefore repeat the entire procedure with selection restricted to the training years, so that
-the withheld period is never seen at any stage. The difference between the two runs bounds the
-combined inflation.
+Selection is therefore restricted to the training years in every result reported below: predictors
+and bandwidth are chosen on 1981–2012 alone, and the withheld period is never seen at any stage. To
+measure the first route we additionally run selection over all years on a common candidate grid;
+the difference between the two runs bounds the inflation that such leakage introduces
+(@sec-results-validation).
 
 ## Results {#sec-results}
 
@@ -311,17 +314,17 @@ gain over the fixed five-predictor configuration.](figures/F0_model_selection.pn
 ### Accuracy on withheld years {#sec-results-validation}
 
 The selected model outperforms every incumbent at every lead time (@tbl-ladder, @fig-ladder).
-Against climatology it reduces RMSE by 21% at a one-year lead and by 21% at four years; against the
+Against climatology it reduces RMSE by 25% at a one-year lead and by 20% at four years; against the
 FAO-56 approximation the reduction exceeds 2.3 °C throughout.
 
 | Withheld period | Climatology | $T_d = T_{\min}$ | Zone OLS | **Selected model** | Skill score |
 |:---|---:|---:|---:|---:|---:|
-| 2016 (1 year) | 1.680 | 3.621 | 2.379 | **1.262** | 0.249 |
-| 2015–2016 (2 years) | 1.667 | 3.676 | 2.370 | **1.274** | 0.235 |
-| 2013–2016 (4 years) | 1.535 | 3.551 | 2.329 | **1.219** | 0.206 |
+| 2016 (1 year) | 1.680 | 3.621 | 2.378 | **1.254** | 0.254 |
+| 2015–2016 (2 years) | 1.667 | 3.676 | 2.369 | **1.276** | 0.234 |
+| 2013–2016 (4 years) | 1.535 | 3.551 | 2.328 | **1.228** | 0.200 |
 
 : Root-mean-square error (°C) on withheld years, pooled over all scored cell-days
-($n = 24{,}896{,}901$ for the four-year split). The skill score is relative to climatology.
+($n = 24{,}876{,}447$ for the four-year split). The skill score is relative to climatology.
 {#tbl-ladder}
 
 Whereas @tbl-ladder compares aggregate error, @tbl-effects asks whether the advantage is large,
@@ -331,21 +334,28 @@ size.
 
 | Comparison | $\Delta$RMSE (°C) | 95% CI | Skill | Cells improved | Cohen's $d$ | $p$ |
 |:---|---:|:---:|---:|---:|---:|---:|
-| vs climatology | $+0.316$ | $[0.314, 0.317]$ | 0.206 | 99.99% | 2.98 | $2\times10^{-4}$ |
-| vs $T_d = T_{\min}$ | $+2.332$ | $[2.308, 2.354]$ | 0.657 | 99.98% | 1.37 | $2\times10^{-4}$ |
-| vs zone OLS | $+1.110$ | $[1.091, 1.126]$ | 0.476 | 99.80% | 1.06 | $2\times10^{-4}$ |
+| vs climatology | $+0.307$ | $[0.306, 0.309]$ | 0.200 | 99.99% | 2.93 | $2\times10^{-4}$ |
+| vs $T_d = T_{\min}$ | $+2.323$ | $[2.300, 2.345]$ | 0.654 | 99.98% | 1.37 | $2\times10^{-4}$ |
+| vs zone OLS | $+1.101$ | $[1.082, 1.118]$ | 0.473 | 99.78% | 1.05 | $2\times10^{-4}$ |
 
-: Paired effect sizes on the four-year withheld block ($17{,}041$ cells). $\Delta$RMSE is the
+: Paired effect sizes on the four-year withheld block ($17{,}027$ cells). $\Delta$RMSE is the
 per-cell reduction in error achieved by the selected model; intervals are from a location-block
 bootstrap and $p$ from a sign-flip permutation null. {#tbl-effects}
 
-The selected model has bias $-0.046$ °C and correlation $0.990$. Skill declines monotonically with
-lead time ($0.249 \rightarrow 0.235 \rightarrow 0.206$), the expected growth of error under
+The selected model has bias $-0.033$ °C and correlation $0.990$. Skill declines monotonically with
+lead time ($0.254 \rightarrow 0.234 \rightarrow 0.200$), the expected growth of error under
 autoregression, without collapsing over four years (@fig-leadtime).
 
-Restricting selection to the training years lowers the four-year skill score from $0.206$ to
-$0.197$. The residual optimism attributable to selection is therefore $0.009$ in skill, about
-$0.013$ °C in RMSE, or 4% of the improvement over climatology.
+Predictor and bandwidth selection uses the training years only, everywhere in this paper. To
+measure what that restriction costs, we repeated the four-year experiment on a common candidate
+grid $h \in \{7, 11, 15, 21\}$, once with selection confined to 1981–2012 and once with selection
+allowed to see 2013–2016 as well. Skill rises from $0.197$ to $0.206$ when the withheld years are
+visible, so leakage of this kind inflates skill by $0.009$, about $0.013$ °C in RMSE, or 4% of the
+improvement over climatology. The bias is small but comparable to the differences between design
+choices reported here, which is why the restriction is enforced rather than assumed harmless.
+Widening the candidate grid to $h \in \{7, 11, 15, 21, 31, 45\}$ under the same leak-free protocol
+recovers $0.003$ of skill ($0.197 \rightarrow 0.200$); that configuration is the one reported
+throughout.
 
 **Corrected forms of the FAO-56 baseline.** Established practice applies an offset to
 $T_d = T_{\min}$ in arid and semi-arid regions [@kimball1997; @eccel2012; @huang2024]. That
@@ -354,24 +364,24 @@ correction does not transfer to this domain (@tbl-fao). The gridded $T_d$ lies s
 so subtracting 2 °C increases the error in every Thornthwaite moisture class, including the
 semi-arid and arid classes for which it was devised: RMSE rises from $2.634$ to $3.760$ °C in class
 D and from $2.089$ to $2.797$ °C in class E. Scanning the offset continuously, the best-fitting
-single value is $+2.25$ °C, of opposite sign to the convention, and yields RMSE $2.848$ °C. Even
+single value is $+2.25$ °C, of opposite sign to the convention, and yields RMSE $2.847$ °C. Even
 that optimal member of the offset family remains far behind the selected model.
 
 | Baseline variant | RMSE | MAE | Bias |
 |:---|---:|---:|---:|
 | $T_d = T_{\min}$ (uncorrected) | 3.551 | 2.735 | $-2.126$ |
-| $T_{\min} - 2$ °C in arid and semi-arid classes | 3.634 | 2.855 | $-2.367$ |
+| $T_{\min} - 2$ °C in arid and semi-arid classes | 3.633 | 2.854 | $-2.367$ |
 | $T_{\min} - 2$ °C everywhere | 5.011 | 4.263 | $-4.126$ |
-| $T_{\min} + 2.25$ °C (best single offset) | 2.848 | | |
-| *Selected model, for reference* | *1.219* | *0.874* | *$-0.046$* |
+| $T_{\min} + 2.25$ °C (best single offset) | 2.847 | | |
+| *Selected model, for reference* | *1.228* | *0.881* | *$-0.033$* |
 
 : Corrected forms of the FAO-56 baseline, scored on the identical withheld observations
-($n = 24{,}896{,}901$). The conventional arid-region offset increases error over this domain.
+($n = 24{,}876{,}447$). The conventional arid-region offset increases error over this domain.
 {#tbl-fao}
 
 Seasonal bias is also reduced. The fixed configuration carries a December warm bias of $+1.45$ °C
 (@sec-supp-version); under per-zone, per-day-of-year selection the December bias falls to
-$+0.01$ °C, with all months within $\pm 0.44$ °C.
+$+0.02$ °C, with all months within $\pm 0.41$ °C.
 
 ![Root-mean-square error on the four-year withheld block for the selected model and the three
 incumbents.](figures/S2_rmse_ladder_ll4.png){#fig-ladder}
@@ -640,7 +650,7 @@ centred:
 : Accuracy against observed dew point for each predictor version ($n = 7.3 \times 10^{6}$).
 {#tbl-supp-acc}
 
-The accuracy difference between releases, $0.009$ °C, is negligible against the $0.316$ °C
+The accuracy difference between releases, $0.009$ °C, is negligible against the $0.307$ °C
 improvement the selected model achieves over climatology: as predictors of dew point the two are
 effectively equivalent, and choosing v1.2 costs nothing. What differs is the fitted relationship,
 with a paired correlation of only $0.685$ on the contemporaneous term, which is why we fit and

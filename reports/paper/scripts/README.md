@@ -12,6 +12,15 @@ each script) and are read-only with respect to the data products.
 | `make_seam_fig.py` | F3 (seam artefact test on full-year windows + natural-variability control); caches per-cell window means to `$RES/tuning/seam_windows_cache.parquet` so replots are fast |
 | `make_f5_month_of_year.py` | F5 (warm tail by month of year) from `warm_tail_monthly.json`; no data scan needed |
 | `warm_tail_diagnostics.py` | warm-tail diagnostics: per-year and per-month >35 C incidence, Td-vs-Tmin bound violation, effect of capping, run-length clustering; dumps `warm_tail_monthly.json` used to build F5 |
+| `november_diagnostics.py` | why the warm tail is a November phenomenon: per-month skill, selected bandwidth by zone and month; output kept in `november_diagnostics_output.txt` |
+| `make_f_selection.py` | F0 (selected models: h distribution, h by zone and day of year, predictor retention, skill uplift) |
+| `fao56_corrected_baseline.py` | Table: corrected FAO-56 baselines (Allen's -2 C, arid-only and global, best single offset) scored per Thornthwaite moisture class. Reads `$BACKTEST_ROOT` (default `$RES/tuning/backtest_clean`, the leak-free run the paper reports) |
+| `excess_bound_eval.py` | Table: the family `Td <= Tmin + k` on the *production* fill -- share of field altered, mean shift, share of >35 C exceedances removed |
+| `backtest_clean_run.sh` | the leak-free validation run itself, as executed: `select_backtest` (train-only) then `backtest` then `effect_sizes` for ll1/ll2/ll4 into `$RES/tuning/backtest_clean/`. Every accuracy number in the paper comes from this run |
+
+Selection never sees the withheld years: `backtest_clean_run.sh` selects predictors and bandwidth on
+the training years alone. The older `$RES/tuning/backtest/` run, in which selection saw 1981–2016, is
+retained only as the leaky arm of the selection-optimism comparison reported in the paper.
 
 These were reconstructed into the repository on 2026-09-07 after the originals were lost from
 `/tmp` in a reboot — which is why they now live under version control.

@@ -300,6 +300,10 @@ be mindful of bias; **disclose AI use** in the paper.
   worth the full run (B0 gate cleared).** Caveat: variant (a) — recipe *selection* used the 1981–2016 manifest
   (saw holdout); A5 (re-select on train-years) will bound that residual optimism. Report:
   `reports/results/phase_a_backtest.md`.
+
+  > ⚠️ **SUPERSEDED AS THE PAPER HEADLINE (2026-09-14).** These are variant (a) numbers: selection saw the
+  > holdout. They remain valid as the *leaky* arm of the selection-optimism experiment, but the manuscript
+  > now reports the leak-free run (`$RES/tuning/backtest_clean/`) throughout. See the 2026-09-14 entry.
 - 2026-07-17 — **A5 DONE (selection-bias check).** Honest train-only re-select (`select_backtest.py`): ll4
   tuned skill vs clim (a) 0.2057 → (b) 0.1969 → **selection bias 0.0088 (~+0.013 °C, ~4% of uplift) —
   negligible.** Tuning improvement over climatology is real & robust. **Phase A fully complete (A1–A5).**
@@ -414,3 +418,39 @@ be mindful of bias; **disclose AI use** in the paper.
   lists drafted from recollection → MUST verify**; `reports/results/` is gitignored (.gitignore:64) so the
   Phase-A writeup is untracked; figure scripts still in scratchpad; product/code DOI deposit.
   **Still uncommitted on this branch: `fill_zoned.py`, `reports/paper/`.**
+
+- 2026-09-14 — **LEAK-FREE BACKTEST (all three splits) — the manuscript's reported numbers.** Ran the
+  README Step-2 recipe end to end for ll1/ll2/ll4 into `$RES/tuning/backtest_clean/`: `select_backtest`
+  (train-only frames + train-only climatology, 16 buckets, per_zone_n=200, h-grid 7,11,15,21,31,45) →
+  `backtest` (64 buckets, the train-only manifest) → `effect_sizes` (1000 boot / 5000 perm). Script:
+  `$RES/tuning/backtest_clean_run.sh`. **ll4 reproduces `backtest_hgrid_ext` bit for bit**
+  (RMSE 1.2279270170806023, skill 0.2001349255519036) — an independent reproducibility check — and extends
+  the protocol to ll1/ll2, which previously existed only in the leaky variant.
+
+  | split (train→predict) | RMSE tuned | RMSE clim | ΔRMSE vs clim [CI] | skill | cells win | Cohen d | p |
+  |---|---|---|---|---|---|---|---|
+  | ll1 (1981–2015→2016) | 1.254 | 1.680 | +0.427 [0.425,0.428] | 0.254 | 100.0% | 4.19 | 2e-4 |
+  | ll2 (1981–2014→2015–16) | 1.276 | 1.667 | +0.390 [0.389,0.392] | 0.234 | 99.98% | 3.04 | 2e-4 |
+  | **ll4 (1981–2012→2013–16)** | **1.228** | **1.535** | **+0.307 [0.306,0.309]** | **0.200** | **99.99%** | **2.93** | **2e-4** |
+
+  n = 24,876,447 scored cell-days, 17,027 cells. bias −0.033 °C, r 0.990. vs Td=Tmin +2.323 [2.300,2.345];
+  vs zone OLS +1.101 [1.082,1.118]. Monthly bias: December +0.017 °C, max |bias| 0.402 °C (January).
+
+  **Selection-optimism, now a controlled 3-way comparison** (`backtest/hgrid_check.log`), all ll4 skill:
+  (a) selection on 1981–2016, h∈{7,11,15,21} = **0.2057**; (b) selection train-only, same grid = **0.1969**;
+  (c) selection train-only, h∈{7,11,15,21,31,45} = **0.2001**. (a)−(b) = **0.0088 skill / 0.013 °C RMSE**
+  is the leakage inflation at fixed candidate set; (c)−(b) = +0.003 is what widening the grid recovers.
+  The paper reports (c) and cites (a)−(b) as the bound. Note ll4 skill *falls* 0.206→0.200 versus the old
+  headline (leakage removed), while ll1 *rises* 0.249→0.254 (the wider h-grid more than compensates).
+
+  **Paper synced:** all headline numbers, both effect tables, the FAO-56 table (re-scored on the clean
+  predictions — conclusion unchanged: the −2 °C arid offset degrades every moisture class; best single
+  offset +2.25 °C → RMSE 2.847), n and cell counts, the monthly-bias sentence, and the Methods framing
+  (train-only is now the default protocol, not "a repeat"). Figures regenerated from the clean run:
+  `S2_lead_time_curve`, `S2_rmse_ladder_ll4`, `S2_bias_by_month_ll4`, `S2_delta_rmse_hist_ll4`.
+  ⚠️ `backtest_clean/metrics_all.csv` was written once per split by `backtest.py`, so each invocation
+  overwrote it and only ll4 survived; rebuilt by concatenating the three per-split `metrics.csv` before
+  regenerating the lead-time curve. `fao56_corrected_baseline.py` now takes `BACKTEST_ROOT` from the
+  environment (default `backtest_clean`) instead of hard-coding the leaky root.
+  Renders clean via Typst: 22 pages, 0 unresolved cross-refs, 0 orphan citations.
+
