@@ -12,6 +12,7 @@ status: stable
 - [[methods/stgcn-graph-conv-forecasting]] — STGCN: convolución de grafos + convolución temporal con compuertas para pronóstico de tráfico. `reviewed`
 - [[methods/precipitation-temporal-disaggregation]] — Desagregación temporal de precipitación diaria a horaria (satélite + AWS + quantile mapping). `reviewed`
 - [[methods/interpolate-first-calculate-later-eto]] — Estrategia IC + interpolación climatológicamente asistida para ETo grillada (FAO Penman-Monteith). `reviewed`
+- [[methods/attention-tcn-explainable-forecasting]] — TCN con atención + XAI para pronóstico de punto de rocío. `draft`
 
 ## Tools
 - [[tools/subseasonalrodeo-dataset]] — Dataset SubseasonalRodeo. `reviewed`
@@ -27,6 +28,7 @@ status: stable
 - [[findings/stgcn-vs-baselines-traffic]] — STGCN supera baselines de tráfico con menos parámetros y entrenamiento más rápido. `reviewed`
 - [[findings/piscop-h-validation-results]] — Validación técnica de PISCOp_h: buen desempeño en centro/sur andino, peor en el norte. `reviewed`
 - [[findings/piscoeo-pm-vs-global-products]] — PISCOeo_pm supera a CRU_TS, TerraClimate y ERA5-Land en validación independiente de ETo. `reviewed`
+- [[findings/xai-tcn-dew-point-performance]] — Métricas de desempeño (test/validation loss, MAE) del TCN+atención para punto de rocío en Bangladesh. `draft`
 
 ## Decisions
 
@@ -36,3 +38,4 @@ status: stable
 - [[sources/stgcn-traffic-forecasting]] — Spatio-Temporal Graph Convolutional Networks (IJCAI-18). `reviewed`
 - [[sources/piscop-h-hourly-precipitation-peru]] — PISCOp_h: High-Resolution Gridded Hourly Precipitation Dataset for Peru (Data in Brief, 2022). `reviewed`
 - [[sources/piscoeo-pm-reference-evapotranspiration-peru]] — PISCOeo_pm: reference evapotranspiration gridded database based on FAO Penman-Monteith in Peru (Scientific Data, 2022). `reviewed`
+- [[sources/xai-tcn-dew-point-forecasting-bangladesh]] — Explainable AI-Driven Dew Point Forecasting With Attention-Based Temporal Convolutional Networks (IEEE Access, 2025). `draft`
