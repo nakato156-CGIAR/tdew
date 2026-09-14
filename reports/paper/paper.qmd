@@ -215,9 +215,10 @@ $\mathcal{L}$ by more than a tolerance $\tau$. The search is repeated for each
 $h \in \{7, 11, 15, 21, 31, 45\}$ and the pair $(\mathcal{S}, h)$ maximising $\mathcal{L}$ is
 retained, giving $41 \times 366 = 15{,}006$ selected models.
 
-Selection uses a stratified sample of 66,534 cells (up to 2,000 per zone). Because the cosine sums
-are additive across cells, a sample suffices to choose $(\mathcal{S}, h)$; coefficients are
-subsequently fitted at every cell of the domain.
+Selection uses a stratified sample of $66{,}534$ cells (up to 2,000 per zone, over all 41 zones).
+Because the cosine sums are additive across cells, a sample suffices to choose $(\mathcal{S}, h)$;
+coefficients are subsequently fitted at every cell of the domain. This sample is used only to choose
+recipes; accuracy is assessed on a different sample of cells (@sec-validation).
 
 ### Autoregressive reconstruction {#sec-forecast}
 
@@ -274,7 +275,13 @@ $$
 Differences are summarised by effect size rather than significance alone: the paired per-cell
 difference in RMSE with 95% confidence intervals from a location-block bootstrap, the fraction of
 cells improved, Cohen's $d = \bar{\Delta}/s_{\Delta}$ on the paired differences, and a sign-flip
-permutation null with 5,000 draws. Scoring uses 17,027 cells distributed across all 41 zones.
+permutation null with 5,000 draws. Scoring uses a sample independent of the one used for
+selection: $17{,}027$ cells drawn from 64 of the 8,192 spatial partitions of the domain, each scored
+on every day of the withheld block ($n = 24{,}876{,}447$ cell-days). These cells lie in 33 of the 41
+zones, which between them hold 99.90% of domain cells. A zone is scored only if it appears in both
+the selection and the scoring sample; the eight zones that do not are small and peripheral, totalling
+$2{,}855$ cells or 0.10% of the domain, the two largest being glacier and lake surfaces. Accuracy is
+not validated for them.
 
 Model selection itself can inflate the result, through two distinct routes. If the selection score
 is computed over all fitting years, recipes chosen on the full 1981–2016 period have already been
@@ -283,7 +290,8 @@ candidate recipes favours those whose score is high partly by chance, so the win
 the model's true skill even when each individual score is unbiased.
 
 Selection is therefore restricted to the training years in every result reported below: predictors
-and bandwidth are chosen on 1981–2012 alone, and the withheld period is never seen at any stage. To
+and bandwidth are chosen on 1981–2012 alone, by the same procedure applied to a 16-partition
+stratified sample (up to 200 cells per zone), and the withheld period is never seen at any stage. To
 measure the first route we additionally run selection over all years on a common candidate grid;
 the difference between the two runs bounds the inflation that such leakage introduces
 (@sec-results-validation).
@@ -601,6 +609,11 @@ cannot separate a genuine 2017–2020 climate anomaly from regional model bias; 
 **Shared covariates.** Gridded $T_d$ and $T_{\min}$ share land-surface-temperature and elevation
 predictors in their construction, so validation against gridded $T_d$ may flatter the mapping
 relative to an independent reference.
+
+**Validation coverage.** The released field covers all 41 climate zones, but accuracy is measured on
+a $17{,}027$-cell sample falling in 33 of them (@sec-validation). The eight unscored zones hold 0.10%
+of domain cells and include glacier and lake surfaces, whose $T_{\min} \rightarrow T_d$ relationship
+need not resemble that of the land zones. The reported error statistics do not extend to them.
 
 **No station-level evaluation.** The target is the gridded product being extended, which is the
 correct reference for this task, but the reconstruction inherits that product's biases.

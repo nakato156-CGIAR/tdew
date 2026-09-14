@@ -178,12 +178,14 @@ stability; not the primary holdout.
        (train-only climatology, streamed per-zone OLS sufficient stats).
 - [x] A2. Build the **forward-backtest harness**: train-years vs holdout split, **autoregressive** holdout
        prediction on a sample. DONE — `HPC_code_tunning/backtest.py` (refit coeffs via GPU `train_bucket_zoned`
-       → `forecast_zoned`; bucket-subset sample = nationwide lattice, all 41 zones; train-only clim per split).
+       → `forecast_zoned`; bucket-subset sample = nationwide lattice; train-only clim per split).
+       ⚠️ The scored sample does NOT reach all 41 zones — see the 2026-09-14 entry.
 - [x] A3. Build the **effect-size + bootstrap + null-test** reporting module. DONE —
        `HPC_code_tunning/effect_sizes.py` (ΔRMSE + location-block bootstrap CIs, per-cell win rate, Cohen's d,
        sign-flip permutation null, plots + lead-time curve).
 - [x] A4. Run backtest **variant (a) refit-only** for tuned + all baselines. DONE 2026-07-16 — 64 buckets
-       (17,041 cells, all zones). Results: `$RES/tuning/backtest/{ll1,ll2,ll4}/` + `reports/results/phase_a_backtest.md`.
+       (17,041 cells, 38 of 41 zones — NOT "all zones" as originally logged). Results:
+       `$RES/tuning/backtest/{ll1,ll2,ll4}/` + `reports/results/phase_a_backtest.md`.
        **Tuned decisively beats climatology / Td=Tmin / zone OLS** (see §12). ✅ clears the gate for B0.
 - [x] A5. Run backtest **variant (b) full re-select** on train-years; compare to (a) → selection-bias estimate.
        DONE 2026-07-17 — `HPC_code_tunning/select_backtest.py` (train-only frames + train-only clim, no leak;
@@ -286,7 +288,7 @@ be mindful of bias; **disclose AI use** in the paper.
   B2 (backtest Tmin for 2013–2016 is already in the prepared shards). Methodological choice for A2: train-only
   climatology (1981–2012) to avoid holdout leakage.
 - 2026-07-16 — **Phase A A1–A4 DONE.** `backtest.py` + `effect_sizes.py`; refit-only autoregressive backtest,
-  64-bucket nationwide sample (17,041 cells, all 41 zones), train-only climatology. Headline effect sizes
+  64-bucket nationwide sample (17,041 cells, 38 of 41 zones), train-only climatology. Headline effect sizes
   (paired, location-block bootstrap 95% CI; sign-flip perm null 5000):
 
   | split (train→predict) | RMSE tuned | RMSE clim | ΔRMSE vs clim [CI] | skill | cells win | Cohen d | p |
@@ -433,7 +435,8 @@ be mindful of bias; **disclose AI use** in the paper.
   | ll2 (1981–2014→2015–16) | 1.276 | 1.667 | +0.390 [0.389,0.392] | 0.234 | 99.98% | 3.04 | 2e-4 |
   | **ll4 (1981–2012→2013–16)** | **1.228** | **1.535** | **+0.307 [0.306,0.309]** | **0.200** | **99.99%** | **2.93** | **2e-4** |
 
-  n = 24,876,447 scored cell-days, 17,027 cells. bias −0.033 °C, r 0.990. vs Td=Tmin +2.323 [2.300,2.345];
+  n = 24,876,447 scored cell-days, 17,027 cells **in 33 of the 41 zones** (see zone-coverage note below).
+  bias −0.033 °C, r 0.990. vs Td=Tmin +2.323 [2.300,2.345];
   vs zone OLS +1.101 [1.082,1.118]. Monthly bias: December +0.017 °C, max |bias| 0.402 °C (January).
 
   **Selection-optimism, now a controlled 3-way comparison** (`backtest/hgrid_check.log`), all ll4 skill:
@@ -453,4 +456,28 @@ be mindful of bias; **disclose AI use** in the paper.
   regenerating the lead-time curve. `fao56_corrected_baseline.py` now takes `BACKTEST_ROOT` from the
   environment (default `backtest_clean`) instead of hard-coding the leaky root.
   Renders clean via Typst: 22 pages, 0 unresolved cross-refs, 0 orphan citations.
+
+- 2026-09-14 — **⚠️ ZONE-COVERAGE ERROR FOUND AND FIXED (user-caught).** The paper stated "17,027 cells
+  distributed across all 41 zones". False. Verified from the prediction files:
+
+  | run | cells | zones scored |
+  |---|---|---|
+  | `backtest/` (leaky) | 17,041 | **38** of 41 |
+  | `backtest_clean/` (reported) | 17,027 | **33** of 41 |
+
+  Cause: a zone is scored only if it appears in **both** the selection manifest and the 64-bucket scoring
+  sample. The train-only manifest is built from 16 buckets at per_zone_n=200 → 34 zones (12,444 recipes);
+  the scoring sample holds 38; the intersection is 33. Production selection is unaffected — B0 used
+  66,534 cells at per_zone_n=2000 → all 41 zones, 15,006 recipes — so the **released field covers all 41
+  zones; only the validation does not**.
+
+  Unvalidated zones = 2,855 of 2,818,404 domain cells = **0.10%**: 37 Glaciar (1,139), 25 C(o,i)E' (488),
+  21 C(i)E' (348), 24 C(o,i)D' (266), 16 C(i,p)B' (256), 38 Lago Junín (228), 15 C(i,p)A' (76), 7 B(i)E' (54).
+  The two largest are glacier and lake surfaces, whose Tmin→Td relationship need not resemble the land zones'.
+
+  Paper fixed: @sec-validation now states 33 of 41 zones holding 99.90% of domain cells and says why the
+  other eight are absent; a **Validation coverage** limitation was added; and the two cell samples are now
+  distinguished explicitly (66,534 = selection, 41 zones, per_zone_n=2000; 17,027 = scoring, independent
+  sample, 64 of 8,192 partitions) because conflating them is what made the numbers unreadable.
+  Lesson: "all zones" was carried forward from the A4 log without ever being checked against the outputs.
 
