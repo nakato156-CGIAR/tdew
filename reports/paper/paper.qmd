@@ -275,9 +275,15 @@ difference in RMSE with 95% confidence intervals from a location-block bootstrap
 cells improved, Cohen's $d = \bar{\Delta}/s_{\Delta}$ on the paired differences, and a sign-flip
 permutation null with 5,000 draws. Scoring uses 17,041 cells distributed across all 41 zones.
 
-Because the selection objective is itself cross-validated, selected models could in principle be
-optimistic on the withheld years. We therefore repeat the entire procedure with selection restricted
-to the training years; the difference between the two bounds that optimism.
+Model selection itself can inflate the result, through two distinct routes. The selection score is
+computed over all fitting years, so recipes chosen on the full 1981–2016 period have already been
+exposed to the years that are later withheld for scoring. Independently, choosing the best of many
+candidate recipes favours those whose score is high partly by chance, so the winning score exceeds
+the model's true skill even when each individual score is unbiased.
+
+We therefore repeat the entire procedure with selection restricted to the training years, so that
+the withheld period is never seen at any stage. The difference between the two runs bounds the
+combined inflation.
 
 ## Results {#sec-results}
 
