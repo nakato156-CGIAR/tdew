@@ -5,7 +5,7 @@ description: Paper de Huerta et al. (SENAMHI, Scientific Data 2022) que document
 resource: https://doi.org/10.1038/s41597-022-01373-8
 tags: [evapotranspiration, hydrology, peru, gridded-dataset, senamhi, netcdf, fao-penman-monteith]
 timestamp: 2026-09-14T00:00:00Z
-status: draft
+status: reviewed
 contributed_by: [claude]
 sources: []
 ---

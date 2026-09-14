@@ -5,7 +5,7 @@ description: Dataset grillado de evapotranspiración de referencia (FAO Penman-M
 resource: https://doi.org/10.6084/m9.figshare.19686738.v1
 tags: [evapotranspiration, gridded-dataset, peru, netcdf, senamhi, fao-penman-monteith]
 timestamp: 2026-09-14T00:00:00Z
-status: draft
+status: reviewed
 contributed_by: [claude]
 sources: ["[[sources/piscoeo-pm-reference-evapotranspiration-peru]]"]
 ---

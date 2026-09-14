@@ -5,7 +5,7 @@ description: Estrategia para estimar evapotranspiración de referencia (FAO Penm
 resource: https://doi.org/10.1038/s41597-022-01373-8
 tags: [evapotranspiration, spatial-interpolation, gap-filling, homogenization, fao-penman-monteith, regression-kriging]
 timestamp: 2026-09-14T00:00:00Z
-status: draft
+status: reviewed
 contributed_by: [claude]
 sources: ["[[sources/piscoeo-pm-reference-evapotranspiration-peru]]"]
 ---

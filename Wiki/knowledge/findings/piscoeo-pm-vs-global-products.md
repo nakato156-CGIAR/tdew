@@ -5,7 +5,7 @@ description: Validación independiente (train/test, 39 estaciones) muestra que P
 resource: https://doi.org/10.1038/s41597-022-01373-8
 tags: [evapotranspiration, validation, benchmark, peru, cru_ts, terraclimate, era5-land]
 timestamp: 2026-09-14T00:00:00Z
-status: draft
+status: reviewed
 contributed_by: [claude]
 sources: ["[[sources/piscoeo-pm-reference-evapotranspiration-peru]]"]
 ---
