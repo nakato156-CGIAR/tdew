@@ -44,6 +44,13 @@ netcdf = [
 multigpu = [
     "dask-cuda>=0.18.0",
 ]
+# Streamlit raster/video dashboard (visualizations/).
+viz = [
+    "streamlit>=1.38",
+    "matplotlib>=3.8",
+    "imageio>=2.34",
+    "imageio-ffmpeg>=0.5",
+]
 
 # Only the algorithm package is installable; HPC_code/ and Local/ are run as scripts.
 [tool.setuptools]
