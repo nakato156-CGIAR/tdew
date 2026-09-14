@@ -49,7 +49,7 @@ fit by $1.10$ °C. Predictors and bandwidths are selected on the training years 
 selection to see the withheld years would inflate the skill score by $0.009$, which bounds the
 optimism such leakage introduces.
 
-The reconstruction covers $2{,}178{,}827$ grid cells over $1{,}461$ days ($3.18 \times 10^{9}$
+The reconstruction covers 2,178,827 grid cells over 1,461 days ($3.18 \times 10^{9}$
 values) and introduces no discontinuity at the 2016/2017 boundary: over equal-length four-year
 windows it differs from the last observed window (mean $-0.041$ °C, sd $0.176$ °C) by no more than
 two observed windows differ from each other (mean $+0.101$ °C, sd $0.125$ °C), with no cell
@@ -213,9 +213,9 @@ Predictors are eliminated by backward stepwise search: starting from the full po
 whose removal most improves $\mathcal{L}$ is dropped, and elimination stops when no removal improves
 $\mathcal{L}$ by more than a tolerance $\tau$. The search is repeated for each
 $h \in \{7, 11, 15, 21, 31, 45\}$ and the pair $(\mathcal{S}, h)$ maximising $\mathcal{L}$ is
-retained, giving $41 \times 366 = 15{,}006$ selected models.
+retained, giving $41 \times 366 = \text{15,006}$ selected models.
 
-Selection uses a stratified sample of $66{,}534$ cells (up to 2,000 per zone, over all 41 zones).
+Selection uses a stratified sample of 66,534 cells (up to 2,000 per zone, over all 41 zones).
 Because the cosine sums are additive across cells, a sample suffices to choose $(\mathcal{S}, h)$;
 coefficients are subsequently fitted at every cell of the domain. This sample is used only to choose
 recipes; accuracy is assessed on a different sample of cells (@sec-validation).
@@ -276,11 +276,11 @@ Differences are summarised by effect size rather than significance alone: the pa
 difference in RMSE with 95% confidence intervals from a location-block bootstrap, the fraction of
 cells improved, Cohen's $d = \bar{\Delta}/s_{\Delta}$ on the paired differences, and a sign-flip
 permutation null with 5,000 draws. Scoring uses a sample independent of the one used for selection:
-64 of the 8,192 spatial partitions of the domain, holding $22{,}024$ cells. Of these, $17{,}027$ have
-an observed dew-point record over the withheld block and are scored on all $1{,}461$ of its days
-($n = 24{,}876{,}447$ cell-days); the remainder fall outside the coverage of the gridded $T_d$
-product, which spans $2{,}178{,}827$ of the $2{,}818{,}404$ cells of the minimum-temperature grid.
-The scored cells lie in 33 of the 41 zones. The eight zones with no scored cell hold $2{,}855$ cells,
+64 of the 8,192 spatial partitions of the domain, holding 22,024 cells. Of these, 17,027 have
+an observed dew-point record over the withheld block and are scored on all 1,461 of its days
+($n$ = 24,876,447 cell-days); the remainder fall outside the coverage of the gridded $T_d$
+product, which spans 2,178,827 of the 2,818,404 cells of the minimum-temperature grid.
+The scored cells lie in 33 of the 41 zones. The eight zones with no scored cell hold 2,855 cells,
 0.13% of the released field, the two largest being glacier and lake surfaces; accuracy is not
 validated for them.
 
@@ -333,7 +333,7 @@ FAO-56 approximation the reduction exceeds 2.3 °C throughout.
 | 2013–2016 (4 years) | 1.535 | 3.551 | 2.328 | **1.228** | 0.200 |
 
 : Root-mean-square error (°C) on withheld years, pooled over all scored cell-days
-($n = 24{,}876{,}447$ for the four-year split). The skill score is relative to climatology.
+($n$ = 24,876,447 for the four-year split). The skill score is relative to climatology.
 {#tbl-ladder}
 
 Whereas @tbl-ladder compares aggregate error, @tbl-effects asks whether the advantage is large,
@@ -347,7 +347,7 @@ size.
 | vs $T_d = T_{\min}$ | $+2.323$ | $[2.300, 2.345]$ | 0.654 | 99.98% | 1.37 | $2\times10^{-4}$ |
 | vs zone OLS | $+1.101$ | $[1.082, 1.118]$ | 0.473 | 99.78% | 1.05 | $2\times10^{-4}$ |
 
-: Paired effect sizes on the four-year withheld block ($17{,}027$ cells). $\Delta$RMSE is the
+: Paired effect sizes on the four-year withheld block (17,027 cells). $\Delta$RMSE is the
 per-cell reduction in error achieved by the selected model; intervals are from a location-block
 bootstrap and $p$ from a sign-flip permutation null. {#tbl-effects}
 
@@ -385,7 +385,7 @@ that optimal member of the offset family remains far behind the selected model.
 | *Selected model, for reference* | *1.228* | *0.881* | *$-0.033$* |
 
 : Corrected forms of the FAO-56 baseline, scored on the identical withheld observations
-($n = 24{,}876{,}447$). The conventional arid-region offset increases error over this domain.
+($n$ = 24,876,447). The conventional arid-region offset increases error over this domain.
 {#tbl-fao}
 
 Seasonal bias is also reduced. The fixed configuration carries a December warm bias of $+1.45$ °C
@@ -400,7 +400,7 @@ incumbents.](figures/S2_rmse_ladder_ll4.png){#fig-ladder}
 ### The reconstructed field {#sec-results-product}
 
 Applying coefficients fitted on 1981–2016 to the observed 2017–2020 minimum temperature yields
-$3{,}183{,}266{,}247$ values with no missing entries. National mean $T_d$ is $19.39$ °C (range
+3,183,266,247 values with no missing entries. National mean $T_d$ is $19.39$ °C (range
 $-13.29$ to $41.16$ °C) and annual means are stable across the period ($19.36$, $19.30$, $19.41$ and
 $19.51$ °C), showing no drift under sustained autoregression.
 
@@ -426,7 +426,7 @@ period-to-period variability of the observed record itself.
 | Observed 2013–16 $-$ observed 2009–12 (control) | $+0.101$ | 0.125 | $-0.18$ … $+0.42$ | 0.0% |
 | Reconstructed 2017–20 $-$ observed 2013–16 | $-0.041$ | 0.176 | $-0.36$ … $+0.54$ | 0.0% |
 
-: Difference in annual-mean dew point (°C) between four-year windows, over $2{,}178{,}827$ cells.
+: Difference in annual-mean dew point (°C) between four-year windows, over 2,178,827 cells.
 The first row involves no model and quantifies natural variability. {#tbl-seam}
 
 The reconstruction differs from the last observed window by no more than two observed windows differ
@@ -445,8 +445,8 @@ maximum of 41.16 °C. These values are sharply localised in space, time and seas
 structure identifies their origin.
 
 They occur exclusively in one climate zone, the Thornthwaite class `A (r) A'` (perhumid, no water
-deficiency, megathermal) of the north-eastern lowlands, affecting $132{,}920$ of that zone's
-$909{,}708$ cells. In time they are concentrated almost entirely in **November**: pooled over
+deficiency, megathermal) of the north-eastern lowlands, affecting 132,920 of that zone's
+909,708 cells. In time they are concentrated almost entirely in **November**: pooled over
 2017–2020, 1.556% of November values exceed the threshold against 0.027% in October, and only 50
 exceedances occur in total between January and July (@fig-tail-month).
 
@@ -612,8 +612,8 @@ predictors in their construction, so validation against gridded $T_d$ may flatte
 relative to an independent reference.
 
 **Validation coverage.** The released field covers all 41 climate zones, but accuracy is measured on
-a $17{,}027$-cell sample falling in 33 of them (@sec-validation). The eight unscored zones hold
-$2{,}855$ cells, 0.13% of the released field, and include glacier and lake surfaces, whose
+a 17,027-cell sample falling in 33 of them (@sec-validation). The eight unscored zones hold
+2,855 cells, 0.13% of the released field, and include glacier and lake surfaces, whose
 $T_{\min} \rightarrow T_d$ relationship need not resemble that of the land zones. The reported error
 statistics do not extend to them.
 
