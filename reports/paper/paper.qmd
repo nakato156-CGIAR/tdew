@@ -4,6 +4,9 @@ author:
   - name: "Piero Palacios"
     affiliation: "International Potato Center (CIP)"
     email: "piero.palacios@cgiar.org"
+  - name: "Henry Juarez"
+    affiliation: "International Potato Center (CIP)"
+    email: "h.juarez@cgiar.org"
 date: last-modified
 format:
   html:
@@ -100,11 +103,17 @@ yield reconstructions; the remainder are ocean or lack the climatology or predic
 model requires.
 
 **Predictor version.** Minimum temperature exists in two PISCO releases, v1.1 (1981–2016) and v1.2
-(1981–2020). They are not interchangeable: refitting the same model on each gives a mean
-contemporaneous $T_{\min}$ coefficient of $0.452$ against $0.370$, and reconstructions made from
-them differ by $0.300$ °C in the mean (@sec-supp-version). Because only v1.2 spans the target
-period, we use **v1.2 throughout**, for both fitting and reconstruction, so that the mapping is
-applied to the same data-generating process from which it was estimated.
+(1981–2020). As predictors of dew point the two are of comparable quality: fitting and scoring an
+identical configuration on each gives RMSE $1.127$ °C against $1.136$ °C, a difference of $0.009$ °C
+(@sec-supp-version). They nevertheless yield different fitted models, the mean contemporaneous
+$T_{\min}$ coefficient being $0.452$ against $0.370$ with a paired correlation of $0.685$.
+
+Only v1.2 spans the target period, so the reconstruction must use it. We therefore also fit on
+**v1.2**, so that the coefficients correspond to the release actually supplied at prediction time.
+Fitting on one release and predicting with the other would apply a sensitivity estimated for one
+product to another whose fitted sensitivity differs appreciably; we avoid that mismatch by
+construction rather than quantify it. Since the two releases are of comparable accuracy, this choice
+costs nothing.
 
 **Validation target.** The model is scored against the gridded v1.1 $T_d$, which is the record being
 extended and therefore the appropriate reference. The reconstruction consequently inherits any bias
@@ -596,8 +605,10 @@ $T_{\min} \rightarrow T_d$ relationship. **[TODO]**
 
 ### Predictor-version sensitivity {#sec-supp-version}
 
-The two PISCO minimum-temperature releases give measurably different models. Refitting an identical
-five-predictor configuration on each, over $7.32 \times 10^{6}$ (cell, day-of-year) fits, gives:
+The two PISCO minimum-temperature releases yield different fitted models of comparable accuracy.
+Each release was run through the identical pipeline, fitted and scored on itself, over
+$7.32 \times 10^{6}$ (cell, day-of-year) fits. The fitted coefficients differ, most clearly in the
+contemporaneous sensitivity:
 
 | Coefficient | v1.1 mean | v1.2 mean | Mean $\Delta$ | Mean $\lvert\Delta\rvert$ | Pearson $r$ |
 |:---|---:|---:|---:|---:|---:|
@@ -610,9 +621,10 @@ five-predictor configuration on each, over $7.32 \times 10^{6}$ (cell, day-of-ye
 : Coefficients fitted on PISCO v1.1 against v1.2 minimum temperature, paired over identical fits.
 The contemporaneous sensitivity differs most. {#tbl-supp-coef}
 
-Reconstructions from the two versions agree to $\mathrm{RMSE} = 0.610$ °C with a mean offset of
-$-0.300$ °C. Scored against observed dew point, v1.1 gives marginally lower error while v1.2 is
-better centred:
+The two self-consistent pipelines agree with one another to $\mathrm{RMSE} = 0.610$ °C
+($r = 0.995$) with a mean offset of $-0.300$ °C. Scored against observed dew point they are
+nevertheless of comparable accuracy, v1.1 giving marginally lower error and v1.2 being better
+centred:
 
 | Predictor version | RMSE | MAE | Bias | Pearson $r$ |
 |:---|---:|---:|---:|---:|
@@ -622,11 +634,19 @@ better centred:
 : Accuracy against observed dew point for each predictor version ($n = 7.3 \times 10^{6}$).
 {#tbl-supp-acc}
 
-The difference in RMSE is $0.009$ °C, well below the $0.316$ °C improvement the selected model
-achieves over climatology, whereas the $0.300$ °C offset introduced by mixing versions is of the
-same order as that improvement. Using a single version throughout is therefore material, and since
-only v1.2 covers the target period it is the version used. This configuration also carries a
-December warm bias of $+1.45$ °C, which per-zone seasonal selection removes (@sec-results-validation).
+The accuracy difference between releases, $0.009$ °C, is negligible against the $0.316$ °C
+improvement the selected model achieves over climatology: as predictors of dew point the two are
+effectively equivalent, and choosing v1.2 costs nothing. What differs is the fitted relationship,
+with a paired correlation of only $0.685$ on the contemporaneous term, which is why we fit and
+predict on the same release.
+
+Note that the $-0.300$ °C offset above is the difference between two **internally consistent**
+pipelines, each fitted and applied to its own release. It is not a measurement of the penalty for
+mixing releases, a configuration we did not run; the case for consistency here is that coefficients
+should correspond to the predictor actually supplied, not an estimated error bound. **[TODO]**
+
+This fixed five-predictor configuration also carries a December warm bias of $+1.45$ °C, which
+per-zone seasonal selection removes (@sec-results-validation).
 
 ### Computational characterisation {#sec-supp-compute}
 
