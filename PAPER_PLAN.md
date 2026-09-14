@@ -43,9 +43,21 @@ climatology/Td≈Tmin baseline) **iff** the baselines and the temporal validatio
 | Zone shapefile (zip) | `/home/ppalacios/Downloads/clasif_clima_peru.zip` | 41 zones | SENAMHI Thornthwaite; 15,700 polygon parts |
 
 **Version-consistency decision (locked):** train and predict both use **v1.2 Tmin** (`--tmin-var tmin_v12`).
-`reports/results/compare_v11_v12.md` shows the Tmin sensitivity differs by version (coeff mean 0.45 vs 0.37)
-and switching versions injects ~0.3 °C bias, so a single Tmin source on both sides is required. State this
-in the paper.
+⚠️ **CORRECTED 2026-09-14 — the earlier justification here was wrong and was repeated into the paper.**
+What `reports/results/` actually shows:
+- **As predictors the two releases are near-equivalent.** `accuracy_v11_v12.md`: v1.1 RMSE 1.127 vs
+  v1.2 1.136, a difference of **0.009 °C (0.8%)**. Do NOT write "not interchangeable".
+- **The fitted models do differ:** `compare_v11_v12.md` Tmin sensitivity coeff mean 0.452 vs 0.370,
+  paired Pearson r = 0.685.
+- **The ~0.3 °C figure does NOT measure mixing.** `compare_datasets.py` is documented as running "the
+  pipeline **twice** into separate `--results` roots", so −0.2999 °C is the offset between two
+  *internally consistent* pipelines (each fitted AND predicted on its own release). The mixed
+  configuration (fit v1.1 → predict v1.2) **was never run**, so no mixing penalty has been measured.
+
+**Correct justification:** only v1.2 spans 2017–2020, so prediction must use it; we therefore also fit
+on v1.2 so coefficients match the release supplied at prediction time — a mismatch avoided *by
+construction*, not bounded by measurement. Since the releases are of comparable accuracy this costs
+nothing.
 
 ---
 
