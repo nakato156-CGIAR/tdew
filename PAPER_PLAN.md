@@ -471,12 +471,24 @@ be mindful of bias; **disclose AI use** in the paper.
   66,534 cells at per_zone_n=2000 → all 41 zones, 15,006 recipes — so the **released field covers all 41
   zones; only the validation does not**.
 
-  Unvalidated zones = 2,855 of 2,818,404 domain cells = **0.10%**: 37 Glaciar (1,139), 25 C(o,i)E' (488),
+  ⚠️ CORRECTED same day: the first version of this entry said the zone filter explained the sample size.
+  It does not. Full arithmetic, verified against the files: 64/8,192 buckets → **22,024** cells; minus
+  **14** with no recipe (zone absent from the train-only manifest) → 22,010; minus **4,983** with *no
+  observed Td at all* in 2013–2016 → **17,027**. The dominant filter is Td availability, not zones
+  (`backtest.py:239` `dropna(subset=["TD_obs"])`). Dropped cells have 0 of 1,461 observed days, scored
+  cells have 1,461/1,461 — strictly binary. And 17,027/22,024 = 0.77311 matches
+  2,178,827/2,818,404 = 0.77307: the gridded Td product covers 77.3% of the Tmin grid, and the backtest
+  sample reproduces that ratio. Product cell count 2,178,827 re-verified by full scan of all 8,192 buckets.
+  Denominator also corrected: the share must be taken against the **released field** (2,178,827), not
+  zone_table (2,818,404).
+
+  Unvalidated zones = 2,855 of 2,178,827 released cells = **0.13%** (all 2,855 ARE in the product):
+  37 Glaciar (1,139), 25 C(o,i)E' (488),
   21 C(i)E' (348), 24 C(o,i)D' (266), 16 C(i,p)B' (256), 38 Lago Junín (228), 15 C(i,p)A' (76), 7 B(i)E' (54).
   The two largest are glacier and lake surfaces, whose Tmin→Td relationship need not resemble the land zones'.
 
-  Paper fixed: @sec-validation now states 33 of 41 zones holding 99.90% of domain cells and says why the
-  other eight are absent; a **Validation coverage** limitation was added; and the two cell samples are now
+  Paper fixed: @sec-validation now gives the full 22,024 → 17,027 arithmetic, names Td coverage as the
+  reason, and states 33 of 41 zones; a **Validation coverage** limitation was added; and the two cell samples are now
   distinguished explicitly (66,534 = selection, 41 zones, per_zone_n=2000; 17,027 = scoring, independent
   sample, 64 of 8,192 partitions) because conflating them is what made the numbers unreadable.
   Lesson: "all zones" was carried forward from the A4 log without ever being checked against the outputs.

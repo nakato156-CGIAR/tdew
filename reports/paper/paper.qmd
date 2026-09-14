@@ -275,13 +275,14 @@ $$
 Differences are summarised by effect size rather than significance alone: the paired per-cell
 difference in RMSE with 95% confidence intervals from a location-block bootstrap, the fraction of
 cells improved, Cohen's $d = \bar{\Delta}/s_{\Delta}$ on the paired differences, and a sign-flip
-permutation null with 5,000 draws. Scoring uses a sample independent of the one used for
-selection: $17{,}027$ cells drawn from 64 of the 8,192 spatial partitions of the domain, each scored
-on every day of the withheld block ($n = 24{,}876{,}447$ cell-days). These cells lie in 33 of the 41
-zones, which between them hold 99.90% of domain cells. A zone is scored only if it appears in both
-the selection and the scoring sample; the eight zones that do not are small and peripheral, totalling
-$2{,}855$ cells or 0.10% of the domain, the two largest being glacier and lake surfaces. Accuracy is
-not validated for them.
+permutation null with 5,000 draws. Scoring uses a sample independent of the one used for selection:
+64 of the 8,192 spatial partitions of the domain, holding $22{,}024$ cells. Of these, $17{,}027$ have
+an observed dew-point record over the withheld block and are scored on all $1{,}461$ of its days
+($n = 24{,}876{,}447$ cell-days); the remainder fall outside the coverage of the gridded $T_d$
+product, which spans $2{,}178{,}827$ of the $2{,}818{,}404$ cells of the minimum-temperature grid.
+The scored cells lie in 33 of the 41 zones. The eight zones with no scored cell hold $2{,}855$ cells,
+0.13% of the released field, the two largest being glacier and lake surfaces; accuracy is not
+validated for them.
 
 Model selection itself can inflate the result, through two distinct routes. If the selection score
 is computed over all fitting years, recipes chosen on the full 1981–2016 period have already been
@@ -611,9 +612,10 @@ predictors in their construction, so validation against gridded $T_d$ may flatte
 relative to an independent reference.
 
 **Validation coverage.** The released field covers all 41 climate zones, but accuracy is measured on
-a $17{,}027$-cell sample falling in 33 of them (@sec-validation). The eight unscored zones hold 0.10%
-of domain cells and include glacier and lake surfaces, whose $T_{\min} \rightarrow T_d$ relationship
-need not resemble that of the land zones. The reported error statistics do not extend to them.
+a $17{,}027$-cell sample falling in 33 of them (@sec-validation). The eight unscored zones hold
+$2{,}855$ cells, 0.13% of the released field, and include glacier and lake surfaces, whose
+$T_{\min} \rightarrow T_d$ relationship need not resemble that of the land zones. The reported error
+statistics do not extend to them.
 
 **No station-level evaluation.** The target is the gridded product being extended, which is the
 correct reference for this task, but the reconstruction inherits that product's biases.
