@@ -54,9 +54,11 @@ values) and introduces no discontinuity at the 2016/2017 boundary: over equal-le
 windows it differs from the last observed window (mean $-0.041$ °C, sd $0.176$ °C) by no more than
 two observed windows differ from each other (mean $+0.101$ °C, sd $0.125$ °C), with no cell
 exceeding $1$ °C in either comparison. The principal limitation is a small warm tail (0.13% of
-values above 35 °C) confined to the humid-rainforest zone of the north-eastern lowlands and to
-November, which we attribute to variance inflation where selection shrinks the smoothing window at
-the dry-to-wet transition. **[SME]**
+values above 35 °C), confined to November and to the part of the grid beyond the classified domain,
+where the source product is itself extrapolated far from any station. Inside that domain the
+reconstruction produces no value above 35 °C at all; outside it, it attenuates a tail already
+present in the field it reproduces. We release a per-cell distance to the classified domain so that
+users may impose their own support threshold.
 
 ## Introduction
 
@@ -470,14 +472,57 @@ distributions.](figures/F3_seam_artifact_test.png){#fig-seam}
 ### Extreme values {#sec-results-tail}
 
 A small fraction of reconstructed values is physically implausible: 0.1326% exceed 35 °C, with a
-maximum of 41.16 °C. These values are sharply localised in space, time and season, and their
-structure identifies their origin.
+maximum of 41.16 °C, against a world record near 35 °C. These values are sharply localised, and
+their location identifies their origin.
 
-They occur exclusively in one climate zone, the Thornthwaite class `A (r) A'` (perhumid, no water
-deficiency, megathermal) of the north-eastern lowlands, affecting 132,920 of that zone's
-909,708 cells (@fig-tail-panel). In time they are concentrated almost entirely in **November**: pooled over
+They lie entirely outside the classified domain. Of the 132,920 cells carrying any value above the
+threshold, **none** falls inside a SENAMHI polygon and all 132,920 fall outside it. That statement
+invites the objection that a national boundary is a political line no atmospheric process respects,
+and the objection is correct: the boundary is not the cause. It is a proxy for where the station
+network that constrains the source fields ends, and the effect it stands for is continuous. Scoring
+the exceedance rate against distance from the classified domain shows a gradient, not a step
+(@tbl-support).
+
+| Distance from classified domain | Cells | Affected | Affected |
+|:---|---:|---:|---:|
+| inside (any depth) | 276,029 | 0 | 0.00% |
+| 0–20 km beyond | 38,013 | 0 | 0.00% |
+| 20–50 km | 54,759 | 10 | 0.02% |
+| 50–100 km | 93,328 | 391 | 0.42% |
+| 100–200 km | 182,878 | 18,888 | 10.33% |
+| 200–300 km | 150,363 | 49,452 | 32.89% |
+| beyond 300 km | 113,904 | 64,179 | 56.34% |
+
+: Exceedance above 35 °C against distance from the classified domain, over the zone in which every
+exceedance occurs. The rate is zero inside and for the first 20 km beyond, and rises monotonically
+thereafter. {#tbl-support}
+
+The first twenty kilometres beyond the boundary are as clean as the interior. Degradation appears
+near 50 km and becomes severe past 100, which is the signature of distance from observational
+support rather than of a border.
+
+The values are moreover inherited rather than introduced. Scored on the withheld years, the source
+product itself carries the larger tail, and the reconstruction attenuates it (@tbl-inherited).
+
+| | Observed $T_d$, maximum | Observed, above 35 °C | Reconstructed, maximum | Reconstructed, above 35 °C |
+|:---|---:|---:|---:|---:|
+| Inside the domain | 38.34 °C | 0.0046% | **34.10 °C** | **0.0000%** |
+| Outside | 46.47 °C | 0.6724% | 40.11 °C | 0.2147% |
+
+: Extreme dew point in the source product and in the reconstruction, on the four-year withheld
+block. Inside the classified domain the reconstruction produces no value above 35 °C at all, and its
+maximum lies below the observed maximum. {#tbl-inherited}
+
+Inside the domain the method therefore produces no implausible value whatever; outside it, it
+returns roughly a third of the exceedance rate of the field it is reproducing. The implausible
+values originate in the gridded dew point where that product is itself extrapolated far from any
+station.
+
+Within the affected region the exceedances concentrate almost entirely in **November**: pooled over
 2017–2020, 1.556% of November values exceed the threshold against 0.027% in October, and only 50
-exceedances occur in total between January and July (@fig-tail-month).
+exceedances occur in total between January and July (@fig-tail-month). They occur in a single
+Thornthwaite class, `A (r) A'` (perhumid, no water deficiency, megathermal), which is the class
+covering the eastern lowlands and the extrapolated area beyond them (@fig-tail-panel).
 
 The concentration is not explained by accumulation of autoregressive error. Annual incidence is
 non-monotonic (0.2015%, 0.1696%, 0.0293% and 0.1299% for 2017–2020) and exceedances occur in short
@@ -491,15 +536,20 @@ August–September ($0.7030$); in-sample $R^{2}$ behaves likewise. The failure a
 predictive distribution rather than its centre, consistent with annual means remaining stable to
 $0.21$ °C.
 
-The determining observation concerns the selected bandwidth. Although $h = 45$ is modal nationally,
-this zone prefers narrower windows (median $h = 21$, 31.7% at $h = 45$), and **November is its
-narrowest band**: 47% of November days select $h \le 11$ against 23% in October, with median
-$h = 15$ in November against $31$ in both adjacent months. Selection responds to a rapidly changing
-time of year by shrinking the window, trading bias for variance. Since the quantity measured is an
-exceedance rate above a fixed threshold, variance rather than bias governs it: a modest increase in
-predictive spread, invisible in mean accuracy, moves the exceedance rate by a factor of 58. Confining
-narrow windows to the transition band also confines the inflated variance there, which accounts for
-the concentration in a single month.
+The seasonal concentration has a separate explanation, in the selected bandwidth. Although
+$h = 45$ is modal nationally, this class prefers narrower windows (median $h = 21$, 31.7% at
+$h = 45$), and **November is its narrowest band**: 47% of November days select $h \le 11$ against
+23% in October, with median $h = 15$ in November against $31$ in both adjacent months. Selection
+responds to a rapidly changing time of year by shrinking the window, trading bias for variance.
+Since the quantity measured is an exceedance rate above a fixed threshold, variance rather than bias
+governs it, so a modest increase in predictive spread, invisible in mean accuracy, moves the rate
+sharply.
+
+That mechanism accounts for *when* the exceedances occur and cannot account for *where*. Predictors
+and bandwidth are selected per class and day of year, so every cell of this class shares one recipe
+on a given day; a shared recipe cannot produce a rate of zero at one longitude and a third at
+another. The spatial pattern is a property of the data each cell is fitted to, and @tbl-support
+identifies which property.
 
 The exceedance peak moves between years, at day of year 313 in 2017, 331 in 2018, 313 in 2019 and
 331 in 2020, with the distribution mean shifting between days 314.9 and 322.2.
@@ -574,10 +624,20 @@ recursions combining observed exogenous forcing with a climatological anchor are
 stable over long horizons than fully autoregressive ones, and that stability concerns from that
 literature do not transfer directly to this class of model.
 
-### Origin of the November extremes
+### Origin of the extreme values
 
-The dry-to-wet transition in Amazonia is a rapid regime shift rather than a gradual seasonal
-progression: it is initiated by late-dry-season rainforest transpiration activating shallow
+Two separate questions arise, where the exceedances occur and when, and they have different
+answers. The spatial answer is observational support: the rate is zero inside the classified domain
+and rises monotonically with distance beyond it (@tbl-support), and the source product carries a
+larger tail there than the reconstruction does (@tbl-inherited). Regression kriging reverts towards
+the covariate-driven mean far from data, and the covariates here are land-surface temperature and
+elevation; where no station constrains the humidity relationship, the resulting dew point need not
+respect the physical ceiling that station data would impose. The reconstruction inherits that
+behaviour through the lagged dew-point predictors while damping it, since a fitted regression on
+anomalies cannot reproduce the full spread of its target.
+
+The seasonal answer is the transition itself. The dry-to-wet transition in Amazonia is a rapid
+regime shift rather than a gradual seasonal progression: it is initiated by late-dry-season rainforest transpiration activating shallow
 convection [@wright2017], driven by increases in surface latent heat flux that rapidly reduce
 convective inhibition [@fu2004], accompanied by a reorganisation of the large-scale circulation
 [@li2004], and is routinely dated to a specific pentad [@marengo2017]. Its timing varies between
@@ -600,10 +660,16 @@ deforested Amazonia [@hierro2025].
 
 ## Limitations {#sec-limitations}
 
-**Extreme values.** The warm tail characterised in @sec-results-tail is not corrected in the
-released field. The diagnosis implies a targeted remedy at the point of fitting, namely constraining
-the minimum bandwidth or otherwise regularising the fits for the transition band in the affected
-zone; this is untested. **[TODO]**
+**Extreme values.** The warm tail characterised in @sec-results-tail is released unmodified, and
+accompanied by a per-cell distance to the classified domain so that users may impose a support
+threshold of their own choosing. We prefer this to editing the values. The exceedances are not an
+artefact we introduce, being both absent inside the domain and milder than the source product
+outside it, so suppressing them would misrepresent the field being extended while discarding
+information about where that field is weakly constrained. A threshold at 50 km removes essentially
+all of them (@tbl-support) at the cost of the extrapolated area.
+
+Constraining the minimum bandwidth would address the seasonal concentration, but not the spatial
+one, which no choice of recipe can reach (@sec-results-tail); it remains untested. **[TODO]**
 
 A post-hoc bound is also available, and the appropriate form is a bound on the *excess* over
 same-day minimum temperature rather than on $T_{\min}$ itself. Capping at $T_d \le T_{\min}$ is not
