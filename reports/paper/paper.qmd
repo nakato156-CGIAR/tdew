@@ -93,9 +93,16 @@ field for 2017–2020; and a characterisation of the conditions under which the 
 | Dew-point temperature $T_d$ | PISCO v1.1 | 1981–2016 | Target |
 | Minimum temperature $T_{\min}$ | PISCO v1.2 | 1981–2020 | Predictor |
 | Grid | PISCO national grid, 0.01° | 1,422 × 1,982 = 2,818,404 cells | Domain |
-| Climate zones | SENAMHI Thornthwaite classification | 41 zones | Unit of model selection |
+| Climate zones | SENAMHI national classification [@senamhi2021] | 41 mapped units | Unit of model selection |
 
 : Data used in this study. {#tbl-data}
+
+**Climate zones.** The classification is SENAMHI's national map on the 1981–2010 normal
+[@senamhi2021], which defines **38 climate types**: 37 Thornthwaite symbols and a glacier class. The
+published shapefile carries three further map units that are not climate types, two lakes and the
+coastal *lomas*, giving the 41 units we use. We select per mapped unit rather than per climate type,
+so the count is 41 throughout; the 37 Thornthwaite symbols in our data match the official list
+exactly.
 
 A *cell* throughout this paper is one pixel of that grid: a 0.01° square, roughly 1.1 km on a side,
 carrying one value per variable per day. The grid is a complete rectangle spanning
@@ -633,7 +640,7 @@ cannot separate a genuine 2017–2020 climate anomaly from regional model bias; 
 predictors in their construction, so validation against gridded $T_d$ may flatter the mapping
 relative to an independent reference.
 
-**Validation coverage.** The released field covers all 41 climate zones, but accuracy is measured on
+**Validation coverage.** The released field covers all 41 mapped units, but accuracy is measured on
 a 17,027-cell sample falling in 33 of them (@sec-validation). The eight unscored zones hold
 2,855 cells, 0.13% of the released field, and include glacier and lake surfaces, whose
 $T_{\min} \rightarrow T_d$ relationship need not resemble that of the land zones. The reported error
