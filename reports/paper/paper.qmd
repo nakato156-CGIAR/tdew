@@ -483,23 +483,25 @@ network that constrains the source fields ends, and the effect it stands for is 
 the exceedance rate against distance from the classified domain shows a gradient, not a step
 (@tbl-support).
 
-| Distance from classified domain | Cells | Affected | Affected |
-|:---|---:|---:|---:|
-| inside (any depth) | 276,029 | 0 | 0.00% |
-| 0–20 km beyond | 38,013 | 0 | 0.00% |
-| 20–50 km | 54,759 | 10 | 0.02% |
-| 50–100 km | 93,328 | 391 | 0.42% |
-| 100–200 km | 182,878 | 18,888 | 10.33% |
-| 200–300 km | 150,363 | 49,452 | 32.89% |
-| beyond 300 km | 113,904 | 64,179 | 56.34% |
+| Support tier | km from domain | Cells | % of field | Cells affected | Values above 35 °C |
+|:---|:---:|---:|---:|---:|---:|
+| within | inside | 1,066,118 | 48.9% | **0** | **0.0000%** |
+| near | 0–50 | 228,643 | 10.5% | 10 | 0.0000% |
+| marginal | 50–100 | 179,581 | 8.2% | 391 | 0.0003% |
+| extrapolated | 100–200 | 328,136 | 15.1% | 18,888 | 0.0255% |
+| unsupported | beyond 200 | 376,349 | 17.3% | 113,631 | 0.7452% |
 
-: Exceedance above 35 °C against distance from the classified domain, over the zone in which every
-exceedance occurs. The rate is zero inside and for the first 20 km beyond, and rises monotonically
-thereafter. {#tbl-support}
+: Exceedance above 35 °C by distance from the classified domain, over the whole released field
+(2,178,827 cells, $3.18 \times 10^{9}$ values). {#tbl-support}
 
-The first twenty kilometres beyond the boundary are as clean as the interior. Degradation appears
-near 50 km and becomes severe past 100, which is the signature of distance from observational
-support rather than of a border.
+Nearly 60% of the field, everything within 50 km of the classified domain, contains ten affected
+cells in total out of 1,294,761. The rate then rises by three orders of magnitude across the
+remainder. The first fifty kilometres beyond the boundary are as clean as its interior, which is the
+signature of distance from observational support rather than of a border.
+
+Holding the climate class fixed gives the same gradient, so it is not a difference between classes:
+within the single class in which every exceedance occurs, the affected fraction runs 0% inside, 0%
+for the first 20 km beyond, 0.42% at 50–100 km, 10.3% at 100–200 km and 56.3% beyond 300 km.
 
 The values are moreover inherited rather than introduced. Scored on the withheld years, the source
 product itself carries the larger tail, and the reconstruction attenuates it (@tbl-inherited).
@@ -815,10 +817,15 @@ are those that reduce traffic, and the full-domain fit remains tractable on a si
 
 ## Data and code availability {#sec-availability}
 
-The reconstruction covers 2017–2020 at the PISCO national grid. Analysis code implements model
-selection, coefficient fitting, autoregressive reconstruction and the validation harness; the
-scripts reproducing each figure and reported statistic accompany the manuscript, together with the
-retrieved literature records supporting @sec-discussion.
+The reconstruction covers 2017–2020 at the PISCO national grid. It is released with a per-cell
+support layer giving the signed distance from the classified domain, negative inside, so that users
+may impose a support threshold of their own rather than inherit ours; @tbl-support gives the
+exceedance rate against that distance, and @sec-results-tail the reasoning. Values are released
+unmodified.
+
+Analysis code implements model selection, coefficient fitting, autoregressive reconstruction and the
+validation harness; the scripts reproducing each figure and reported statistic accompany the
+manuscript, together with the retrieved literature records supporting @sec-discussion.
 
 **[TODO]** Deposit the reconstructed field and a frozen code release, and record their identifiers
 here.
