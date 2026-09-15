@@ -31,9 +31,9 @@ import pandas as pd
 import pyarrow.dataset as pads
 import streamlit as st
 
-from visualizations.rasterize import to_grid
+from visualizations.raster.rasterize import to_grid
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_SILVER_DIR = REPO_ROOT / "Data" / "silver"
 
 DAILY_FILE_RE = re.compile(r"^(?P<var>[a-zA-Z0-9]+)_daily_(?P<year>\d{4})_(?P<month>\d{2})\.parquet$")

@@ -1,6 +1,6 @@
 """Shared matplotlib rendering for a single raster frame, used by the
-Streamlit app (visualizations.app) and the video builder
-(visualizations.render_video)."""
+Streamlit app (visualizations.raster.app) and the video builder
+(visualizations.raster.render_video)."""
 
 from __future__ import annotations
 

@@ -44,7 +44,7 @@ netcdf = [
 multigpu = [
     "dask-cuda>=0.18.0",
 ]
-# Streamlit raster/video dashboard (visualizations/).
+# Streamlit raster/video dashboard (visualizations/raster/).
 viz = [
     "streamlit>=1.38",
     "matplotlib>=3.8",

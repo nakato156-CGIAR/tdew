@@ -16,7 +16,7 @@ predictions materialized). Add them as new tabs here once those inputs land.
 
 Usage
 -----
-streamlit run visualizations/app.py
+streamlit run visualizations/raster/app.py
 """
 
 from __future__ import annotations
@@ -26,14 +26,14 @@ from pathlib import Path
 
 # ``streamlit run`` puts this file's own directory on sys.path, not the repo
 # root, so the ``visualizations.*`` package imports below need a hand.
-sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 import pandas as pd
 import streamlit as st
 
-from visualizations.data_access import list_variables, list_years, load_climatology_day, load_day
-from visualizations.plotting import draw_raster
-from visualizations.render_video import build_year_video, render_path
+from visualizations.raster.data_access import list_variables, list_years, load_climatology_day, load_day
+from visualizations.raster.plotting import draw_raster
+from visualizations.raster.render_video import build_year_video, render_path
 
 st.set_page_config(page_title="TDEW — Vista raster", layout="wide")
 st.title("TDEW — Vista raster de la data (silver)")

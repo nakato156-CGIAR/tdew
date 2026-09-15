@@ -18,10 +18,10 @@ from pathlib import Path
 import imageio
 import numpy as np
 
-from visualizations.data_access import DEFAULT_SILVER_DIR, iter_year_days, year_value_range
-from visualizations.plotting import draw_raster
+from visualizations.raster.data_access import DEFAULT_SILVER_DIR, iter_year_days, year_value_range
+from visualizations.raster.plotting import draw_raster
 
-REPO_ROOT = Path(__file__).resolve().parents[1]
+REPO_ROOT = Path(__file__).resolve().parents[2]
 DEFAULT_RENDERS_DIR = REPO_ROOT / "Data" / "gold" / "renders"
 FPS = 12
 
