@@ -92,10 +92,14 @@ field for 2017–2020; and a characterisation of the conditions under which the 
 |:---|:---|:---|:---|
 | Dew-point temperature $T_d$ | PISCO v1.1 | 1981–2016 | Target |
 | Minimum temperature $T_{\min}$ | PISCO v1.2 | 1981–2020 | Predictor |
-| Grid | PISCO national grid | 2,818,404 cells | Domain |
+| Grid | PISCO national grid, 0.01° | 1,422 × 1,982 = 2,818,404 cells | Domain |
 | Climate zones | SENAMHI Thornthwaite classification | 41 zones | Unit of model selection |
 
 : Data used in this study. {#tbl-data}
+
+A *cell* throughout this paper is one pixel of that grid: a 0.01° square, roughly 1.1 km on a side,
+carrying one value per variable per day. The grid is a complete rectangle spanning
+81.40°W–67.19°W and 18.59°S–1.22°N.
 
 The gridded fields derive from land-surface temperature and elevation covariates by regression
 kriging within the PISCOeo_pm framework [@huerta2022]; $T_d$ is not derived from $T_{\min}$
@@ -215,6 +219,17 @@ $\mathcal{L}$ by more than a tolerance $\tau$. The search is repeated for each
 $h \in \{7, 11, 15, 21, 31, 45\}$ and the pair $(\mathcal{S}, h)$ maximising $\mathcal{L}$ is
 retained, giving $41 \times 366 = \text{15,006}$ selected models.
 
+The configuration in production use before this work serves as the reference throughout. It fixes
+the subset and the bandwidth globally, at
+
+$$
+\mathcal{S}_0 = \big\{\,1,\; T^{\min\prime},\; T^{d\prime}_{-1},\; T^{d\prime}_{-2},\;
+T^{\min\prime}_{-1}\,\big\}, \qquad h = 11,
+$$
+
+applied identically at every zone and day of year. We call it the fixed five-predictor
+configuration; it is a subset of $\mathcal{P}$, and the count includes the intercept.
+
 Selection uses a stratified sample of 66,534 cells (up to 2,000 per zone, over all 41 zones).
 Because the cosine sums are additive across cells, a sample suffices to choose $(\mathcal{S}, h)$;
 coefficients are subsequently fitted at every cell of the domain. This sample is used only to choose
@@ -266,11 +281,17 @@ Four methods are scored on the identical withheld block:
 4. **The selected model** of @sec-selection.
 
 We report root-mean-square error, mean absolute error, bias and correlation, and the skill score
-relative to climatology,
+relative to climatology. Bias is the mean of prediction minus observation, so a negative value means
+the reconstruction sits below the observed field. The skill score is
 
 $$
 \mathrm{SS} \;=\; 1 - \frac{\mathrm{RMSE}_{\text{model}}}{\mathrm{RMSE}_{\text{climatology}}} .
 $$
+
+This is a ratio of root-mean-square errors, not of mean-square errors; a skill score defined on
+the squared scale would give a larger number for the same forecast. It is also a different
+quantity from the cosine objective $\mathcal{L}$ of @sec-selection, which selection maximises
+in sample. The two are reported on different scales and are not comparable.
 
 Differences are summarised by effect size rather than significance alone: the paired per-cell
 difference in RMSE with 95% confidence intervals from a location-block bootstrap, the fraction of
@@ -312,13 +333,14 @@ $T_{\min} \rightarrow T_d$ relationship varies smoothly with day of year, so poo
 days buys sample size at little cost in bias. The preference is not uniform across the domain
 (@fig-selection b), and the between-zone variation proves consequential (@sec-results-tail).
 
-Cross-validated skill exceeds the fixed five-predictor configuration by $+0.015$ on average (median
-$+0.008$), with no gain for 16.8% of zone-days (@fig-selection d). These are in-sample quantities
-computed on the same objective that selection maximises; the out-of-sample assessment follows.
+The cross-validated cosine objective $\mathcal{L}$ exceeds that of the fixed five-predictor
+configuration by $+0.015$ on average (median $+0.008$), with no gain for 16.8% of zone-days
+(@fig-selection d). These are in-sample quantities computed on the same objective that selection
+maximises; the out-of-sample assessment follows.
 
 ![Selected models. (a) distribution of the day-of-year half-window $h$; (b) $h$ by climate zone and
-day of year; (c) fraction of models retaining each candidate predictor; (d) cross-validated skill
-gain over the fixed five-predictor configuration.](figures/F0_model_selection.png){#fig-selection}
+day of year; (c) fraction of models retaining each candidate predictor; (d) gain in the
+cross-validated cosine objective over the fixed five-predictor configuration.](figures/F0_model_selection.png){#fig-selection}
 
 ### Accuracy on withheld years {#sec-results-validation}
 
@@ -446,7 +468,7 @@ structure identifies their origin.
 
 They occur exclusively in one climate zone, the Thornthwaite class `A (r) A'` (perhumid, no water
 deficiency, megathermal) of the north-eastern lowlands, affecting 132,920 of that zone's
-909,708 cells. In time they are concentrated almost entirely in **November**: pooled over
+909,708 cells (@fig-tail-panel). In time they are concentrated almost entirely in **November**: pooled over
 2017–2020, 1.556% of November values exceed the threshold against 0.027% in October, and only 50
 exceedances occur in total between January and July (@fig-tail-month).
 
@@ -456,7 +478,7 @@ episodes, 40.6% of them isolated single days, with a mean run of 3.42 days. Prog
 of the kind reported for free-running autoregressive models [@gallusser2025] would produce
 lengthening runs and monotonic growth with lead time; neither is present.
 
-Nor is it a failure of average fit. In the affected zone, November cross-validated skill ($0.7317$)
+Nor is it a failure of average fit. In the affected zone, the November cosine objective ($0.7317$)
 is indistinguishable from December ($0.7333$) and January–July ($0.7324$), and higher than
 August–September ($0.7030$); in-sample $R^{2}$ behaves likewise. The failure affects the tail of the
 predictive distribution rather than its centre, consistent with annual means remaining stable to
@@ -468,7 +490,7 @@ narrowest band**: 47% of November days select $h \le 11$ against 23% in October,
 $h = 15$ in November against $31$ in both adjacent months. Selection responds to a rapidly changing
 time of year by shrinking the window, trading bias for variance. Since the quantity measured is an
 exceedance rate above a fixed threshold, variance rather than bias governs it: a modest increase in
-predictive spread, invisible in mean skill, moves the exceedance rate by a factor of 58. Confining
+predictive spread, invisible in mean accuracy, moves the exceedance rate by a factor of 58. Confining
 narrow windows to the transition band also confines the inflated variance there, which accounts for
 the concentration in a single month.
 
