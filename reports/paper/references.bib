@@ -1,13 +1,10 @@
 % VERIFICATION STATUS (2026-09-16). The claim this manuscript attributes to each reference
-% below was checked against the full text of the paper, not its abstract, for every entry
-% except the four noted. PDFs are under reports/paper/refs_pdf/ (gitignored).
+% below was checked against the FULL TEXT of the paper, not its abstract. All 15 are done;
+% the four Wiley/Elsevier titles were obtained through institutional access. PDFs are under
+% reports/paper/refs_pdf/ (gitignored).
 %
-% NOT YET VERIFIED against full text, paywalled at the time of checking:
-%   kimball1997   10.1016/S0168-1923(96)02366-0   Agric. For. Meteorol. (Elsevier)
-%   eccel2012     10.1002/met.258                 Meteorol. Appl. (Wiley)
-%   kilibarda2014 10.1002/2013JD020803            JGR Atmospheres (Wiley/AGU)
-%   hierro2025    10.1002/joc.70184               Int. J. Climatol. (Wiley)
-% Page numbers and volumes are still incomplete on several entries.
+% Remaining: page numbers and volumes are still incomplete on several entries, and
+% senamhi2021 was verified by the authors directly against the source document.
 
 @inproceedings{hwang2019,
   title     = {Improving Subseasonal Forecasting in the Western {U.S.} with Machine Learning},
@@ -52,7 +49,10 @@
   author  = {Kimball, J. S. and Running, S. W. and Nemani, R.},
   journal = {Agricultural and Forest Meteorology},
   year    = {1997},
-  note    = {Aridity-based correction to the Tmin dew-point proxy; corpusId 84499623}
+  note    = {Correction to the Tmin dew-point proxy driven by the ratio of annual
+               precipitation to annual potential evapotranspiration; 52 US and Alaska
+               stations; reduces error by up to 80% at arid and semi-arid sites.
+               Verified against full text 2026-09-16. corpusId 84499623}
 }
 
 @article{eccel2012,
@@ -60,7 +60,9 @@
   author  = {Eccel, E.},
   journal = {Meteorological Applications},
   year    = {2012},
-  note    = {Tmin dew-point bias corrected with temperature and precipitation; alpine station evaluation; corpusId 60878010}
+  note    = {Dew point from minimum temperature, corrected downward using temperature and
+               precipitation and requiring local calibration; evaluated at Italian alpine
+               stations. Verified against full text 2026-09-16. corpusId 60878010}
 }
 
 @article{forster2016,
@@ -126,7 +128,10 @@
   author  = {Kilibarda, M. and Hengl, T. and Heuvelink, G. and Gr{\"a}ler, Benedikt and Pebesma, E. and Per{\v c}ec Tadi{\'c}, Melita},
   journal = {Journal of Geophysical Research: Atmospheres},
   year    = {2014},
-  note    = {Spatio-temporal regression kriging of daily temperature, validated by spatial leave-one-out; corpusId 128411698}
+  note    = {Spatio-temporal regression kriging of daily temperature from about 9,000
+               stations with MODIS covariates, validated by leave-one-station-out and
+               aggregated to land blocks to offset station clustering. Verified against
+               full text 2026-09-16. corpusId 128411698}
 }
 
 @article{serranonotivoli2019,
@@ -153,7 +158,9 @@
   author  = {Hierro, R.},
   journal = {International Journal of Climatology},
   year    = {2025},
-  note    = {GPS radio occultation humidity profiles show vertical drying over deforested Amazonia; corpusId 283024444}
+  note    = {GPS radio occultation specific-humidity profiles, 2007--2023, show drying over
+               highly deforested Amazonia, strongest below 1.5 km and intensifying in the
+               dry season. Verified against full text 2026-09-16. corpusId 283024444}
 }
 
 @article{huang2024,

@@ -436,9 +436,11 @@ Widening the candidate grid to $h \in \{7, 11, 15, 21, 31, 45\}$ under the same 
 recovers $0.003$ of skill ($0.197 \rightarrow 0.200$); that configuration is the one reported
 throughout.
 
-**Corrected forms of the FAO-56 baseline.** Established practice applies an offset to
-$T_d = T_{\min}$ in arid and semi-arid regions [@kimball1997; @eccel2012; @huang2024]. That
-correction does not transfer to this domain (@tbl-fao). The gridded $T_d$ lies systematically
+**Corrected forms of the FAO-56 baseline.** Established practice corrects $T_d = T_{\min}$ in arid
+and semi-arid regions, by an aridity-dependent adjustment [@kimball1997], by a function of
+temperature and precipitation [@eccel2012], or by a fixed $-2$ °C offset [@huang2024]. We evaluate
+the offset, being the form that needs no additional inputs. It does not transfer to this domain
+(@tbl-fao). The gridded $T_d$ lies systematically
 *above* $T_{\min}$ here (bias $-2.13$ °C), which is the opposite of the regime the offset addresses,
 so subtracting 2 °C increases the error in every Thornthwaite moisture class, including the
 semi-arid and arid classes for which it was devised: RMSE rises from $2.634$ to $3.760$ °C in class
