@@ -121,9 +121,8 @@ coastal *lomas*, giving the 41 units we use. We select per mapped unit rather th
 so the count is 41 throughout; the 37 Thornthwaite symbols in our data match the official list
 exactly.
 
-A *cell* throughout this paper is one pixel of that grid: a 0.01° square, roughly 1.1 km on a side,
-carrying one value per variable per day. The grid is a complete rectangle spanning
-81.40°W–67.19°W and 18.59°S–1.22°N.
+The grid has a resolution of 0.01°, roughly 1.1 km, and is a complete rectangle of
+1,422 × 1,982 cells spanning 81.40°W–67.19°W and 18.59°S–1.22°N.
 
 The gridded fields are produced by regression kriging within the PISCOeo_pm framework
 [@huerta2022]. Dew point is interpolated from **182 stations** on covariates of mean land-surface
