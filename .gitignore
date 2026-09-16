@@ -82,6 +82,18 @@ datasets/
 *.tif
 *.tiff
 
+# NOTE: the "data/" rule above also matches "Data/" case-insensitively on
+# Windows checkouts, which silently hid the whole Data/ medallion tree (the
+# project's real data dir) from git, including any DVC ".dvc" pointer files.
+# Targeted un-ignore so DVC pointer files can be tracked while the actual
+# (large) data content stays out of git. Extend this chain if more paths
+# under Data/ need their .dvc pointers tracked.
+!/Data/
+/Data/*
+!/Data/silver/
+/Data/silver/*
+!/Data/silver/department_grid_ids.dvc
+
 # Dask artifacts
 dask-worker-space/
 presentations/

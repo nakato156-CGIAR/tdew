@@ -1,0 +1,55 @@
+# DVC pipeline for the existing bronze -> silver -> gold medallion scripts
+# under pipeline/ (see pipeline/__init__.py). Only stages for scripts that
+# already exist are declared here — no fictitious/placeholder stages.
+#
+# NOT included yet (deliberately): the Week-1 deep-learning experiment
+# pipeline (dataset build for Lima/Cusco/Selva, TCN/GRU/Transformer training)
+# planned in the Notion Timeline Planner. Those scripts don't exist yet; add
+# stages for them once implemented (see beads tdew-ztn, tdew-x46, tdew-2s6,
+# tdew-efi in `bd show <id>`).
+#
+# `Data/bronze` and `Data/silver` (excluding department_grid_ids/) are large
+# (~3GB / ~11GB) and are NOT yet `dvc add`-ed or cached — they are used here
+# only as plain on-disk deps/outs so `dvc dag`/`dvc status` can reason about
+# the pipeline shape without forcing a multi-GB hash/copy into local cache.
+# Run `dvc add` on them explicitly first if you want dvc to version them.
+stages:
+  bronze:
+    cmd: python -m pipeline.bronze
+    deps:
+      - pipeline/bronze.py
+      - Data/bronze/spatial_covariables.zip
+    outs:
+      - Data/bronze/_inventory.csv:
+          cache: false
+
+  silver:
+    cmd: python -m pipeline.silver
+    deps:
+      - pipeline/silver.py
+      - Data/bronze/_inventory.csv
+      - Data/bronze
+    outs:
+      - Data/silver/grid_index.parquet:
+          cache: false
+      - Data/silver/static_covariates.parquet:
+          cache: false
+      - Data/silver/lst_normals.parquet:
+          cache: false
+      - Data/silver/tmin:
+          cache: false
+      - Data/silver/tmax:
+          cache: false
+
+  gold:
+    cmd: python -m pipeline.gold
+    deps:
+      - pipeline/gold.py
+      - Data/silver/grid_index.parquet
+      - Data/silver/static_covariates.parquet
+      - Data/silver/lst_normals.parquet
+      - Data/silver/tmin
+      - Data/silver/tmax
+    outs:
+      - Data/gold/model_input:
+          cache: false
