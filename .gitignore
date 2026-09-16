@@ -79,3 +79,5 @@ datasets/
 # Dask artifacts
 dask-worker-space/
 presentations/
+reports/paper/refs_pdf/
+reports/paper/*.typ

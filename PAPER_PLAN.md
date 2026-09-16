@@ -43,9 +43,21 @@ climatology/Td≈Tmin baseline) **iff** the baselines and the temporal validatio
 | Zone shapefile (zip) | `/home/ppalacios/Downloads/clasif_clima_peru.zip` | 41 zones | SENAMHI Thornthwaite; 15,700 polygon parts |
 
 **Version-consistency decision (locked):** train and predict both use **v1.2 Tmin** (`--tmin-var tmin_v12`).
-`reports/results/compare_v11_v12.md` shows the Tmin sensitivity differs by version (coeff mean 0.45 vs 0.37)
-and switching versions injects ~0.3 °C bias, so a single Tmin source on both sides is required. State this
-in the paper.
+⚠️ **CORRECTED 2026-09-14 — the earlier justification here was wrong and was repeated into the paper.**
+What `reports/results/` actually shows:
+- **As predictors the two releases are near-equivalent.** `accuracy_v11_v12.md`: v1.1 RMSE 1.127 vs
+  v1.2 1.136, a difference of **0.009 °C (0.8%)**. Do NOT write "not interchangeable".
+- **The fitted models do differ:** `compare_v11_v12.md` Tmin sensitivity coeff mean 0.452 vs 0.370,
+  paired Pearson r = 0.685.
+- **The ~0.3 °C figure does NOT measure mixing.** `compare_datasets.py` is documented as running "the
+  pipeline **twice** into separate `--results` roots", so −0.2999 °C is the offset between two
+  *internally consistent* pipelines (each fitted AND predicted on its own release). The mixed
+  configuration (fit v1.1 → predict v1.2) **was never run**, so no mixing penalty has been measured.
+
+**Correct justification:** only v1.2 spans 2017–2020, so prediction must use it; we therefore also fit
+on v1.2 so coefficients match the release supplied at prediction time — a mismatch avoided *by
+construction*, not bounded by measurement. Since the releases are of comparable accuracy this costs
+nothing.
 
 ---
 
@@ -136,7 +148,10 @@ stability; not the primary holdout.
       bucket path (14× faster), kept in sync by `tests/test_forecast_zoned.py` (parity Δ<1e-9, independent
       hand-recursion, autoregressive-feed). No manifest needed at forecast time — the coeffs already encode
       each cell's retained features. Verified on real bucket-0 data (parity Δ=2.5e-14; day-1 math Δ=0).
-- [ ] **Prep 2017–2020 v1.2 Tmin inputs — this is a REGRID, not a copy.** ⚠️ The raw v1.2 Tmin at
+- [x] **Prep 2017–2020 v1.2 Tmin inputs — this is a REGRID, not a copy.** DONE 2026-07-22 (§12): extracted to
+      the full 2.8M grid (`nc_to_point_parquet --var tmin_v12 --no-peru-potato --year-range 2017,2020`, grid_index
+      md5-identical to td) → `shard_future_tmin_by_bucket` into `$RES/future_tmin_by_bucket/` (8192×4). Seam
+      Jan2017−Dec2016 = +0.028 °C (no grid mismatch). ⚠️ The raw v1.2 Tmin at
       `/media/ppalacios/Data1/henry_simcast_peru/tmin_v12/Outputs` is on a **302,449-ID grid** (max ID
       302448); the full product/coeffs use the **2,818,404-ID** grid. Feeding the raw file directly to the
       forecast mismatches the ID space (verified: produced a spurious −8.7 °C 2016→2017 seam jump; with the
@@ -144,9 +159,15 @@ stability; not the primary holdout.
       `$FULL/tmin_v12/Outputs` but only covers **1981–2016** (432 files). B2 must run the same regrid/prep
       that built those, extended to 2017–2020, then bucketise into `future_tmin_root/id_bucket=XXXX/`
       (`[ID, FECHA, TMIN]`). Find the regrid step in `$FULL/extract_tmin.log` / the prep pipeline.
-- [ ] **Run the full-grid fill** for 2017–2020 using the coeffs trained on all 1981–2016 → the extended Td
-      product. Save under `$RES/tuning/predictions_2017_2020/` (persistent disk, never /tmp).
-- [ ] Sanity/QC the filled product (ranges, seasonal cycle continuity across the 2016→2017 seam, maps).
+- [x] **Run the full-grid fill** for 2017–2020 using the coeffs trained on all 1981–2016 → the extended Td
+      product. DONE 2026-07-22 — `HPC_code_tunning/fill_zoned.py` (new parallel CLI over
+      `forecast_bucket_zoned_from_disk`), 8192 buckets / **3.18 B rows**, ~20 min at 14 workers.
+      Saved under `$RES/tuning/predictions_2017_2020/id_bucket=*/pred.parquet`.
+- [x] Sanity/QC the filled product (ranges, seasonal cycle continuity across the 2016→2017 seam, maps).
+      DONE 2026-07-22 — 0 NaN; mean 19.39 °C; annual means 19.30–19.51 (no drift); seam Dec2016 obs 20.23 →
+      Jan2017 pred 19.89 (continuous); no cold outliers. ⚠️ **Warm tail: max 41.2 °C, >35 °C = 0.13%
+      (4.2 M cells), >32 °C = 1.0% — physically implausible dew points; needs an SME decision (document vs
+      clip vs investigate offending zones/doys).** Maps not yet rendered.
 
 ---
 
@@ -157,12 +178,14 @@ stability; not the primary holdout.
        (train-only climatology, streamed per-zone OLS sufficient stats).
 - [x] A2. Build the **forward-backtest harness**: train-years vs holdout split, **autoregressive** holdout
        prediction on a sample. DONE — `HPC_code_tunning/backtest.py` (refit coeffs via GPU `train_bucket_zoned`
-       → `forecast_zoned`; bucket-subset sample = nationwide lattice, all 41 zones; train-only clim per split).
+       → `forecast_zoned`; bucket-subset sample = nationwide lattice; train-only clim per split).
+       ⚠️ The scored sample does NOT reach all 41 zones — see the 2026-09-14 entry.
 - [x] A3. Build the **effect-size + bootstrap + null-test** reporting module. DONE —
        `HPC_code_tunning/effect_sizes.py` (ΔRMSE + location-block bootstrap CIs, per-cell win rate, Cohen's d,
        sign-flip permutation null, plots + lead-time curve).
 - [x] A4. Run backtest **variant (a) refit-only** for tuned + all baselines. DONE 2026-07-16 — 64 buckets
-       (17,041 cells, all zones). Results: `$RES/tuning/backtest/{ll1,ll2,ll4}/` + `reports/results/phase_a_backtest.md`.
+       (17,041 cells, 38 of 41 zones — NOT "all zones" as originally logged). Results:
+       `$RES/tuning/backtest/{ll1,ll2,ll4}/` + `reports/results/phase_a_backtest.md`.
        **Tuned decisively beats climatology / Td=Tmin / zone OLS** (see §12). ✅ clears the gate for B0.
 - [x] A5. Run backtest **variant (b) full re-select** on train-years; compare to (a) → selection-bias estimate.
        DONE 2026-07-17 — `HPC_code_tunning/select_backtest.py` (train-only frames + train-only clim, no leak;
@@ -171,15 +194,23 @@ stability; not the primary holdout.
        Results: `$RES/tuning/backtest_reselect/`. **Method confirmed robust → B0 justified.**
 
 **Phase B — Production deliverable**
-- [ ] B0. **Re-select + re-train the full grid with the extended h-grid** `{7,11,15,21,31,45}` (§9), replacing
-       the stale manifest/coeffs (§3). Do this once Phase A confirms tuning is worth it. ~25 h select + ~6 h train.
+- [x] B0. **Re-select + re-train the full grid with the extended h-grid** `{7,11,15,21,31,45}` (§9), replacing
+       the stale manifest/coeffs (§3). DONE 2026-07-22 05:03 (see §12): manifest.parquet=15,006 recipes,
+       zoned_coeffs=8192 buckets / 8.13 B rows, 0 NaN. h=45 modal (43.1%), uplift vs fixed-5 mean +0.0153
+       (16.8% ≤0). **These are now the production manifest+coeffs for the 2017–2020 fill.** ~39.5 h total.
 - [x] B1. Implement **P6 autoregressive forecast** for tuned recipes (§6). DONE 2026-07-16 —
        `HPC_code_tunning/forecast_zoned.py` + `tests/test_forecast_zoned.py` (3 passing). *(unblocks A2)*
-- [ ] B2. Prep 2017–2020 v1.2 Tmin future inputs — **REGRID** raw 302k-ID Tmin → full 2.8M grid (see §6).
-- [ ] B3. Full-grid fill 2017–2020; QC.
+- [x] B2. Prep 2017–2020 v1.2 Tmin future inputs — **REGRID** raw 302k-ID Tmin → full 2.8M grid (see §6).
+       DONE 2026-07-22: `$RES/future_tmin_by_bucket/` (8192 buckets × 4 yr, `[ID,FECHA,TMIN]`), seam +0.028 °C.
+- [x] B3. Full-grid fill 2017–2020; QC. DONE 2026-07-22 — `fill_zoned.py` parallel CLI; 8192 buckets/3.18 B
+       rows; QC passed (seam continuous, no drift) with a warm-tail caveat (>35 °C 0.13%, max 41.2 °C → SME).
 
 **Phase C — Write-up**
-- [ ] C1. Draft Quarto/Typst paper: method, data, temporal validation, effect sizes, filled product.
+- [x] C1. Draft Quarto/Typst paper: method, data, temporal validation, effect sizes, filled product.
+       **FIRST DRAFT DONE 2026-07-22** — `reports/paper/paper.qmd` (+ `references.bib`, `figures/`).
+       Renders clean with Quarto 1.9.36 (all 7 figure refs, 3 citations, all cross-refs resolve).
+       Open items marked inline **[SME]** / **[TODO]**: warm-tail disposition, seam regional pattern,
+       station-level validation, bib author lists to verify, gitignored `reports/results/`, DOI deposit.
 - [ ] C2. **AI-use disclosure** + **SME sign-off** (CIP org policy).
 
 ---
@@ -257,7 +288,7 @@ be mindful of bias; **disclose AI use** in the paper.
   B2 (backtest Tmin for 2013–2016 is already in the prepared shards). Methodological choice for A2: train-only
   climatology (1981–2012) to avoid holdout leakage.
 - 2026-07-16 — **Phase A A1–A4 DONE.** `backtest.py` + `effect_sizes.py`; refit-only autoregressive backtest,
-  64-bucket nationwide sample (17,041 cells, all 41 zones), train-only climatology. Headline effect sizes
+  64-bucket nationwide sample (17,041 cells, 38 of 41 zones), train-only climatology. Headline effect sizes
   (paired, location-block bootstrap 95% CI; sign-flip perm null 5000):
 
   | split (train→predict) | RMSE tuned | RMSE clim | ΔRMSE vs clim [CI] | skill | cells win | Cohen d | p |
@@ -271,6 +302,10 @@ be mindful of bias; **disclose AI use** in the paper.
   worth the full run (B0 gate cleared).** Caveat: variant (a) — recipe *selection* used the 1981–2016 manifest
   (saw holdout); A5 (re-select on train-years) will bound that residual optimism. Report:
   `reports/results/phase_a_backtest.md`.
+
+  > ⚠️ **SUPERSEDED AS THE PAPER HEADLINE (2026-09-14).** These are variant (a) numbers: selection saw the
+  > holdout. They remain valid as the *leaky* arm of the selection-optimism experiment, but the manuscript
+  > now reports the leak-free run (`$RES/tuning/backtest_clean/`) throughout. See the 2026-09-14 entry.
 - 2026-07-17 — **A5 DONE (selection-bias check).** Honest train-only re-select (`select_backtest.py`): ll4
   tuned skill vs clim (a) 0.2057 → (b) 0.1969 → **selection bias 0.0088 (~+0.013 °C, ~4% of uplift) —
   negligible.** Tuning improvement over climatology is real & robust. **Phase A fully complete (A1–A5).**
@@ -290,3 +325,171 @@ be mindful of bias; **disclose AI use** in the paper.
   (6 h-values ≈ 1.5× the old 4-value ~25 h). GPU healthy at launch (100% util, 10.3/12.3 GB). Progress:
   select-done = manifest.parquet mtime updates + log "SELECT done"; train has no per-bucket log (watch coeffs
   mtimes). **After B0: B2 (regrid 2017–2020 Tmin, see §6) → B3 (full-grid fill) → Phase C.**
+- 2026-07-17 20:23 — **B0 DIED (OOM-kill), ~12% into select.** `systemd-oomd` SIGKILL'd the whole
+  `user@1000.service` slice (gnome-shell + a B0 python worker) at **PSI memory pressure 77% > 50% limit** —
+  NOT a code bug, NOT a reboot (box up 10 d), NOT GPU. Root cause: parquet-heavy select churned page cache +
+  the tiny 2 GiB swap (near-full) -> reclaim thrash -> oomd's aggressive user-slice 50% PSI limit fired.
+  Only zones 0–4 of 41 logged; select writes the manifest only at the end, so **no durable output**:
+  `manifest.parquet` still the old {7,11,15,21} (Jul 14), coeffs still stale -> full restart needed.
+  Dead log preserved: `$RES/tuning/b0_run_died_20260717.log`.
+- 2026-07-20 — **B0 RELAUNCHED (oomd-safe).** Now a memory-capped **transient user service** (no root; outputs
+  stay user-owned): `systemd-run --user --unit=b0 --collect -p MemoryHigh=56G -p MemoryMax=72G
+  -p MemorySwapMax=0 -p ManagedOOMMemoryPressure=auto bash b0_run.sh` (same script: select then
+  train --overwrite, extended h-grid, 1981–2016 v1.2). `MemorySwapMax=0` + caps stop B0 from driving the slice
+  PSI to the oomd cutoff; `sudo loginctl enable-linger ppalacios` decouples it from the graphical session
+  (survives logout/session-death); claude-desktop added to `~/.config/autostart` (auto-reopen). Started
+  10:05:43, active, 66,534 IDs sampled. Monitor: `journalctl --user -u b0` / `tail -f $RES/tuning/b0_run.log`
+  / `systemctl --user status b0`. **Runtime revised up: select alone ~53 h (zones 0–4 ran ~1.3 h each) + ~6 h
+  train ≈ ~2.5 days.** After B0: B2 -> B3 -> Phase C.
+- 2026-07-20 12:27 — **B0 DIED AGAIN (oomd), 1 zone done.** The memory-capped user service did NOT survive:
+  `systemd-oomd` killed `b0.service` at slice PSI 76.93% > 50% — trigger is the PARENT `user@1000.service`
+  aggregate PSI (job + whole desktop), not the job's RAM (~110 GiB free). `MemoryHigh=56G` BACKFIRED: reclaim at
+  the cap IS pressure -> spiked PSI -> made b0 the kill target. **Per-job caps cannot fix an oomd PSI kill.**
+  Dead log: `$RES/tuning/b0_run_died2_20260720_1227.log`. See [[oomd-safe-long-runs]] (corrected).
+- 2026-07-20 13:37 — **B0 RELAUNCHED with the REAL fix.** `sudo systemctl set-property user@1000.service
+  ManagedOOMMemoryPressure=auto` (disables the user-slice PSI-kill rule; kernel OOM killer remains as
+  true-exhaustion backstop). Relaunched: `systemd-run --user --unit=b0 --collect -p MemoryMax=100G
+  -p MemorySwapMax=0 bash b0_run.sh` — hard ceiling + no swap, **NO MemoryHigh** (removed; it caused the
+  reclaim-storm). Active/running from zone 0. This is the durable config for B0 and later B3.
+- 2026-07-22 05:03 — **B0 DONE** (ran clean under the oomd fix, ~39.5 h, no kill). SELECT: all 41 zones →
+  `manifest.parquet` (15,006 recipes, 22:18 Jul 21). TRAIN: `zoned_coeffs/` 8192 buckets / 8,127,391,537 tidy
+  rows (05:03 Jul 22). **Sanity check PASSED:** 41 zones × doy 1–366; h-dist uses all 6 values, **h=45 modal
+  43.1%** (7:14/11:9/15:9/21:11/31:13); n_features=11 kept 70.7% (light pruning, const always kept); feature
+  retention 91–98%; uplift vs fixed-5 mean **+0.0153** / median +0.0084 / **16.8% ≤0** (better than old
+  manifest's 22.5%); coeffs 8192/8192, schema `[ID,zone_id,doy,feature_name,coeff,r_squared_anom,h]`, **0 NaN**,
+  all 6 h present. Old manifest still backed up at `manifest_oldhgrid_backup.parquet`. **manifest.parquet +
+  zoned_coeffs/ are now the PRODUCTION artifacts for the 2017–2020 fill.** Next (user-gated): B2 (regrid
+  2017–2020 v1.2 Tmin to the 2.8M grid, §6) → B3 (full-grid fill) → QC → Phase C.
+- 2026-07-22 — **B2 DONE (future-Tmin regrid + bucketize).** No new code needed — used existing tools.
+  B2.1 `nc_to_point_parquet.py --var tmin_v12 --nc-dir …/_raw/tmin_v12 --base $FULL --no-peru-potato
+  --year-range 2017,2020` (detached `b2extract.service`, ~14 min) → 48 monthly files into `$FULL/tmin_v12/Outputs`
+  on the **full 2,818,404-cell grid** (grid_index md5-identical to td → IDs align with B0 coeffs; raw .nc covers
+  1981–2020). B2.2 `shard_future_tmin_by_bucket(prediction_years=(2017,2020), base=$FULL,
+  out=$RES/future_tmin_by_bucket, future_tmin_var=tmin_v12, num_buckets=8192)` (detached `b2bucket.service`, ~1 h)
+  → 8192 buckets × 4 yr = 32,768 files `[ID,FECHA,TMIN]`. **Verified:** horizon 2017–2020, TMIN −17.7…29.7 °C,
+  NaN=ocean cells; **seam Jan2017−Dec2016 mean Δ +0.028 °C / median −0.10 / |Δ|>5°C 0.00% → NO grid mismatch.**
+  All B3 inputs now present: coeffs (B0), climatology_by_bucket, bucketed_training_data (2016 seed),
+  future_tmin_by_bucket (B2). **Next (user-gated): B3 — build the fill CLI around
+  `forecast_zoned.run_bucketed_zoned_forecast` (history_end_year=2016, prediction_years=(2017,2020)).**
+- 2026-07-22 — **B3 DONE (full-grid fill + QC).** Built `HPC_code_tunning/fill_zoned.py` — a parallel CLI that
+  fans `forecast_bucket_zoned_from_disk` across buckets with a ProcessPoolExecutor (numerical recursion reused
+  untouched; parallelism only at the independent per-bucket boundary). Feed-forward fast path for TD-lag-free
+  zones NOT implemented (deferred — bucket-level parallelism already made it ~20 min). Smoke (8 buckets) →
+  full run (8192 buckets, 14 workers, ~20 min, `b3fill.service`, oomd-safe): **3,183,266,247 predicted rows**,
+  0 errors → `$RES/tuning/predictions_2017_2020/id_bucket=*/pred.parquet` (`[FECHA,ID,TD_predicted]`).
+  **QC (national scan, all 3.18 B rows):** 0 NaN; min −13.29 / mean 19.39 / max 41.16 °C; annual means
+  19.36/19.30/19.41/19.51 (no drift); seam Dec2016 obs 20.23 → Jan2017 pred 19.89 (continuous, seasonal cycle
+  flows across); no cold outliers (<−15 °C = 0%). ⚠️ **WARM TAIL: >30 °C 3.18%, >32 °C 1.02%, >35 °C 0.13%
+  (4.2 M cells), max 41.16 °C — physically implausible dew points (records ~35 °C). Needs SME decision:
+  document as caveat / clip to a physical ceiling / investigate offending zones×doy recipes.** Maps not yet
+  rendered. `fill_zoned.py` is UNCOMMITTED on branch claude/tdew-gap-fill-resume-7391e5. **Next: Phase C
+  (paper draft in reports/paper/) + the warm-tail decision + AI-use disclosure & SME sign-off (CIP).**
+- 2026-07-22 — **Paper figures started → `reports/paper/figures/`.** Reused existing Phase-A/select plots
+  (S1 manifest_overview, S2 rmse_ladder/lead_time/delta_rmse/bias). Generated 4 new from the product
+  (`scratchpad/make_paper_figs.py`, parallel scan): F1 national monthly-mean Td 2010–2020 obs→pred (seam
+  **seamless** — matching amplitude/phase, no level shift), F2 mean-Td map 2017–2020 (Amazon ~25 °C, Andes
+  spine, coast — geographically correct), F3 seam-diff map (SUPERSEDED — see correction below), F4 warm-tail
+  panel.
+  **Warm-tail DIAGNOSED: the >35 °C cells (n≈133k with ≥1 such day) cluster entirely in the NE Amazon lowlands
+  (Loreto) and spike only in the late dry season (~Aug–Oct) each year — a localized, physically interpretable
+  regional behavior, not random noise.** → SME decision is narrowly scoped (regional caveat / targeted clip).
+- 2026-07-22 — **CORRECTION + rigorous seam test (F3 replaced).** The original F3 (Jan2017 pred − Dec2016 obs)
+  compared **two different months**, so it was dominated by the real Dec→Jan seasonal cycle — a WEAK artifact
+  test, and the earlier "≈0 everywhere" note here was overstated. Renamed to
+  `S3_seasonal_change_dec_to_jan.png` (still a valid picture of seasonal change). New
+  **`F3_seam_artifact_test.png`** uses equal-length FULL-YEAR windows (seasonality cancels) plus a
+  natural-variability control: **A = obs2013–16 − obs2009–12** (both observed, no model) vs
+  **B = pred2017–20 − obs2013–16** (the seam), same colour scale, + overlaid distributions.
+  **Result (2,178,827 cells, annual-mean Td): A mean +0.101 sd 0.125; B mean −0.041 sd 0.176; NEITHER has a
+  single cell |Δ|>1 °C.** B's spread is only ~1.4× A's and B's mean is closer to zero → **the filled years
+  differ from the observed record no more than the observed record differs from itself ⇒ no seam artifact.**
+  B is spatially smooth/coherent (no blockiness or speckle). ⚠️ For the paper, state honestly: B's spatial
+  *pattern* (warm S-Andes, cool N-Amazon) is a coherent regional signal that this figure alone cannot separate
+  from regional model bias (no observed Td after 2016) — **bound it with the Phase-A backtest** (bias ≈ −0.05 °C,
+  RMSE 1.22). The faint circular features appear in panel A (observed-only) too → they are PISCO
+  regression-kriging station artifacts, NOT introduced by our fill. Cache: `tuning/seam_windows_cache.parquet`.
+- 2026-07-22 — **PHASE C STARTED: first full paper draft.** `reports/paper/paper.qmd` (Quarto, ~20 KB) +
+  `references.bib` + `figures/` (9 PNGs). Sections: abstract, intro, data, methods (anomaly formulation,
+  per-zone×doy selection, training, AR forecast, implementation), validation design, results
+  (selection / temporal validation / product / seam), limitations, data-&-code availability, **AI-use
+  disclosure**, **SME sign-off table**. All numbers read directly from recorded run outputs
+  (`metrics_all.csv`, `effect_sizes_all.csv`, QC + seam logs) — none from memory. Renders clean
+  (`quarto render`, v1.9.36): 7 figure refs, 3 citations, all cross-refs resolve; self-contained HTML
+  (figures embedded) at `reports/paper/paper.html`. **Open items flagged inline [SME]/[TODO]:** warm-tail
+  disposition; seam regional pattern vs regional bias; no station-level validation; **references.bib author
+  lists drafted from recollection → MUST verify**; `reports/results/` is gitignored (.gitignore:64) so the
+  Phase-A writeup is untracked; figure scripts still in scratchpad; product/code DOI deposit.
+  **Still uncommitted on this branch: `fill_zoned.py`, `reports/paper/`.**
+
+- 2026-09-14 — **LEAK-FREE BACKTEST (all three splits) — the manuscript's reported numbers.** Ran the
+  README Step-2 recipe end to end for ll1/ll2/ll4 into `$RES/tuning/backtest_clean/`: `select_backtest`
+  (train-only frames + train-only climatology, 16 buckets, per_zone_n=200, h-grid 7,11,15,21,31,45) →
+  `backtest` (64 buckets, the train-only manifest) → `effect_sizes` (1000 boot / 5000 perm). Script:
+  `$RES/tuning/backtest_clean_run.sh`. **ll4 reproduces `backtest_hgrid_ext` bit for bit**
+  (RMSE 1.2279270170806023, skill 0.2001349255519036) — an independent reproducibility check — and extends
+  the protocol to ll1/ll2, which previously existed only in the leaky variant.
+
+  | split (train→predict) | RMSE tuned | RMSE clim | ΔRMSE vs clim [CI] | skill | cells win | Cohen d | p |
+  |---|---|---|---|---|---|---|---|
+  | ll1 (1981–2015→2016) | 1.254 | 1.680 | +0.427 [0.425,0.428] | 0.254 | 100.0% | 4.19 | 2e-4 |
+  | ll2 (1981–2014→2015–16) | 1.276 | 1.667 | +0.390 [0.389,0.392] | 0.234 | 99.98% | 3.04 | 2e-4 |
+  | **ll4 (1981–2012→2013–16)** | **1.228** | **1.535** | **+0.307 [0.306,0.309]** | **0.200** | **99.99%** | **2.93** | **2e-4** |
+
+  n = 24,876,447 scored cell-days, 17,027 cells **in 33 of the 41 zones** (see zone-coverage note below).
+  bias −0.033 °C, r 0.990. vs Td=Tmin +2.323 [2.300,2.345];
+  vs zone OLS +1.101 [1.082,1.118]. Monthly bias: December +0.017 °C, max |bias| 0.402 °C (January).
+
+  **Selection-optimism, now a controlled 3-way comparison** (`backtest/hgrid_check.log`), all ll4 skill:
+  (a) selection on 1981–2016, h∈{7,11,15,21} = **0.2057**; (b) selection train-only, same grid = **0.1969**;
+  (c) selection train-only, h∈{7,11,15,21,31,45} = **0.2001**. (a)−(b) = **0.0088 skill / 0.013 °C RMSE**
+  is the leakage inflation at fixed candidate set; (c)−(b) = +0.003 is what widening the grid recovers.
+  The paper reports (c) and cites (a)−(b) as the bound. Note ll4 skill *falls* 0.206→0.200 versus the old
+  headline (leakage removed), while ll1 *rises* 0.249→0.254 (the wider h-grid more than compensates).
+
+  **Paper synced:** all headline numbers, both effect tables, the FAO-56 table (re-scored on the clean
+  predictions — conclusion unchanged: the −2 °C arid offset degrades every moisture class; best single
+  offset +2.25 °C → RMSE 2.847), n and cell counts, the monthly-bias sentence, and the Methods framing
+  (train-only is now the default protocol, not "a repeat"). Figures regenerated from the clean run:
+  `S2_lead_time_curve`, `S2_rmse_ladder_ll4`, `S2_bias_by_month_ll4`, `S2_delta_rmse_hist_ll4`.
+  ⚠️ `backtest_clean/metrics_all.csv` was written once per split by `backtest.py`, so each invocation
+  overwrote it and only ll4 survived; rebuilt by concatenating the three per-split `metrics.csv` before
+  regenerating the lead-time curve. `fao56_corrected_baseline.py` now takes `BACKTEST_ROOT` from the
+  environment (default `backtest_clean`) instead of hard-coding the leaky root.
+  Renders clean via Typst: 22 pages, 0 unresolved cross-refs, 0 orphan citations.
+
+- 2026-09-14 — **⚠️ ZONE-COVERAGE ERROR FOUND AND FIXED (user-caught).** The paper stated "17,027 cells
+  distributed across all 41 zones". False. Verified from the prediction files:
+
+  | run | cells | zones scored |
+  |---|---|---|
+  | `backtest/` (leaky) | 17,041 | **38** of 41 |
+  | `backtest_clean/` (reported) | 17,027 | **33** of 41 |
+
+  Cause: a zone is scored only if it appears in **both** the selection manifest and the 64-bucket scoring
+  sample. The train-only manifest is built from 16 buckets at per_zone_n=200 → 34 zones (12,444 recipes);
+  the scoring sample holds 38; the intersection is 33. Production selection is unaffected — B0 used
+  66,534 cells at per_zone_n=2000 → all 41 zones, 15,006 recipes — so the **released field covers all 41
+  zones; only the validation does not**.
+
+  ⚠️ CORRECTED same day: the first version of this entry said the zone filter explained the sample size.
+  It does not. Full arithmetic, verified against the files: 64/8,192 buckets → **22,024** cells; minus
+  **14** with no recipe (zone absent from the train-only manifest) → 22,010; minus **4,983** with *no
+  observed Td at all* in 2013–2016 → **17,027**. The dominant filter is Td availability, not zones
+  (`backtest.py:239` `dropna(subset=["TD_obs"])`). Dropped cells have 0 of 1,461 observed days, scored
+  cells have 1,461/1,461 — strictly binary. And 17,027/22,024 = 0.77311 matches
+  2,178,827/2,818,404 = 0.77307: the gridded Td product covers 77.3% of the Tmin grid, and the backtest
+  sample reproduces that ratio. Product cell count 2,178,827 re-verified by full scan of all 8,192 buckets.
+  Denominator also corrected: the share must be taken against the **released field** (2,178,827), not
+  zone_table (2,818,404).
+
+  Unvalidated zones = 2,855 of 2,178,827 released cells = **0.13%** (all 2,855 ARE in the product):
+  37 Glaciar (1,139), 25 C(o,i)E' (488),
+  21 C(i)E' (348), 24 C(o,i)D' (266), 16 C(i,p)B' (256), 38 Lago Junín (228), 15 C(i,p)A' (76), 7 B(i)E' (54).
+  The two largest are glacier and lake surfaces, whose Tmin→Td relationship need not resemble the land zones'.
+
+  Paper fixed: @sec-validation now gives the full 22,024 → 17,027 arithmetic, names Td coverage as the
+  reason, and states 33 of 41 zones; a **Validation coverage** limitation was added; and the two cell samples are now
+  distinguished explicitly (66,534 = selection, 41 zones, per_zone_n=2000; 17,027 = scoring, independent
+  sample, 64 of 8,192 partitions) because conflating them is what made the numbers unreadable.
+  Lesson: "all zones" was carried forward from the A4 log without ever being checked against the outputs.
+

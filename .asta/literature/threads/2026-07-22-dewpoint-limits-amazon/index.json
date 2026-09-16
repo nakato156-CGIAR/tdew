@@ -1,0 +1,18 @@
+{
+  "thread_id": "aed3e7d1-fcc3-4cf5-a4bb-a5ebef6130b6",
+  "created_at": "2026-09-04T23:04:34.170978+00:00",
+  "updated_at": "2026-09-04T23:04:34.171044+00:00",
+  "turns": [
+    {
+      "turn": 1,
+      "ts": "2026-09-04T23:04:34.170999+00:00",
+      "file": "dewpoint-limits-amazon.001.json",
+      "summary": {
+        "query": "Physical upper limits on dew point temperature and near surface humidity in the humid tropics, wet bulb temperature limits, late dry season Amazon humidity and drought and land atmosphere coupling, and unphysical or oversaturated humidity values produced by statistical humidity estimation models in tropical lowlands.",
+        "mode": "infer",
+        "narrative": "The search identified a strong set of papers addressing your topics:\n\n1. **Physical and physiological upper limits on dew point and near-surface humidity in the humid tropics**: Multiple recent and foundational studies directly address wet bulb temperature limits and the physical/physiological constraints on humidity, including both meteorological and human survivability perspectives.\n2. **Wet bulb temperature limits**: Several papers provide methods for estimating or constraining wet bulb temperatures, with a focus on both physiological thresholds and meteorological modeling.\n3. **Late dry season Amazon humidity, drought, and land-atmosphere coupling**: Relevant studies are present in the results, though the top-ranked papers are more focused on wet bulb and physiological limits. Amazon-specific and land-atmosphere coupling topics are covered in the broader set.\n4. **Unphysical or oversaturated humidity values from statistical estimation models in tropical lowlands**: Papers addressing statistical/modeling artifacts are included in the broader results, though not as prominent in the top 10.\n\n**Confidence: High** \u2014 The search returned recent and foundational work on all requested subtopics. If you need a more focused set on Amazon land-atmosphere coupling or on statistical/modeling artifacts, specify and I can refine the search further.",
+        "paper_count": 161
+      }
+    }
+  ]
+}

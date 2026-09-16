@@ -1,0 +1,36 @@
+CITED	kimball1997	1997	CLOSED	10.1016/S0168-1923(96)02366-0	An improved method for estimating surface humidity from daily minimum temperature
+CITED	eccel2012	2012	BRONZE	10.1002/met.258	Estimating air humidity from temperature and precipitation measures for modelling applications
+CITED	forster2016	2016	GOLD	10.5194/GMD-9-2315-2016	An open-source MEteoroLOgical observation time series DISaggregation Tool (MELODIST v0.1.1)
+CITED	althoff2022	2022	GOLD	10.1590/1678-992X-2021-0229	Improvement of reference crop evapotranspiration estimates using limited data for the Brazilian Cerrado
+CITED	chabotcouture2014	2014	GOLD	10.1371/journal.pone.0094741	An Environmental Data Set for Vector-Borne Disease Modeling and Epidemiology
+CITED	he2020	2020	GOLD	10.1609/aaai.v35i1.16090	Sub-Seasonal Climate Forecasting via Machine Learning: Challenges, Analysis, and Advances
+CITED	wang2021	2021	GOLD	10.3389/feart.2021.659310	Improving the Accuracy of Subseasonal Forecasting of China Precipitation With a Machine Learning Approach
+CITED	gallusser2025	2025	CLOSED	10.48550/arXiv.2505.02506	Exploring Design Choices for Autoregressive Deep Learning Climate Models
+CITED	kilibarda2014	2014	HYBRID	10.1002/2013JD020803	Spatio‐temporal interpolation of daily temperatures for global land areas at 1 km resolution
+CITED	serranonotivoli2019	2019	GOLD	10.5194/ESSD-11-1171-2019	STEAD: a high-resolution daily gridded temperature dataset for Spain
+CITED	mu2025	2025	GOLD	10.1088/2515-7620/ae0c5b	Increasing dry-season vapor pressure deficit in the Amazon Basin: historical trends, future projections, and links to deforestation
+CITED	hierro2025	2025	HYBRID	10.1002/joc.70184	Observational Evidence of Vertical Drying Over Deforested Amazonia From GPS‐RO Data
+CITED	huang2024	2024	GOLD	10.5194/essd-16-3993-2024	Satellite-based near-real-time global daily terrestrial evapotranspiration estimates
+CITED	wright2017	2017	GREEN	10.1073/pnas.1621516114	Rainforest-initiated wet season onset over the southern Amazon
+CITED	li2004	2004	BRONZE	10.1175/1520-0442(2004)017<2637:TOTLAA>2.0.CO;2	Transition of the Large-Scale Atmospheric and Land Surface Conditions from the Dry to the Wet Season over Amazonia as Diagnosed by the ECMWF Re-Analysis
+CITED	fu2004	2004	GREEN	10.1007/S00704-004-0046-7	The influence of the land surface on the transition from dry to wet season in Amazonia
+CITED	yin2014	2014	BRONZE	10.1002/2013JD021349	What controls the interannual variation of the wet season onsets over the Amazon?
+CITED	marengo2017	2017	GOLD	10.5194/ACP-17-7671-2017	Meteorological context of the onset and end of the rainy season in Central Amazonia during the GoAmazon2014/5
+CITED	zhang2016	2016	GOLD	10.1214/16-EJS1127	Testing for jumps in the presence of smooth changes in trends of nonstationary time series
+CITED	hwang2019	2018	GOLD	10.1145/3292500.3330674	Improving Subseasonal Forecasting in the Western U.S. with Machine Learning
+SEEDED	-	2008	BRONZE	10.1175/2007JCLI1600.1	The Drought of Amazonia in 2005
+SEEDED	-	2018	GOLD	10.3389/feart.2018.00227	Droughts Over Amazonia in 2005, 2010, and 2015: A Cloud Cover Perspective
+SEEDED	-	2010	GOLD	10.5194/HESS-14-1595-2010	The ability of a GCM-forced hydrological model to reproduce global discharge variability
+SEEDED	-	2015	CLOSED	10.1002/joc.4420	Extreme seasonal droughts and floods in Amazonia: causes, trends and impacts
+SEEDED	-	2018	GOLD	10.12691/ajwr-6-6-2	Impact of Alternative Data on the Penman-Monteith Method Considering Windy Conditions in the Semi-Arid Area
+SEEDED	-	2019	GOLD	10.1088/1748-9326/ab2a26	The relationship of atmospheric air temperature and dew point temperature to extreme rainfall
+SEEDED	-	2020	CLOSED	10.1007/s13253-020-00393-4	Estimating Changes in the Observed Relationship Between Humidity and Temperature Using Noncrossing Quantile Smoothing Splines
+SEEDED	-	2020	GOLD	10.3390/w12082159	Temporal Trend Analysis of Meteorological Variables and Reference Evapotranspiration in the Inter-mountain Region of Wyoming
+SEEDED	-	2022	GOLD	10.1088/1748-9326/ac5b3d	How wildfires increase sensitivity of Amazon forests to droughts
+SEEDED	-	2023	GOLD	10.5194/hess-27-577-2023	A robust gap-filling approach for European Space Agency Climate Change Initiative (ESA CCI) soil moisture integrating satellite observations, model-driven knowledge, and spatiotemporal machine learning
+SEEDED	-	2023	GOLD	10.1088/1748-9326/acb836	Global scaling of precipitation extremes using near-surface air temperature and dew point temperature
+SEEDED	-	2024	GOLD	10.1088/1748-9326/ad281e	Assessing the relative importance of dry-season incoming solar radiation and water storage dynamics during the 2005, 2010 and 2015 southern Amazon droughts: not all droughts are created equal
+SEEDED	-	2024	GOLD	10.1038/s41598-024-55176-5	Amazon savannization and climate change are projected to increase dry season length and temperature extremes over Brazil
+SEEDED	-	2026	GOLD	10.1029/2026GL123578	Interactive Climate Projection via Conditional Generative AI
+SEEDED	-	2026	CLOSED	10.48550/arXiv.2607.21080	Nipping the Butterfly Effect in the Bud: Self-Output Fine-Tuning for Autoregressive Weather Prediction
+SEEDED	-	2026	GOLD	10.3390/s26154717	Strict Recursive Closed-Loop Evaluation of Greenhouse Air Temperature Forecasting with Generated Exogenous Variables and Exogenous-Error Propagation Analysis
