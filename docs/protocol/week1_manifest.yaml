@@ -1,0 +1,109 @@
+# Manifest v1 — protocolo congelado, Semana 1 (Notion Timeline Planner / Tdew)
+#
+# Entregable del bead tdew-cra ("Congelar protocolo + seleccionar sitios",
+# Dia 1, 2026-09-15). Consolida lo que Notion ya fijo como decision congelada
+# para esta semana. Cualquier cambio a este archivo despues del cierre del
+# Dia 1 es, por definicion, un cambio de protocolo y debe justificarse
+# explicitamente (ver "Criterio de cierre" al final).
+#
+# No inventar valores no respaldados por Notion o por el repo: los campos
+# marcados "PENDIENTE" son controles espaciales/decisiones abiertas que
+# Notion registra como pendientes, no como resueltas.
+
+version: 1
+frozen_on: "2026-09-15"
+source: "Notion Timeline Planner (Tdew) - tarea 'Congelar protocolo + seleccionar sitios'"
+bead: tdew-cra
+
+sites:
+  selection_unit: "departamento administrativo completo (no bounding box, no ciudad puntual)"
+  geometric_criterion: "centro de celda dentro del poligono departamental real (spatial join, predicado 'within')"
+  departments:
+    - name: Lima
+      region_natural: Costa
+      grid_ids_file: Data/silver/department_grid_ids/lima.csv
+      n_cells: 29079
+    - name: Cusco
+      region_natural: Sierra
+      grid_ids_file: Data/silver/department_grid_ids/cusco.csv
+      n_cells: 60041
+    - name: "Loreto (Iquitos)"
+      region_natural: Selva
+      grid_ids_file: Data/silver/department_grid_ids/iquitos_loreto.csv
+      n_cells: 305564
+    - name: "San Martin (Tarapoto)"
+      region_natural: Selva
+      grid_ids_file: Data/silver/department_grid_ids/tarapoto_san_martin.csv
+      n_cells: 41835
+  selva_generalization_test:
+    justification: >
+      Loreto/Iquitos y San Martin/Tarapoto se usan simultaneamente para
+      evaluar si el modelo generaliza o extrapola entre dos dominios
+      distintos dentro de la misma region natural Selva.
+  dataset_tracking:
+    tool: DVC
+    pointer: Data/silver/department_grid_ids.dvc
+  boundary_source:
+    provider: "juaneladio/peru-geojson (GitHub, comunitario, no oficial)"
+    file: "peru_departamental_simple.geojson"
+    limitation: >
+      No proviene de una fuente oficial INEI/IGN/SENAMHI. Es de resolucion
+      "simple"; celdas cerca del borde departamental podrian estar mal
+      clasificadas por unos pocos km.
+  senamhi_41_zones_compatibility:
+    status: PENDIENTE
+    note: >
+      Verificacion de compatibilidad entre esta seleccion por departamentos
+      y las 41 zonas climaticas SENAMHI usadas por el pipeline existente
+      (ver docs/MODEL_INPUTS.md) queda registrada como control espacial
+      pendiente. Son esquemas espaciales distintos y NO deben asumirse
+      equivalentes. No resolver implicitamente en fases posteriores sin
+      dejarlo explicito.
+  official_boundary_validation:
+    status: PENDIENTE
+    note: >
+      Validar contra un shapefile oficial (INEI/IGN) si la precision
+      limitrofe resulta relevante para el analisis.
+
+target:
+  definition: "X_{<=t} -> Td(t+1)"
+  leakage_constraint: "ninguna variable de entrada puede provenir de t+1 o posterior"
+
+period:
+  full_range: [2002, 2016]
+  splits:
+    train: [2002, 2012]
+    validation: [2013, 2014]
+    test: [2015, 2016]
+  split_type: "estrictamente temporal (sin mezcla entre splits)"
+
+features:
+  inputs:
+    - Tmin
+    - Tmax
+    - Td_historico
+    - DEM
+    - TDI
+    - LST_DAY
+    - LST_NIGHT
+    - X
+    - Y
+    - "sin(DOY)"
+    - "cos(DOY)"
+  seasonal_encoding: >
+    codificacion circular de DOY via theta = 2*pi*DOY/366, sin(theta),
+    cos(theta) -- el 'von Mises transform' que menciona Notion es el nombre
+    estadistico de esta misma codificacion (sin(theta)/cos(theta) son los
+    estadisticos suficientes de la distribucion von Mises para la direccion
+    media), NO una tercera feature adicional a sumar junto a sin/cos(DOY).
+  context_lengths_L: [14, 30, 60]
+  normalization_rule: "calcular estadisticas de normalizacion SOLO con el split de training"
+
+status:
+  closure_criterion: >
+    No iniciar construccion definitiva del dataset ni entrenamiento hasta que
+    target, seleccion espacial, splits e inputs esten congelados y
+    documentados (este archivo). La validacion contra limites oficiales y
+    contra las 41 zonas SENAMHI queda registrada como control espacial
+    pendiente, no como cambio del protocolo base.
+  next_bead: tdew-ztn  # Construir dataset reproducible + QC

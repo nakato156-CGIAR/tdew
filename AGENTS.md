@@ -2,6 +2,26 @@
 
 This project uses **bd** (beads) for issue tracking. Run `bd prime` for full workflow context.
 
+## Project Timeline / Planning (Notion)
+
+This project's timeline and day-by-day plan live in Notion, not in this repo:
+
+https://app.notion.com/p/Timeline-Planner-86999c87538483bbb30a81974bf2dc50
+
+Whenever the user asks what is planned for a given day, week, or milestone (e.g. "qué hay planeado para el día X"), consult this Notion page via the Notion MCP tools (`notion-fetch` / `notion-search`) before answering — do not guess from repo state or bd issues alone.
+
+### bd ↔ Notion task mapping
+
+The tasks database inside the Timeline Planner is the "Gantt Chart" data source (`collection://6d399c87-5384-8237-81a4-87812c222f13`), with properties `Task/Project Name`, `Status` (Not Started / In Progress / On Hold / Delayed / Completed), `Progress` (0–1), `Start Date`, `End Date`, `Blocked by` / `Blocking`, `Priority`, `Category`.
+
+Each row now has a `Bead ID` (rich text) property holding the matching `bd` issue id (e.g. `tdew-cra`). This property was added on 2026-09-15 because no mapping existed before — task titles happened to match bead titles exactly, but that was never guaranteed. Always match by `Bead ID`, not by title.
+
+**Closing a bead updates Notion.** A `PostToolUse` hook on `Bash` in `.claude/settings.json` detects when a `bd close <id...>` command runs and injects a reminder into context with the bead id(s). The hook cannot call Notion itself (a shell hook has no MCP access) — when you see that reminder, you (the agent) must:
+1. Query the `Gantt Chart` data source for the row whose `Bead ID` equals the closed bead id.
+2. Update that row via the Notion MCP `update-page` tool: set `Status` = `Completed` and `Progress` = `1`.
+
+When creating a new bead for a task that also exists (or will exist) as a Notion row, set that row's `Bead ID` property so this mapping stays intact.
+
 > **Architecture in one line:** Issues live in a local Dolt database
 > (`.beads/dolt/`); cross-machine sync uses `bd dolt push/pull` (a
 > git-compatible protocol), stored under `refs/dolt/data` on your git
