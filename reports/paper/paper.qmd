@@ -103,6 +103,9 @@ field for 2017–2020; and a characterisation of the conditions under which the 
 
 : Data used in this study. {#tbl-data}
 
+@tbl-data lists the inputs. Two of them span different periods, and that asymmetry is the
+opportunity this paper exploits.
+
 **Scope.** The grid is a rectangle and the gridded predictors extend across it, so the
 reconstruction covers 2,667,142 km², about twice the area of Peru. Rather than clip the field to a
 national boundary, which no atmospheric process respects, we release all of it together with the
@@ -414,8 +417,9 @@ gives @tbl-tiers.
 | extrapolated | 2,563 | 1.374 | 1.017 | $-0.070$ | 0.980 | 1.682 | 0.183 |
 | unsupported | 2,946 | 1.724 | 1.283 | $-0.089$ | 0.953 | 2.036 | 0.153 |
 
-: Four-year withheld block by observational-support tier, the tiers being distance bands from the
-classified domain (@tbl-support). Every column degrades monotonically outward. {#tbl-tiers}
+: Four-year withheld block by observational-support tier: distance bands from the classified
+domain of, respectively, inside it, 0–50, 50–100, 100–200 and beyond 200 km. Every column degrades
+monotonically outward. {#tbl-tiers}
 
 Within the classified domain the reconstruction attains $\mathrm{RMSE} = 0.946$ °C at a skill score
 of $0.251$ and a bias of $+0.010$ °C, essentially unbiased; the pooled $1.228$ °C is an average
@@ -480,10 +484,10 @@ The field reproduces the expected national structure, with a humid Amazon near 2
 delineated cold Andean cordillera and the coastal gradient (@fig-map), and continues the observed
 seasonal cycle across the 2016/2017 boundary with matching amplitude and phase (@fig-timeseries).
 
+![Mean reconstructed dew point, 2017–2020.](figures/F2_meanTd_map_2017_2020.png){#fig-map}
+
 ![National monthly-mean dew point, 2010–2020: observed through 2016 and reconstructed
 thereafter.](figures/F1_national_td_timeseries_seam.png){#fig-timeseries}
-
-![Mean reconstructed dew point, 2017–2020.](figures/F2_meanTd_map_2017_2020.png){#fig-map}
 
 ### Continuity at the record boundary {#sec-results-seam}
 
@@ -491,7 +495,7 @@ A reconstruction appended to an observed record must not introduce an artificial
 adjacent months across the boundary would confound such a step with the seasonal cycle, so we
 compare equal-length full-year windows, which removes seasonality, and include a model-free control:
 the difference between two consecutive observed four-year windows, which measures the
-period-to-period variability of the observed record itself.
+period-to-period variability of the observed record itself. @tbl-seam reports both.
 
 | Comparison | Mean | sd | 1st–99th pct | Cells $\lvert\Delta\rvert > 1$ °C |
 |:---|---:|---:|:---:|---:|

@@ -1,38 +1,20 @@
 ---
-title: "Electronic Supplementary Material --- Extending the PISCO gridded dew-point record for Peru (2017--2020) from the continued minimum-temperature record, using per-climate-zone seasonal model selection"
-author:
-  - name: "Piero Palacios"
-    affiliations:
-      - name: "International Potato Center (CIP)"
-        city: "Lima"
-        country: "Peru"
-    email: "piero.palacios@cgiar.org"
-    attributes:
-      corresponding: true
-  - name: "Henry Juarez"
-    affiliations:
-      - name: "International Potato Center (CIP)"
-        city: "Lima"
-        country: "Peru"
-    email: "h.juarez@cgiar.org"
+title: "Online Resource 1 --- Extending the PISCO gridded dew-point record for Peru (2017--2020) from the continued minimum-temperature record, using per-climate-zone seasonal model selection"
 date: last-modified
-keywords:
-  - dew-point temperature
-  - gap filling
-  - gridded climate data
-  - local regression
-  - model selection
-  - Peru
 bibliography: references.bib
 csl: springer-basic-author-date.csl
+crossref:
+  fig-title: "Fig."
+  fig-prefix: "Fig."
+  tbl-title: "Table"
+  tbl-prefix: "Table"
 format:
   typst:
-    toc: true
+    toc: false
     number-sections: true
     papersize: a4
     margin: {x: 2.5cm, y: 2.5cm}
-    mainfont: "Libertinus Serif"
-    fontsize: 11pt
+    include-in-header: taac_format.typ
 ---
 
 

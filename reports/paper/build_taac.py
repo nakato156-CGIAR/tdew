@@ -20,7 +20,6 @@ What changes, and why:
 
 Run from reports/paper/:  python3 build_taac.py
 """
-import json
 import re
 import subprocess
 from pathlib import Path
@@ -48,41 +47,66 @@ def demote(body: str) -> str:
 
 FRONT = """---
 title: "Extending the PISCO gridded dew-point record for Peru (2017--2020) from the continued minimum-temperature record, using per-climate-zone seasonal model selection"
-author:
-  - name: "Piero Palacios"
-    affiliations:
-      - name: "International Potato Center (CIP)"
-        city: "Lima"
-        country: "Peru"
-    email: "piero.palacios@cgiar.org"
-    attributes:
-      corresponding: true
-  - name: "Henry Juarez"
-    affiliations:
-      - name: "International Potato Center (CIP)"
-        city: "Lima"
-        country: "Peru"
-    email: "h.juarez@cgiar.org"
 date: last-modified
-keywords:
-  - dew-point temperature
-  - gap filling
-  - gridded climate data
-  - local regression
-  - model selection
-  - Peru
 bibliography: references.bib
 csl: springer-basic-author-date.csl
+crossref:
+  fig-title: "Fig."
+  fig-prefix: "Fig."
+  tbl-title: "Table"
+  tbl-prefix: "Table"
 format:
   typst:
     toc: false
     number-sections: true
     papersize: a4
     margin: {x: 2.5cm, y: 2.5cm}
-    mainfont: "Libertinus Serif"
-    fontsize: 11pt
+    include-in-header: taac_format.typ
 ---
 
+"""
+
+TITLE_PAGE = """
+::: {.content-visible}
+**Piero Palacios**^1^\\*  ·  **Henry Juarez**^1^
+
+^1^ International Potato Center (CIP), Lima, Peru
+
+\\* Corresponding author. piero.palacios@cgiar.org
+
+ORCID: [TODO: add the 16-digit ORCID of each author.]
+:::
+
+**Acknowledgments.** [TODO: acknowledge people, grants and funds here; the guidelines
+require this on the title page, and funding organizations must be written in full.]
+
+**Author contributions.** [TODO: confirm with the co-author before submission.] Both authors
+conceived the study. PP implemented the method, ran the analyses and drafted the manuscript.
+HJ contributed to the design and to the interpretation of results. Both authors read and
+approved the final manuscript.
+
+\\newpage
+"""
+
+ABSTRACT = """
+The PISCO gridded climate product for Peru provides daily dew-point temperature through 2016,
+while its minimum-temperature record extends to 2020, leaving a four-year gap in a variable
+required for reference-evapotranspiration, disease-risk and crop models. We reconstruct dew point
+for 2017--2020 by learning the minimum-temperature to dew-point mapping on the 1981--2016 overlap
+and applying it forward at every grid cell. The model is a weighted local linear regression on
+climate anomalies, fitted per cell and day of year, with the predictor subset and the day-of-year
+smoothing bandwidth selected jointly for each climate zone and day of year by leave-one-year-out
+cross-validation. Because no observed dew point exists in the gap, reconstruction is
+autoregressive: each predicted day supplies the dew-point lags of subsequent days.
+
+Validation withholds the four most recent years and scores against observation under the same
+autoregressive conditions the real gap imposes, with selection confined to the training years.
+Within the domain where the source product is constrained by stations, the model attains a
+root-mean-square error of 0.946 °C at a skill score of 0.251 against daily climatology, the
+incumbent choice for gap filling, and a bias of +0.010 °C. Accuracy degrades monotonically with
+distance from that domain, reaching 1.724 °C beyond 200 km, so the reconstruction is released with
+a per-cell distance to it. The conventional arid-region correction to the FAO-56 approximation
+increases error here in every moisture class, including the arid classes for which it was devised.
 """
 
 CONCLUSIONS = """
@@ -120,7 +144,7 @@ than inherit ours.
 """
 
 DECLARATIONS = """
-## Declarations {.unnumbered}
+## Statements and Declarations {.unnumbered}
 
 **Funding.** [TODO: state the funding source, or "The authors did not receive support from any
 organization for the submitted work."]
@@ -142,12 +166,10 @@ selection, coefficient fitting, autoregressive reconstruction and the validation
 with the scripts reproducing every figure and reported statistic, will be released publicly on
 acceptance.
 
-**Author contributions.** [TODO: confirm with the co-author before submission.] Both authors
-conceived the study. PP implemented the method, ran the analyses and drafted the manuscript. HJ
-contributed to the design and to interpretation. Both authors read and approved the final
-manuscript.
+**Use of generative artificial intelligence.** See also Sect. 3.6, where the guidelines
+require this to be documented.
 
-**Use of generative artificial intelligence.** The analysis pipeline, the figures and a first draft
+**Detail.** The analysis pipeline, the figures and a first draft
 of this manuscript were produced with the assistance of a large language model (Anthropic Claude)
 under author direction. Every quantitative result reported here was computed by code the authors
 reviewed, from the recorded outputs of the runs described, and the claim attributed to each cited
@@ -156,42 +178,133 @@ The authors take full responsibility for the content.
 """
 
 
+LLM_IN_METHODS = """
+### Use of a large language model {#sec-llm}
+
+The journal requires that use of a large language model be documented in the Methods. The analysis
+pipeline described above, the figures, and a first draft of this manuscript were produced with the
+assistance of a large language model (Anthropic Claude) under author direction. Every quantitative
+result reported here was computed by code the authors reviewed, from the recorded outputs of the
+runs described; the claim attributed to each cited work was checked against the full text of that
+work, except where the bibliography notes otherwise. The model is not an author: authorship carries
+accountability that cannot be assigned to it. The authors take full responsibility for the content.
+"""
+
+
+
+def place_bibliography_before_declarations() -> None:
+    """Move the bibliography above Statements and Declarations, then recompile.
+
+    The journal says the statements go "after the References section", but Quarto's Typst
+    writer emits #bibliography() at the end of the document whatever the position of the
+    #refs div, which would put the reference list last and the statements above it. The
+    generated Typst is patched rather than the document restructured, because the document
+    is right and only the renderer disagrees.
+
+    Springer's own page is inconsistent here: its Competing Interests section says the
+    declarations go *before* the reference list. We follow the dedicated Statements &
+    Declarations section, which is the more specific instruction and also names the heading.
+    """
+    typ = HERE / "paper_taac.typ"
+    if not typ.exists():
+        print("no paper_taac.typ; skipping bibliography move")
+        return
+    t = typ.read_text()
+    m = re.search(r"\n#set bibliography\([^\n]*\)\n+#bibliography\(\([^\n]*\)\)\s*$", t)
+    marker = "#heading(level: 1, numbering: none)[Statements and Declarations]"
+    if not m or marker not in t:
+        print("bibliography or declarations marker not found; leaving output as rendered")
+        return
+    block = m.group(0).strip()
+    t = t[:m.start()] + "\n"
+    t = t.replace(marker, block + "\n\n" + marker)
+    typ.write_text(t)
+    subprocess.run(["quarto", "typst", "compile", "paper_taac.typ", "paper_taac.pdf"],
+                   cwd=HERE, check=True)
+    print("moved bibliography above Statements and Declarations")
+
+
+
+def check_compliance() -> None:
+    """Re-check the guideline requirements that are mechanically checkable.
+
+    Not a substitute for reading the guidelines, but these are the ones that silently
+    regress when the text is edited.
+    """
+    txt = subprocess.run(["pdftotext", "paper_taac.pdf", "-"],
+                         capture_output=True, text=True, cwd=HERE).stdout
+    rows = []
+
+    words = len(re.sub(r"\$[^$]*\$", " x ", ABSTRACT).split())
+    rows.append(("abstract 150-250 words", 150 <= words <= 250, f"{words}"))
+
+    chars = len(txt.replace("\n", ""))
+    rows.append(("<= 100,000 characters", chars <= 100_000, f"{chars:,}"))
+
+    depth = max(len(h) for h in re.findall(r"^(#+) ", OUT.read_text(), re.M))
+    rows.append(("<= 3 heading levels", depth <= 3, f"{depth}"))
+
+    lines = len(re.findall(r"^\s*\d{1,3}\s+\S", txt, re.M))
+    rows.append(("line numbers present", lines > 100, f"{lines}"))
+
+    refs = txt.find("\nReferences"), txt.find("\nStatements and Declarations")
+    rows.append(("declarations after references",
+                 -1 not in refs and refs[0] < refs[1], ""))
+
+    # Figures and tables must be cited in consecutive numerical order. A citation and a
+    # caption both begin "Fig. 3", so a caption is only one that continues into a caption
+    # body; we compare the order of first mention instead, which is what the rule is about.
+    for kind, pat in (("figures", r"Fig\. (\d+)"), ("tables", r"Table (\d+)")):
+        order, seen = [], set()
+        for n in re.findall(pat, txt):
+            if n not in seen:
+                seen.add(n)
+                order.append(int(n))
+        rows.append((f"{kind} numbered consecutively", order == sorted(order), str(order)))
+
+    print("\n  Springer / TAAC guideline check")
+    for name, ok, detail in rows:
+        print(f"    {'PASS' if ok else 'FAIL'}  {name:<32} {detail}")
+    print("    NOTE  submission requires .docx or LaTeX; this build is Typst by request")
+
+
 def main() -> int:
     sec = sections(SRC.read_text())
 
     body = [
         FRONT,
+        TITLE_PAGE,
         "## Abstract {.unnumbered}\n",
-        sec["Abstract"],
+        ABSTRACT.strip(),
         "\n\n**Keywords** dew-point temperature · gap filling · gridded climate data · "
         "local regression · model selection · Peru\n",
         "\n## Introduction {#sec-intro}\n", sec["Introduction"],
         "\n## Data {#sec-data}\n", sec["Data"],
-        "\n## Methods {#sec-methods}\n", sec["Methods"],
+        "\n## Methods {#sec-methods}\n", sec["Methods"], LLM_IN_METHODS,
         "\n## Results {#sec-results}\n", sec["Results"],
         "\n## Discussion {#sec-discussion}\n", sec["Discussion"],
         "\n### Limitations {#sec-limitations}\n", demote(sec["Limitations"]),
         CONCLUSIONS,
-        DECLARATIONS,
+        # "This should be placed after the References section", per the guidelines. Their
+        # Competing Interests section says before it instead; the more specific instruction wins.
         "\n## References {.unnumbered}\n\n::: {#refs}\n:::\n",
+        DECLARATIONS,
     ]
     text = "\n".join(body)
 
-    # The draft banner is internal; so is the pointer to a supplementary section that has
-    # moved out of this document.
+    # The draft banner is internal, and the supplement is now a separate file that the
+    # journal calls an Online Resource.
     text = re.sub(r"::: \{\.callout-important\}.*?:::\n", "", text, flags=re.S)
-    text = text.replace("@sec-supp-version", "the Electronic Supplementary Material")
-    text = text.replace("@sec-supp-compute", "the Electronic Supplementary Material")
+    text = text.replace("@sec-supp-version", "Online Resource 1")
+    text = text.replace("@sec-supp-compute", "Online Resource 1")
     OUT.write_text(text)
 
     supp = sec["Supplementary material"]
-    # Cross-references into the main manuscript cannot resolve from a separate file, so
-    # they become prose pointers rather than dangling links.
+    # Cross-references into the main manuscript cannot resolve from a separate file.
     supp = supp.replace("@sec-results-validation", "Sect. 4.2 of the main manuscript")
     esm = (FRONT.replace(
         'title: "Extending',
-        'title: "Electronic Supplementary Material --- Extending')
-        .replace("toc: false", "toc: true")
+        'title: "Online Resource 1 --- Extending')
         + "\n" + supp
         + "\n\n## References {.unnumbered}\n\n::: {#refs}\n:::\n")
     ESM.write_text(esm)
@@ -199,7 +312,10 @@ def main() -> int:
     for f in (OUT, ESM):
         print(f"wrote {f.name}: {len(f.read_text().splitlines())} lines")
     for f in (OUT, ESM):
-        subprocess.run(["quarto", "render", f.name, "--to", "typst"], cwd=HERE, check=True)
+        subprocess.run(["quarto", "render", f.name, "--to", "typst",
+                        "-M", "keep-typ:true"], cwd=HERE, check=True)
+    place_bibliography_before_declarations()
+    check_compliance()
     return 0
 
 

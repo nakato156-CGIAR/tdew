@@ -1,78 +1,64 @@
 ---
 title: "Extending the PISCO gridded dew-point record for Peru (2017--2020) from the continued minimum-temperature record, using per-climate-zone seasonal model selection"
-author:
-  - name: "Piero Palacios"
-    affiliations:
-      - name: "International Potato Center (CIP)"
-        city: "Lima"
-        country: "Peru"
-    email: "piero.palacios@cgiar.org"
-    attributes:
-      corresponding: true
-  - name: "Henry Juarez"
-    affiliations:
-      - name: "International Potato Center (CIP)"
-        city: "Lima"
-        country: "Peru"
-    email: "h.juarez@cgiar.org"
 date: last-modified
-keywords:
-  - dew-point temperature
-  - gap filling
-  - gridded climate data
-  - local regression
-  - model selection
-  - Peru
 bibliography: references.bib
 csl: springer-basic-author-date.csl
+crossref:
+  fig-title: "Fig."
+  fig-prefix: "Fig."
+  tbl-title: "Table"
+  tbl-prefix: "Table"
 format:
   typst:
     toc: false
     number-sections: true
     papersize: a4
     margin: {x: 2.5cm, y: 2.5cm}
-    mainfont: "Libertinus Serif"
-    fontsize: 11pt
+    include-in-header: taac_format.typ
 ---
 
 
+
+::: {.content-visible}
+**Piero Palacios**^1^\*  ·  **Henry Juarez**^1^
+
+^1^ International Potato Center (CIP), Lima, Peru
+
+\* Corresponding author. piero.palacios@cgiar.org
+
+ORCID: [TODO: add the 16-digit ORCID of each author.]
+:::
+
+**Acknowledgments.** [TODO: acknowledge people, grants and funds here; the guidelines
+require this on the title page, and funding organizations must be written in full.]
+
+**Author contributions.** [TODO: confirm with the co-author before submission.] Both authors
+conceived the study. PP implemented the method, ran the analyses and drafted the manuscript.
+HJ contributed to the design and to the interpretation of results. Both authors read and
+approved the final manuscript.
+
+\newpage
+
 ## Abstract {.unnumbered}
 
-The PISCO gridded climate product for Peru provides daily dew-point temperature ($T_d$) through 2016,
-while its minimum-temperature ($T_{\min}$) record extends to 2020, leaving a four-year gap in a
-variable required for reference-evapotranspiration, disease-risk and crop models. We reconstruct
-$T_d$ for 2017–2020 by learning the $T_{\min} \rightarrow T_d$ mapping on the 1981–2016 overlap and
-applying it forward at every grid cell. The model is a per-(cell, day-of-year) weighted local linear
-regression on climate anomalies; the predictor subset and the day-of-year smoothing half-window $h$
-are selected jointly for each combination of SENAMHI climate zone and day of year by
-leave-one-year-out cross-validation. Because no observed $T_d$ exists in the gap, reconstruction is
-autoregressive: each predicted day supplies the $T_d$ lags of subsequent days.
+The PISCO gridded climate product for Peru provides daily dew-point temperature through 2016,
+while its minimum-temperature record extends to 2020, leaving a four-year gap in a variable
+required for reference-evapotranspiration, disease-risk and crop models. We reconstruct dew point
+for 2017--2020 by learning the minimum-temperature to dew-point mapping on the 1981--2016 overlap
+and applying it forward at every grid cell. The model is a weighted local linear regression on
+climate anomalies, fitted per cell and day of year, with the predictor subset and the day-of-year
+smoothing bandwidth selected jointly for each climate zone and day of year by leave-one-year-out
+cross-validation. Because no observed dew point exists in the gap, reconstruction is
+autoregressive: each predicted day supplies the dew-point lags of subsequent days.
 
-Because the task is extrapolation in time rather than interpolation in space, we validate by
-withholding the four most recent years (train 1981–2012, reconstruct 2013–2016) and scoring against
-observed $T_d$ under the same autoregressive conditions the real gap imposes. Within the domain in
-which the climate classification is defined and the source product is station-constrained, which is
-48.9% of the released cells, the model attains $\mathrm{RMSE} = 0.946$ °C at a skill score of
-$0.251$ and a bias of $+0.010$ °C; pooled over the whole released field, half of which lies beyond
-that domain, $\mathrm{RMSE} = 1.228$ °C at a skill score of $0.200$. Accuracy degrades monotonically
-with distance from the domain, to $1.724$ °C beyond 200 km. Against daily climatology, the incumbent
-choice for gap filling, the pooled reduction is $0.307$ °C (95% CI $[0.306, 0.309]$), improving on
-climatology at 99.99% of grid cells (Cohen's $d = 2.93$, permutation $p \approx 2 \times 10^{-4}$).
-It also improves on $T_d = T_{\min}$ (FAO-56) by $2.32$ °C and on a per-zone ordinary least-squares
-fit by $1.10$ °C. Predictors and bandwidths are selected on the training years alone; allowing
-selection to see the withheld years would inflate the skill score by $0.009$, which bounds the
-optimism such leakage introduces.
-
-The reconstruction covers 2,178,827 grid cells over 1,461 days ($3.18 \times 10^{9}$
-values) and introduces no discontinuity at the 2016/2017 boundary: over equal-length four-year
-windows it differs from the last observed window (mean $-0.041$ °C, sd $0.176$ °C) by no more than
-two observed windows differ from each other (mean $+0.101$ °C, sd $0.125$ °C), with no cell
-exceeding $1$ °C in either comparison. The principal limitation is a small warm tail (0.13% of
-values above 35 °C), confined to November and to the part of the grid beyond the classified domain,
-where the source product is itself extrapolated far from any station. Inside that domain the
-reconstruction produces no value above 35 °C at all; outside it, it attenuates a tail already
-present in the field it reproduces. We release a per-cell distance to the classified domain so that
-users may impose their own support threshold.
+Validation withholds the four most recent years and scores against observation under the same
+autoregressive conditions the real gap imposes, with selection confined to the training years.
+Within the domain where the source product is constrained by stations, the model attains a
+root-mean-square error of 0.946 °C at a skill score of 0.251 against daily climatology, the
+incumbent choice for gap filling, and a bias of +0.010 °C. Accuracy degrades monotonically with
+distance from that domain, reaching 1.724 °C beyond 200 km, so the reconstruction is released with
+a per-cell distance to it. The conventional arid-region correction to the FAO-56 approximation
+increases error here in every moisture class, including the arid classes for which it was devised.
 
 
 **Keywords** dew-point temperature · gap filling · gridded climate data · local regression · model selection · Peru
@@ -117,6 +103,9 @@ field for 2017–2020; and a characterisation of the conditions under which the 
 
 : Data used in this study. {#tbl-data}
 
+@tbl-data lists the inputs. Two of them span different periods, and that asymmetry is the
+opportunity this paper exploits.
+
 **Scope.** The grid is a rectangle and the gridded predictors extend across it, so the
 reconstruction covers 2,667,142 km², about twice the area of Peru. Rather than clip the field to a
 national boundary, which no atmospheric process respects, we release all of it together with the
@@ -147,7 +136,7 @@ model requires.
 **Predictor version.** Minimum temperature exists in two PISCO releases, v1.1 (1981–2016) and v1.2
 (1981–2020). As predictors of dew point the two are of comparable quality: fitting and scoring an
 identical configuration on each gives RMSE $1.127$ °C against $1.136$ °C, a difference of $0.009$ °C
-(the Electronic Supplementary Material). They nevertheless yield different fitted models, the mean contemporaneous
+(Online Resource 1). They nevertheless yield different fitted models, the mean contemporaneous
 $T_{\min}$ coefficient being $0.452$ against $0.370$ with a paired correlation of $0.685$.
 
 Only v1.2 spans the target period, so the reconstruction must use it. We therefore also fit on
@@ -355,6 +344,17 @@ measure the first route we additionally run selection over all years on a common
 the difference between the two runs bounds the inflation that such leakage introduces
 (@sec-results-validation).
 
+### Use of a large language model {#sec-llm}
+
+The journal requires that use of a large language model be documented in the Methods. The analysis
+pipeline described above, the figures, and a first draft of this manuscript were produced with the
+assistance of a large language model (Anthropic Claude) under author direction. Every quantitative
+result reported here was computed by code the authors reviewed, from the recorded outputs of the
+runs described; the claim attributed to each cited work was checked against the full text of that
+work, except where the bibliography notes otherwise. The model is not an author: authorship carries
+accountability that cannot be assigned to it. The authors take full responsibility for the content.
+
+
 ## Results {#sec-results}
 
 ### Selected models {#sec-results-selection}
@@ -428,8 +428,9 @@ gives @tbl-tiers.
 | extrapolated | 2,563 | 1.374 | 1.017 | $-0.070$ | 0.980 | 1.682 | 0.183 |
 | unsupported | 2,946 | 1.724 | 1.283 | $-0.089$ | 0.953 | 2.036 | 0.153 |
 
-: Four-year withheld block by observational-support tier, the tiers being distance bands from the
-classified domain (@tbl-support). Every column degrades monotonically outward. {#tbl-tiers}
+: Four-year withheld block by observational-support tier: distance bands from the classified
+domain of, respectively, inside it, 0–50, 50–100, 100–200 and beyond 200 km. Every column degrades
+monotonically outward. {#tbl-tiers}
 
 Within the classified domain the reconstruction attains $\mathrm{RMSE} = 0.946$ °C at a skill score
 of $0.251$ and a bias of $+0.010$ °C, essentially unbiased; the pooled $1.228$ °C is an average
@@ -475,7 +476,7 @@ that optimal member of the offset family remains far behind the selected model.
 {#tbl-fao}
 
 Seasonal bias is also reduced. The fixed configuration carries a December warm bias of $+1.45$ °C
-(the Electronic Supplementary Material); under per-zone, per-day-of-year selection the December bias falls to
+(Online Resource 1); under per-zone, per-day-of-year selection the December bias falls to
 $+0.02$ °C, with all months within $\pm 0.41$ °C.
 
 ![Root-mean-square error on the four-year withheld block for the selected model and the three
@@ -494,10 +495,10 @@ The field reproduces the expected national structure, with a humid Amazon near 2
 delineated cold Andean cordillera and the coastal gradient (@fig-map), and continues the observed
 seasonal cycle across the 2016/2017 boundary with matching amplitude and phase (@fig-timeseries).
 
+![Mean reconstructed dew point, 2017–2020.](figures/F2_meanTd_map_2017_2020.png){#fig-map}
+
 ![National monthly-mean dew point, 2010–2020: observed through 2016 and reconstructed
 thereafter.](figures/F1_national_td_timeseries_seam.png){#fig-timeseries}
-
-![Mean reconstructed dew point, 2017–2020.](figures/F2_meanTd_map_2017_2020.png){#fig-map}
 
 ### Continuity at the record boundary {#sec-results-seam}
 
@@ -505,7 +506,7 @@ A reconstruction appended to an observed record must not introduce an artificial
 adjacent months across the boundary would confound such a step with the seasonal cycle, so we
 compare equal-length full-year windows, which removes seasonality, and include a model-free control:
 the difference between two consecutive observed four-year windows, which measures the
-period-to-period variability of the observed record itself.
+period-to-period variability of the observed record itself. @tbl-seam reports both.
 
 | Comparison | Mean | sd | 1st–99th pct | Cells $\lvert\Delta\rvert > 1$ °C |
 |:---|---:|---:|:---:|---:|
@@ -850,7 +851,13 @@ distance band, so that a user can impose a support threshold appropriate to thei
 than inherit ours.
 
 
-## Declarations {.unnumbered}
+## References {.unnumbered}
+
+::: {#refs}
+:::
+
+
+## Statements and Declarations {.unnumbered}
 
 **Funding.** [TODO: state the funding source, or "The authors did not receive support from any
 organization for the submitted work."]
@@ -872,20 +879,12 @@ selection, coefficient fitting, autoregressive reconstruction and the validation
 with the scripts reproducing every figure and reported statistic, will be released publicly on
 acceptance.
 
-**Author contributions.** [TODO: confirm with the co-author before submission.] Both authors
-conceived the study. PP implemented the method, ran the analyses and drafted the manuscript. HJ
-contributed to the design and to interpretation. Both authors read and approved the final
-manuscript.
+**Use of generative artificial intelligence.** See also Sect. 3.6, where the guidelines
+require this to be documented.
 
-**Use of generative artificial intelligence.** The analysis pipeline, the figures and a first draft
+**Detail.** The analysis pipeline, the figures and a first draft
 of this manuscript were produced with the assistance of a large language model (Anthropic Claude)
 under author direction. Every quantitative result reported here was computed by code the authors
 reviewed, from the recorded outputs of the runs described, and the claim attributed to each cited
 work was checked against the full text of that work, except where the bibliography notes otherwise.
 The authors take full responsibility for the content.
-
-
-## References {.unnumbered}
-
-::: {#refs}
-:::

@@ -80,3 +80,4 @@ datasets/
 dask-worker-space/
 presentations/
 reports/paper/refs_pdf/
+reports/paper/*.typ
