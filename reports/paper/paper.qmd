@@ -122,9 +122,11 @@ A *cell* throughout this paper is one pixel of that grid: a 0.01° square, rough
 carrying one value per variable per day. The grid is a complete rectangle spanning
 81.40°W–67.19°W and 18.59°S–1.22°N.
 
-The gridded fields derive from land-surface temperature and elevation covariates by regression
-kriging within the PISCOeo_pm framework [@huerta2022]; $T_d$ is not derived from $T_{\min}$
-directly, although the two share covariates. Of the 2,818,404 grid cells, **2,178,827** (77.3%)
+The gridded fields are produced by regression kriging within the PISCOeo_pm framework
+[@huerta2022]. Dew point is interpolated from **182 stations** on covariates of mean land-surface
+temperature, elevation, longitude and latitude; $T_d$ is not derived from $T_{\min}$ directly,
+although the two share covariates. That station count, over a territory of 1.28 million km², is
+what the support analysis of @sec-results-validation is ultimately measuring distance from. Of the 2,818,404 grid cells, **2,178,827** (77.3%)
 yield reconstructions; the remainder are ocean or lack the climatology or predictor coverage the
 model requires.
 
@@ -669,9 +671,10 @@ Two separate questions arise, where the exceedances occur and when, and they hav
 answers. The spatial answer is observational support: the rate is zero inside the classified domain
 and rises monotonically with distance beyond it (@tbl-support), and the source product carries a
 larger tail there than the reconstruction does (@tbl-inherited). Regression kriging reverts towards
-the covariate-driven mean far from data, and the covariates here are land-surface temperature and
-elevation; where no station constrains the humidity relationship, the resulting dew point need not
-respect the physical ceiling that station data would impose. The reconstruction inherits that
+the covariate-driven mean far from data, and for dew point those covariates are mean land-surface
+temperature, elevation, longitude and latitude [@huerta2022]; where none of the 182 stations
+constrains the humidity relationship, the resulting dew point need not respect the physical ceiling
+that station data would impose. The reconstruction inherits that
 behaviour through the lagged dew-point predictors while damping it, since a fitted regression on
 anomalies cannot reproduce the full spread of its target.
 

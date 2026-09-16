@@ -1,6 +1,13 @@
-% TODO [VERIFY]: identifiers (arXiv ID, DOI) are taken from the project's own records
-% (PAPER_PLAN.md §1, §4); author lists and page numbers below were drafted from
-% recollection and MUST be checked against the actual publications before submission.
+% VERIFICATION STATUS (2026-09-16). The claim this manuscript attributes to each reference
+% below was checked against the full text of the paper, not its abstract, for every entry
+% except the four noted. PDFs are under reports/paper/refs_pdf/ (gitignored).
+%
+% NOT YET VERIFIED against full text, paywalled at the time of checking:
+%   kimball1997   10.1016/S0168-1923(96)02366-0   Agric. For. Meteorol. (Elsevier)
+%   eccel2012     10.1002/met.258                 Meteorol. Appl. (Wiley)
+%   kilibarda2014 10.1002/2013JD020803            JGR Atmospheres (Wiley/AGU)
+%   hierro2025    10.1002/joc.70184               Int. J. Climatol. (Wiley)
+% Page numbers and volumes are still incomplete on several entries.
 
 @inproceedings{hwang2019,
   title     = {Improving Subseasonal Forecasting in the Western {U.S.} with Machine Learning},
@@ -108,7 +115,10 @@
   journal = {arXiv preprint},
   year    = {2025},
   doi     = {10.48550/arXiv.2505.02506},
-  note    = {Long-rollout stability and error growth in autoregressive climate models; multi-step training improves stability}
+  note    = {Workshop paper, ``Tackling Climate Change with Machine Learning''. Compares
+             long-term stability of FourCastNet, SFNO and ClimaX; forecasts degrade beyond
+             14 days, some configurations give stable 10-year rollouts. Verified against
+             full text 2026-09-16}
 }
 
 @article{kilibarda2014,
