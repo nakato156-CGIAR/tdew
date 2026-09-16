@@ -17,6 +17,7 @@ dependencies = [
     "tqdm>=4.66",
     "dask[distributed]>=2024.1",
     "nvidia-ml-py>=13.610.43",
+    "zenml[server]>=0.96.4",
 ]
 
 [project.optional-dependencies]
@@ -50,6 +51,14 @@ viz = [
     "matplotlib>=3.8",
     "imageio>=2.34",
     "imageio-ffmpeg>=0.5",
+]
+# Data/experiment reproducibility layer: DVC for data versioning, MLflow for
+# experiment tracking (see tdew_estimation/experiment_tracking.py), pytest to
+# run the test suite (including the MLflow smoke test under tests/).
+tracking = [
+    "dvc>=3.67",
+    "mlflow>=3.0",
+    "pytest>=8",
 ]
 
 # Only the algorithm package is installable; HPC_code/ and Local/ are run as scripts.
