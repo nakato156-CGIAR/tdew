@@ -157,47 +157,19 @@
   note    = {Applies the FAO-56 Tmin dew-point proxy with a 2 C arid/semi-arid correction}
 }
 
-% --- added 2026-09-07: Amazonian dry-to-wet transition + nonparametric smoothing at jumps ---
+% --- added 2026-09-07: nonparametric smoothing at jumps ---
+%
+% Five southern-Amazonian dry-to-wet transition references (wright2017, li2004, fu2004,
+% yin2014, marengo2017) were removed on 2026-09-16. They supported an attribution of the
+% November extremes to that transition, which the data did not sustain: the affected area is
+% equatorial rather than southern Amazonian, no precipitation product covers it, and the
+% November feature is a one-month spike in the source product present at every support tier.
+% The retrieval records remain under .asta/ if the attribution is ever revisited.
 
-@article{wright2017,
-  title   = {Rainforest-initiated wet season onset over the southern Amazon},
-  author  = {Wright, Jonathon S. and Fu, R. and Worden, J. and Chakraborty, S. and Clinton, N. and Risi, C. and Sun, Ying and Yin, L.},
-  journal = {Proceedings of the National Academy of Sciences},
-  year    = {2017},
-  note    = {Rainforest transpiration in the late dry season initiates the dry-to-wet transition via shallow convection; corpusId 31512633}
-}
 
-@article{li2004,
-  title   = {Transition of the Large-Scale Atmospheric and Land Surface Conditions from the Dry to the Wet Season over Amazonia as Diagnosed by the {ECMWF} Re-Analysis},
-  author  = {Li, Wenhong and Fu, R.},
-  journal = {Journal of Climate},
-  year    = {2004},
-  note    = {Large-scale and surface-flux evolution through the dry-to-wet transition; corpusId 8407239}
-}
 
-@article{fu2004,
-  title   = {The influence of the land surface on the transition from dry to wet season in Amazonia},
-  author  = {Fu, R. and Li, Wenhong},
-  journal = {Theoretical and Applied Climatology},
-  year    = {2004},
-  note    = {Transition initially driven by increases in surface latent heat flux which rapidly reduce convective inhibition; corpusId 34314121}
-}
 
-@article{yin2014,
-  title   = {What controls the interannual variation of the wet season onsets over the Amazon?},
-  author  = {Yin, L. and Fu, R. and Zhang, Yong-fei and Arias, P. and Fernando, D. N. and Li, Wenhong and Fernandes, K. and Bowerman, A.},
-  journal = {Journal of Geophysical Research: Atmospheres},
-  year    = {2014},
-  note    = {Onset timing set by competing processes nonlinearly related to Pacific and Atlantic SST anomalies; corpusId 1666227}
-}
 
-@article{marengo2017,
-  title   = {Meteorological context of the onset and end of the rainy season in Central Amazonia during the {GoAmazon2014/5}},
-  author  = {Marengo, J. and Fisch, G. and Alves, L. and de Sousa, Natanael Vieira and Fu, R. and Zhuang, Y.},
-  journal = {Atmospheric Chemistry and Physics},
-  year    = {2017},
-  note    = {Onset dated to a specific pentad, 2-3 pentads later than normal in 2014/15, associated with the MJO; corpusId 4673735}
-}
 
 @article{zhang2016,
   title   = {Testing for jumps in the presence of smooth changes in trends of nonstationary time series},

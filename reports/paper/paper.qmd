@@ -99,6 +99,14 @@ field for 2017–2020; and a characterisation of the conditions under which the 
 
 : Data used in this study. {#tbl-data}
 
+**Scope.** The grid is a rectangle and the gridded predictors extend across it, so the
+reconstruction covers 2,667,142 km², about twice the area of Peru. Rather than clip the field to a
+national boundary, which no atmospheric process respects, we release all of it together with the
+distance from the classified domain, and we report accuracy against that distance
+(@sec-results-validation). Where the paper speaks of Peru it means the classified domain, which is
+48.9% of the released cells; the remainder is territory the source product covers by extension and
+where, as @sec-results-tail shows, it is materially less reliable.
+
 **Climate zones.** The classification is SENAMHI's national map on the 1981–2010 normal
 [@senamhi2021], which defines **38 climate types**: 37 Thornthwaite symbols and a glacier class. The
 published shapefile carries three further map units that are not climate types, two lakes and the
@@ -386,6 +394,31 @@ The selected model has bias $-0.033$ °C and correlation $0.990$. Skill declines
 lead time ($0.254 \rightarrow 0.234 \rightarrow 0.200$), the expected growth of error under
 autoregression, without collapsing over four years (@fig-leadtime).
 
+These are pooled figures, and pooling is misleading here. Half the grid lies beyond the domain in
+which the climate classification is defined and in which the source product is constrained by
+stations, so the pooled error describes neither the region the reconstruction is used in nor the
+region it extends into. Splitting on that external criterion, fixed before any error was examined,
+gives @tbl-tiers.
+
+| Support tier | Cells | RMSE | MAE | Bias | $r$ | Climatology | Skill |
+|:---|---:|---:|---:|---:|---:|---:|---:|
+| within | 8,306 | **0.946** | 0.697 | $+0.010$ | 0.994 | 1.264 | **0.251** |
+| near | 1,779 | 1.139 | 0.831 | $-0.079$ | 0.988 | 1.464 | 0.222 |
+| marginal | 1,433 | 1.276 | 0.943 | $-0.044$ | 0.987 | 1.582 | 0.193 |
+| extrapolated | 2,563 | 1.374 | 1.017 | $-0.070$ | 0.980 | 1.682 | 0.183 |
+| unsupported | 2,946 | 1.724 | 1.283 | $-0.089$ | 0.953 | 2.036 | 0.153 |
+
+: Four-year withheld block by observational-support tier, the tiers being distance bands from the
+classified domain (@tbl-support). Every column degrades monotonically outward. {#tbl-tiers}
+
+Within the classified domain the reconstruction attains $\mathrm{RMSE} = 0.946$ °C at a skill score
+of $0.251$ and a bias of $+0.010$ °C, essentially unbiased; the pooled $1.228$ °C is an average
+dragged by the unsupported area, where error reaches $1.724$ °C. Every column of @tbl-tiers
+degrades in the same direction, which is what makes the split a description of the data rather than
+a choice of subset: an arbitrary partition would not order five tiers monotonically in RMSE, MAE,
+absolute bias, correlation and skill at once. Skill also declines with lead time within every tier
+separately, so the lead-time result of @fig-leadtime is not an artefact of mixing regions.
+
 Predictor and bandwidth selection uses the training years only, everywhere in this paper. To
 measure what that restriction costs, we repeated the four-year experiment on a common candidate
 grid $h \in \{7, 11, 15, 21\}$, once with selection confined to 1981–2012 and once with selection
@@ -638,27 +671,43 @@ respect the physical ceiling that station data would impose. The reconstruction 
 behaviour through the lagged dew-point predictors while damping it, since a fitted regression on
 anomalies cannot reproduce the full spread of its target.
 
-The seasonal answer is the transition itself. The dry-to-wet transition in Amazonia is a rapid
-regime shift rather than a gradual seasonal progression: it is initiated by late-dry-season rainforest transpiration activating shallow
-convection [@wright2017], driven by increases in surface latent heat flux that rapidly reduce
-convective inhibition [@fu2004], accompanied by a reorganisation of the large-scale circulation
-[@li2004], and is routinely dated to a specific pentad [@marengo2017]. Its timing varies between
-years, modulated non-linearly by Pacific and Atlantic sea-surface temperatures and by the
-Madden–Julian Oscillation [@yin2014; @marengo2017], which is consistent with the observed movement
-of the exceedance peak and with the sevenfold range in its severity.
+The seasonal answer is also a property of the source product, and it is measurable in the training
+data. Observed dew point in this class carries a November spike at every support tier, isolated
+between two ordinary months (@tbl-november). The spike grows with distance from the station network,
+from $+1.69$ °C inside the classified domain to $+2.29$ °C beyond 200 km, and the November level it
+is added to grows with distance as well, from $25.7$ °C to $29.1$ °C. Neither alone reaches the
+threshold; together, only beyond the domain, the upper tail crosses it. That is why the exceedances
+are simultaneously a November phenomenon and an outside-the-domain phenomenon without either fact
+explaining the other.
 
-An abrupt transition is also the classical setting in which nonparametric smoothing struggles, since
-such methods require the underlying function to be smooth and jumps must be handled explicitly
-[@zhang2016]. The behaviour documented here is a specific instance: rather than biasing the fit,
-the abrupt transition drives the selection criterion to a narrow bandwidth, and the resulting
-variance inflation appears in the tail of the reconstruction.
+| Support tier | November level | Rise above adjacent months |
+|:---|---:|---:|
+| within | 25.7 °C | $+1.69$ |
+| near | 27.7 °C | $+1.88$ |
+| unsupported | 29.1 °C | $+2.29$ |
+
+: Observed dew point in the affected Thornthwaite class, from the 1981–2016 training record. The
+rise is against the mean of October and December. {#tbl-november}
+
+A single month that rises and returns is not the signature of a seasonal regime change, and we do
+not attribute it to one. The exceedance fraction in the observed record runs 4.97% in October,
+22.87% in November and 2.67% in December; a transition between regimes would not reverse within a
+month. We are unable to test a precipitation explanation in the affected area, because the gridded
+precipitation product for Peru does not extend there either: 23 of its cells reach the region, with
+values inconsistent with a rainforest. Where precipitation is available, in the part of this class
+inside the classified domain, the wet season peaks in April rather than November. The affected area
+is also equatorial, at a mean latitude of $0.79$ °S with 79% of cells north of 2 °S, so the
+literature on the southern-Amazonian dry-to-wet transition does not apply to it.
 
 The artefact class is not new. @chabotcouture2014 report interpolated dew point exceeding
-interpolated air temperature, implying relative humidity above 100%, in a day-of-year-parameterised
-dew-point interpolation, and recommend capping. The regime is additionally non-stationary, which
-compounds the difficulty of estimating it from a 1981–2016 sample: dry-season vapour pressure
-deficit over the Amazon has been rising [@mu2025] and vertical drying has been observed over
-deforested Amazonia [@hierro2025].
+interpolated air temperature in a day-of-year-parameterised dew-point interpolation, and recommend
+capping. Nonparametric smoothing is in any case poorly suited to an abrupt feature, since such
+methods require the underlying function to be smooth and jumps must be estimated separately
+[@zhang2016]; a November spike of this kind is exactly such a feature. Amazonian humidity is
+additionally non-stationary, which compounds the difficulty of estimating the relationship from a
+1981–2016 sample: dry-season vapour pressure deficit has been rising [@mu2025] and vertical drying
+has been observed over deforested Amazonia [@hierro2025]. Our own test of the training period
+(@sec-limitations) finds a drift consistent with this.
 
 ## Limitations {#sec-limitations}
 
@@ -696,8 +745,10 @@ perturbation is preferable to retaining known-implausible values. **[SME]**
 : Effect of bounding the dew-point excess over same-day minimum temperature, evaluated over all
 $3.18 \times 10^{9}$ reconstructed values. {#tbl-bound}
 
-That November corresponds to the dry-to-wet transition in this region requires confirmation against
-regional climatology. **[SME: confirm regional seasonality]**
+We considered and rejected an attribution of the November concentration to the regional dry-to-wet
+transition (@sec-discussion). What remains unexplained is the November spike in the source product
+itself, which is present at every support tier and is not ours to diagnose from the gridded fields
+alone.
 
 **Attribution of the boundary signal.** The reconstructed-minus-observed field in @fig-seam carries
 a coherent regional pattern. Because no observed $T_d$ exists after 2016, that comparison alone
@@ -721,13 +772,27 @@ Station-level evaluation is the natural next step. **[TODO]**
 **Baseline correction.** The FAO-56 baseline is reported in its uncorrected form because, over this
 domain, the conventional arid-region offset increases its error whether applied regionally or
 globally (@tbl-fao). We have not evaluated the aridity-dependent formulations of @kimball1997 or
-@eccel2012, which use precipitation as well as temperature and may behave differently. **[TODO]**
+@eccel2012, which use precipitation as well as temperature. Gridded precipitation exists for this
+domain over the identical period, so this is a gap in the present comparison rather than one the
+data prevent closing; note only that it does not reach the area where the extremes occur, which the
+precipitation product does not cover either. **[TODO]**
 
 **Lead time.** Skill decays with lead time, so 2020 rests on a longer recursion than 2017. The
 lead-time curve quantifies this to four years, the length of the actual gap.
 
-**Non-stationarity.** We did not test the training period for non-stationarity in the
-$T_{\min} \rightarrow T_d$ relationship. **[TODO]**
+**Non-stationarity.** The training period is not stationary. Splitting it into halves and
+regressing the dew-point anomaly on the minimum-temperature anomaly against each half's own
+day-of-year climatology, the slope falls from $0.716$ to $0.661$ inside the classified domain, a
+change of $-0.055$ with Cohen's $d = -0.64$, in the same direction at 72.8% of cells. Level trends
+run $+0.097$ °C per decade in dew point and $+0.154$ in minimum temperature inside the domain, and
+rise with distance from the station network to $+0.293$ and $+0.238$ beyond 200 km, the source
+product drifting fastest exactly where it is least constrained.
+
+The reported accuracy already absorbs this, since the validation fits early years and predicts later
+ones, so any drift over the withheld block is inside the error it measures. What the test adds is
+that the drift is slow relative to a four-year horizon and that it is concentrated outside the
+domain. Extending the reconstruction much further forward on the same coefficients would not be
+safe on this evidence. **[SME]**
 
 ## Supplementary material {#sec-supp}
 
@@ -852,7 +917,7 @@ those supporting @sec-discussion should be verified in full before submission. *
 | Withheld-year results and effect sizes (@tbl-ladder, @tbl-effects) | | | ☐ |
 | Boundary continuity (@tbl-seam) | | | ☐ |
 | Disposition of extreme values (@sec-results-tail) | | | ☐ |
-| Regional seasonality of the transition month | | | ☐ |
+| Withdrawal of the dry-to-wet attribution (@sec-discussion) | | | ☐ |
 | Release of the reconstructed field and metadata | | | ☐ |
 
 : Sign-offs required before submission. {#tbl-signoff}
