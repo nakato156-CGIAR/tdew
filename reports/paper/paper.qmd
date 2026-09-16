@@ -40,9 +40,13 @@ autoregressive: each predicted day supplies the $T_d$ lags of subsequent days.
 
 Because the task is extrapolation in time rather than interpolation in space, we validate by
 withholding the four most recent years (train 1981–2012, reconstruct 2013–2016) and scoring against
-observed $T_d$ under the same autoregressive conditions the real gap imposes. The model attains
-$\mathrm{RMSE} = 1.228$ °C against $1.535$ °C for daily climatology, the incumbent choice for
-gap filling: a reduction of $0.307$ °C (95% CI $[0.306, 0.309]$), skill score $0.200$, improving on
+observed $T_d$ under the same autoregressive conditions the real gap imposes. Within the domain in
+which the climate classification is defined and the source product is station-constrained, which is
+48.9% of the released cells, the model attains $\mathrm{RMSE} = 0.946$ °C at a skill score of
+$0.251$ and a bias of $+0.010$ °C; pooled over the whole released field, half of which lies beyond
+that domain, $\mathrm{RMSE} = 1.228$ °C at a skill score of $0.200$. Accuracy degrades monotonically
+with distance from the domain, to $1.724$ °C beyond 200 km. Against daily climatology, the incumbent
+choice for gap filling, the pooled reduction is $0.307$ °C (95% CI $[0.306, 0.309]$), improving on
 climatology at 99.99% of grid cells (Cohen's $d = 2.93$, permutation $p \approx 2 \times 10^{-4}$).
 It also improves on $T_d = T_{\min}$ (FAO-56) by $2.32$ °C and on a per-zone ordinary least-squares
 fit by $1.10$ °C. Predictors and bandwidths are selected on the training years alone; allowing
