@@ -2,6 +2,10 @@
 
 This project uses **bd** (beads) for issue tracking. Run `bd prime` for full workflow context.
 
+## Python Environment / Tooling (uv)
+
+This project is managed with **uv** (`uv.lock` is the source of truth for dependencies). Always run Python and CLI tooling through `uv run ...` (e.g. `uv run zenml status`, `uv run pytest`, `uv run python ...`) instead of manually activating `.venv` with `source .venv/bin/activate`. This guarantees the locked dependency set is used and keeps behavior consistent across machines and agents.
+
 ## Project Timeline / Planning (Notion)
 
 This project's timeline and day-by-day plan live in Notion, not in this repo:

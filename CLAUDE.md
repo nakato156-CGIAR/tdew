@@ -80,12 +80,12 @@ This protocol applies when ending a Beads implementation workflow. It is subordi
 
 ## Build & Test
 
-_Add your build and test commands here_
+This project is managed with **uv** (`uv.lock` is the source of truth for dependencies). Always run Python/CLI tooling through `uv run ...` (e.g. `uv run zenml status`, `uv run pytest`) instead of manually activating `.venv` — this guarantees the locked dependency set is used and keeps behavior consistent across machines and agents.
 
 ```bash
 # Example:
-# npm install
-# npm test
+# uv sync
+# uv run pytest
 ```
 
 ## Architecture Overview
