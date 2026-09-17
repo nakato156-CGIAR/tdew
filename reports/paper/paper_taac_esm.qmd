@@ -58,7 +58,7 @@ predict on the same release.
 Note that the $-0.300$ °C offset above is the difference between two **internally consistent**
 pipelines, each fitted and applied to its own release. It is not a measurement of the penalty for
 mixing releases, a configuration we did not run; the case for consistency here is that coefficients
-should correspond to the predictor actually supplied, not an estimated error bound. **[TODO]**
+should correspond to the predictor actually supplied, not an estimated error bound.
 
 This fixed five-predictor configuration also carries a December warm bias of $+1.45$ °C, which
 per-zone seasonal selection removes (Sect. 4.2 of the main manuscript).
