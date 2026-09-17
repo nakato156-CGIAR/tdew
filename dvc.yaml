@@ -8,41 +8,78 @@
 # stages for them once implemented (see beads tdew-ztn, tdew-x46, tdew-2s6,
 # tdew-efi in `bd show <id>`).
 #
-# `Data/bronze` and `Data/silver` (excluding department_grid_ids/) are large
-# (~3GB / ~11GB) and are NOT yet `dvc add`-ed or cached — they are used here
-# only as plain on-disk deps/outs so `dvc dag`/`dvc status` can reason about
-# the pipeline shape without forcing a multi-GB hash/copy into local cache.
-# Run `dvc add` on them explicitly first if you want dvc to version them.
+# `Data/{bronze,silver,gold}` are symlinks to
+# /media/ppalacios/Data1/henry_simcast_peru/tdew_medallion/{bronze,silver,gold}
+# — the raw .nc files under bronze are themselves symlinks into `_raw/v1_2`
+# (already extracted, never zipped on this machine), so there is no
+# `spatial_covariables.zip` to depend on; the covariates dep below points at
+# the extracted folder instead.
+#
+# Nothing under Data/ can be `dvc add`-ed: DVC refuses to manage a path
+# inside a symlinked directory (see dvc.org/doc/user-guide/troubleshooting
+# #add-symlink) — this is exactly why Data/silver/department_grid_ids.dvc
+# was orphaned in the past (created before/without this symlink layout) and
+# had to be dropped in tdew-ztn.1. So every Data/ path here is a plain
+# on-disk dep/out (`cache: false`) instead: dvc.yaml/dvc.lock only reason
+# about the pipeline *shape* and staleness via hashes, DVC never caches or
+# pushes the actual bytes for any of it.
+#
+# Every out also sets `persist: true`. Two reasons, both load-bearing:
+# 1. These files are on a shared disk owned by another user (ppalacios);
+#    we only have group rwx, not ownership. `dvc commit`/`repro` otherwise
+#    try to chmod cache:false outs while saving the (separate) run-cache —
+#    that chmod requires ownership and fails with "Operation not permitted".
+#    `persist: true` disqualifies the stage from run-cache bookkeeping
+#    entirely, so that chmod never happens.
+# 2. It also stops dvc from deleting outs before re-running `cmd` — the
+#    correct behavior here anyway, since bronze/silver/gold are already
+#    incremental (extract_daily_var/gold.py skip files that already exist
+#    unless `--overwrite` is passed).
 stages:
   bronze:
-    cmd: python -m pipeline.bronze
+    cmd: uv run python -m pipeline.bronze
     deps:
       - pipeline/bronze.py
-      - Data/bronze/spatial_covariables.zip
+      - Data/bronze/spatial_covariables
     outs:
       - Data/bronze/_inventory.csv:
           cache: false
+          persist: true
 
   silver:
-    cmd: python -m pipeline.silver
+    # Scoped to Lima/Cusco/Loreto(Iquitos)/San Martin(Tarapoto) per tdew-ztn.2 —
+    # tmin/tmax/td are filtered to these departments' cells instead of the full
+    # 2.8M-cell national grid; grid_index/static_covariates/lst_normals stay
+    # full-country (cheap, and department_grid_ids/*.csv is itself derived from
+    # grid_index.parquet). Drop --departments to go back to full-country.
+    cmd: uv run python -m pipeline.silver --departments lima,cusco,iquitos_loreto,tarapoto_san_martin
     deps:
       - pipeline/silver.py
       - Data/bronze/_inventory.csv
       - Data/bronze
+      - Data/silver/department_grid_ids
     outs:
       - Data/silver/grid_index.parquet:
           cache: false
+          persist: true
       - Data/silver/static_covariates.parquet:
           cache: false
+          persist: true
       - Data/silver/lst_normals.parquet:
           cache: false
+          persist: true
       - Data/silver/tmin:
           cache: false
+          persist: true
       - Data/silver/tmax:
           cache: false
+          persist: true
+      - Data/silver/td:
+          cache: false
+          persist: true
 
   gold:
-    cmd: python -m pipeline.gold
+    cmd: uv run python -m pipeline.gold
     deps:
       - pipeline/gold.py
       - Data/silver/grid_index.parquet
@@ -50,6 +87,8 @@ stages:
       - Data/silver/lst_normals.parquet
       - Data/silver/tmin
       - Data/silver/tmax
+      - Data/silver/td
     outs:
       - Data/gold/model_input:
           cache: false
+          persist: true
