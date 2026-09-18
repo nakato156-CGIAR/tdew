@@ -186,13 +186,23 @@ The authors take full responsibility for the content.
 LLM_IN_METHODS = """
 ### Use of a large language model {#sec-llm}
 
-The journal requires that use of a large language model be documented in the Methods. The analysis
-pipeline described above, the figures, and a first draft of this manuscript were produced with the
-assistance of a large language model (Anthropic Claude) under author direction. Every quantitative
-result reported here was computed by code the authors reviewed, from the recorded outputs of the
-runs described; the claim attributed to each cited work was checked against the full text of that
-work, except where the bibliography notes otherwise. The model is not an author: authorship carries
-accountability that cannot be assigned to it. The authors take full responsibility for the content.
+The journal requires that use of a large language model be documented in the Methods. Two AI systems
+were used and each is named with what it did.
+
+The analysis pipeline described above, the figures, and a first draft of this manuscript were
+produced with the assistance of a large language model (Anthropic Claude) under author direction.
+Every quantitative result reported here was computed by code the authors reviewed, from the recorded
+outputs of the runs described, and the claim attributed to each cited work was checked against the
+full text of that work.
+
+The literature underpinning the discussion was located with Ai2's Asta agents [@asta2025]: Paper
+Finder for five topic searches, and the theory-generation agent [@jansen2026] for
+literature-grounded hypotheses about the mechanisms involved. One hypothesis obtained this way,
+attributing the November extremes to the Amazonian dry-to-wet transition, was withdrawn when our own
+data contradicted it; the agents supplied candidate explanations, which we then tested.
+
+Neither system is an author: authorship carries accountability that cannot be assigned to a model.
+The authors take full responsibility for the content.
 """
 
 
