@@ -22,14 +22,23 @@ that per-ID time-ordering step is already implemented, at this same scale, by
 the bucketed pipeline in ``tdew_estimation`` (see ``Local/run_pipeline.sh`` /
 ``main.py``). This script only produces the clean join those steps consume.
 
-TD (dewpoint) is optional: if no ``silver/td/`` tables exist yet (only TMIN is
-bundled in this repo so far), the TD-derived columns are simply omitted.
+TD (dewpoint) and TMAX are optional: if no ``silver/td/`` or ``silver/tmax/``
+tables exist yet, their derived columns are simply omitted.
+
+Climatology (``{var}_clim``) is computed ONLY from rows whose ``date`` falls
+in the frozen training period (2002-2012, ``docs/protocol/week1_manifest.yaml``
+/ ``period.splits``) — never from validation/test years — per the manifest's
+``normalization_rule``. Rows outside 2002-2016 (e.g. TMIN/TMAX 1981-2001 and
+2017-2020) get a climatology value too (same train-year-only per-doy mean) but
+have no ``split`` label; downstream ``pipeline.features`` restricts to
+2002-2016 and assigns train/validation/test.
 
 Output
 ------
 ``Data/gold/model_input/id_bucket=XXXX/part.parquet`` — one row per (ID, date):
     ID, date, doy, month, TMIN, TMIN_clim, TMIN_anom,
-    [TD, TD_clim, TD_anom,] DEM, TDI, X, Y, LST_DAY, LST_NIGHT
+    [TMAX, TMAX_clim, TMAX_anom,] [TD, TD_clim, TD_anom,]
+    DEM, TDI, X, Y, LST_DAY, LST_NIGHT
 
 Usage
 -----
@@ -51,6 +60,12 @@ REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_SILVER_DIR = REPO_ROOT / "Data" / "silver"
 DEFAULT_GOLD_DIR = REPO_ROOT / "Data" / "gold"
 DEFAULT_NUM_BUCKETS = 64
+
+# Frozen training period (docs/protocol/week1_manifest.yaml, period.splits.train)
+# — climatology is computed ONLY from these years, never from validation/test,
+# per the manifest's normalization_rule.
+TRAIN_YEAR_START = 2002
+TRAIN_YEAR_END = 2012
 
 
 def _bucket_path(root: Path, bucket_id: int) -> Path:
@@ -106,8 +121,20 @@ def reshuffle_lookup(path: Path, out_root: Path, num_buckets: int, *, overwrite:
 
 
 def add_climatology(df: pd.DataFrame, var: str) -> pd.DataFrame:
+    """``{var}_clim`` is the per-(ID, doy) mean computed ONLY over
+    ``TRAIN_YEAR_START..TRAIN_YEAR_END`` rows, then applied (left-merge) to
+    every row of ``df`` — train, validation, test, and any year outside the
+    2002-2016 modeling range. This is what keeps validation/test years out of
+    the climatology/anomaly baseline (manifest ``normalization_rule``)."""
     df = df.rename(columns={"value": var})
-    clim = df.groupby(["ID", "doy"], as_index=False)[var].mean().rename(columns={var: f"{var}_clim"})
+    train_years = pd.DatetimeIndex(df["date"]).year
+    train_mask = (train_years >= TRAIN_YEAR_START) & (train_years <= TRAIN_YEAR_END)
+    clim = (
+        df.loc[train_mask]
+        .groupby(["ID", "doy"], as_index=False)[var]
+        .mean()
+        .rename(columns={var: f"{var}_clim"})
+    )
     df = df.merge(clim, on=["ID", "doy"], how="left")
     df[f"{var}_anom"] = df[var] - df[f"{var}_clim"]
     return df
@@ -117,12 +144,20 @@ def build_bucket_table(
     bucket_id: int,
     *,
     tmin_root: Path,
+    tmax_root: Path | None,
     td_root: Path | None,
     static_root: Path | None,
     lst_root: Path | None,
 ) -> pd.DataFrame:
     tmin = pd.read_parquet(_bucket_path(tmin_root, bucket_id)).drop(columns=["id_bucket"], errors="ignore")
     table = add_climatology(tmin, "TMIN")
+
+    if tmax_root is not None:
+        tmax_path = _bucket_path(tmax_root, bucket_id)
+        if tmax_path.exists():
+            tmax = pd.read_parquet(tmax_path).drop(columns=["id_bucket"], errors="ignore")
+            tmax = add_climatology(tmax, "TMAX")
+            table = table.merge(tmax, on=["ID", "date", "doy"], how="left")
 
     if td_root is not None:
         td_path = _bucket_path(td_root, bucket_id)
@@ -158,6 +193,12 @@ def run(silver_dir: Path, gold_dir: Path, *, num_buckets: int = DEFAULT_NUM_BUCK
     if not reshuffle_daily_var(silver_dir / "tmin", tmin_root, num_buckets, overwrite=overwrite):
         raise FileNotFoundError(f"No tmin daily tables under {silver_dir}/tmin")
 
+    tmax_root = bucketed_dir / "tmax"
+    have_tmax = reshuffle_daily_var(silver_dir / "tmax", tmax_root, num_buckets, overwrite=overwrite)
+    if not have_tmax:
+        print("[gold] no silver/tmax tables found, omitting TMAX-derived columns")
+        tmax_root = None
+
     td_root = bucketed_dir / "td"
     have_td = reshuffle_daily_var(silver_dir / "td", td_root, num_buckets, overwrite=overwrite)
     if not have_td:
@@ -186,7 +227,14 @@ def run(silver_dir: Path, gold_dir: Path, *, num_buckets: int = DEFAULT_NUM_BUCK
         out_path = out_dir / f"id_bucket={bucket_id}" / "part.parquet"
         if out_path.exists() and not overwrite:
             continue
-        table = build_bucket_table(bucket_id, tmin_root=tmin_root, td_root=td_root, static_root=static_root, lst_root=lst_root)
+        table = build_bucket_table(
+            bucket_id,
+            tmin_root=tmin_root,
+            tmax_root=tmax_root,
+            td_root=td_root,
+            static_root=static_root,
+            lst_root=lst_root,
+        )
         out_path.parent.mkdir(parents=True, exist_ok=True)
         table.to_parquet(out_path, index=False)
     print(f"[gold] wrote {out_dir.relative_to(gold_dir.parent)} ({len(bucket_ids)} buckets)")

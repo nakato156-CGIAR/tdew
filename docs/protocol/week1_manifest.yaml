@@ -96,8 +96,28 @@ features:
     estadistico de esta misma codificacion (sin(theta)/cos(theta) son los
     estadisticos suficientes de la distribucion von Mises para la direccion
     media), NO una tercera feature adicional a sumar junto a sin/cos(DOY).
-  context_lengths_L: [14, 30, 60]
+  context_lengths_L: [14, 31, 60]
+  lag_features: >
+    Para los modelos secuenciales (TCN/GRU/Transformer) Td_historico (y Tmin/
+    Tmax) son features dinamicas crudas por timestep dentro de la ventana
+    X_{t-L+1:t} -> Td(t+1); esa ventana ya da acceso a t-1..t-L, por lo que NO
+    se agregan columnas de lag explicitas (TD_lag1/2/3/7/30) al dataset de
+    tdew-ztn. Ese esquema de lags explicitos (replicando MODEL_INPUTS.md del
+    modelo LLR anterior) queda reservado para el baseline no-secuencial de
+    tdew-x46, donde no existe una dimension temporal que los provea gratis.
   normalization_rule: "calcular estadisticas de normalizacion SOLO con el split de training"
+
+amendments:
+  - date: "2026-09-17"
+    bead: tdew-ztn.3
+    change: "context_lengths_L: [14, 30, 60] -> [14, 31, 60]"
+    justification: >
+      Bajo la convencion congelada X_{t-L+1:t} -> Td(t+1), una ventana L=30
+      cubre t-29..t, no llega a t-30. Para que el lookback maximo del modelo
+      secuencial cubra el mismo horizonte que el lag maximo (30) del pool de
+      features del baseline no-secuencial (ver MODEL_INPUTS.md, TD_anom_lag30/
+      TMIN_anom_lag30), se necesita L>=31. L=31 es el primer valor que
+      efectivamente incluye t-30. Decidido con el usuario al cerrar tdew-ztn.
 
 status:
   closure_criterion: >

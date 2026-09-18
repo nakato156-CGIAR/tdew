@@ -1,0 +1,71 @@
+# ZenML server, self-hosted in Docker for this team.
+#
+# Usage:
+#   cd docker/zenml
+#   cp .env.example .env       # first time only, then fill in passwords
+#   ./render-store-url.py      # (re-)derive ZENML_STORE_URL from ZENML_DB_PASSWORD
+#   docker compose up -d
+#
+# Whenever you edit MYSQL_ROOT_PASSWORD or ZENML_DB_PASSWORD in .env, rerun
+# ./render-store-url.py before `docker compose up` — it URL-encodes the
+# password into ZENML_STORE_URL so special characters don't break the
+# mysql:// connection string (an unencoded `@`, `:`, `[`, etc. in the raw
+# password crashes zenml-server on startup with "Invalid IPv6 URL").
+#
+# Then open http://localhost:8080 and create the initial admin account
+# from the dashboard (the server starts unactivated on purpose: no default
+# user/password is set here, so the first person to visit the dashboard
+# creates that account).
+#
+# The zenml-server image tag is pinned to match the `zenml` client version
+# pinned in ../../pyproject.toml (zenml[server]>=0.96.4). Bump both together.
+#
+# `zenml-server` runs a locally-built custom image (~/Code/zenMLDash), not
+# the stock zenmldocker/zenml-server:0.96.4 — OSS's own dashboard hardcodes
+# "default" as the only project it will ever show/let you create one for,
+# even though the server's own REST API already supports arbitrary
+# projects. The fork patches just that dashboard UI restriction (see its
+# README/commits), layered on top of the same 0.96.4 base image.
+#
+# Right now this points at a locally `docker build`-tagged image
+# (zenml-server-custom:local) because the fork hasn't been pushed to a real
+# GitHub remote yet (`gh auth login` is still pending on this host). Once
+# it's pushed and its release.yml runs on a tag push, switch this to
+# `ghcr.io/<owner>/zenml-server-custom:latest` and add a Watchtower service
+# scoped to zenml-server (see the fork's release workflow for what it
+# publishes) so future releases roll out automatically. Until then, rebuild
+# manually after pulling fork changes:
+#   cd ~/Code/zenMLDash && docker build -t zenml-server-custom:local . && \
+#   cd -  && docker compose up -d
+services:
+  mysql:
+    image: mysql:8.0
+    restart: unless-stopped
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: zenml
+      MYSQL_USER: zenml
+      MYSQL_PASSWORD: ${ZENML_DB_PASSWORD}
+    volumes:
+      - zenml-mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "127.0.0.1", "-uroot", "-p${MYSQL_ROOT_PASSWORD}"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    # Not published to the host: only zenml-server needs to reach it, and the
+    # host already has something else listening on the default 3306.
+
+  zenml-server:
+    image: zenml-server-custom:local
+    restart: unless-stopped
+    ports:
+      - "8080:8080"
+    environment:
+      ZENML_STORE_URL: ${ZENML_STORE_URL}
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+volumes:
+  zenml-mysql-data:

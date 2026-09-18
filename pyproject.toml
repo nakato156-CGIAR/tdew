@@ -65,5 +65,11 @@ tracking = [
 [tool.setuptools]
 packages = ["tdew_estimation"]
 
+# `pipeline/` and `experiments/` are run as `python -m pipeline.foo` (repo
+# root on sys.path via -m), not installed packages; this lets `pytest` import
+# them the same way without a separate install step.
+[tool.pytest.ini_options]
+pythonpath = ["."]
+
 [tool.ty.environment]
 python = ".venv"

@@ -92,3 +92,68 @@ stages:
       - Data/gold/model_input:
           cache: false
           persist: true
+
+  # Everything below is the rest of tdew-ztn (tdew-ztn.3): derived features,
+  # train-only normalization, sequence-eligibility index, and the QC table.
+  # See docs/protocol/week1_manifest.yaml for the frozen split/L definitions.
+
+  features:
+    cmd: uv run python -m pipeline.features
+    deps:
+      - pipeline/features.py
+      - Data/gold/model_input
+    outs:
+      - Data/gold/model_features:
+          cache: false
+          persist: true
+
+  normalize:
+    cmd: uv run python -m pipeline.normalize
+    deps:
+      - pipeline/normalize.py
+      - Data/gold/model_features
+    outs:
+      - Data/gold/normalization_stats.json:
+          cache: false
+          persist: true
+      - Data/gold/model_features_norm:
+          cache: false
+          persist: true
+
+  sequences:
+    cmd: uv run python -m pipeline.sequences
+    deps:
+      - pipeline/sequences.py
+      - Data/gold/model_features_norm
+    outs:
+      - Data/gold/sequence_index:
+          cache: false
+          persist: true
+
+  qc:
+    cmd: uv run python -m pipeline.qc
+    deps:
+      - pipeline/qc.py
+      - Data/silver/tmin
+      - Data/silver/tmax
+      - Data/silver/td
+      - Data/silver/department_grid_ids
+    outs:
+      - Data/qc/qc_table.csv:
+          cache: false
+          persist: true
+
+  # tdew-x46 (baselines): leak-safe lagged feature table consumed by
+  # experiments/baselines/train_baselines.py. Reuses sequence_index/L=31 for
+  # run/split-boundary eligibility instead of re-deriving it — see
+  # pipeline/baseline_features.py docstring.
+  baseline_dataset:
+    cmd: uv run python -m pipeline.baseline_features
+    deps:
+      - pipeline/baseline_features.py
+      - Data/gold/model_features_norm
+      - Data/gold/sequence_index
+    outs:
+      - Data/gold/baseline_dataset:
+          cache: false
+          persist: true
