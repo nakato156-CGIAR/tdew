@@ -219,6 +219,28 @@ no una sola:
    2002–2016 sí existe TD real para toda la ventana. Son dos tareas
    distintas, no la misma tarea con distintos datos de entrada.
 
+### 5.1 Ojo: la escalera de Palacios NO son los mismos 5 métodos
+
+Malentendido frecuente (surgió en esta sesión, se aclara explícitamente): la
+diferencia con Palacios **no es únicamente** "los mismos 4-5 métodos, solo
+que sin `t+1` en la entrada". Su escalera (`HPC_code_tunning/backtest.py`,
+`docs/evaluation_methodology.md` sección 5) tiene 4 métodos, y solo uno
+coincide en nombre con los nuestros — con fórmula distinta:
+
+| Palacios (`backtest.py`) | fórmula | ¿corresponde a alguno de nuestros 5? |
+|---|---|---|
+| `climatology` | promedio histórico por (celda, doy), **recalculado por cada ventana de holdout** (`ll1`/`ll2`/`ll4`) | mismo nombre, pero climatología calculada distinto (nuestro `climatology` usa fijo train 2002–2012 del manifest) |
+| `td_eq_tmin` | `pred = TMIN` (directo, sin anomalía, sin ajuste) | **no existe en nuestra lista** — no equivale a `persistence` (que persiste la *anomalía de TD de ayer*, no TMIN de hoy) |
+| `zone_ols` | `Td ~ a + b·TMIN` (TMIN del **mismo día** que el target), una por **zona climática SENAMHI** (41 zonas) | se parece en espíritu a `dept_ols`, pero usa TMIN del mismo día (prohibido acá) y zona SENAMHI, no departamento |
+| `tuned` (el modelo de producción) | WLS por **celda individual × ventana de día-del-año** | **no existe en nuestra lista** — sería un 6to baseline hiperlocal, descartado por costo (sección 4, "fuera de alcance") |
+
+Y al revés: `persistence`, `dept_mlr` y `generalist_mlr` **no tienen
+equivalente** en la escalera de Palacios — son fórmulas nuevas de esta
+sesión, no una versión "recortada" de las suyas. Lo único reusado tal cual de
+su trabajo son las fórmulas de las métricas (`rmse/mae/bias/r/skill_vs_clim`)
+y la idea general de tener una escalera de dificultad creciente — no los
+métodos en sí.
+
 **Por qué no se reusó el código de Palacios tal cual**: no resuelve la
 pregunta que necesita responder esta semana ("¿qué tanto mejora un modelo
 secuencial (TCN/GRU/Transformer) sobre un baseline liviano, bajo el *mismo*
