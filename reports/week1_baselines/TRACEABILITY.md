@@ -1,8 +1,10 @@
 # Trazabilidad — tdew-x46 baselines (Semana 1, Día 4)
 
 Este documento responde: **de dónde salieron** `leaderboard.csv` y
-`skill_vs_climatology.png`, **bajo qué protocolo/reglas** se calcularon, y
-**cómo reproducirlos exactamente**.
+`skill_vs_climatology.png`, **bajo qué protocolo/reglas** se calcularon, **qué
+mide y qué hipótesis prueba cada uno de los 5 métodos**, **por qué no se
+reusó tal cual el modelo de producción de Piero Palacios**, y **cómo
+reproducir estos números exactamente**.
 
 ## 1. Protocolo (reglas congeladas, no negociables sin nuevo acuerdo)
 
@@ -53,27 +55,186 @@ normalize, sequences, qc, baseline_dataset`) y también un step de ZenML
 ZenML es la forma soportada de reproducir esto (ver `CLAUDE.md`/pedido
 explícito del usuario: "todos los pipelines" pasan por ZenML).
 
-## 3. Cómo se calculó cada método (fórmulas exactas)
+## 3. Los 5 métodos: qué miden, qué hipótesis prueban, fórmula y métricas
 
-Ver docstrings de `experiments/baselines/train_baselines.py` para el detalle
-completo. Resumen:
+Convención de tiempo usada en toda esta sección: **`t`** = "hoy", el último
+día con dato real observado. **`t+1`** = "mañana", el día que se predice
+(el target). Todas las features de todos los métodos usan datos de fecha
+`<= t` — nunca de `t+1` (regla `leakage_constraint` del manifest,
+sección 1).
 
-| método | fórmula | ajuste |
-|---|---|---|
-| `climatology` | `TD_clim(ID, doy(t+1))` | ninguno |
-| `persistence` | `TD_anom(t) + TD_clim(t+1)` | ninguno |
-| `dept_ols` | `TD_anom(t+1) ~ a + b·TMIN_anom(t)`, 1 por departamento | `tdew_estimation.metrics.OLSAccum` (closed-form) |
-| `dept_mlr` | `TD_anom(t+1) ~` lags TD/TMIN + estáticos + estacionalidad, 1 por departamento | `tdew_estimation.metrics.NormalEquationsAccum` (ridge=1e-6) |
-| `generalist_mlr` | igual que `dept_mlr` + dummies región natural × lags, pesos ∝ 1/n_train_filas(sitio) | ídem, un solo modelo para los 4 sitios |
+Los 5 métodos **miden exactamente lo mismo** en el sentido de evaluación:
+predicen `Td(t+1)` y se puntúan con el mismo examen — mismas celdas, mismas
+fechas de `validation`/`test`, y el mismo set de 5 métricas para los 5:
 
-Métricas (`n, rmse, mae, bias, r, skill_vs_clim`): mismas fórmulas que
-`HPC_code_tunning/backtest.py::_metrics/_score_all` (documentado en
-`docs/evaluation_methodology.md`), reimplementadas en
-`tdew_estimation/metrics.py` para no acoplarse a ese régimen (que es un
-problema distinto: gap-fill multi-año autoregresivo, no `Td(t+1)`
-single-step).
+- `n` — cantidad de pares (predicción, observación) válidos usados.
+- `rmse = sqrt(mean((pred − obs)²))` — error cuadrático medio, penaliza más
+  los errores grandes.
+- `mae = mean(|pred − obs|)` — error absoluto medio, más robusto a outliers
+  que `rmse`.
+- `bias = mean(pred − obs)` — error promedio con signo: `bias > 0` = el
+  método sobreestima en promedio, `bias < 0` = subestima.
+- `r` — correlación de Pearson entre predicción y observación.
+- `skill_vs_clim = 1 − rmse_método / rmse_climatología` — cuánto mejora
+  sobre el piso mínimo (ver la pregunta anterior en esta conversación para el
+  detalle completo de esta métrica).
 
-## 4. Cómo reproducir exactamente estos números
+Lo que **sí** es distinto entre los 5 es la **hipótesis** que cada uno pone a
+prueba sobre qué explica `Td(t+1)`, y por lo tanto su fórmula/proceso de
+ajuste:
+
+### 3.1 `climatology`
+- **Qué mide**: si alcanza con saber la época del año (nada del clima
+  reciente) para predecir mañana.
+- **Hipótesis**: "solo importa la época del año".
+- **Fórmula**: `pred = TD_clim(celda, día-del-año de t+1)` — el promedio
+  histórico (2002–2012, train-only) de TD para esa celda en esa fecha del
+  calendario.
+- **Proceso de ajuste**: ninguno. Es un valor ya calculado en
+  `pipeline/gold.py` (columna `TD_clim`), no se re-estima aquí.
+- **Rol en la tabla**: es la referencia — su `skill_vs_clim` es `0.0` por
+  definición en las 5 filas (se compara contra sí misma).
+
+### 3.2 `persistence`
+- **Qué mide**: si alcanza con la inercia día-a-día (sin mirar geografía,
+  estación ni ninguna otra variable) para predecir mañana.
+- **Hipótesis**: "mañana ≈ hoy" (la desviación de hoy respecto a su propio
+  promedio histórico se mantiene mañana).
+- **Fórmula**: `pred = TD_anom(t) + TD_clim(t+1)`, donde
+  `TD_anom(t) = TD(t) − TD_clim(t)` es cuánto se desvió TD hoy de su
+  climatología.
+- **Proceso de ajuste**: ninguno, es una regla fija (no hay parámetros que
+  estimar de los datos).
+
+### 3.3 `dept_ols`
+- **Qué mide**: si la temperatura mínima de hoy, sola, ya explica la
+  anomalía de TD de mañana.
+- **Hipótesis**: "solo importa `TMIN` de hoy".
+- **Fórmula**: `TD_anom(t+1) ~ a + b · TMIN_anom(t)` — una regresión lineal
+  simple (1 variable + intercepto), **una por departamento** (4 modelos:
+  Lima, Cusco, Loreto/Iquitos, San Martín/Tarapoto).
+- **Proceso de ajuste**: `tdew_estimation.metrics.OLSAccum` — acumula
+  sufficient statistics (`Σx, Σy, Σx², Σxy, n`) leyendo el dataset por
+  bloques (`id_bucket`) y resuelve `a, b` en forma cerrada al final, sin
+  necesitar cargar el departamento completo en memoria. Solo con filas de
+  `split=train`.
+
+### 3.4 `dept_mlr`
+- **Qué mide**: si la historia reciente de TD/TMIN, más la geografía y la
+  estación del año, explican mejor la anomalía de mañana que una sola
+  variable. Este es el "baseline no-deep" que pide el bead `tdew-x46`.
+- **Hipótesis**: "importa la historia reciente + geografía + estación, todo
+  junto, por sitio".
+- **Fórmula**:
+  ```
+  TD_anom(t+1) ~ const
+               + TMIN_anom(t) + TMIN_anom(t-1)
+               + TD_anom(t) + TD_anom(t-1) + TD_anom(t-2) + TD_anom(t-6) + TD_anom(t-29)
+               + sin(doy(t+1)) + cos(doy(t+1))
+               + DEM + TDI + X + Y
+               + LST_DAY(mes de t+1) + LST_NIGHT(mes de t+1)
+  ```
+  (15 variables + intercepto), **una regresión por departamento** — no por
+  celda individual, esa sería la granularidad del modelo de producción de
+  Piero Palacios (ver sección 4).
+- **Proceso de ajuste**: `tdew_estimation.metrics.NormalEquationsAccum` —
+  el mismo truco de acumulación por bloques que `dept_ols`, pero
+  multivariado: acumula `X'X` (16×16) y `X'y` por `id_bucket` y resuelve
+  `beta = (X'X + ridge·I)⁻¹ X'y` al final (`ridge=1e-6`, solo para
+  estabilidad numérica frente a la colinealidad entre lags — matemáticamente
+  equivalente a `statsmodels.OLS(...).fit()` sobre el dataset completo,
+  verificado en `tests/test_metrics.py`). Solo con filas de `split=train`.
+
+### 3.5 `generalist_mlr`
+- **Qué mide**: si la dinámica que aprende `dept_mlr` por separado en cada
+  departamento se puede compartir en un solo modelo para los 4 sitios sin
+  perder poder predictivo — la pregunta de fondo detrás de "¿generalista o
+  por sitio?" (ver sección 6, investigación citada).
+- **Hipótesis**: "lo mismo que `dept_mlr`, pero la dinámica se puede
+  compartir entre sitios" (con una corrección por región natural).
+- **Fórmula**: igual que `dept_mlr`, más:
+  ```
+  + region_Sierra + region_Selva                          (Costa = referencia)
+  + region_Sierra × (cada uno de los 7 lags de TD/TMIN)
+  + region_Selva  × (cada uno de los 7 lags de TD/TMIN)
+  ```
+  (31 variables + intercepto en total), **un solo ajuste usando las filas de
+  train de los 4 departamentos juntas**. Las interacciones región×lag dejan
+  que la "memoria" de TD pese distinto en Selva que en Sierra, sin necesitar
+  4 modelos separados.
+- **Proceso de ajuste**: mismo `NormalEquationsAccum`, pero cada fila se
+  pondera por `peso(sitio) = 1 / n_filas_train(sitio)` antes de acumular —
+  sin este peso, Loreto/Iquitos (~1.2 mil millones de filas de train) le
+  ganaría el ajuste 10.5x a Lima (~116 millones) simplemente por volumen, no
+  porque su dinámica sea "más correcta".
+
+## 4. Resumen (tabla)
+
+| # | método | mide / hipótesis | fórmula (resumen) | ¿se ajusta? | granularidad |
+|---|---|---|---|---|---|
+| 1 | `climatology` | solo importa la época del año | `TD_clim(t+1)` | no | — |
+| 2 | `persistence` | solo importa la inercia (mañana ≈ hoy) | `TD_anom(t) + TD_clim(t+1)` | no | — |
+| 3 | `dept_ols` | solo importa `TMIN` de hoy | `a + b·TMIN_anom(t)` | sí (OLS) | 1 modelo/departamento |
+| 4 | `dept_mlr` | historia + geografía + estación, por sitio | 15 variables (lags+estáticos+doy) | sí (ridge normal-eqs) | 1 modelo/departamento |
+| 5 | `generalist_mlr` | igual que #4, compartido entre sitios | 31 variables (+ región × lags), ponderado | sí (ridge normal-eqs, WLS) | 1 modelo para los 4 sitios |
+
+Las 5 filas se puntúan con las mismas `n, rmse, mae, bias, r, skill_vs_clim`
+por `(sitio, split)` — el examen es idéntico, lo que cambia es qué hipótesis
+sobre la física/estadística del problema encierra cada fórmula.
+
+## 5. ¿Por qué no se reusó el modelo de Piero Palacios directamente? ¿Es solo un cambio de datos de entrada?
+
+**No es solo un cambio de datos de entrada — son tres diferencias de fondo**,
+no una sola:
+
+1. **Regla de fuga de información (sí es, en parte, un cambio de datos)**.
+   El modelo de Palacios (`tdew_estimation/anomaly_train.py`,
+   `docs/MODEL_INPUTS.md`) usa `TMIN_anom` del **mismo día que el target**
+   como variable exógena — válido en su contexto, porque TMIN es un dato
+   real conocido incluso en el hueco de producción 2017–2020 (a diferencia
+   de TD). El manifest de la Semana 1 (`leakage_constraint`) prohíbe
+   explícitamente cualquier input `>= t+1`, así que ni siquiera `TMIN` del
+   día del target se usa aquí — todos los lags de estos 5 baselines quedan
+   corridos un día atrás respecto al diseño de Palacios. Esta parte sí es
+   "solo" una diferencia de qué columnas entran.
+
+2. **Granularidad espacial del modelo (esto SÍ es metodología, no datos)**.
+   Palacios ajusta una regresión ponderada (WLS, kernel tricube) **distinta
+   por cada combinación de celda individual × ventana de día-del-año** —
+   del orden de millones de modelos hiperlocales sobre el grid nacional
+   completo. Ninguno de los 5 baselines de esta sesión hace eso: `dept_ols`/
+   `dept_mlr` ajustan **1 modelo por departamento** y `generalist_mlr`
+   ajusta **1 modelo para los 4 departamentos juntos**, usando `X, Y, DEM,
+   TDI` como features en vez de "memorizar" cada celda por separado. Es un
+   cambio de arquitectura/metodología del modelo, no de qué datos entran.
+
+3. **Régimen de evaluación (también metodología, no datos)**. El régimen de
+   Palacios (`HPC_code_tunning/backtest.py`, documentado en
+   `docs/evaluation_methodology.md`) es un **gap-fill multi-año
+   autoregresivo**: entrena hasta un año de corte y predice 1 a 4 años hacia
+   adelante, retroalimentando sus propias predicciones como lags de TD
+   dentro del hueco (porque no hay TD real en 2017–2020). El régimen de esta
+   sesión es **un solo paso adelante** (`Td(t+1)` desde una ventana real de
+   historia `X_{<=t}`), sin retroalimentación autoregresiva — porque en
+   2002–2016 sí existe TD real para toda la ventana. Son dos tareas
+   distintas, no la misma tarea con distintos datos de entrada.
+
+**Por qué no se reusó el código de Palacios tal cual**: no resuelve la
+pregunta que necesita responder esta semana ("¿qué tanto mejora un modelo
+secuencial (TCN/GRU/Transformer) sobre un baseline liviano, bajo el *mismo*
+régimen de datos/splits/features que esos modelos van a usar?"). Reusarlo
+sin cambios habría comparado peras con manzanas: su régimen resuelve un
+problema real distinto (rellenar 2017–2020) con reglas de fuga distintas
+(TMIN del mismo día sí permitido) y a una granularidad (por celda) que los
+modelos deep de esta semana no van a replicar. Lo que sí se reusó
+explícitamente: la idea de "escalera de baselines" y las fórmulas exactas de
+`rmse/mae/bias/r/skill_vs_clim` de `HPC_code_tunning/backtest.py` (sección 3
+de este documento), reimplementadas en `tdew_estimation/metrics.py` para el
+nuevo régimen — así los números quedan en el mismo lenguaje/formato que el
+resto del proyecto, aunque no sean numéricamente comparables entre sí (son
+exámenes distintos).
+
+## 6. Cómo reproducir exactamente estos números
 
 ```bash
 uv run python -m pipeline.zenml_pipeline               # hasta baseline_dataset (+ qc)
@@ -88,7 +249,7 @@ de `pipeline/baseline_features.py` y `experiments/baselines/train_baselines.py`
 está streameado por bucket (nunca carga un departamento completo en memoria
 — ver `tdew_estimation.metrics.NormalEquationsAccum`/`MetricsAccum`).
 
-## 5. Dónde quedó registrado cada run
+## 7. Dónde quedó registrado cada run
 
 - **MLflow** (`sqlite:///mlflow.db`, experiment `tdew-week1`): un run
   `week1-baseline` por `(site, method)` con tags `git_commit`, `seed=0`,
@@ -104,7 +265,7 @@ está streameado por bucket (nunca carga un departamento completo en memoria
   antes de este commit; si se necesita que el tag coincida exactamente,
   re-ejecutar `experiments.baselines.zenml_pipeline` después de este commit).
 
-## 6. Investigación externa citada (transparencia sobre uso de IA)
+## 8. Investigación externa citada (transparencia sobre uso de IA)
 
 La decisión de agregar `generalist_mlr` (y la interacción región-natural ×
 lags) se apoya en un resumen de investigación generado por un agente de IA
