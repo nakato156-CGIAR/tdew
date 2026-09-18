@@ -221,7 +221,7 @@ Rather than fixing $\mathcal{S} \subseteq \mathcal{P}$ and $h$ globally, we sele
 combination of climate zone $z$ and day of year $d$, following the multitask design of @hwang2019:
 predictors are chosen jointly across the grid cells of a zone while coefficients remain per cell.
 The approach has since been benchmarked against other machine-learning methods for subseasonal
-forecasting [@he2020] and applied to precipitation [@wang2021]; here it is adapted to a
+forecasting [@he2021] and applied to precipitation [@wang2021]; here it is adapted to a
 reconstruction rather than a forecasting task.
 
 The selection objective is leave-one-year-out cross-validated cosine similarity on anomalies. For a
@@ -622,7 +622,7 @@ increases error in every moisture class, and the best-fitting offset has the opp
 (@tbl-fao). Reported corrections should not be transferred between products and regions without
 re-estimation.
 
-The most directly comparable result is that of @althoff2022, who calibrate a temperature-based
+The most directly comparable result is that of @althoff2023, who calibrate a temperature-based
 approach over the Brazilian Cerrado, a tropical biome with a pronounced dry season, and obtain
 corrections of **opposite sign in the two seasons**: $-0.93$ °C in the wet season ($T_d > T_{\min}$)
 against $+0.57$ °C in the dry season ($T_d < T_{\min}$). The coupling is thus not a fixed offset but

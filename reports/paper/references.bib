@@ -3,8 +3,15 @@
 % the four Wiley/Elsevier titles were obtained through institutional access. PDFs are under
 % reports/paper/refs_pdf/ (gitignored).
 %
-% Remaining: page numbers and volumes are still incomplete on several entries, and
-% senamhi2021 was verified by the authors directly against the source document.
+% Volumes, article numbers, pages and DOIs completed 2026-09-18 from the PDFs themselves,
+% except mu2025 (publisher landing page) and senamhi2021 (a book, verified by the authors
+% against the source document). Four entries carry no volume or pages because their form
+% has none: hwang2019 and he2021 are conference papers, gallusser2025 a workshop paper,
+% senamhi2021 a book.
+%
+% Two years were wrong, both taken from Semantic Scholar metadata and corrected against the
+% published articles: althoff is 2023 (Sci. Agric. v.80, e20210229), not 2022; he is 2021
+% (AAAI-21), not 2020. Their citation keys were renamed to match.
 
 @inproceedings{hwang2019,
   title     = {Improving Subseasonal Forecasting in the Western {U.S.} with Machine Learning},
@@ -13,6 +20,9 @@
   year      = {2019},
   eprint    = {1809.07394},
   archivePrefix = {arXiv},
+  publisher = {ACM},
+  address   = {New York, NY, USA},
+  doi       = {10.1145/3292500.3330674},
   note      = {Source of the MultiLLR multitask local-linear-regression selection design}
 }
 
@@ -23,6 +33,8 @@
   volume  = {9},
   year    = {2022},
   doi     = {10.1038/s41597-022-01373-8},
+  volume  = {9},
+  number  = {328},
   note    = {Construction of the PISCO gridded fields (LST + DEM covariates, regression kriging)}
 }
 
@@ -49,6 +61,9 @@
   author  = {Kimball, J. S. and Running, S. W. and Nemani, R.},
   journal = {Agricultural and Forest Meteorology},
   year    = {1997},
+  volume  = {85},
+  pages   = {87--98},
+  doi     = {10.1016/S0168-1923(96)02366-0},
   note    = {Correction to the Tmin dew-point proxy driven by the ratio of annual
                precipitation to annual potential evapotranspiration; 52 US and Alaska
                stations; reduces error by up to 80% at arid and semi-arid sites.
@@ -60,6 +75,9 @@
   author  = {Eccel, E.},
   journal = {Meteorological Applications},
   year    = {2012},
+  volume  = {19},
+  pages   = {118--128},
+  doi     = {10.1002/met.258},
   note    = {Dew point from minimum temperature, corrected downward using temperature and
                precipitation and requiring local calibration; evaluated at Italian alpine
                stations. Verified against full text 2026-09-16. corpusId 60878010}
@@ -76,11 +94,14 @@
   note    = {Humidity disaggregation methods H1 (Tdew=Tmin) through H4; documents decoupling of Tmin from ambient moisture}
 }
 
-@article{althoff2022,
+@article{althoff2023,
   title   = {Improvement of reference crop evapotranspiration estimates using limited data for the Brazilian Cerrado},
   author  = {Althoff, Daniel and Rodrigues, L.},
   journal = {Scientia Agricola},
-  year    = {2022},
+  volume  = {80},
+  number  = {e20210229},
+  year    = {2023},
+  doi     = {10.1590/1678-992X-2021-0229},
   note    = {Opposite-signed seasonal Tmin-to-Tdew corrections in a tropical seasonal biome: wet season -0.93 C, dry season +0.57 C; corpusId 250155510}
 }
 
@@ -90,14 +111,19 @@
   journal = {PLoS ONE},
   year    = {2014},
   doi     = {10.1371/journal.pone.0094741},
+  volume  = {9},
+  number  = {5},
+  pages   = {e94741},
   note    = {Dew-point interpolation with day-of-year-dependent parameterisation and 31-day smoothing; documents interpolated Tdew exceeding Tair (RH>100%) and recommends capping}
 }
 
-@inproceedings{he2020,
+@inproceedings{he2021,
   title     = {Sub-Seasonal Climate Forecasting via Machine Learning: Challenges, Analysis, and Advances},
   author    = {He, Sijie and Li, Xinyan and DelSole, T. and Ravikumar, Pradeep and Banerjee, A.},
-  booktitle = {AAAI Conference on Artificial Intelligence},
-  year      = {2020},
+  booktitle = {Proceedings of the Thirty-Fifth {AAAI} Conference on Artificial Intelligence (AAAI-21)},
+  volume    = {35},
+  year      = {2021},
+  doi       = {10.1609/aaai.v35i1.16090},
   note      = {MultiLLR multitask feature selection benchmarked against other ML methods; corpusId 219686759}
 }
 
@@ -108,6 +134,7 @@
   volume  = {9},
   year    = {2021},
   doi     = {10.3389/feart.2021.659310},
+  number  = {659310},
   note    = {MultiLLR with local linear regression applied to China precipitation}
 }
 
@@ -128,6 +155,9 @@
   author  = {Kilibarda, M. and Hengl, T. and Heuvelink, G. and Gr{\"a}ler, Benedikt and Pebesma, E. and Per{\v c}ec Tadi{\'c}, Melita},
   journal = {Journal of Geophysical Research: Atmospheres},
   year    = {2014},
+  volume  = {119},
+  pages   = {2294--2313},
+  doi     = {10.1002/2013JD020803},
   note    = {Spatio-temporal regression kriging of daily temperature from about 9,000
                stations with MODIS covariates, validated by leave-one-station-out and
                aggregated to land blocks to offset station clustering. Verified against
@@ -147,9 +177,13 @@
 
 @article{mu2025,
   title   = {Increasing dry-season vapor pressure deficit in the Amazon Basin: historical trends, future projections, and links to deforestation},
-  author  = {Mu, Ye and Hu, Yiwen and Jones, Charles and Biggs, Trent and Domingues, T. and Funk, Chris},
+  author  = {Mu, Ye and Hu, Yiwen and Jones, Charles and Biggs, Trent and Domingues, Tomas F. and
+             Funk, Chris and Peterson, Pete},
   journal = {Environmental Research Communications},
+  volume  = {7},
+  number  = {101001},
   year    = {2025},
+  doi     = {10.1088/2515-7620/ae0c5b},
   note    = {Rising dry-season VPD driven primarily by warming-induced saturation vapour pressure; corpusId 281622763}
 }
 
@@ -158,6 +192,9 @@
   author  = {Hierro, R.},
   journal = {International Journal of Climatology},
   year    = {2025},
+  volume  = {45},
+  number  = {e70184},
+  doi     = {10.1002/joc.70184},
   note    = {GPS radio occultation specific-humidity profiles, 2007--2023, show drying over
                highly deforested Amazonia, strongest below 1.5 km and intensifying in the
                dry season. Verified against full text 2026-09-16. corpusId 283024444}
@@ -195,6 +232,7 @@
   volume  = {10},
   year    = {2016},
   doi     = {10.1214/16-EJS1127},
+  pages   = {706--735},
   note    = {Nonparametric trend smoothing requires the underlying function to be smooth; jumps must be detected and estimated separately}
 }
 
