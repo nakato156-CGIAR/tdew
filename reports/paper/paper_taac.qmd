@@ -9,6 +9,11 @@ crossref:
   tbl-title: "Table"
   tbl-prefix: "Table"
 format:
+  # The journal requires Word or LaTeX. docx is the submission artefact; typst is kept
+  # because it is what we read, and the two come from one source.
+  docx:
+    reference-doc: reference-taac.docx
+    number-sections: true
   typst:
     toc: false
     number-sections: true
@@ -221,7 +226,7 @@ Rather than fixing $\mathcal{S} \subseteq \mathcal{P}$ and $h$ globally, we sele
 combination of climate zone $z$ and day of year $d$, following the multitask design of @hwang2019:
 predictors are chosen jointly across the grid cells of a zone while coefficients remain per cell.
 The approach has since been benchmarked against other machine-learning methods for subseasonal
-forecasting [@he2020] and applied to precipitation [@wang2021]; here it is adapted to a
+forecasting [@he2021] and applied to precipitation [@wang2021]; here it is adapted to a
 reconstruction rather than a forecasting task.
 
 The selection objective is leave-one-year-out cross-validated cosine similarity on anomalies. For a
@@ -633,7 +638,7 @@ increases error in every moisture class, and the best-fitting offset has the opp
 (@tbl-fao). Reported corrections should not be transferred between products and regions without
 re-estimation.
 
-The most directly comparable result is that of @althoff2022, who calibrate a temperature-based
+The most directly comparable result is that of @althoff2023, who calibrate a temperature-based
 approach over the Brazilian Cerrado, a tropical biome with a pronounced dry season, and obtain
 corrections of **opposite sign in the two seasons**: $-0.93$ °C in the wet season ($T_d > T_{\min}$)
 against $+0.57$ °C in the dry season ($T_d < T_{\min}$). The coupling is thus not a fixed offset but
@@ -743,7 +748,7 @@ information about where that field is weakly constrained. A threshold at 50 km r
 all of them (@tbl-support) at the cost of the extrapolated area.
 
 Constraining the minimum bandwidth would address the seasonal concentration, but not the spatial
-one, which no choice of recipe can reach (@sec-results-tail); it remains untested. **[TODO]**
+one, which no choice of recipe can reach (@sec-results-tail); it remains untested.
 
 A post-hoc bound is also available, and the appropriate form is a bound on the *excess* over
 same-day minimum temperature rather than on $T_{\min}$ itself. Capping at $T_d \le T_{\min}$ is not
@@ -754,7 +759,7 @@ a typical $3.0$ °C, and are therefore separable from the bulk of the distributi
 bound of $T_d \le T_{\min} + 8$ °C removes 99.1% of them while altering 2.2% of values by a mean of
 $0.030$ °C over the field, three orders of magnitude less perturbation than a cap at $T_{\min}$.
 Whether to apply such a bound to the released field is a judgement about whether a small targeted
-perturbation is preferable to retaining known-implausible values. **[SME]**
+perturbation is preferable to retaining known-implausible values.
 
 | Bound | Values altered | Mean shift over all values (°C) | Exceedances removed |
 |:---|---:|---:|---:|
@@ -776,7 +781,7 @@ alone.
 **Attribution of the boundary signal.** The reconstructed-minus-observed field in @fig-seam carries
 a coherent regional pattern. Because no observed $T_d$ exists after 2016, that comparison alone
 cannot separate a genuine 2017–2020 climate anomaly from regional model bias; the bound comes from
-@sec-results-validation, where regional errors are measured on withheld years. **[SME]**
+@sec-results-validation, where regional errors are measured on withheld years.
 
 **Shared covariates.** Gridded $T_d$ and $T_{\min}$ share land-surface-temperature and elevation
 predictors in their construction, so validation against gridded $T_d$ may flatter the mapping
@@ -790,7 +795,7 @@ statistics do not extend to them.
 
 **No station-level evaluation.** The target is the gridded product being extended, which is the
 correct reference for this task, but the reconstruction inherits that product's biases.
-Station-level evaluation is the natural next step. **[TODO]**
+Station-level evaluation is the natural next step.
 
 **Baseline correction.** The FAO-56 baseline is reported in its uncorrected form because, over this
 domain, the conventional arid-region offset increases its error whether applied regionally or
@@ -798,7 +803,7 @@ globally (@tbl-fao). We have not evaluated the aridity-dependent formulations of
 @eccel2012, which use precipitation as well as temperature. Gridded precipitation exists for this
 domain over the identical period, so this is a gap in the present comparison rather than one the
 data prevent closing; note only that it does not reach the area where the extremes occur, which the
-precipitation product does not cover either. **[TODO]**
+precipitation product does not cover either.
 
 **Lead time.** Skill decays with lead time, so 2020 rests on a longer recursion than 2017. The
 lead-time curve quantifies this to four years, the length of the actual gap.
@@ -815,7 +820,7 @@ The reported accuracy already absorbs this, since the validation fits early year
 ones, so any drift over the withheld block is inside the error it measures. What the test adds is
 that the drift is slow relative to a four-year horizon and that it is concentrated outside the
 domain. Extending the reconstruction much further forward on the same coefficients would not be
-safe on this evidence. **[SME]**
+safe on this evidence.
 
 ## Conclusions
 
