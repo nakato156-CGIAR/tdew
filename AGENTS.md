@@ -2,6 +2,10 @@
 
 This project uses **bd** (beads) for issue tracking. Run `bd prime` for full workflow context.
 
+## Writing style
+
+Before writing any documentation, report, Notion page, or other prose deliverable, read [`ESTILO_REDACCION.md`](ESTILO_REDACCION.md) and follow it. It requires Spanish, impersonal/passive voice ("se hizo", not "yo hice"), and bans a specific list of AI-sounding filler patterns. This does not apply to code comments or short back-and-forth chat replies.
+
 ## Python Environment / Tooling (uv)
 
 This project is managed with **uv** (`uv.lock` is the source of truth for dependencies). Always run Python and CLI tooling through `uv run ...` (e.g. `uv run zenml status`, `uv run pytest`, `uv run python ...`) instead of manually activating `.venv` with `source .venv/bin/activate`. This guarantees the locked dependency set is used and keeps behavior consistent across machines and agents.

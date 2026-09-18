@@ -2,6 +2,10 @@
 
 This file provides instructions and context for AI coding agents working on this project.
 
+## Writing style
+
+Before writing any documentation, report, Notion page, or other prose deliverable, read [`ESTILO_REDACCION.md`](ESTILO_REDACCION.md) and follow it. It requires Spanish, impersonal/passive voice ("se hizo", not "yo hice"), and bans a specific list of AI-sounding filler patterns. This does not apply to code comments or short back-and-forth chat replies.
+
 ## Project Timeline / Planning (Notion)
 
 This project's timeline and day-by-day plan live in Notion, not in this repo:
