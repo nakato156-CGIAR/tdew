@@ -81,4 +81,7 @@ dask-worker-space/
 presentations/
 reports/paper/refs_pdf/
 reports/paper/*.typ
+# Rendered manuscripts are outputs; the Word reference document is an input the build
+# needs, so it is tracked.
 reports/paper/*.docx
+!reports/paper/reference-taac.docx
