@@ -24,3 +24,16 @@ retained only as the leaky arm of the selection-optimism comparison reported in 
 
 These were reconstructed into the repository on 2026-09-07 after the originals were lost from
 `/tmp` in a reboot — which is why they now live under version control.
+
+## Map figures
+
+`geo_overlay.py` draws Peru's national and departmental boundaries (GADM 4.1 level 1, in
+`../geo/`) over the four figures with a geographic axis: F2, F3, F4 and S4. The outline
+carries an argument rather than decorating the figure. The released field covers about twice
+the area of Peru, and accuracy degrades with distance from the Peruvian station network the
+source product is built on, so the border shows the reader where the errors come from: the
+`unsupported` tier, at RMSE 1.724 °C against 0.946 °C inside, and every one of the 132,920
+cells carrying a value above 35 °C, lie beyond it.
+
+GADM's extent agrees with the SENAMHI classification shapefile to three decimal places,
+which is a useful cross-check of both.

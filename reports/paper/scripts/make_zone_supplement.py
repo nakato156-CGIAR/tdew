@@ -23,6 +23,8 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
+from geo_overlay import add_peru_outline
+
 RES = os.environ.get("RES", "/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning")
 OUT = Path(__file__).resolve().parent.parent / "figures"
 CACHE = os.environ.get("PRODUCT_IDS_CACHE", "")
@@ -154,6 +156,7 @@ def main() -> int:
     ax.set_ylabel("latitude (°N)")
     ax.set_title("SENAMHI Thornthwaite zones over the released field", fontsize=11)
     ax.set_aspect("equal")
+    add_peru_outline(ax)
 
     cnt = t.set_index("zone")["cells"].to_dict()
     handles = [Patch(facecolor=colours[z],
