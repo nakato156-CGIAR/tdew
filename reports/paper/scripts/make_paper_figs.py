@@ -17,6 +17,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+from geo_overlay import add_peru_outline
+
 FULL = "/media/ppalacios/Data1/henry_simcast_peru_full"
 RES = f"{FULL}/results_tuning"
 PRED = f"{RES}/tuning/predictions_2017_2020"
@@ -107,6 +109,7 @@ def main():
     fig, ax = plt.subplots(figsize=(6.8, 8))
     sc = ax.scatter(m.lon, m.lat, c=m.mean_td, s=0.15, cmap="viridis", vmin=0, vmax=26, linewidths=0)
     ax.set_aspect("equal"); ax.set_xlabel("lon"); ax.set_ylabel("lat")
+    add_peru_outline(ax)
     ax.set_title("Mean gap-filled Td, 2017–2020 (°C)")
     fig.colorbar(sc, ax=ax, shrink=0.6, label="Td (°C)")
     fig.tight_layout(); fig.savefig(f"{OUT}/F2_meanTd_map_2017_2020.png", dpi=150); plt.close(fig)
@@ -122,6 +125,7 @@ def main():
     axs[1].scatter(grid.lon, grid.lat, s=0.05, color="0.85", linewidths=0)
     axs[1].scatter(warm.lon, warm.lat, c=warm.max_td, s=2, cmap="hot_r", vmin=35, vmax=42, linewidths=0)
     axs[1].set_aspect("equal"); axs[1].set_xlabel("lon"); axs[1].set_ylabel("lat")
+    add_peru_outline(axs[1])
     axs[1].set_title(f"Cells with max Td >35 °C (n={len(warm):,})")
     frac = (p_gt / p_mcnt * 100).sort_index()
     axs[2].plot(to_dt(frac.index), frac.values, "-o", ms=3, color="#c44e52")

@@ -23,6 +23,8 @@ import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
+from geo_overlay import add_peru_outline
+
 FULL = "/media/ppalacios/Data1/henry_simcast_peru_full"
 RES = f"{FULL}/results_tuning"
 PRED = f"{RES}/tuning/predictions_2017_2020"
@@ -93,7 +95,8 @@ def main():
         ax = fig.add_subplot(gs[0, i])
         sc = ax.scatter(m.lon, m.lat, c=m[col], s=0.12, cmap="RdBu_r",
                         vmin=-lim, vmax=lim, linewidths=0)
-        ax.set_aspect("equal"); ax.set_title(title, fontsize=11); ax.set_xlabel("lon")
+        ax.set_aspect("equal"); add_peru_outline(ax); ax.set_title(title, fontsize=11)
+        ax.set_xlabel("lon")
         if i == 0:
             ax.set_ylabel("lat")
         cb = fig.colorbar(sc, ax=ax, shrink=0.55, pad=0.02)

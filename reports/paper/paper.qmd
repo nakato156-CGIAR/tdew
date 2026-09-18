@@ -909,12 +909,24 @@ here.
 
 ## AI-use disclosure {#sec-ai-disclosure}
 
-In accordance with CIP's Acceptable Use and Privacy policy: the analysis pipeline, validation
-harness, reconstruction driver and figures were developed and executed with AI assistance
-(Anthropic Claude, via Claude Code) under the direction and review of the author. The assistant
-wrote and ran analysis code, produced the figures, and drafted this manuscript. No confidential,
-personal or unpublished third-party data was provided to the assistant; all inputs are institutional
-gridded climate products.
+In accordance with CIP's Acceptable Use and Privacy policy, two AI systems were used and each is
+named with what it did.
+
+The analysis pipeline, validation harness, reconstruction driver and figures were developed and
+executed with AI assistance (Anthropic Claude, via Claude Code) under the direction and review of
+the author. The assistant wrote and ran analysis code, produced the figures, and drafted this
+manuscript.
+
+The literature underpinning @sec-discussion was located with Ai2's Asta agents [@asta2025]: Paper
+Finder for five topic searches, and the theory-generation agent [@jansen2026] for
+literature-grounded hypotheses about the mechanisms discussed. The retrieval and generation records
+accompany the manuscript. One hypothesis obtained this way, attributing the November extremes to the
+Amazonian dry-to-wet transition, was **withdrawn** when our own data contradicted it
+(@sec-discussion); the agents were used as a source of candidate explanations, not as an authority
+on them.
+
+No confidential, personal or unpublished third-party data was provided to any assistant; all inputs
+are institutional gridded climate products.
 
 All quantitative results are pending SME validation (@sec-signoff). Values were read directly from
 the recorded outputs of the runs cited rather than reproduced from memory. The claim attributed to
