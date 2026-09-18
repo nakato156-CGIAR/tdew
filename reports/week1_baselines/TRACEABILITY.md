@@ -182,44 +182,57 @@ Las 5 filas se puntúan con las mismas `n, rmse, mae, bias, r, skill_vs_clim`
 por `(sitio, split)` — el examen es idéntico, lo que cambia es qué hipótesis
 sobre la física/estadística del problema encierra cada fórmula.
 
-## 5. ¿Por qué no se reusó el modelo de Piero Palacios directamente? ¿Es solo un cambio de datos de entrada?
+## 5. Comparación completa: qué hizo Palacios vs. qué hicimos en esta sesión
 
-**No es solo un cambio de datos de entrada — son tres diferencias de fondo**,
-no una sola:
+Esta sección enumera **todas** las diferencias entre el trabajo previo de
+Piero Palacios (`tdew_estimation/`, `HPC_code_tunning/`, `docs/MODEL_INPUTS.md`,
+`docs/evaluation_methodology.md`) y los 5 baselines de `tdew-x46` — no solo
+la regla de fuga de `t+1`, que es apenas una de ocho diferencias.
 
-1. **Regla de fuga de información (sí es, en parte, un cambio de datos)**.
-   El modelo de Palacios (`tdew_estimation/anomaly_train.py`,
-   `docs/MODEL_INPUTS.md`) usa `TMIN_anom` del **mismo día que el target**
-   como variable exógena — válido en su contexto, porque TMIN es un dato
-   real conocido incluso en el hueco de producción 2017–2020 (a diferencia
-   de TD). El manifest de la Semana 1 (`leakage_constraint`) prohíbe
-   explícitamente cualquier input `>= t+1`, así que ni siquiera `TMIN` del
-   día del target se usa aquí — todos los lags de estos 5 baselines quedan
-   corridos un día atrás respecto al diseño de Palacios. Esta parte sí es
-   "solo" una diferencia de qué columnas entran.
+### 5.0 Tabla maestra (todas las dimensiones)
 
-2. **Granularidad espacial del modelo (esto SÍ es metodología, no datos)**.
-   Palacios ajusta una regresión ponderada (WLS, kernel tricube) **distinta
-   por cada combinación de celda individual × ventana de día-del-año** —
-   del orden de millones de modelos hiperlocales sobre el grid nacional
-   completo. Ninguno de los 5 baselines de esta sesión hace eso: `dept_ols`/
-   `dept_mlr` ajustan **1 modelo por departamento** y `generalist_mlr`
-   ajusta **1 modelo para los 4 departamentos juntos**, usando `X, Y, DEM,
-   TDI` como features en vez de "memorizar" cada celda por separado. Es un
-   cambio de arquitectura/metodología del modelo, no de qué datos entran.
+| Dimensión | Piero Palacios (`tdew_estimation/`, `HPC_code_tunning/`) | Esta sesión (`tdew-x46`) |
+|---|---|---|
+| **Objetivo/tarea** | Producción: rellenar el hueco real de TD 2017–2020 (no hay TD real en ese rango) | Investigación: primer leaderboard de baselines para comparar contra TCN/GRU/Transformer de la Semana 1 |
+| **Alcance espacial** | Grid nacional completo (~2.8M celdas), particionado en 41 zonas climáticas SENAMHI | 4 departamentos completos (436,523 celdas): Lima, Cusco, Loreto/Iquitos, San Martín/Tarapoto |
+| **Alcance temporal (train)** | 1981–2016 (o hasta el año de corte del holdout) | 2002–2012 (fijo, `period.splits.train` del manifest) |
+| **Splits de evaluación** | `ll1`/`ll2`/`ll4`: holdouts de 1, 2 y 4 años sobre el mismo régimen de gap-fill | 1 solo split fijo: train 2002–2012 / validation 2013–2014 / test 2015–2016, sin mezcla |
+| **Variable objetivo** | `TD` (dewpoint) absoluto, para el hueco real 2017–2020 | `Td(t+1)`: un paso adelante, dentro de un rango donde SÍ existe TD real (2002–2016) |
+| **Timing de features** | Permite `TMIN` del **mismo día** que el target (dato real conocido incluso en el hueco) | Prohíbe cualquier input `>= t+1` (`leakage_constraint` del manifest) — ni siquiera TMIN del mismo día |
+| **Mecanismo de predicción** | **Autoregresivo/recursivo**: dentro del hueco, los lags de `TD_anom` se alimentan con la predicción del propio modelo del día anterior (`tdew_estimation/forecast.py`), porque no hay TD real que usar | **No autoregresivo**: todos los lags son TD/TMIN reales observados (2002–2016 tiene TD real completo), nunca la propia predicción del modelo |
+| **Técnica de modelo (`tuned`/producción)** | Regresión ponderada **local por kernel** (WLS, kernel Tricube o Gaussiano, medio-ancho `h` en días) sobre una **ventana circular de día-del-año**, ajustada **por separado en cada celda** — cientos de miles de regresiones locales por celda | Una regresión **global** (sin ventana de kernel) por departamento (`dept_ols`/`dept_mlr`) o una sola para los 4 sitios (`generalist_mlr`), con `sin/cos(doy)` como feature explícito para capturar la estacionalidad en vez de ventanear por DOY |
+| **Selección de hiperparámetros/features** | Sí: `HPC_code_tunning/select_backtest.py` re-selecciona, por (zona × doy), qué subconjunto de lags usar de un pool de candidatos (`TuningConfig`, `candidate_pool`, `h_grid`) — solo con años de train | No: el set de features de `dept_mlr`/`generalist_mlr` es fijo, decidido de antemano (sección 3); `ridge=1e-6` es un valor fijo de estabilidad numérica, no buscado |
+| **Cómputo a escala** | Dask distribuido (`dask.distributed`, multi-worker/multi-nodo SLURM) + un kernel WLS por lotes en GPU (`cupy`, ver `D3 batched-WLS kernel`) | Un solo proceso, acumulación streaming por `id_bucket` en NumPy puro (`tdew_estimation.metrics.NormalEquationsAccum`/`MetricsAccum`), sin Dask ni GPU |
+| **Normalización** | Anomalía `TD_anom = TD − TD_clim` por (celda, doy); sin capa adicional de z-score | Igual noción de anomalía (reusada de `pipeline/gold.py`), más una capa de z-score train-only (`pipeline/normalize.py`) que existe en el dataset pero que estos 5 baselines **no usan** (una regresión lineal no la necesita; sí la usarán probablemente TCN/GRU/Transformer) |
+| **Partición espacial usada como feature/agrupador** | Zona climática SENAMHI (metadato meteorológico fijo, 41 zonas) | Departamento administrativo (metadato político, 4 unidades) — el propio manifest (`sites.senamhi_41_zones_compatibility`) deja **pendiente y sin asumir** que ambos esquemas sean equivalentes |
+| **Escalera de métodos evaluados** | 4 métodos: `climatology`, `td_eq_tmin`, `zone_ols`, `tuned` (detalle en 5.1) | 5 métodos: `climatology`, `persistence`, `dept_ols`, `dept_mlr`, `generalist_mlr` (detalle en sección 3) — solo el nombre `climatology` se repite, y ni ese se calcula igual |
+| **Métricas** | `n, rmse, mae, bias, r, skill_vs_clim` + inferencia estadística (bootstrap de bloques por celda, Cohen's d, test de permutación — `effect_sizes.py`) | Mismas fórmulas de `n, rmse, mae, bias, r, skill_vs_clim` (reimplementadas, sección 3) — **sin** la capa de inferencia estadística de `effect_sizes.py` (no se hizo en esta sesión) |
+| **Registro/tracking** | Salidas a CSV/parquet planos (`metrics.csv`, `predictions.parquet`, `effect_sizes.csv`), sin MLflow | MLflow (`sqlite:///mlflow.db`, experiment `tdew-week1`) + DVC + ZenML (sección 6) |
 
-3. **Régimen de evaluación (también metodología, no datos)**. El régimen de
-   Palacios (`HPC_code_tunning/backtest.py`, documentado en
-   `docs/evaluation_methodology.md`) es un **gap-fill multi-año
-   autoregresivo**: entrena hasta un año de corte y predice 1 a 4 años hacia
-   adelante, retroalimentando sus propias predicciones como lags de TD
-   dentro del hueco (porque no hay TD real en 2017–2020). El régimen de esta
-   sesión es **un solo paso adelante** (`Td(t+1)` desde una ventana real de
-   historia `X_{<=t}`), sin retroalimentación autoregresiva — porque en
-   2002–2016 sí existe TD real para toda la ventana. Son dos tareas
-   distintas, no la misma tarea con distintos datos de entrada.
+### 5.1 Por qué estas diferencias no son solo "un cambio de datos de entrada"
 
-### 5.1 Ojo: la escalera de Palacios NO son los mismos 5 métodos
+De las filas de la tabla, tres son genuinamente cambios de **metodología**
+(no de qué columnas entran a la fórmula), y vale la pena remarcarlas:
+
+1. **Mecanismo del modelo**: kernel-local por (celda, ventana-DOY) vs.
+   regresión global por departamento/generalista con estacionalidad
+   explícita. No es "el mismo modelo con menos columnas" — es una técnica de
+   ajuste distinta (regresión local no-paramétrica en el espacio de DOY vs.
+   regresión lineal global con una feature cíclica).
+2. **Mecanismo de predicción**: autoregresivo/recursivo (alimentado con sus
+   propias predicciones cuando no hay TD real) vs. no-autoregresivo (todos
+   los lags son siempre datos reales, porque el rango 2002–2016 nunca tiene
+   huecos de TD). Esto no es una diferencia de columnas, es una diferencia de
+   cómo se genera la predicción día a día.
+3. **Régimen de evaluación**: holdouts multi-año (`ll1/ll2/ll4`, simulando el
+   gap real) vs. un único split fijo de un paso adelante. Son dos preguntas
+   de investigación distintas, no la misma pregunta con distintos datos.
+
+La regla de `t+1` (no usar `TMIN` del mismo día) sí es, en cambio, una
+diferencia puramente de **qué dato entra** — la única de las ocho filas de la
+tabla que es solamente eso.
+
+### 5.2 La escalera de Palacios NO son los mismos 5 métodos
 
 Malentendido frecuente (surgió en esta sesión, se aclara explícitamente): la
 diferencia con Palacios **no es únicamente** "los mismos 4-5 métodos, solo
@@ -232,7 +245,7 @@ coincide en nombre con los nuestros — con fórmula distinta:
 | `climatology` | promedio histórico por (celda, doy), **recalculado por cada ventana de holdout** (`ll1`/`ll2`/`ll4`) | mismo nombre, pero climatología calculada distinto (nuestro `climatology` usa fijo train 2002–2012 del manifest) |
 | `td_eq_tmin` | `pred = TMIN` (directo, sin anomalía, sin ajuste) | **no existe en nuestra lista** — no equivale a `persistence` (que persiste la *anomalía de TD de ayer*, no TMIN de hoy) |
 | `zone_ols` | `Td ~ a + b·TMIN` (TMIN del **mismo día** que el target), una por **zona climática SENAMHI** (41 zonas) | se parece en espíritu a `dept_ols`, pero usa TMIN del mismo día (prohibido acá) y zona SENAMHI, no departamento |
-| `tuned` (el modelo de producción) | WLS por **celda individual × ventana de día-del-año** | **no existe en nuestra lista** — sería un 6to baseline hiperlocal, descartado por costo (sección 4, "fuera de alcance") |
+| `tuned` (el modelo de producción) | WLS por **celda individual × ventana de día-del-año** | **no existe en nuestra lista** — sería un 6to baseline hiperlocal; se descartó por costo de cómputo (ver 5.0, fila "Cómputo a escala") y queda fuera de alcance de esta sesión, no implementado |
 
 Y al revés: `persistence`, `dept_mlr` y `generalist_mlr` **no tienen
 equivalente** en la escalera de Palacios — son fórmulas nuevas de esta
