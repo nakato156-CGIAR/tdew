@@ -262,6 +262,12 @@ def check_compliance() -> None:
                 order.append(int(n))
         rows.append((f"{kind} numbered consecutively", order == sorted(order), str(order)))
 
+    # Internal sign-off annotations must not reach a submission. The placeholders in the
+    # declarations are a different thing and use a different form, "[TODO: what to supply]",
+    # so they are left alone: a reviewer never sees them because the author fills them first.
+    leaked = re.findall(r"\*\*\[(?:SME|TODO)[^\]]*\]\*\*", OUT.read_text())
+    rows.append(("no internal markers in prose", not leaked, f"{len(leaked)} found"))
+
     print("\n  Springer / TAAC guideline check")
     for name, ok, detail in rows:
         print(f"    {'PASS' if ok else 'FAIL'}  {name:<32} {detail}")
