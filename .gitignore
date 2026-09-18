@@ -81,3 +81,4 @@ dask-worker-space/
 presentations/
 reports/paper/refs_pdf/
 reports/paper/*.typ
+reports/paper/*.docx

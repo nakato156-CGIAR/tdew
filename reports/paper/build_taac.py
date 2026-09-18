@@ -56,6 +56,11 @@ crossref:
   tbl-title: "Table"
   tbl-prefix: "Table"
 format:
+  # The journal requires Word or LaTeX. docx is the submission artefact; typst is kept
+  # because it is what we read, and the two come from one source.
+  docx:
+    reference-doc: reference-taac.docx
+    number-sections: true
   typst:
     toc: false
     number-sections: true
@@ -271,7 +276,19 @@ def check_compliance() -> None:
     print("\n  Springer / TAAC guideline check")
     for name, ok, detail in rows:
         print(f"    {'PASS' if ok else 'FAIL'}  {name:<32} {detail}")
-    print("    NOTE  submission requires .docx or LaTeX; this build is Typst by request")
+    # The journal requires Word or LaTeX; verify the docx actually carries the formatting,
+    # since none of it is settable from the front matter.
+    import zipfile
+    try:
+        z = zipfile.ZipFile(HERE / "paper_taac.docx")
+        sty = z.read("word/styles.xml").decode()
+        doc = z.read("word/document.xml").decode()
+        ok = ("Times New Roman" in sty and 'w:sz w:val="24"' in sty
+              and 'w:line="360"' in sty and "lnNumType" in doc)
+        detail = "Times New Roman 12 pt, 1.5 spacing, line numbers"
+    except Exception as e:                                     # noqa: BLE001
+        ok, detail = False, str(e)
+    print(f"    {'PASS' if ok else 'FAIL'}  {'docx carries the formatting':<32} {detail}")
 
 
 def main() -> int:
@@ -320,6 +337,7 @@ def main() -> int:
     for f in (OUT, ESM):
         subprocess.run(["quarto", "render", f.name, "--to", "typst",
                         "-M", "keep-typ:true"], cwd=HERE, check=True)
+        subprocess.run(["quarto", "render", f.name, "--to", "docx"], cwd=HERE, check=True)
     place_bibliography_before_declarations()
     check_compliance()
     return 0
