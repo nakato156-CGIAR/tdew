@@ -21,8 +21,16 @@ Fuente única: [`docs/protocol/week1_manifest.yaml`](../../docs/protocol/week1_m
   features de este baseline **difiera** del modelo de producción
   (`tdew_estimation/anomaly_train.py`, `docs/MODEL_INPUTS.md`), que sí usa
   TMIN del mismo día que el target.
-- **Normalización/climatología**: estadísticos calculados SOLO con años de
-  train (2002–2012), nunca con validation/test.
+- **Climatología**: `TD_clim`/`TMIN_clim` es el promedio por (celda, día del
+  año) calculado SOLO con años de train (2002–2012, `pipeline/gold.py`),
+  luego aplicado igual a train/validation/test. `TD_anom = TD - TD_clim` es
+  lo que consumen los 5 baselines.
+- **Normalización (z-score)**: capa aparte (`pipeline/normalize.py`), media/
+  desviación estándar también calculadas solo con train, aplicadas a
+  TMIN/TMAX/TD/sus anomalías/DEM/TDI/X/Y/LST_DAY/LST_NIGHT como columnas
+  `{col}_norm`. Existe en `Data/gold/model_features_norm` pero **ninguno de
+  los 5 baselines la usa** — las regresiones trabajan en unidades originales
+  (anomalía cruda), no en z-score.
 
 Decisiones específicas de esta implementación (acordadas con el usuario en
 esta sesión, no están en el manifest):
