@@ -9,6 +9,11 @@ crossref:
   tbl-title: "Table"
   tbl-prefix: "Table"
 format:
+  # The journal requires Word or LaTeX. docx is the submission artefact; typst is kept
+  # because it is what we read, and the two come from one source.
+  docx:
+    reference-doc: reference-taac.docx
+    number-sections: true
   typst:
     toc: false
     number-sections: true
