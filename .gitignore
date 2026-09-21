@@ -107,3 +107,8 @@ presentations/
 # MLflow local tracking (docs/experiment_infrastructure.md): mlflow.db is
 # already covered by *.db above; mlruns/ is its local artifact store.
 mlruns/
+
+# Checkpoints de entrenamiento de modelos profundos (experiments/tcn/train.py).
+# Cada .pt pesa ~2 MB y se regenera desde el run de MLflow correspondiente;
+# el directorio se versiona por su ruta, no por su contenido.
+experiments/*/checkpoints/

@@ -33,6 +33,12 @@ benchmark = [
 gpu = [
     "cupy-cuda12x>=12",
 ]
+# Deep sequence models (TCN/GRU/Transformer, Semana 1 tdew-x46/tdew-2s6/tdew-efi).
+# PyPI's linux "torch" wheel bundles its own CUDA 12.x runtime (no separate
+# --index-url needed), same rationale as `gpu` above for cupy-cuda12x.
+deep = [
+    "torch>=2.5",
+]
 # .nc -> point-parquet extraction (PISCO download pipeline): xarray/netCDF4 for the rasters,
 # geopandas/rasterio for the potato-grid shapefile sampling. Not needed to train/benchmark.
 netcdf = [
