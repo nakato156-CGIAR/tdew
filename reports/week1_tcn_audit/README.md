@@ -7,7 +7,7 @@ issues, y la única regla sobre las cifras fue que todas salieran de código pro
 era doble: explicar el déficit del modelo y comprobar si un diagnóstico hecho antes por otra
 vía era replicable.
 
-Scripts en `experiments/tcn/audit_x46/` (19 scripts numerados), salidas en este directorio.
+Scripts en `experiments/tcn/audit_x46/` (21 scripts numerados), salidas en este directorio.
 Las submuestras materializadas (`sample_train.npz`, `sample_validation.npz`, 30 MB) no se
 versionan; `03_build_sample.py` las regenera con semilla fija.
 
@@ -105,6 +105,31 @@ ventanas, 55,351 muestras por parámetro. Treinta épocas al ritmo medido son 14
 posterior. El óptimo se alcanzó al cerrar la primera época y las 46.4 h siguientes lo
 degradaron (0.2670 → 0.2612 → 0.2550 → 0.2624 → 0.2360).
 
+## Reproducción completa de la curva de degradación
+
+`20_ablation_gpu.py` reentrenó desde cero en GPU, 20,000 pasos de batch 1024 sobre 2,551,040
+ventanas de 640 celdas, evaluando siempre sobre las mismas 559,200 ventanas de validación:
+
+| paso | 2,000 | 4,000 | 6,000 | 8,000 | 10,000 | 14,000 | 20,000 |
+|---|---|---|---|---|---|---|---|
+| val RMSE ALL | **0.8682** | 0.8860 | 0.8966 | 0.9109 | 0.9155 | 0.9346 | **0.9513** |
+| train loss | 0.10124 | 0.09396 | 0.08225 | 0.07832 | 0.07415 | 0.06985 | 0.06333 |
+
+El óptimo cae en la primera evaluación, al paso 2,000, con 0.8682: mejor que persistencia
+(0.9204 sobre esa misma submuestra) y cerca de `generalist_mlr`. Desde ahí degrada de forma
+monótona hasta 0.9513, que es donde está el modelo de producción (0.9498 sobre la misma
+submuestra). El `train_loss` baja en todo momento.
+
+Eso cierra el caso: la curva completa del run de producción se reproduce en 787 segundos. El
+bucle de entrenamiento evalúa una vez cada 1,699,186 pasos, unas 850 veces más tarde que el
+mínimo observado, así que **nunca vio el óptimo**; el checkpoint guardado como mejor ya estaba
+muy pasado de él.
+
+Caveat sobre el mínimo: tanto este experimento (primera evaluación en el paso 2,000) como el de
+`tdew-x46.1` (primera evaluación en el paso 1,000) encuentran su mejor valor en la **primera**
+medición, así que ninguno de los dos acotó por abajo dónde está realmente el óptimo. Puede estar
+antes.
+
 ## Qué aprendió el modelo, y dónde se pierde la información
 
 Sobre 60,000 ventanas (`06_sensitivity.py`): `corr(label, pred) = 0.684` mientras
@@ -160,13 +185,18 @@ la información está en las entradas del modelo profundo.
 512 sobre 128 celdas, evaluadas sobre 60,000 ventanas de validation de **buckets disjuntos**
 (celdas y años no vistos):
 
-| variante | ALL reponderado | loreto |
-|---|---|---|
-| A arquitectura actual | 0.8587 | 0.9368 |
-| B FiLM en identidad | 0.8713 | 0.9517 |
-| C residual de persistencia | 0.8565 | 0.9331 |
-| D B+C | 0.8533 | 0.9307 |
-| E actual con pesos uniformes | 0.8717 | 0.9531 |
+| variante | CPU 1,500 pasos | CPU, loreto | GPU paso 2,000 | GPU paso 20,000 |
+|---|---|---|---|---|
+| A arquitectura actual | 0.8587 | 0.9368 | 0.8682 | 0.9513 |
+| B FiLM en identidad | 0.8713 | 0.9517 | — | — |
+| C residual de persistencia | 0.8565 | 0.9331 | — | — |
+| D B+C | 0.8533 | 0.9307 | 0.8721 | 0.9439 |
+| E actual con pesos uniformes | 0.8717 | 0.9531 | 0.9125 | 0.9370 |
+
+Las tres variantes llevadas a 20,000 pasos recorren la misma curva descendente: las correcciones
+arquitectónicas mueven entre 0.005 y 0.014 °C y **ninguna evita la degradación**. Los pesos
+uniformes arrancan claramente peor (0.9125 contra 0.8682 en el paso 2,000) y terminan algo mejor
+(0.9370 contra 0.9513), o sea degradan más despacio pero desde un punto peor.
 
 Las cinco quedan entre 0.853 y 0.872, al nivel del OLS y muy por encima del run real (0.950),
 con diferencias entre ellas del orden del ruido de una sola semilla. La misma arquitectura,
@@ -208,9 +238,12 @@ del periodo de train: es entrada pasada, no viola causalidad.
 entre sitios se combina con redundancia espacial extrema en el sitio mayoritario, y la
 metodología actual no reconoce eso en ningún punto.
 
-**Metodología**: causa dominante. El óptimo de validación ocurre en la época 0 y las cuatro
-siguientes lo degradan; el mecanismo de ponderación por sitio queda anulado en el 56% de los
-batches; cada batch procede de 8–28 celdas; y no hay parada temprana ni validación intra-época.
+**Metodología**: causa dominante, y reproducida de punta a punta. El bucle evalúa una vez cada
+1,699,186 pasos (11.6 h) mientras el óptimo medido cae alrededor del paso 2,000; reentrenando en
+GPU se recorre la curva entera, de 0.8682 en el paso 2,000 a 0.9513 en el 20,000, que es donde
+está el modelo de producción. A eso se suma que el mecanismo de ponderación por sitio queda
+anulado en el 56% de los batches, que cada batch procede de 8–28 celdas, y que se optimiza una
+pérdida ponderada mientras se selecciona por una métrica sin ponderar.
 
 **Modelo**: contribuye, pero es la causa menor. La cadena de sondas cuantifica su coste en unos
 0.10 °C, repartido entre codificador (0.059), FiLM (0.034) y cabeza (0.048), y la atención
@@ -228,6 +261,15 @@ es lo que impide llegar al nivel de los baselines.
 4. Añadir la conexión residual de persistencia, la única variante arquitectónica que mejoró de
    forma consistente.
 5. Revisar la ablación de L (`tdew-bs4`) con esta evidencia: truncar la ventana a 3 días mejora
-   el modelo entrenado en 0.055 °C.
+   el modelo entrenado en 0.055 °C, y un OLS sobre 3 días (0.8504) queda a 0.0025 °C del mismo
+   OLS sobre 31 (0.8479). El contexto largo no está pagando su costo ni siquiera para un modelo
+   lineal.
 6. Registrar métricas por sitio y no solo el agregado. La brecha de 7.54× en Loreto es invisible
    en el `val_rmse` agrupado y fue lo que más información aportó.
+
+## Alcance de las mediciones
+
+Todas las cifras propias de la auditoría provienen de submuestras de como máximo 8 de los 64
+buckets, y las mediciones por año y de rango efectivo usan entre 4 y 300 celdas. Coinciden con
+las métricas registradas del run de producción dentro del 1%, pero el error de muestreo espacial
+no se cuantificó formalmente.
