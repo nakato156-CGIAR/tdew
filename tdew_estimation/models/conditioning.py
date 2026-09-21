@@ -27,7 +27,14 @@ N_REGIONS = 3
 
 
 class FiLMGenerator(nn.Module):
-    def __init__(self, d_model: int, n_static: int = 4, region_embed_dim: int = 8, hidden: int = 32):
+    def __init__(
+        self,
+        d_model: int,
+        n_static: int = 4,
+        region_embed_dim: int = 8,
+        hidden: int = 32,
+        identity_init: bool = False,
+    ):
         super().__init__()
         self.d_model = d_model
         self.region_embedding = nn.Embedding(N_REGIONS, region_embed_dim)
@@ -36,6 +43,17 @@ class FiLMGenerator(nn.Module):
             nn.GELU(),
             nn.Linear(hidden, 2 * d_model),
         )
+        if identity_init:
+            # Pairs with apply(..., identity=True): zeroing the last layer makes
+            # gamma=beta=0, so the modulation starts as (1+0)*h+0 == h, instead
+            # of annihilating h. On the trained week1-tcn-attention checkpoint
+            # the plain gamma*h+beta form left |gamma| averaging 0.120 after
+            # 8.5M steps; switching to this parameterisation did not improve
+            # validation RMSE in the tdew-x46.1 ablation
+            # (reports/week1_tcn_ablation/), so the attenuation is a real
+            # measurement but not a demonstrated cause of the deficit.
+            nn.init.zeros_(self.mlp[-1].weight)
+            nn.init.zeros_(self.mlp[-1].bias)
 
     def forward(self, static: torch.Tensor, region: torch.Tensor) -> tuple[torch.Tensor, torch.Tensor]:
         """static: [B, n_static] float; region: [B] long in [0, N_REGIONS).
@@ -46,5 +64,10 @@ class FiLMGenerator(nn.Module):
         return gamma, beta
 
     @staticmethod
-    def apply(h: torch.Tensor, gamma: torch.Tensor, beta: torch.Tensor) -> torch.Tensor:
+    def apply(h: torch.Tensor, gamma: torch.Tensor, beta: torch.Tensor, identity: bool = False) -> torch.Tensor:
+        """``identity=True`` uses the ``(1+gamma)*h + beta`` parameterisation
+        (Perez et al. 2018's usual implementation form), so that gamma=0 leaves
+        ``h`` untouched instead of annihilating it."""
+        if identity:
+            return (1.0 + gamma) * h + beta
         return gamma * h + beta

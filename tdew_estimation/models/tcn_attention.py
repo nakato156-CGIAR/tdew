@@ -55,6 +55,29 @@ class TCNAttentionConfig:
     film_hidden: int = 32
     head_hidden: int = 32
     dropout: float = 0.1
+    # --- correctives under test in bead tdew-x46.1 (both default to the
+    # behaviour the week1-tcn-attention run was trained with, so an existing
+    # checkpoint still loads: neither flag adds, removes or renames a
+    # parameter) ---
+    # Predict the residual over persistence instead of the level: the head's
+    # output is added to TD_anom_norm(t), and the head's last layer is
+    # zero-initialised, so an untrained model IS persistence exactly.
+    #
+    # What it buys, per the tdew-x46.1 ablation
+    # (reports/week1_tcn_ablation/): a floor, not accuracy. At init the pooled
+    # validation RMSE is 0.9200 (persistence) instead of 1.3138, but at the
+    # best point of an 8,000-step run the difference against the plain head is
+    # 0.8542 vs 0.8593 -- inside the spread. The hypothesis that the model
+    # underperformed because it lacked this identity path was NOT confirmed.
+    residual_persistence: bool = False
+    # Index of TD_anom_norm inside the dynamic feature axis
+    # (experiments.tcn.dataset.DYNAMIC_COLS).
+    persistence_feature_index: int = 2
+    # FiLM as (1+gamma)*h + beta with a zero-initialised generator, i.e.
+    # starting at the identity -- see FiLMGenerator. Also measured in the
+    # tdew-x46.1 ablation and also without a measurable effect on accuracy
+    # (0.8588 against 0.8542 without it, at the same best point).
+    film_identity: bool = False
 
     def receptive_field(self) -> int:
         return receptive_field(self.kernel_size, self.n_tcn_blocks, self.dilation_base)
@@ -71,7 +94,9 @@ class TCNAttentionModel(nn.Module):
             c.d_model, c.n_tcn_blocks, kernel_size=c.kernel_size, dilation_base=c.dilation_base, dropout=c.dropout
         )
         self.attention_pool = QueryPoolingAttention(c.d_model, c.n_attention_heads, dropout=c.dropout)
-        self.film = FiLMGenerator(c.d_model, c.n_static_features, c.region_embed_dim, c.film_hidden)
+        self.film = FiLMGenerator(
+            c.d_model, c.n_static_features, c.region_embed_dim, c.film_hidden, identity_init=c.film_identity
+        )
         head_in = c.d_model + c.n_target_cond_features
         self.head = nn.Sequential(
             nn.Linear(head_in, c.head_hidden),
@@ -79,6 +104,15 @@ class TCNAttentionModel(nn.Module):
             nn.Dropout(c.dropout),
             nn.Linear(c.head_hidden, 1),
         )
+        if c.residual_persistence:
+            # Zero-init the last head layer so the correction starts at exactly
+            # 0 and the model's initial prediction is persistence. The trunk
+            # receives no gradient on the very first step (dout/dhidden == W ==
+            # 0), but the layer's own weights do, so it becomes non-zero
+            # immediately -- the same zero-init-the-residual-branch trick as in
+            # He et al.'s ResNet recipe.
+            nn.init.zeros_(self.head[-1].weight)
+            nn.init.zeros_(self.head[-1].bias)
 
     @property
     def receptive_field(self) -> int:
@@ -99,10 +133,12 @@ class TCNAttentionModel(nn.Module):
         pooled = self.attention_pool(h)  # [B, d_model]
 
         gamma, beta = self.film(static, region)
-        pooled = FiLMGenerator.apply(pooled, gamma, beta)
+        pooled = FiLMGenerator.apply(pooled, gamma, beta, identity=self.config.film_identity)
 
         combined = torch.cat([pooled, target_cond], dim=-1)  # [B, d_model + n_target_cond_features]
         pred_norm = self.head(combined).squeeze(-1)  # [B]
+        if self.config.residual_persistence:
+            pred_norm = pred_norm + dynamic[:, -1, self.config.persistence_feature_index]
         return pred_norm
 
 
