@@ -1,0 +1,35 @@
+/tmp/claude-1001/-home-cvelasquez-Code-tdew/9415381c-fc93-47a2-9bd6-06415dbba794/scratchpad/audit-wt/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py:68: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+/tmp/claude-1001/-home-cvelasquez-Code-tdew/9415381c-fc93-47a2-9bd6-06415dbba794/scratchpad/audit-wt/audit/12_loss_numerics.py:74: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /__w/pytorch/pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:820.)
+  print(f"   {str(dt):16s} loss={float(l):.6f}  ||grad||={float(pp.grad.float().norm()):.6e}")
+=== A. perdida real del modelo entrenado sobre TRAIN ===
+   Huber ponderado (float32)     = 0.095198
+   Huber sin ponderar (float32)  = 0.075027
+   RMSE train por sitio: lima=0.5694  cusco=0.5610  iquitos_loreto=0.1466  tarapoto_san_martin=0.3414
+   train_loss registrado en MLflow, epoca 4 = 0.043734 (ver audit/01_mlflow_dump.py)
+
+=== B. el mismo calculo en bfloat16, como en el entrenamiento (autocast) ===
+   batch=1024, 60 batches:
+      float32  bfloat16    razon  num_b16/num_f32  den_b16/den_f32
+mean 0.095861  0.095874 1.000117         1.000331         1.000325
+min  0.083015  0.083008 0.993240         0.996841         0.997513
+max  0.118198  0.118652 1.004936         1.003958         1.003134
+
+   mismo experimento con pesos uniformes (=1) para aislar el efecto de la escala de w:
+   float32=0.092707  bfloat16=0.092773  razon=1.0007
+
+=== C. escala del gradiente: d(loss)/d(pred) en float32 vs bfloat16 ===
+   torch.float32    loss=0.118198  ||grad||=1.639531e-02
+   torch.bfloat16   loss=0.118652  ||grad||=1.648312e-02
+
+=== D. correlaciones sobre el mismo subconjunto de validation ===
+   corr(label, TD_anom_norm(t))  [persistencia] = 0.75903
+   corr(label, pred del modelo)                 = 0.68434
+   std(label)=0.9930  std(TD(t))=0.9908  std(pred)=0.6340
+
+=== E. cuanto aporta target_cond (LST/doy del dia objetivo) a un lineal ===
+   OLS 31 dias + static + region + target_cond          rmse_ALL_repond=0.8479  lima=0.6175 cusc=0.7042 iqui=0.9251 tara=0.5233
+   OLS 31 dias + static + region (sin target_cond)      rmse_ALL_repond=0.8479  lima=0.6175 cusc=0.7043 iqui=0.9252 tara=0.5233
+   OLS solo 3 dias + static + region + target_cond      rmse_ALL_repond=0.8504  lima=0.6144 cusc=0.7034 iqui=0.9288 tara=0.5217
+   OLS solo 1 dia + static + region + target_cond       rmse_ALL_repond=0.8570  lima=0.6142 cusc=0.7040 iqui=0.9374 tara=0.5222

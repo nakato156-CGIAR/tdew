@@ -112,3 +112,7 @@ mlruns/
 # Cada .pt pesa ~2 MB y se regenera desde el run de MLflow correspondiente;
 # el directorio se versiona por su ruta, no por su contenido.
 experiments/*/checkpoints/
+
+# Submuestras materializadas de la auditoria del TCN (experiments/tcn/audit_x46):
+# ~30 MB, regenerables con semilla fija por 03_build_sample.py.
+reports/week1_tcn_audit/*.npz

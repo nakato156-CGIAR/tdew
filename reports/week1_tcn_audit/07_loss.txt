@@ -1,0 +1,30 @@
+/tmp/claude-1001/-home-cvelasquez-Code-tdew/9415381c-fc93-47a2-9bd6-06415dbba794/scratchpad/audit-wt/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py:68: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+n=120000 ventanas de validation (submuestra balanceada por sitio)
+std de TD_anom = 1.111624 degC por unidad normalizada
+
+=== 1. regimen de Huber(delta=1) sobre los residuos reales ===
+   fraccion de residuos con |r| > delta=1.0: 13.7133%
+   masa de perdida en el tramo lineal: 60.0751%
+   masa de error cuadratico en esos mismos residuos: 65.1728%
+   -> la parte de la distribucion que mas pesa en RMSE es la que Huber atenua
+
+=== 2. ponderacion por sitio: lo que optimiza la perdida vs lo que mide RMSE ===
+              sitio  n_submuestra  peso_por_muestra  rmse_degC  mse_norm  share_celdas_reales  share_grad_batch_equilibrado  share_grad_si_frec_natural
+               lima         29941        8.6253e-09   0.666313  0.359287            0.0666157                      0.439643                        0.25
+              cusco         29894        4.1774e-09   0.771607   0.48181             0.137545                      0.212928                        0.25
+     iquitos_loreto         30242       8.20827e-10    1.07919  0.942505             0.700002                     0.0418386                        0.25
+tarapoto_san_martin         29923       5.99534e-09   0.595978  0.287438            0.0958378                      0.305591                        0.25
+
+   razon max/min del share de gradiente en batch equilibrado: 10.51
+
+=== 3. RMSE agrupado: submuestra balanceada vs poblacion real ===
+   RMSE ALL con 25%/sitio          = 0.7999 degC
+   RMSE ALL con celdas reales      = 0.9802 degC
+   (Loreto pesa 70.0% de las celdas)
+
+=== 4. el objetivo ponderado vs el RMSE: signo de la discrepancia ===
+   Huber ponderado (lo que se minimiza)   = 0.177517
+   Huber sin ponderar                     = 0.226312
+   0.5*MSE sin ponderar (norm)            = 0.259437
+   train_loss registrado en MLflow es de este orden -> ver 01_mlflow_dump

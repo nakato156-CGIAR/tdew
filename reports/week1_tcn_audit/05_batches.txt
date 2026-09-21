@@ -1,0 +1,64 @@
+/tmp/claude-1001/-home-cvelasquez-Code-tdew/9415381c-fc93-47a2-9bd6-06415dbba794/scratchpad/audit-wt/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py:68: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+2026/09/21 09:27:24 INFO mlflow.agent.hint: Load the `instrumenting-with-mlflow-tracing` skill at /tmp/claude-1001/-home-cvelasquez-Code-tdew/9415381c-fc93-47a2-9bd6-06415dbba794/scratchpad/audit-wt/.venv/lib/python3.13/site-packages/mlflow/assistant/skills/instrumenting-with-mlflow-tracing/SKILL.md before writing any tracing code; it ships with this MLflow install. Set MLFLOW_DISABLE_AGENT_HINT=1 to silence this.
+pesos por sitio (experiments/tcn/site_weights.json): {'cusco': 4.177397931996699e-09, 'iquitos_loreto': 8.208268946440477e-10, 'lima': 8.625301737852532e-09, 'tarapoto_san_martin': 5.995342398350993e-09}
+
+120 batches reales en 12.1s (9.90 batches/s, 10,138 muestras/s) con num_workers=2
+
+=== resumen sobre los 150 batches ===
+             n   n_lima  n_cusco  n_iquitos_loreto  n_tarapoto_san_martin  grad_share_lima  grad_share_cusco  grad_share_iquitos_loreto  grad_share_tarapoto_san_martin      ess  n_ids_unicos  label_std  nan_dyn  nan_label
+mean 1024.0000 254.7333 256.3667          257.4667               255.4333           0.4382            0.2139                     0.0422                          0.3057 766.0772       14.7500     0.8356   0.0000     0.0000
+min  1024.0000 211.0000 232.0000          225.0000               231.0000           0.3867            0.1942                     0.0357                          0.2746 744.0534        8.0000     0.7394   0.0000     0.0000
+max  1024.0000 295.0000 291.0000          292.0000               287.0000           0.4855            0.2500                     0.0509                          0.3402 790.4509       24.0000     0.9870   0.0000     0.0000
+
+=== primeros 5 y ultimos 5 batches ===
+ batch    n  n_lima  n_cusco  n_iquitos_loreto  n_tarapoto_san_martin  grad_share_lima  grad_share_cusco  grad_share_iquitos_loreto  grad_share_tarapoto_san_martin      ess  n_ids_unicos  label_std  nan_dyn  nan_label
+     0 1024     254      270               262                    238           0.4416            0.2274                     0.0434                          0.2876 760.9365             8     0.9870        0          0
+     1 1024     254      270               262                    238           0.4416            0.2274                     0.0434                          0.2876 760.9365             8     0.9392        0          0
+     2 1024     288      243               243                    250           0.4779            0.1953                     0.0384                          0.2884 775.8990             8     0.8946        0          0
+     3 1024     288      243               243                    250           0.4779            0.1953                     0.0384                          0.2884 775.8990             8     0.7873        0          0
+     4 1024     244      257               265                    258           0.4258            0.2172                     0.0440                          0.3130 761.2490             8     0.8805        0          0
+   115 1024     261      248               273                    242           0.4537            0.2088                     0.0452                          0.2924 754.6704            20     0.7855        0          0
+   116 1024     248      263               264                    249           0.4324            0.2221                     0.0438                          0.3018 760.8722            24     0.8407        0          0
+   117 1024     248      263               264                    249           0.4324            0.2221                     0.0438                          0.3018 760.8722            24     0.8203        0          0
+   118 1024     257      264               263                    240           0.4456            0.2217                     0.0434                          0.2893 760.6282            24     0.8835        0          0
+   119 1024     257      264               263                    240           0.4456            0.2217                     0.0434                          0.2893 760.6282            24     0.8493        0          0
+
+=== contenido del primer batch ===
+   dynamic          (1024, 31, 5) torch.float32
+   static           (1024, 4) torch.float32
+   region           (1024,) torch.int64
+   target_cond      (1024, 4) torch.float32
+   label            (1024,) torch.float32
+   td_clim_target   (1024,) torch.float32
+   weight           (1024,) torch.float32
+   id               (1024,) torch.int64
+   date_ordinal     (1024,) torch.int64
+   dynamic[:,:,0] TMIN_anom_norm   mean=-0.0013 std=0.9686 min=-5.372 max=+4.472
+   dynamic[:,:,1] TMAX_anom_norm   mean=-0.0221 std=1.0107 min=-5.480 max=+3.836
+   dynamic[:,:,2] TD_anom_norm     mean=-0.0102 std=0.9155 min=-5.135 max=+5.184
+   dynamic[:,:,3] sin_doy          mean=-0.0069 std=0.7230 min=-1.000 max=+1.000
+   dynamic[:,:,4] cos_doy          mean=-0.0233 std=0.6904 min=-1.000 max=+1.000
+   corr(label, TD_anom_norm(t)) = 0.75414
+   label mean=+0.0039 std=0.9866
+   fechas distintas en el batch = 923
+
+=== emision por sitio dentro de un bucket completo (indice real L=31, split train) ===
+                     celdas_en_bucket  muestras_en_bucket
+_site                                                    
+cusco                             946             3771702
+iquitos_loreto                   4776            19041912
+lima                              455             1814085
+tarapoto_san_martin               654             2607498
+
+  fases del round-robin (posicion acumulada en muestras del bucket):
+   hasta ronda  1,814,085: 4 sitios vivos (cusco, iquitos_loreto, lima, tarapoto_san_martin) ->    7,256,340 muestras acumulando hasta    7,256,340
+   hasta ronda  2,607,498: 3 sitios vivos (cusco, iquitos_loreto, tarapoto_san_martin) ->    2,380,239 muestras acumulando hasta    9,636,579
+   hasta ronda  3,771,702: 2 sitios vivos (cusco, iquitos_loreto) ->    2,328,408 muestras acumulando hasta   11,964,987
+   hasta ronda 19,041,912: 1 sitios vivos (iquitos_loreto) ->   15,270,210 muestras acumulando hasta   27,235,197
+   total del bucket = 27,235,197 muestras
+
+=== dependencia dentro de un batch real ===
+   celdas distintas en el batch: 8 (batch de 1024)
+   muestras por celda: min=44 mediana=127 max=210
+   fraccion de la varianza del label explicada por la celda = 0.0139
