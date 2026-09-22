@@ -16,6 +16,7 @@ status: stable
 - [[methods/resnet-direct-continuous-weather-forecasting]] — Resnet de 19 bloques residuales con preentrenamiento sobre salidas de modelo climático (WeatherBench). `draft`
 - [[methods/htc-bilstm-attention-multitarget]] — HTC-LSTM-Attn: Conv1D jerárquicas + BiLSTM + atención, con hold-out espacial. `draft`
 - [[methods/temporal-residual-connections-rnn]] — Conexiones residuales en la dimensión temporal de redes recurrentes. `draft`
+- [[methods/alibi-linear-attention-bias]] — ALiBi: sesgo lineal por distancia sobre los scores de atención, en lugar de embeddings posicionales. `draft`
 
 ## Tools
 - [[tools/subseasonalrodeo-dataset]] — Dataset SubseasonalRodeo. `reviewed`
@@ -25,6 +26,7 @@ status: stable
 
 ## Patterns
 - [[patterns/persistence-climatology-reference-baselines]] — Persistencia y climatología como referencias obligatorias en pronóstico meteorológico. `draft`
+- [[patterns/train-short-test-long-evaluation]] — Entrenar con ventanas cortas y evaluar con ventanas largas, midiendo la degradación. `draft`
 
 ## Findings
 - [[findings/subseasonal-forecasting-skill-gains]] — Ganancias de skill vs. CFSv2. `reviewed`
@@ -35,6 +37,7 @@ status: stable
 - [[findings/xai-tcn-dew-point-performance]] — Métricas (test/validation loss, MAE, RMSE, R²) y baselines del TCN+atención para punto de rocío en Bangladesh. `draft`
 - [[findings/resnet-weatherbench-vs-ifs-baselines]] — La Resnet preentrenada con CMIP alcanza el nivel de IFS T63 en WeatherBench. `draft`
 - [[findings/htc-lstm-attn-bangladesh-metrics]] — HTC-LSTM-Attn: métricas en test temporal y hold-out espacial (Bangladesh). `draft`
+- [[findings/alibi-length-extrapolation-results]] — Extrapolación de longitud de ALiBi vs. sinusoidal, rotary y T5 bias; la ganancia se explica por la early token curse. `draft`
 
 ## Decisions
 
@@ -48,3 +51,4 @@ status: stable
 - [[sources/resnet-weatherbench-pretrained-climate]] — Data-driven medium-range weather prediction with a Resnet pretrained on climate simulations (Rasp y Thuerey, JAMES 2020). `draft`
 - [[sources/htc-lstm-attn-multitarget-weather-bangladesh]] — Redefining multi-target weather forecasting with HTC-LSTM-Attn (Kabir y Chakma, PLOS ONE 2026). `draft`
 - [[sources/residual-echo-state-networks]] — Residual Echo State Networks (Ceni y Gallicchio, Neurocomputing 2024). `draft`
+- [[sources/alibi-attention-linear-biases]] — Train Short, Test Long: Attention with Linear Biases Enables Input Length Extrapolation (Press, Smith y Lewis, ICLR 2022; arXiv:2108.12409). `draft`
