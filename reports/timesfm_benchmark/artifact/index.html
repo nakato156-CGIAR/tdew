@@ -1,0 +1,1176 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Reconstrucción de Td en el Perú</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
+<style>
+:root{
+  --ground:#F4F6F9; --surface:#FFFFFF; --surface-2:#EDF1F5;
+  --ink:#141E28; --ink-soft:#54646F; --ink-faint:#8494A0;
+  --line:#DBE2E9; --line-soft:#E9EEF3;
+  --sea:#E4EAF0; --land:#B9C6D1; --land-ext:#D8DEE4; --fuera:#B02A1E;
+  --tfm-suave:#8FCDBD;
+  --lima:#E69F00; --cusco:#0072B2; --loreto:#009E73; --sanmartin:#D55E00;
+  --tfm:#009E73; --tuned:#0072B2; --clim:#E69F00; --tcn:#D55E00;
+  --ols:#56B4E9; --tmin:#CC79A7;
+  --ramp0:#E3EFEC; --ramp1:#9CC9BE; --ramp2:#4E9E8B; --ramp3:#1D7460; --ramp4:#0A4A3C;
+  --ok:#0A7D5A; --warn:#B45309; --crit:#B02A1E;
+  --measure:68ch;
+  /* Roles semanticos para las figuras. No definen color propio: apuntan a la
+     paleta ya establecida, para que las figuras cambien con ella. */
+  --fig-primary:var(--tfm); --fig-secondary:var(--ink-soft); --fig-muted:var(--ink-faint);
+  --fig-grid:var(--line-soft); --fig-axis:var(--line); --fig-highlight:var(--ink);
+  --fig-scale-low:var(--ramp0); --fig-scale-high:var(--ramp4);
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --ground:#0C131A; --surface:#121B23; --surface-2:#18242E;
+  --ink:#E4ECF2; --ink-soft:#93A4B1; --ink-faint:#687885;
+  --line:#22303B; --line-soft:#1B2831;
+  --sea:#101A22; --land:#3A4C5A; --land-ext:#1E2A34; --fuera:#E0776B;
+  --tfm-suave:#1F6B5B;
+  --ramp0:#12322B; --ramp1:#1D6353; --ramp2:#2E8F77; --ramp3:#4DB89B; --ramp4:#86DCC3;
+  --ok:#4DB89B; --warn:#E0A253; --crit:#E0776B;
+}}
+:root[data-theme="dark"]{
+  --ground:#0C131A; --surface:#121B23; --surface-2:#18242E;
+  --ink:#E4ECF2; --ink-soft:#93A4B1; --ink-faint:#687885;
+  --line:#22303B; --line-soft:#1B2831;
+  --sea:#101A22; --land:#3A4C5A; --land-ext:#1E2A34; --fuera:#E0776B;
+  --tfm-suave:#1F6B5B;
+  --ramp0:#12322B; --ramp1:#1D6353; --ramp2:#2E8F77; --ramp3:#4DB89B; --ramp4:#86DCC3;
+  --ok:#4DB89B; --warn:#E0A253; --crit:#E0776B;
+}
+*{box-sizing:border-box}
+body{
+  background:var(--ground); color:var(--ink);
+  font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+  font-size:16px; line-height:1.62; margin:0;
+  padding-inline:20px; padding-block:0 72px;
+  -webkit-font-smoothing:antialiased;
+}
+.envoltura{max-width:var(--measure); margin-inline:auto}
+.ancha{max-width:1080px; margin-inline:auto}
+h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif; text-wrap:balance; margin:0}
+h1{font-size:clamp(28px,5.2vw,42px); line-height:1.16; font-weight:600; letter-spacing:-.015em}
+h2{font-size:clamp(21px,3.4vw,27px); font-weight:600; line-height:1.28}
+h3{font-size:17px; font-weight:600}
+p{margin:0}
+a{color:inherit}
+.eyebrow{
+  font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:11px;
+  letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint);
+}
+.num{font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums}
+
+/* --- encabezado ------------------------------------------------------- */
+header{padding-block:56px 34px; border-bottom:1px solid var(--line)}
+header .tesis{margin-top:18px; font-size:19px; color:var(--ink-soft); max-width:60ch}
+.destacados{display:flex; flex-wrap:wrap; gap:26px 44px; margin-top:32px}
+.destacado .cifra{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums;
+  font-size:30px; line-height:1.1; color:var(--tfm); font-weight:500}
+.destacado .pie{font-size:13px; color:var(--ink-soft); margin-top:5px; max-width:23ch}
+
+section{padding-block:46px; border-bottom:1px solid var(--line-soft)}
+section > .envoltura > * + *,
+section > .ancha > * + *{margin-top:18px}
+.sub{color:var(--ink-soft); font-size:15px}
+
+/* --- mapa -------------------------------------------------------------- */
+.mapa-caja{display:grid; grid-template-columns:minmax(0,1fr) 250px; gap:28px; align-items:start}
+@media (max-width:760px){.mapa-caja{grid-template-columns:1fr}}
+.lienzo-marco{position:relative; background:var(--sea); border:1px solid var(--line);
+  border-radius:3px; overflow:hidden; display:flex; justify-content:center}
+#mapa{display:block; width:100%; height:auto; max-height:760px; object-fit:contain;
+  image-rendering:pixelated; cursor:crosshair}
+@media (max-width:760px){#mapa{max-height:none}}
+.capas{display:flex; flex-direction:column; gap:7px}
+.capas button{
+  font-family:inherit; font-size:13.5px; text-align:left; cursor:pointer;
+  background:var(--surface); color:var(--ink); border:1px solid var(--line);
+  border-radius:3px; padding:9px 11px; line-height:1.35;
+}
+.capas button[aria-pressed="true"]{border-color:var(--tfm); background:var(--surface-2);
+  box-shadow:inset 2px 0 0 var(--tfm)}
+.capas button:focus-visible{outline:2px solid var(--tfm); outline-offset:2px}
+.leyenda{margin-top:16px; font-size:12.5px; color:var(--ink-soft); display:flex;
+  flex-direction:column; gap:6px}
+.leyenda .fila{display:flex; align-items:center; gap:8px}
+.muestra{width:13px; height:13px; border-radius:2px; flex:none; border:1px solid rgba(0,0,0,.14)}
+.rampa{height:9px; border-radius:2px; background:linear-gradient(90deg,var(--ramp0),var(--ramp1),var(--ramp2),var(--ramp3),var(--ramp4))}
+#lectura{
+  min-height:82px; margin-top:14px; padding:11px 12px; border:1px solid var(--line);
+  border-radius:3px; background:var(--surface); font-size:13px; line-height:1.5;
+}
+#lectura .titulo{font-weight:600}
+.bloque-zona{margin-top:10px; padding-top:9px; border-top:1px solid var(--line)}
+.cabecera-zona{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--ink-faint)}
+.medido-en{font-size:12.5px; color:var(--ink-faint); margin:0 0 8px; line-height:1.5}
+.medido-en strong{color:var(--ink-soft); font-weight:500}
+#lectura dl{display:grid; grid-template-columns:auto 1fr; gap:2px 12px; margin:7px 0 0}
+#lectura dt{color:var(--ink-soft)}
+#lectura dd{margin:0; font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums}
+.nota{font-size:12.5px; color:var(--ink-faint); line-height:1.55}
+
+/* --- comparacion de modelos --------------------------------------------- */
+.comparativa{display:grid; grid-template-columns:1.6fr 1fr; gap:8px 48px; align-items:start}
+@media (max-width:760px){.comparativa{grid-template-columns:1fr; gap:34px}}
+.comparativa-grafico svg{display:block; width:100%; height:auto; overflow:visible}
+.familias{display:flex; flex-direction:column}
+.familia{padding-block:17px}
+.familia:first-child{padding-top:2px}
+.familia:last-child{padding-bottom:2px}
+.familia + .familia{border-top:1px solid var(--line-soft)}
+.familia h3{font-family:"IBM Plex Sans",sans-serif; font-size:14.5px; margin-bottom:5px}
+.familia p{font-size:13.5px; line-height:1.55; color:var(--ink-soft)}
+.familia-modelos{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-faint);
+  margin-top:7px; letter-spacing:.01em}
+.conclusion-franja{margin-top:8px; padding:22px 26px; background:var(--surface-2);
+  border-radius:3px; display:flex; flex-direction:column; gap:7px}
+.conclusion-frase{font-family:"IBM Plex Serif",Georgia,serif; font-size:19px; line-height:1.42;
+  font-weight:600; max-width:78ch}
+
+/* --- tablas ------------------------------------------------------------ */
+.tabla-caja{overflow-x:auto; border:1px solid var(--line); border-radius:3px; background:var(--surface)}
+table{border-collapse:collapse; width:100%; font-size:13.5px; min-width:520px}
+th,td{padding:8px 12px; text-align:right; white-space:nowrap; border-bottom:1px solid var(--line-soft)}
+th:first-child,td:first-child{text-align:left}
+thead th{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.08em;
+  text-transform:uppercase; color:var(--ink-faint); font-weight:500; background:var(--surface-2)}
+tbody td:not(:first-child){font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums}
+tbody tr:last-child td{border-bottom:none}
+td.mejor{font-weight:600; color:var(--ok)}
+td.mejor::after{content:" ▪"; font-size:8px; vertical-align:middle; opacity:.65}
+tr.foco td:first-child{box-shadow:inset 3px 0 0 var(--tfm)}
+.pill{display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:7px;
+  vertical-align:baseline}
+
+/* --- figuras cientificas ------------------------------------------------ */
+.fig{margin:44px 0 0; padding:0}
+.fig figcaption{display:flex; flex-direction:column; gap:3px; margin-bottom:18px}
+.fig-titulo{font-family:"IBM Plex Serif",Georgia,serif; font-size:16px; font-weight:600}
+.fig-sub{font-size:13px; color:var(--fig-muted); line-height:1.5; max-width:74ch}
+.fig svg{display:block; width:100%; height:auto; overflow:visible}
+.pestanas{display:flex; flex-wrap:wrap; gap:0 4px; margin-bottom:16px;
+  border-bottom:1px solid var(--fig-axis)}
+.pestanas button{
+  font-family:inherit; font-size:13px; cursor:pointer; background:none; color:var(--fig-muted);
+  border:none; border-bottom:2px solid transparent; padding:6px 10px; margin-bottom:-1px;
+}
+.pestanas button[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--fig-primary)}
+.pestanas button:focus-visible{outline:2px solid var(--fig-primary); outline-offset:-2px}
+.fig-nota{font-size:12.5px; color:var(--fig-muted); margin-top:12px; line-height:1.55;
+  max-width:74ch}
+
+/* --- grafico ----------------------------------------------------------- */
+.grafico{position:relative; background:var(--surface); border:1px solid var(--line);
+  border-radius:3px; padding:14px 14px 8px}
+#curva{display:block; width:100%; height:auto}
+.leyenda-linea{display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:10px; font-size:12.5px}
+.leyenda-linea span{display:flex; align-items:center; gap:7px; color:var(--ink-soft)}
+.leyenda-linea i{width:16px; height:3px; border-radius:2px; display:inline-block}
+
+/* --- objeciones -------------------------------------------------------- */
+.objecion{border-left:3px solid var(--crit); padding:2px 0 2px 16px}
+.objecion + .objecion{margin-top:22px}
+.objecion h3{font-family:"IBM Plex Sans",sans-serif; font-size:15px; margin-bottom:5px}
+.objecion p{font-size:14px; color:var(--ink-soft); line-height:1.6}
+
+footer{padding-top:34px; font-size:12.5px; color:var(--ink-faint); line-height:1.6}
+code{font-family:"IBM Plex Mono",monospace; font-size:.92em; background:var(--surface-2);
+  padding:1px 4px; border-radius:2px}
+@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+</style>
+
+<header class="envoltura">
+  <p class="eyebrow">Punto de rocío diario · PISCO · bloque oculto 2013–2016</p>
+  <h1>Un modelo que nunca vio estos datos reconstruye Td mejor que los dos que sí</h1>
+  <p class="tesis">TimesFM 3, usado sin entrenar ni ajustar, queda por debajo del método
+    publicado de Palacios y de la TCN entrenada para el problema, sobre las mismas celdas,
+    los mismos días y bajo el mismo protocolo. El mecanismo está identificado y las
+    contrapartidas medidas.</p>
+  <div class="destacados">
+    <div class="destacado">
+      <div class="cifra">1.154</div>
+      <div class="pie">RMSE °C contra 1.219 del método de Palacios, sobre las mismas 17.041 celdas de su backtest</div>
+    </div>
+    <div class="destacado">
+      <div class="cifra">99.2 %</div>
+      <div class="pie">de las celdas donde gana, y las 38 zonas climáticas muestreadas sin excepción</div>
+    </div>
+    <div class="destacado">
+      <div class="cifra">0</div>
+      <div class="pie">datos de este problema vistos durante su entrenamiento</div>
+    </div>
+  </div>
+</header>
+
+<section>
+  <div class="ancha">
+    <p class="eyebrow">Dónde se mide</p>
+    <h2>La rejilla real, no un mapa ilustrativo</h2>
+    <p class="sub">Cada píxel es una celda de 0,01° del producto PISCO. La rejilla tiene
+      <span class="num">2 818 404</span> celdas y cubre la caja envolvente del país, no el
+      país: algo más de la mitad de sus celdas con tierra está en Brasil, Bolivia, Ecuador o
+      Colombia. El estudio trabaja sobre los cuatro departamentos resaltados y sobre el
+      muestreo de <span class="num">17 041</span> celdas del backtest, que toca 38 de las 41
+      zonas climáticas SENAMHI.</p>
+    <p class="sub"><strong>De ese muestreo, <span class="num">8 755</span> celdas —el
+      51,4 %— caen fuera del territorio peruano.</strong> No es un artefacto de este trabajo:
+      es el marco de muestreo del backtest publicado, que sortea buckets completos sobre toda
+      la rejilla. No afecta a la comparación, porque todos los métodos se puntúan sobre las
+      mismas celdas y las cifras publicadas del paper salen de esa misma muestra, pero sí
+      obliga a no llamarla «nacional» sin más.</p>
+    <div class="mapa-caja">
+      <div>
+        <div class="lienzo-marco"><canvas id="mapa"></canvas></div>
+        <p class="nota" style="margin-top:10px">Proyección equirectangular simple. A escala de
+          país distorsiona las áreas hacia el sur, pero conserva la posición relativa, que es
+          lo que esta figura tiene que comunicar. Los contornos departamentales provienen de
+          una fuente comunitaria de resolución simple, no oficial: el propio manifiesto del
+          protocolo advierte que celdas cercanas al borde podrían quedar mal clasificadas por
+          unos pocos kilómetros.</p>
+      </div>
+      <div>
+        <p class="medido-en">El mapa abre en <strong>lo efectivamente calculado</strong>.
+          Los cuatro departamentos están cubiertos celda por celda desde la pasada de escala;
+          el muestreo del backtest aporta los puntos dispersos del resto de la rejilla. Las
+          otras dos capas muestran el alcance del estudio y una métrica agregada por zona
+          climática, que no es una medición celda a celda.</p>
+        <div class="capas" role="group" aria-label="Capas del mapa">
+          <button type="button" data-capa="muestreo" aria-pressed="true">Dónde se ha medido TimesFM</button>
+          <button type="button" data-capa="regiones" aria-pressed="false">Alcance del estudio</button>
+          <button type="button" data-capa="skill" aria-pressed="false">Skill por zona climática</button>
+        </div>
+        <div class="leyenda" id="leyenda"></div>
+        <div id="lectura"><span class="sub">Pasa el cursor sobre el mapa.</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="ancha">
+    <p class="eyebrow">Qué hace cada modelo</p>
+    <h2>Todos ven el mismo historial de Td y la misma Tmin del período a rellenar. Lo que
+      cambia es cómo cruzan el bloque oculto.</h2>
+    <p class="sub" style="max-width:var(--measure)">Seis formas de resolver el mismo problema,
+      del ajuste más simple al modelo entrenado para el caso. La cifra es el RMSE de cada uno
+      sobre la mayor muestra en la que se midió.</p>
+
+    <div class="comparativa">
+      <div class="comparativa-grafico">
+        <svg id="fig-modelos" viewBox="0 0 620 250"></svg>
+        <p class="fig-nota">RMSE en °C, menor es mejor · cinco métodos ordenados sobre las
+          17.041 celdas del muestreo nacional. <strong>†</strong> La TCN no entra en ese
+          orden: solo existe medida sobre las 2.048 celdas de su panel departamental, una
+          población distinta, así que se marca aparte en la misma escala.</p>
+      </div>
+      <div class="familias">
+        <div class="familia">
+          <h3>Sin memoria</h3>
+          <p>No usan el historial de Td más allá de un ajuste estadístico simple con Tmin o
+            con el día del año.</p>
+          <p class="familia-modelos">climatología · Td = Tmin · zone_ols</p>
+        </div>
+        <div class="familia">
+          <h3>Autorregresivo</h3>
+          <p>Alimenta sus propios rezagos de Td dentro del bloque oculto: el error del día 1
+            entra como dato del día 2 y se realimenta durante 1.461 días.</p>
+          <p class="familia-modelos">Palacios · tuned</p>
+        </div>
+        <div class="familia">
+          <h3>Pasada única</h3>
+          <p>Produce el bloque entero de una vez sin consumir su propia salida: no acumula
+            deriva, pero tampoco se recondiciona con lo ya observado.</p>
+          <p class="familia-modelos">TCN directa · TimesFM 3</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="ancha">
+    <div class="conclusion-franja">
+      <p class="eyebrow">El hallazgo</p>
+      <p class="conclusion-frase">Sin ajustarse al problema, TimesFM termina primero sobre el
+        muestreo nacional — y le sigue ganando a la TCN entrenada para estos departamentos en
+        el único terreno donde ambas se midieron sobre las mismas celdas.</p>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="ancha">
+    <p class="eyebrow">La comparación</p>
+    <h2>Sobre las 17.041 celdas del backtest de Palacios</h2>
+    <p class="sub" style="max-width:var(--measure)">Bloque oculto 2013–2016,
+      <span class="num">24 896 901</span> pares observación–predicción. Las filas de
+      <code>tuned</code> y climatología reproducen exactamente las cifras publicadas del
+      paper, lo que confirma que la comparación se hace sobre el mismo terreno.</p>
+    <figure class="fig">
+      <figcaption>
+        <span class="fig-titulo">Ranking global por RMSE</span>
+        <span class="fig-sub">Menor es mejor · 17.041 celdas del backtest, 24.896.901 pares
+          observación–predicción del bloque oculto 2013–2016</span>
+      </figcaption>
+      <svg id="fig-ranking" viewBox="0 0 760 210"></svg>
+    </figure>
+
+    <figure class="fig">
+      <figcaption>
+        <span class="fig-titulo">Ventaja de TimesFM sobre cada alternativa</span>
+        <span class="fig-sub">ΔRMSE = RMSE de la alternativa − RMSE de TimesFM, en °C · a la
+          derecha de cero, ventaja de TimesFM · las mismas 17.041 celdas del backtest</span>
+      </figcaption>
+      <svg id="fig-efectos" viewBox="0 0 950 192"></svg>
+      <p class="fig-nota">Con 17.041 celdas, el intervalo de confianza del 95 % por bootstrap
+        (1.000 remuestreos) es más estrecho que el propio punto en las cuatro comparaciones: el
+        de TimesFM contra Palacios va de 0,065 a 0,066 °C. Dibujarlo como barra lo haría
+        indistinguible del punto o exigiría exagerar su ancho, así que esta figura no lo
+        representa gráficamente: el intervalo exacto va en la columna numérica de la derecha,
+        junto al tamaño de efecto y a la fracción de celdas donde gana TimesFM. El remuestreo es
+        de celdas y no de días, para respetar la autocorrelación temporal dentro de cada serie,
+        y el valor de p por permutación es 0,0002 en las cuatro comparaciones, el mínimo
+        alcanzable con 5.000 permutaciones.</p>
+    </figure>
+
+    <h3 style="margin-top:44px">Cómo se comporta cada uno al alargar el horizonte</h3>
+    <p class="medido-en"><strong>Mismas 17.041 celdas</strong>, tres bloques ocultos distintos</p>
+    <div class="tabla-caja"><table id="t-horizonte"></table></div>
+    <p class="nota" style="max-width:var(--measure)">El skill del método de Palacios decae de
+      forma ordenada al alargar el bloque y el propio paper lo describe como crecimiento
+      esperado del error. El de TimesFM no sigue esa pendiente. Dicho de otro modo, TimesFM a
+      cuatro años alcanza el mismo skill que el método de Palacios a uno.</p>
+
+    <h3 style="margin-top:44px">Panel departamental, con la TCN en la mesa</h3>
+    <p class="sub" style="max-width:var(--measure)">2.048 celdas, 512 por departamento, y los
+      mismos 1.461 días. Es la única mesa donde la TCN de reconstrucción continua es
+      comparable, porque solo existe entrenada sobre estos departamentos.</p>
+
+    <figure class="fig">
+      <figcaption>
+        <span class="fig-titulo">Comparación multimétrica</span>
+        <span class="fig-sub">Cada métrica tiene su escala y su criterio de optimización. El
+          relleno señala el <strong>método focal</strong>, que es el mismo en todos los
+          paneles; el anillo y la negrita señalan el <strong>mejor valor de esa métrica</strong>,
+          que no siempre coincide.</span>
+      </figcaption>
+      <div class="pestanas" role="tablist" id="pestanas-metrica"></div>
+      <svg id="fig-metrica" viewBox="0 0 760 250"></svg>
+      <p class="fig-nota" id="nota-metrica"></p>
+    </figure>
+
+    <figure class="fig">
+      <figcaption>
+        <span class="fig-titulo">Consistencia regional</span>
+        <span class="fig-sub">RMSE por departamento y método; menor es mejor. El objetivo no
+          es solo quién tiene el mejor promedio, sino si la ventaja se sostiene en las cuatro
+          regiones.</span>
+      </figcaption>
+      <svg id="fig-heatmap" viewBox="0 0 760 230"></svg>
+    </figure>
+
+    <p class="nota" style="max-width:var(--measure)">La TCN supera al método de Palacios en
+      tres de los cuatro departamentos y pierde en Lima por 0.003 °C. TimesFM gana en los
+      cuatro. Es el matiz que respalda mirar por departamento y no solo el agregado.</p>
+  </div>
+</section>
+
+<section>
+  <div class="ancha">
+    <p class="eyebrow">A escala</p>
+    <h2>Los cuatro departamentos completos, celda por celda</h2>
+    <p class="sub" style="max-width:var(--measure)">Las comparaciones anteriores se apoyan en
+      muestras: 17.041 celdas sorteadas en el backtest, 2.048 en el panel departamental. La
+      objeción natural es si la ventaja sobrevive al pasar de una muestra a la rejilla entera.
+      TimesFM predijo los 1.461 días de las <span class="num">436 519</span> celdas de Lima,
+      Cusco, Loreto y San Martín, sin hueco, en 23 h 48 min de GPU continua.</p>
+    <p class="sub" style="max-width:var(--measure)">La puntuación se hace sobre las
+      <span class="num">61 113</span> celdas que el método de Palacios alcanzó —el 14 % de cada
+      departamento, proporcional, porque su implementación agota la memoria de la máquina sobre
+      la rejilla completa—, lo que da <span class="num">89 286 093</span> pares de predicción y
+      observación. La ventaja se sostiene, y en los cuatro departamentos.</p>
+
+    <figure class="fig">
+      <figcaption>
+        <span class="fig-titulo">RMSE a escala, agregado de los cuatro departamentos</span>
+        <span class="fig-sub">Reponderado por el número real de celdas de cada departamento,
+          de modo que Loreto pesa lo que le corresponde. Menor es mejor.</span>
+      </figcaption>
+      <svg id="fig-escala" viewBox="0 0 760 130"></svg>
+    </figure>
+
+    <figure class="fig">
+      <figcaption>
+        <span class="fig-titulo">Por departamento</span>
+        <span class="fig-sub">RMSE en °C sobre los 89,3 millones de pares puntuados. El mejor
+          de cada fila va en negrita y con contorno.</span>
+      </figcaption>
+      <svg id="fig-escala-mapa" viewBox="0 0 760 200"></svg>
+    </figure>
+
+    <p class="nota" style="max-width:var(--measure)">Ninguna cifra de esta sección proviene de
+      una muestra de conveniencia: la submuestra es estratificada y proporcional, y las tres
+      series se puntúan sobre exactamente las mismas celdas y los mismos días.</p>
+  </div>
+</section>
+
+<section>
+  <div class="ancha">
+    <p class="eyebrow">Por qué gana</p>
+    <h2>El error de los rivales crece; el suyo no</h2>
+    <p class="sub" style="max-width:var(--measure)">RMSE acumulado día a día dentro del bloque
+      oculto, sobre las 17.041 celdas. En los primeros días el método de Palacios va por
+      delante, porque todavía tiene Td observado cerca. TimesFM lo alcanza y lo pasa a medida
+      que la realimentación autorregresiva acumula deriva.</p>
+    <div class="capas" style="flex-direction:row; flex-wrap:wrap; margin-bottom:12px">
+      <button type="button" id="curva-pocas" aria-pressed="true">Solo los competidores</button>
+      <button type="button" id="curva-todas" aria-pressed="false">Añadir líneas base débiles</button>
+    </div>
+    <div class="grafico">
+      <svg id="curva" viewBox="0 0 760 340" role="img"
+           aria-label="RMSE acumulado por día del bloque oculto, cinco métodos"></svg>
+      <div class="leyenda-linea" id="leyenda-curva"></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="envoltura">
+    <p class="eyebrow">Qué cuesta</p>
+    <h2>Tres objeciones, las tres medidas</h2>
+    <div class="objecion">
+      <h3>La licencia no tiene alternativa viable</h3>
+      <p>Los pesos de TimesFM 3.0 están bajo <code>timesfm-non-commercial-license-v1.0</code>
+        y no permiten uso comercial ni productivo. La versión 2.5, que sí es Apache-2.0, da
+        <span class="num">1.5257</span> de RMSE contra <span class="num">1.2884</span> de la
+        climatología: no alcanza ni al piso. La causa es arquitectónica. La 3.0 procesa las
+        covariables dentro del modelo; la 2.5 ajusta una regresión lineal externa y predice el
+        residuo. Se probaron los dos órdenes y ninguno alcanza a la climatología. Como la
+        ventaja de TimesFM depende por completo de la covariable Tmin, la restricción recae
+        sobre la única parte que hace útil al modelo.</p>
+    </div>
+    <div class="objecion">
+      <h3>El costo es de dos a tres órdenes de magnitud mayor</h3>
+      <p>Ya no es una estimación de banco: la pasada de escala se cronometró entera. En una
+        RTX A2000 de 12 GB con TF32 activo, <span class="num">5,09</span> celdas/s a contexto
+        completo, es decir <span class="num">23 h 48 min</span> para los cuatro departamentos
+        y, extrapolando al mismo ritmo, <span class="num">6,4</span> días para las 2.818.404
+        celdas del grid nacional. El método de Palacios cubre el grid completo en
+        <span class="num">20</span> minutos. La tarjeta está limitada por potencia, ya en el
+        máximo de su firmware, de modo que el margen no está en la configuración del software.</p>
+    </div>
+    <div class="objecion">
+      <h3>El sesgo varía con el periodo</h3>
+      <p>TimesFM queda en <span class="num">+0.180</span>, <span class="num">−0.126</span> y
+        <span class="num">+0.105</span> °C según el bloque, mientras el método de Palacios se
+        mantiene cerca de cero. Gana en error cuadrático y pierde en centrado. Además produce
+        algo más de predicciones fuera del rango de control de calidad de PISCO,
+        <span class="num">0,12 %</span> contra <span class="num">0,08 %</span> de la TCN, que
+        es la dirección esperable de un modelo que no conoce las restricciones físicas del
+        problema.</p>
+    </div>
+  </div>
+</section>
+
+<section style="border-bottom:none">
+  <div class="envoltura">
+    <p class="eyebrow">Cómo leer esto</p>
+    <h2>Protocolo y controles</h2>
+    <p class="sub">Los bloques de años no se inventaron para este trabajo: son los mismos que
+      define el backtest de Palacios y bajo los que reporta sus cifras. El contexto termina el
+      31 de diciembre del último año de entrenamiento y ningún valor de Td del bloque oculto
+      entra al modelo, ni directamente ni a través de la climatología. Tmin sí, porque es
+      exógeno y el método de Palacios también lo usa: igualar la entrada hace que la
+      comparación mida el modelo y no el acceso a datos.</p>
+    <p class="sub">Antes de comparar nada se reprodujeron las cifras publicadas y se verificó
+      que la climatología, el Tmin y el Td observado del panel nuevo coincidieran con los
+      archivos originales con diferencia exactamente cero.</p>
+    <p class="sub">Las diez variantes de TimesFM se evaluaron sobre el mismo bloque que
+      después se reporta, por decisión explícita. La ventaja que eso introduce se midió en
+      lugar de dejarse como advertencia: la brecha entre la ganadora y la segunda es de
+      <span class="num">0.023</span> °C, seis veces el semiancho del intervalo bootstrap, de
+      modo que la elección no es intercambiable.</p>
+    <p class="sub">Una precisión sobre el alcance geográfico: el muestreo del backtest cubre
+      la caja envolvente del producto y no el territorio peruano, de modo que el 51,4 % de sus
+      celdas está fuera del país. Eso no invalida ninguna comparación, porque todos los
+      métodos comparten celdas y días y las cifras publicadas del paper salen de la misma
+      muestra, pero conviene tenerlo presente al leer los agregados: no son un promedio del
+      Perú. Las cuatro regiones del estudio sí están enteramente dentro del país.</p>
+    <p class="sub">La prueba de escala ya está cerrada: TimesFM cubrió las 436.519 celdas de
+      los cuatro departamentos el 23 de septiembre de 2026, en 23 h 48 min. La puntuación se
+      hace sobre la submuestra de 61.113 celdas que el método de Palacios alcanzó, porque su
+      implementación agota la memoria de la máquina sobre la rejilla completa: la corrida fue
+      eliminada por el núcleo con <code>rc=137</code> tras 3 h 14 min y unos 100 GB, en el
+      bucket 8.190 de 8.192. Está anotado como <code>tdew-x46.8</code>, con prioridad alta,
+      porque el protocolo de producción son 2.818.404 celdas.</p>
+    <footer>
+      Bead <code>tdew-214</code>. Las cifras provienen de <code>reports/timesfm_benchmark/</code>
+      y esta página no recalcula ninguna: un control aborta la construcción si algo se desvía
+      de su CSV de origen. La implementación y el análisis se hicieron con asistencia de
+      Claude Code; conviene validar las conclusiones con el equipo antes de tomarlas como
+      definitivas, conforme a la política de uso de IA del CIP.
+    </footer>
+  </div>
+</section>
+
+<script src="datos.js"></script>
+<script>
+(function(){
+  "use strict";
+  const D = window.DATOS;
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+  /* ---- descompresión de las capas ---------------------------------- */
+  async function inflar(b64){
+    const crudo = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    const flujo = new Blob([crudo]).stream().pipeThrough(new DecompressionStream("deflate"));
+    return new Uint8Array(await new Response(flujo).arrayBuffer());
+  }
+
+  const NOMBRES = {2:"Lima", 3:"Cusco", 4:"Loreto", 5:"San Martín"};
+  const VAR_DEP = {2:"--lima", 3:"--cusco", 4:"--loreto", 5:"--sanmartin"};
+
+  function hexARgb(h){
+    h = h.replace("#","");
+    if(h.length === 3) h = h.split("").map(c=>c+c).join("");
+    return [parseInt(h.slice(0,2),16), parseInt(h.slice(2,4),16), parseInt(h.slice(4,6),16)];
+  }
+
+  /* ---- mapa --------------------------------------------------------- */
+  const lienzo = document.getElementById("mapa");
+  const ctx = lienzo.getContext("2d");
+  const lectura = document.getElementById("lectura");
+  const leyenda = document.getElementById("leyenda");
+  let capas = null, capaActiva = "muestreo", imagen = null;
+
+  const skillPorZona = {};
+  let skillMin = Infinity, skillMax = -Infinity;
+  for(const [z, m] of Object.entries(D.zonas)){
+    if(m.timesfm){
+      skillPorZona[z] = m.timesfm.skill;
+      skillMin = Math.min(skillMin, m.timesfm.skill);
+      skillMax = Math.max(skillMax, m.timesfm.skill);
+    }
+  }
+
+  function rampa(t){
+    const pasos = [css("--ramp0"),css("--ramp1"),css("--ramp2"),css("--ramp3"),css("--ramp4")].map(hexARgb);
+    const x = Math.max(0, Math.min(1, t)) * (pasos.length - 1);
+    const i = Math.min(pasos.length - 2, Math.floor(x)), f = x - i;
+    return [0,1,2].map(k => Math.round(pasos[i][k] + (pasos[i+1][k] - pasos[i][k]) * f));
+  }
+
+  function pintar(){
+    if(!capas) return;
+    const {nLat, nLon} = D.meta;
+    const datos = imagen.data;
+    const mar = hexARgb(css("--sea")), tierra = hexARgb(css("--land"));
+    const ajena = hexARgb(css("--land-ext")), fueraCol = hexARgb(css("--fuera"));
+    const panelCol = hexARgb(css("--tcn"));
+    const escalaCol = hexARgb(css("--tfm-suave"));
+    const dep = {}; for(const k in VAR_DEP) dep[k] = hexARgb(css(VAR_DEP[k]));
+    const foco = hexARgb(css("--tfm"));
+    const cacheZona = {};
+
+    for(let i = 0; i < nLat * nLon; i++){
+      const c = capas.categoria[i];
+      let rgb;
+      if(c === 0){ rgb = mar; }
+      else if(c === 1){ rgb = ajena; }
+      else if(capaActiva === "regiones"){ rgb = c < 6 ? dep[c] : tierra; }
+      else if(capaActiva === "muestreo"){ rgb = capas.muestreo[i] === 4 ? escalaCol : tierra; }
+      else {
+        const z = capas.zona[i];
+        if(z === 0){ rgb = tierra; }
+        else if(c === 1){ rgb = ajena; }
+        else {
+          const s = skillPorZona[z - 1];
+          if(s === undefined){ rgb = tierra; }
+          else {
+            if(!cacheZona[z]) cacheZona[z] = rampa((s - skillMin) / (skillMax - skillMin || 1));
+            rgb = cacheZona[z];
+          }
+        }
+      }
+      const p = i * 4;
+      datos[p] = rgb[0]; datos[p+1] = rgb[1]; datos[p+2] = rgb[2]; datos[p+3] = 255;
+    }
+
+    if(capaActiva === "muestreo"){
+      // El muestreo del backtest es disperso: cada celda es un solo píxel y se
+      // engorda a 3x3 para que se vea al escalar la imagen a la anchura de la
+      // página. La cobertura de escala no lo necesita, porque es superficie
+      // continua y ya quedó pintada en la pasada de arriba.
+      for(let y = 0; y < nLat; y++){
+        for(let x = 0; x < nLon; x++){
+          const v = capas.muestreo[y * nLon + x];
+          if(v === 0 || v === 4) continue;
+          const col = v === 3 ? panelCol : (v === 2 ? foco : fueraCol);
+          for(let dy = -1; dy <= 1; dy++) for(let dx = -1; dx <= 1; dx++){
+            const yy = y + dy, xx = x + dx;
+            if(yy < 0 || yy >= nLat || xx < 0 || xx >= nLon) continue;
+            const p = (yy * nLon + xx) * 4;
+            datos[p] = col[0]; datos[p+1] = col[1]; datos[p+2] = col[2]; datos[p+3] = 255;
+          }
+        }
+      }
+    }
+    ctx.putImageData(imagen, 0, 0);
+    dibujarContornos();
+    pintarLeyenda();
+  }
+
+  function dibujarContornos(){
+    const {nLon, latMax, lonMin, paso} = D.meta;
+    ctx.save();
+    ctx.strokeStyle = css("--ink-faint");
+    ctx.globalAlpha = .5;
+    ctx.lineWidth = 1.1;
+    ctx.beginPath();
+    for(const f of D.contornos.features){
+      const partes = f.geometry.type === "Polygon" ? [f.geometry.coordinates] : f.geometry.coordinates;
+      for(const poly of partes) for(const anillo of poly){
+        anillo.forEach(([lon, lat], k) => {
+          const x = (lon - lonMin) / paso, y = (latMax - lat) / paso;
+          k === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+        });
+        ctx.closePath();
+      }
+    }
+    ctx.stroke();
+    ctx.restore();
+  }
+
+  function pintarLeyenda(){
+    if(capaActiva === "regiones"){
+      leyenda.innerHTML = Object.entries(NOMBRES).map(([c, n]) =>
+        `<div class="fila"><span class="muestra" style="background:${css(VAR_DEP[c])}"></span>
+         ${n} <span class="num" style="color:var(--ink-faint)">${D.meta.porDepartamento[n].toLocaleString("es")}</span></div>`
+      ).join("") + `<div class="fila"><span class="muestra" style="background:${css("--land")}"></span>
+        resto del Perú</div>
+        <div class="fila"><span class="muestra" style="background:${css("--land-ext")}"></span>
+        dominio modelado fuera del Perú</div>`;
+    } else if(capaActiva === "muestreo"){
+      leyenda.innerHTML = `<div class="fila"><span class="muestra" style="background:${css("--tfm-suave")}"></span>
+        cuatro departamentos, cobertura completa <span class="num" style="color:var(--ink-faint)">${(D.meta.escalaCeldas||0).toLocaleString("es")}</span></div>
+        <div class="fila"><span class="muestra" style="background:${css("--tfm")}"></span>
+        backtest, en el Perú <span class="num" style="color:var(--ink-faint)">${D.meta.muestreoDentro.toLocaleString("es")}</span></div>
+        <div class="fila"><span class="muestra" style="background:${css("--fuera")}"></span>
+        backtest, fuera del Perú <span class="num" style="color:var(--ink-faint)">${D.meta.muestreoFuera.toLocaleString("es")}</span></div>
+        <p class="nota">Estas son <strong>todas</strong> las celdas con medición propia de
+        TimesFM: ${D.meta.medidasHoy.toLocaleString("es")} en total, cada una con sus 1.461 días
+        predichos. Los cuatro departamentos ya están cubiertos celda por celda, sin hueco; el
+        muestreo disperso del backtest se dibuja engordado para que sea visible.</p>`;
+    } else {
+      leyenda.innerHTML = `<div>Skill vs. climatología</div><div class="rampa"></div>
+        <div class="fila" style="justify-content:space-between">
+          <span class="num">${skillMin.toFixed(2)}</span><span class="num">${skillMax.toFixed(2)}</span></div>
+        <p class="nota">Rampa secuencial de un solo tono: el skill es positivo en las 38
+        zonas medidas, así que no corresponde una escala divergente. Las zonas sin celdas en
+        el muestreo quedan en gris.</p>`;
+    }
+  }
+
+  function leer(ev){
+    if(!capas) return;
+    const r = lienzo.getBoundingClientRect();
+    const x = Math.floor((ev.clientX - r.left) / r.width * D.meta.nLon);
+    const y = Math.floor((ev.clientY - r.top) / r.height * D.meta.nLat);
+    if(x < 0 || y < 0 || x >= D.meta.nLon || y >= D.meta.nLat) return;
+    const i = y * D.meta.nLon + x;
+    const c = capas.categoria[i];
+    if(c === 0){ lectura.innerHTML = '<span class="sub">Fuera del área modelada.</span>'; return; }
+
+    const lat = (D.meta.latMax - y * D.meta.paso).toFixed(2);
+    const lon = (D.meta.lonMin + x * D.meta.paso).toFixed(2);
+    const z = capas.zona[i] - 1;
+    const m = D.zonas[z];
+    const titulo = c >= 2 && c <= 5 ? NOMBRES[c] : (c === 6 ? "Perú, fuera del estudio" : "Fuera del Perú");
+    const mv = capas.muestreo[i];
+    const partes = [`<div class="titulo">${titulo}</div>`,
+      `<dl><dt>coordenada</dt><dd>${lat}, ${lon}</dd>`];
+    if(z >= 0 && D.etiquetasZona[z]) partes.push(`<dt>zona</dt><dd>${D.etiquetasZona[z]}</dd>`);
+    partes.push(`<dt>esta celda</dt><dd>${mv ? "medida en el backtest" : "no medida"}</dd></dl>`);
+    if(m && m.timesfm){
+      partes.push(`<div class="bloque-zona"><div class="cabecera-zona">Medido en esta zona climática</div>
+        <dl><dt>TimesFM</dt><dd>${m.timesfm.rmse.toFixed(3)} · skill ${m.timesfm.skill.toFixed(3)}</dd>`);
+      if(m.tuned) partes.push(`<dt>Palacios</dt><dd>${m.tuned.rmse.toFixed(3)} · skill ${m.tuned.skill.toFixed(3)}</dd>`);
+      partes.push(`<dt>sobre</dt><dd>${m.celdas.toLocaleString("es")} celdas</dd></dl>
+        <p class="nota">Cifra de la zona climática completa en el muestreo del backtest, no de
+        esta celda. Las cifras por departamento, ya sobre cobertura completa, están en la
+        sección de escala.</p></div>`);
+    } else if(z >= 0){
+      partes.push(`<p class="nota">Esta zona no tiene celdas en el muestreo del backtest, así
+        que no hay métricas para ella.</p>`);
+    }
+    lectura.innerHTML = partes.join("");
+  }
+
+  lienzo.addEventListener("mousemove", leer);
+  lienzo.addEventListener("mouseleave", () => {
+    lectura.innerHTML = '<span class="sub">Pasa el cursor sobre el mapa.</span>';
+  });
+  document.querySelectorAll(".capas button").forEach(b => b.addEventListener("click", () => {
+    capaActiva = b.dataset.capa;
+    document.querySelectorAll(".capas button").forEach(o =>
+      o.setAttribute("aria-pressed", String(o === b)));
+    pintar();
+  }));
+
+  /* ---- tablas -------------------------------------------------------- */
+  const NOMBRE_METODO = {timesfm:"TimesFM", tuned:"Palacios · tuned", climatology:"climatología",
+    zone_ols:"zone_ols", td_eq_tmin:"Td = Tmin", tcn_direct:"TCN directa"};
+  const COLOR_METODO = {timesfm:"--tfm", tuned:"--tuned", climatology:"--clim",
+    zone_ols:"--ols", td_eq_tmin:"--tmin", tcn_direct:"--tcn"};
+
+  function etiquetaPlana(m){
+    const base = String(m).replace(/^timesfm:.*/, "timesfm");
+    return NOMBRE_METODO[base] || m;
+  }
+  function etiqueta(m){
+    const base = String(m).replace(/^timesfm:.*/, "timesfm");
+    const v = COLOR_METODO[base] ? `<span class="pill" style="background:${css(COLOR_METODO[base])}"></span>` : "";
+    return v + (NOMBRE_METODO[base] || m);
+  }
+  // `mejores` dice, por indice de columna, como se elige el mejor valor: "min",
+  // "max" o "abs" (el mas cercano a cero). Se marca la celda, no la fila: marcar la
+  // fila entera del mejor por RMSE sugeriria que ese metodo gana en todas las
+  // columnas, y no es cierto ni en sesgo ni en el control de calidad.
+  function tabla(id, cabeceras, filas, mejores, porFila){
+    const el = document.getElementById(id);
+    const marca = new Set();
+    // `porFila` marca el mejor de esas columnas dentro de cada fila. Hace falta
+    // cuando las columnas son los metodos y las filas son sitios: ahi el minimo de
+    // una columna compararia departamentos entre si, que no significa nada.
+    if(porFila) filas.forEach((f, i) => {
+      let idx = -1, mejor = null;
+      porFila.forEach(k => {
+        const v = parseFloat(String(f.c[k]).replace(/[^0-9.+-]/g, ""));
+        if(isFinite(v) && (mejor === null || v < mejor)){ mejor = v; idx = k; }
+      });
+      if(idx >= 0) marca.add(i + ":" + idx);
+    });
+    if(mejores) for(const [col, modo] of Object.entries(mejores)){
+      const k = Number(col);
+      let idx = -1, mejor = null;
+      filas.forEach((f, i) => {
+        const v = parseFloat(String(f.c[k]).replace(/[^0-9.+-]/g, ""));
+        if(!isFinite(v)) return;
+        const comp = modo === "abs" ? Math.abs(v) : v;
+        if(mejor === null || (modo === "max" ? comp > mejor : comp < mejor)){ mejor = comp; idx = i; }
+      });
+      if(idx >= 0) marca.add(idx + ":" + k);
+    }
+    el.innerHTML = `<thead><tr>${cabeceras.map(c => `<th>${c}</th>`).join("")}</tr></thead>
+      <tbody>${filas.map((f, i) => `<tr${f.foco ? ' class="foco"' : ""}>${
+        f.c.map((v, k) => `<td${marca.has(i + ":" + k) ? ' class="mejor"' : ""}>${v}</td>`).join("")
+      }</tr>`).join("")}</tbody>`;
+  }
+  const f = (v, d = 4) => (v === null || v === undefined || Number.isNaN(v)) ? "—" : Number(v).toFixed(d);
+
+  /* ---- utilidades de figura ------------------------------------------ */
+  const F = (v, d) => Number(v).toFixed(d);
+  const AX = 11;                       // tamano de fuente de ejes
+  const MONO = "IBM Plex Mono, ui-monospace, monospace";
+  const SANS = "IBM Plex Sans, system-ui, sans-serif";
+
+  // Escoge el mejor segun el criterio de la metrica, no segun quien sea el focal.
+  function mejorIndice(valores, criterio){
+    let idx = -1, mejor = null;
+    valores.forEach((v, i) => {
+      if(!isFinite(v)) return;
+      const c = criterio === "cero" ? Math.abs(v) : v;
+      if(mejor === null || (criterio === "max" ? c > mejor : c < mejor)){ mejor = c; idx = i; }
+    });
+    return idx;
+  }
+
+  function escala(valores, criterio){
+    let lo = Math.min(...valores), hi = Math.max(...valores);
+    if(criterio === "cero"){ const m = Math.max(Math.abs(lo), Math.abs(hi)) * 1.25; lo = -m; hi = m; }
+    else { const p = (hi - lo) * 0.18 || Math.abs(hi) * 0.1 || 1; lo -= p; hi += p; }
+    return [lo, hi];
+  }
+
+  function ticks(lo, hi, n){
+    const bruto = (hi - lo) / n;
+    const mag = Math.pow(10, Math.floor(Math.log10(bruto)));
+    const paso = [1, 2, 2.5, 5, 10].map(m => m * mag).find(v => v >= bruto) || mag * 10;
+    const out = [];
+    for(let v = Math.ceil(lo / paso) * paso; v <= hi + 1e-9; v += paso) out.push(v);
+    return out;
+  }
+
+  // Dot plot horizontal. `criterio` decide el orden y quien lleva el anillo de
+  // mejor-en-la-metrica; `focal` solo decide el relleno, que es un canal distinto.
+  // `filasExtra` reserva altura (en filas) al final del grafico sin dibujar nada
+  // ahi: la usa quien llama cuando necesita anexar, en la misma escala X que
+  // devuelve esta funcion, una fila que no debe entrar en el orden por valor
+  // (por ejemplo, una cifra medida sobre una poblacion de celdas distinta).
+  function dotPlot(svg, {items, criterio, decimales, sufijo = "", ancho = 760, filaAlto = 30,
+                         etiquetaAncho = 148, cero = false, filasExtra = 0}){
+    const orden = items.slice().sort((a, b) => criterio === "max" ? b.v - a.v :
+      (criterio === "cero" ? Math.abs(a.v) - Math.abs(b.v) : a.v - b.v));
+    const vals = orden.map(o => o.v);
+    const iMejor = mejorIndice(vals, criterio);
+    const [lo, hi] = escala(vals, criterio);
+    const M = {t: 8, r: 76, b: 26, l: etiquetaAncho};
+    const alto = M.t + (orden.length + filasExtra) * filaAlto + M.b;
+    const X = v => M.l + (v - lo) / (hi - lo) * (ancho - M.l - M.r);
+    const Y = i => M.t + i * filaAlto + filaAlto / 2;
+    let o = "";
+    for(const t of ticks(lo, hi, 5)){
+      o += `<line x1="${X(t)}" y1="${M.t}" x2="${X(t)}" y2="${alto - M.b}" stroke="var(--fig-grid)" stroke-width="1"/>`;
+      o += `<text x="${X(t)}" y="${alto - M.b + 15}" text-anchor="middle" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${F(t, decimales)}</text>`;
+    }
+    if(cero) o += `<line x1="${X(0)}" y1="${M.t}" x2="${X(0)}" y2="${alto - M.b}" stroke="var(--fig-axis)" stroke-width="1.4"/>`;
+    o += `<line x1="${M.l}" y1="${alto - M.b}" x2="${ancho - M.r}" y2="${alto - M.b}" stroke="var(--fig-axis)" stroke-width="1"/>`;
+    orden.forEach((d, i) => {
+      const y = Y(i), x = X(d.v), base = cero ? X(0) : M.l;
+      const esMejor = i === iMejor;
+      o += `<text x="${M.l - 12}" y="${y + 4}" text-anchor="end" font-size="12.5" font-family="${SANS}"><tspan fill="${d.focal ? "var(--fig-highlight)" : "var(--fig-secondary)"}">${d.n}</tspan>${d.fam ? ` <tspan font-size="10" font-family="${MONO}" fill="var(--fig-muted)">${d.fam}</tspan>` : ""}</text>`;
+      o += `<line x1="${base}" y1="${y}" x2="${x}" y2="${y}" stroke="var(--fig-grid)" stroke-width="1.5"/>`;
+      o += d.focal
+        ? `<circle cx="${x}" cy="${y}" r="5" fill="var(--fig-primary)"/>`
+        : `<circle cx="${x}" cy="${y}" r="4" fill="var(--fig-muted)"/>`;
+      if(esMejor) o += `<circle cx="${x}" cy="${y}" r="8.5" fill="none" stroke="var(--fig-highlight)" stroke-width="1.3"/>`;
+      o += `<text x="${x + 13}" y="${y + 4}" font-size="12" font-family="${MONO}" fill="${esMejor ? "var(--fig-highlight)" : "var(--fig-muted)"}" font-weight="${esMejor ? 600 : 400}">${F(d.v, decimales)}${sufijo}</text>`;
+    });
+    svg.setAttribute("viewBox", `0 0 ${ancho} ${alto}`);
+    svg.innerHTML = o;
+    return {orden, iMejor, X, M, filaAlto};
+  }
+
+  /* ---- figura 0: comparacion editorial de los seis modelos ------------
+     Reutiliza dotPlot con las mismas cifras que ya aparecen mas abajo en la
+     pagina: los cinco metodos del muestreo nacional (D.tablas.nacional,
+     split ll4, la misma fuente de la figura "Ranking global por RMSE")
+     entran al orden por valor. La TCN NO entra en ese orden: solo existe
+     medida en el panel departamental (D.tablas.departamental, la misma
+     fuente de "Comparacion multimetrica"), una poblacion de celdas mas
+     facil que la nacional, asi que ordenarla junto a las otras cinco por
+     valor crudo exageraria su lugar -- de hecho, en el unico panel donde
+     se midio junto a TimesFM sobre las mismas celdas, TimesFM le gana
+     (0.800 contra 0.841). Por eso se dibuja aparte, en la misma escala,
+     como fila de referencia con marcador hueco y linea discontinua.
+     Ninguna cifra se calcula de nuevo: se agrupan las que ya pasan el
+     control de paridad de datos.js. --------------------------------- */
+  (function(){
+    const FAMILIA = {climatology:"sin memoria", td_eq_tmin:"sin memoria", zone_ols:"sin memoria",
+      tuned:"autorregresivo", timesfm:"pasada única", tcn_direct:"pasada única"};
+    const nac = D.tablas.nacional.filter(r => r.split === "ll4");
+    const items = nac.map(r => ({n: etiquetaPlana(r.method), fam: FAMILIA[r.method],
+      v: r.rmse, focal: r.method === "timesfm"}));
+    const tcnFilas = D.tablas.departamental.filter(r => r.model === "tcn_direct");
+    const tcnRmse = tcnFilas.reduce((a, r) => a + r.rmse, 0) / tcnFilas.length;
+
+    const svg = document.getElementById("fig-modelos");
+    const GAP = 0.4; // fraccion de fila que se deja como aire antes de la referencia
+    const {X, M, filaAlto} = dotPlot(svg, {items, criterio: "min", decimales: 3,
+      ancho: 600, filaAlto: 36, etiquetaAncho: 200, filasExtra: GAP + 1});
+
+    const yDiv = M.t + (items.length + GAP / 2) * filaAlto;
+    const yTcn = M.t + (items.length + GAP + 0.5) * filaAlto;
+    const xTcn = X(tcnRmse);
+    let extra = `<line x1="${M.l}" y1="${yDiv}" x2="600" y2="${yDiv}" stroke="var(--fig-axis)" stroke-width="1" stroke-dasharray="2 3"/>`;
+    extra += `<text x="${M.l - 12}" y="${yTcn + 4}" text-anchor="end" font-size="12.5" font-family="${SANS}"><tspan fill="var(--fig-secondary)">${etiquetaPlana("tcn_direct")}</tspan> <tspan font-size="10" font-family="${MONO}" fill="var(--fig-muted)">${FAMILIA.tcn_direct}</tspan></text>`;
+    extra += `<line x1="${M.l}" y1="${yTcn}" x2="${xTcn}" y2="${yTcn}" stroke="var(--fig-grid)" stroke-width="1.5" stroke-dasharray="1 3"/>`;
+    extra += `<circle cx="${xTcn}" cy="${yTcn}" r="4" fill="none" stroke="var(--fig-muted)" stroke-width="1.5"/>`;
+    extra += `<text x="${xTcn + 13}" y="${yTcn + 4}" font-size="12" font-family="${MONO}" fill="var(--fig-muted)">${F(tcnRmse, 3)}†</text>`;
+    svg.insertAdjacentHTML("beforeend", extra);
+  })();
+
+  /* ---- figura 1: ranking global por RMSE ----------------------------- */
+  (function(){
+    const nac = D.tablas.nacional.filter(r => r.split === "ll4");
+    const items = nac.map(r => ({n: etiquetaPlana(r.method), v: r.rmse, focal: r.method === "timesfm"}));
+    const svg = document.getElementById("fig-ranking");
+    const {orden} = dotPlot(svg, {items, criterio: "min", decimales: 3, filaAlto: 32});
+    const brecha = orden[1].v - orden[0].v;
+    const nota = document.createElement("p");
+    nota.className = "fig-nota";
+    nota.innerHTML = `La distancia entre el primero y el segundo es de <strong>${F(brecha, 3)} °C</strong>,
+      un ${F(brecha / orden[1].v * 100, 1)} % de mejora relativa sobre el método publicado.
+      El eje no arranca en cero: hacerlo aplastaría diferencias que sí importan.`;
+    svg.after(nota);
+  })();
+
+  /* ---- figura 2: ventaja con intervalo de confianza ------------------ */
+  (function(){
+    const svg = document.getElementById("fig-efectos");
+    const filas = D.tablas.efectos.filter(r => r.split === "ll4").map(r => {
+      const ic = String(r.delta_ci95).match(/-?\d+\.?\d*/g).map(Number);
+      return {n: r.comparison.replace("timesfm_vs_", "vs. ")
+        .replace("climatology", "climatología").replace("tuned", "Palacios")
+        .replace("zone_ols", "zone_ols").replace("td_eq_tmin", "Td = Tmin"),
+        v: r.delta_rmse_C, lo: ic[0], hi: ic[1], d: r.cohens_d, gana: r.frac_cells_focal_wins};
+    }).sort((a, b) => a.v - b.v);
+    const ancho = 950, M = {t: 30, r: 410, b: 26, l: 148}, filaAlto = 34;
+    const alto = M.t + filas.length * filaAlto + M.b;
+    const lo = 0, hi = Math.max(...filas.map(f => f.hi)) * 1.08;
+    const X = v => M.l + (v - lo) / (hi - lo) * (ancho - M.l - M.r);
+    // Columna numerica: el IC 95% real, no representado como barra porque a esta
+    // escala seria indistinguible del punto o habria que exagerarlo.
+    const col0 = ancho - M.r + 10, c1 = col0 + 160, c2 = c1 + 95, c3 = c2 + 120;
+    let o = "";
+    for(const t of ticks(lo, hi, 5)){
+      o += `<line x1="${X(t)}" y1="${M.t}" x2="${X(t)}" y2="${alto - M.b}" stroke="var(--fig-grid)" stroke-width="1"/>`;
+      o += `<text x="${X(t)}" y="${alto - M.b + 15}" text-anchor="middle" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${F(t, 1)}</text>`;
+    }
+    o += `<line x1="${X(0)}" y1="${M.t}" x2="${X(0)}" y2="${alto - M.b}" stroke="var(--fig-axis)" stroke-width="1.4"/>`;
+    [["ΔRMSE [IC 95 %]", c1], ["EFFECT SIZE (D)", c2], ["% CELDAS FAVORABLES", c3]].forEach(([txt, x]) => {
+      o += `<text x="${x}" y="${M.t - 12}" text-anchor="end" font-size="9.5" font-family="${MONO}" fill="var(--fig-muted)" letter-spacing=".03em">${txt}</text>`;
+    });
+    filas.forEach((f, i) => {
+      const y = M.t + i * filaAlto + filaAlto / 2, x = X(f.v), signo = f.v >= 0 ? "+" : "";
+      o += `<text x="${M.l - 12}" y="${y + 4}" text-anchor="end" font-size="12.5" font-family="${SANS}" fill="var(--fig-secondary)">${f.n}</text>`;
+      o += `<line x1="${X(0)}" y1="${y}" x2="${x}" y2="${y}" stroke="var(--fig-grid)" stroke-width="1.5"/>`;
+      o += `<circle cx="${x}" cy="${y}" r="4" fill="var(--fig-primary)"/>`;
+      o += `<text x="${c1}" y="${y + 4}" text-anchor="end" font-size="11.5" font-family="${MONO}" fill="var(--fig-highlight)">${signo}${F(f.v, 3)} [${F(f.lo, 3)}, ${F(f.hi, 3)}]</text>`;
+      o += `<text x="${c2}" y="${y + 4}" text-anchor="end" font-size="11.5" font-family="${MONO}" fill="var(--fig-muted)">${F(f.d, 2)}</text>`;
+      o += `<text x="${c3}" y="${y + 4}" text-anchor="end" font-size="11.5" font-family="${MONO}" fill="var(--fig-muted)">${F(f.gana * 100, 1)} %</text>`;
+    });
+    svg.setAttribute("viewBox", `0 0 ${ancho} ${alto}`);
+    svg.innerHTML = o;
+  })();
+
+  /* ---- tabla de horizonte: 3x6, se lee mejor como tabla que como figura -- */
+  (function(){
+    const ordenH = {ll1:"1 año · 366 d", ll2:"2 años · 731 d", ll4:"4 años · 1 461 d"};
+    const filas = ["ll1","ll2","ll4"].map(sp => {
+      const g = k => D.tablas.nacional.find(r => r.split === sp && r.method === k);
+      return {c:[ordenH[sp], f(g("timesfm").rmse), f(g("tuned").rmse), f(g("climatology").rmse),
+        f(g("timesfm").skill_vs_clim,4), f(g("tuned").skill_vs_clim,4)]};
+    });
+    tabla("t-horizonte", ["horizonte","TimesFM","Palacios","climatología","skill TimesFM","skill Palacios"], filas);
+  })();
+
+  /* ---- figura 3: comparacion multimetrica con pestanas --------------- */
+  (function(){
+    const dep = D.tablas.departamental;
+    const agrupado = {};
+    dep.forEach(r => {
+      (agrupado[r.model] = agrupado[r.model] || []).push(r);
+    });
+    const METRICAS = [
+      {k: "rmse", n: "RMSE", crit: "min", dec: 3, dir: "Menor es mejor", uni: " °C"},
+      {k: "mae", n: "MAE", crit: "min", dec: 3, dir: "Menor es mejor", uni: " °C"},
+      {k: "bias", n: "Sesgo", crit: "cero", dec: 3, dir: "Más cerca de cero es mejor", uni: " °C", cero: true},
+      {k: "r", n: "r", crit: "max", dec: 4, dir: "Mayor es mejor", uni: ""},
+      {k: "skill_vs_climatology", n: "Skill", crit: "max", dec: 4, dir: "Mayor es mejor", uni: ""},
+      {k: "outside_qc_fraction", n: "Fuera de QC", crit: "min", dec: 2, dir: "Menor es mejor", uni: " %", esc: 100}
+    ];
+    const cont = document.getElementById("pestanas-metrica");
+    const svg = document.getElementById("fig-metrica");
+    const nota = document.getElementById("nota-metrica");
+    cont.innerHTML = METRICAS.map((m, i) =>
+      `<button type="button" role="tab" data-i="${i}" aria-selected="${i === 0}">${m.n}</button>`).join("");
+
+    function pinta(i){
+      const m = METRICAS[i];
+      const items = Object.entries(agrupado).map(([modelo, filas]) => ({
+        n: etiquetaPlana(modelo) + (filas.length > 1 ? ` (media de ${filas.length})` : ""),
+        v: filas.reduce((a, r) => a + r[m.k], 0) / filas.length * (m.esc || 1),
+        focal: modelo === "timesfm"
+      }));
+      const {orden, iMejor} = dotPlot(svg, {items, criterio: m.crit, decimales: m.dec,
+        sufijo: m.uni, filaAlto: 34, cero: !!m.cero, etiquetaAncho: 160});
+      const mejor = orden[iMejor], focal = orden.find(o => o.focal);
+      nota.innerHTML = `<strong>${m.dir}.</strong> ` + (mejor === focal
+        ? `Aquí el método focal es además el mejor: ${etiquetaPlana("timesfm")} con ${F(mejor.v, m.dec)}${m.uni}.`
+        : `El método focal no gana esta métrica: el mejor es <strong>${mejor.n}</strong> con
+           ${F(mejor.v, m.dec)}${m.uni}, frente a ${F(focal.v, m.dec)}${m.uni} de TimesFM.`);
+      cont.querySelectorAll("button").forEach(b =>
+        b.setAttribute("aria-selected", String(Number(b.dataset.i) === i)));
+    }
+    cont.addEventListener("click", e => {
+      const b = e.target.closest("button"); if(b) pinta(Number(b.dataset.i));
+    });
+    pinta(0);
+  })();
+
+  /* ---- figura 4: consistencia regional (heatmap anotado) ------------- */
+  (function(){
+    const svg = document.getElementById("fig-heatmap");
+    const sitios = ["Cusco", "Lima", "Loreto", "San Martin"];
+    const modelos = ["timesfm", "tcn_direct", "tuned", "climatology"];
+    const valor = (s, m) => {
+      const rs = D.tablas.departamentalPorSitio.filter(r => r.department === s && r.model === m);
+      return rs.reduce((a, r) => a + r.rmse, 0) / rs.length;
+    };
+    const matriz = sitios.map(s => modelos.map(m => valor(s, m)));
+    const todos = matriz.flat(), vmin = Math.min(...todos), vmax = Math.max(...todos);
+    const ancho = 760, M = {t: 42, r: 96, b: 34, l: 118};
+    const celdaH = 34, celdaW = (ancho - M.l - M.r) / modelos.length;
+    const alto = M.t + sitios.length * celdaH + M.b;
+    const mezcla = (t) => `color-mix(in srgb, var(--fig-scale-high) ${Math.round(t * 100)}%, var(--fig-scale-low))`;
+    let o = "";
+    modelos.forEach((m, j) => {
+      o += `<text x="${M.l + j * celdaW + celdaW / 2}" y="${M.t - 14}" text-anchor="middle" font-size="12" font-family="${SANS}" fill="${m === "timesfm" ? "var(--fig-highlight)" : "var(--fig-secondary)"}">${etiquetaPlana(m)}</text>`;
+    });
+    matriz.forEach((fila, i) => {
+      const y = M.t + i * celdaH;
+      const iMejor = mejorIndice(fila, "min");
+      o += `<text x="${M.l - 12}" y="${y + celdaH / 2 + 4}" text-anchor="end" font-size="12.5" font-family="${SANS}" fill="var(--fig-secondary)">${sitios[i] === "San Martin" ? "San Martín" : sitios[i]}</text>`;
+      fila.forEach((v, j) => {
+        const t = (v - vmin) / (vmax - vmin || 1);
+        const x = M.l + j * celdaW;
+        const esMejor = j === iMejor;
+        o += `<rect x="${x + 1}" y="${y + 1}" width="${celdaW - 2}" height="${celdaH - 2}" fill="${mezcla(t)}"/>`;
+        if(esMejor) o += `<rect x="${x + 1}" y="${y + 1}" width="${celdaW - 2}" height="${celdaH - 2}" fill="none" stroke="var(--fig-highlight)" stroke-width="1.3"/>`;
+        o += `<text x="${x + celdaW / 2}" y="${y + celdaH / 2 + 4}" text-anchor="middle" font-size="12" font-family="${MONO}" fill="${t > .55 ? "var(--surface)" : "var(--fig-highlight)"}" font-weight="${esMejor ? 600 : 400}">${F(v, 3)}</text>`;
+      });
+    });
+    const lx = ancho - M.r + 16, lw = 12, lh = sitios.length * celdaH;
+    o += `<defs><linearGradient id="gr" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="var(--fig-scale-low)"/><stop offset="100%" stop-color="var(--fig-scale-high)"/></linearGradient></defs>`;
+    o += `<rect x="${lx}" y="${M.t}" width="${lw}" height="${lh}" fill="url(#gr)"/>`;
+    o += `<text x="${lx + lw + 6}" y="${M.t + 9}" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${F(vmax, 2)}</text>`;
+    o += `<text x="${lx + lw + 6}" y="${M.t + lh}" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${F(vmin, 2)}</text>`;
+    o += `<text x="${lx}" y="${M.t - 14}" font-size="10" font-family="${MONO}" fill="var(--fig-muted)" letter-spacing=".06em">RMSE °C</text>`;
+    o += `<text x="${M.l}" y="${alto - 10}" font-size="12" font-family="${SANS}" fill="var(--fig-muted)">El contorno marca el mejor método de cada fila. TimesFM gana en las cuatro.</text>`;
+    svg.setAttribute("viewBox", `0 0 ${ancho} ${alto}`);
+    svg.innerHTML = o;
+  })();
+
+  /* ---- figuras 5 y 6: la prueba de escala ---------------------------- */
+  (function(){
+    const filas = D.tablas.escala || [];
+    if(!filas.length) return;
+    const SITIO = {cusco:"Cusco", lima:"Lima", iquitos_loreto:"Loreto",
+                   tarapoto_san_martin:"San Martín"};
+
+    const agregado = filas.filter(r => r.site === "ALL_reponderado");
+    const items = agregado.map(r => ({n: etiquetaPlana(r.method), v: r.rmse,
+                                      focal: r.method === "timesfm"}));
+    const svg = document.getElementById("fig-escala");
+    const {orden} = dotPlot(svg, {items, criterio: "min", decimales: 3, filaAlto: 32});
+    const brecha = orden[1].v - orden[0].v;
+    const nota = document.createElement("p");
+    nota.className = "fig-nota";
+    nota.innerHTML = `La ventaja sobre el método publicado es de <strong>${F(brecha, 3)} °C</strong>,
+      un ${F(brecha / orden[1].v * 100, 1)} % de mejora relativa, sobre
+      ${(agregado[0].n).toLocaleString("es")} pares de predicción y observación. El eje no
+      arranca en cero.`;
+    svg.after(nota);
+
+    const svg2 = document.getElementById("fig-escala-mapa");
+    const sitios = Object.keys(SITIO);
+    const modelos = ["timesfm", "tuned", "climatology"];
+    const valor = (s, m) => {
+      const fila = filas.find(r => r.site === s && r.method === m);
+      return fila ? fila.rmse : NaN;
+    };
+    const matriz = sitios.map(s => modelos.map(m => valor(s, m)));
+    const todos = matriz.flat(), vmin = Math.min(...todos), vmax = Math.max(...todos);
+    const ancho = 760, M = {t: 42, r: 96, b: 34, l: 118};
+    const celdaH = 34, celdaW = (ancho - M.l - M.r) / modelos.length;
+    const alto = M.t + sitios.length * celdaH + M.b;
+    const mezcla = t => `color-mix(in srgb, var(--fig-scale-high) ${Math.round(t * 100)}%, var(--fig-scale-low))`;
+    let o = "";
+    modelos.forEach((m, j) => {
+      o += `<text x="${M.l + j * celdaW + celdaW / 2}" y="${M.t - 14}" text-anchor="middle" font-size="12" font-family="${SANS}" fill="${m === "timesfm" ? "var(--fig-highlight)" : "var(--fig-secondary)"}">${etiquetaPlana(m)}</text>`;
+    });
+    matriz.forEach((fila, i) => {
+      const y = M.t + i * celdaH;
+      const iMejor = mejorIndice(fila, "min");
+      o += `<text x="${M.l - 12}" y="${y + celdaH / 2 + 4}" text-anchor="end" font-size="12.5" font-family="${SANS}" fill="var(--fig-secondary)">${SITIO[sitios[i]]}</text>`;
+      fila.forEach((v, j) => {
+        const t = (v - vmin) / (vmax - vmin || 1);
+        const x = M.l + j * celdaW;
+        const esMejor = j === iMejor;
+        o += `<rect x="${x + 1}" y="${y + 1}" width="${celdaW - 2}" height="${celdaH - 2}" fill="${mezcla(t)}"/>`;
+        if(esMejor) o += `<rect x="${x + 1}" y="${y + 1}" width="${celdaW - 2}" height="${celdaH - 2}" fill="none" stroke="var(--fig-highlight)" stroke-width="1.3"/>`;
+        o += `<text x="${x + celdaW / 2}" y="${y + celdaH / 2 + 4}" text-anchor="middle" font-size="12" font-family="${MONO}" fill="${t > .55 ? "var(--surface)" : "var(--fig-highlight)"}" font-weight="${esMejor ? 600 : 400}">${F(v, 3)}</text>`;
+      });
+    });
+    const lx = ancho - M.r + 16, lw = 12, lh = sitios.length * celdaH;
+    o += `<defs><linearGradient id="gr-escala" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0%" stop-color="var(--fig-scale-low)"/><stop offset="100%" stop-color="var(--fig-scale-high)"/></linearGradient></defs>`;
+    o += `<rect x="${lx}" y="${M.t}" width="${lw}" height="${lh}" fill="url(#gr-escala)"/>`;
+    o += `<text x="${lx + lw + 6}" y="${M.t + 9}" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${F(vmax, 2)}</text>`;
+    o += `<text x="${lx + lw + 6}" y="${M.t + lh}" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${F(vmin, 2)}</text>`;
+    o += `<text x="${lx}" y="${M.t - 14}" font-size="10" font-family="${MONO}" fill="var(--fig-muted)" letter-spacing=".06em">RMSE °C</text>`;
+    const ganados = sitios.filter((s, i) => mejorIndice(matriz[i], "min") === 0).length;
+    o += `<text x="${M.l}" y="${alto - 10}" font-size="12" font-family="${SANS}" fill="var(--fig-muted)">El contorno marca el mejor de cada fila. TimesFM gana en ${ganados === 4 ? "los cuatro departamentos" : `${ganados} de los cuatro`}.</text>`;
+    svg2.setAttribute("viewBox", `0 0 ${ancho} ${alto}`);
+    svg2.innerHTML = o;
+  })();
+
+  /* ---- curva de error ------------------------------------------------ */
+  const SERIES_POCAS = ["climatology","tuned","timesfm"];
+  const SERIES_TODAS = ["td_eq_tmin","zone_ols","climatology","tuned","timesfm"];
+  function curva(series){
+    const svg = document.getElementById("curva");
+    const W = 760, H = 340, M = {t:14, r:58, b:34, l:46};
+    let yMax = 0, xMax = 0;
+    series.forEach(k => {
+      const s = D.curva[k]; if(!s) return;
+      yMax = Math.max(yMax, ...s.rmse); xMax = Math.max(xMax, ...s.dia);
+    });
+    yMax = Math.ceil(yMax * 5) / 5;
+    const paso = yMax > 2 ? 0.5 : 0.2;
+    const X = d => M.l + d / xMax * (W - M.l - M.r);
+    const Y = v => H - M.b - v / yMax * (H - M.t - M.b);
+    let out = "";
+    for(let v = 0; v <= yMax + 1e-9; v += paso){
+      out += `<line x1="${M.l}" y1="${Y(v)}" x2="${W-M.r}" y2="${Y(v)}" stroke="${css("--line-soft")}" stroke-width="1"/>`;
+      out += `<text x="${M.l-8}" y="${Y(v)+4}" text-anchor="end" font-size="11" font-family="IBM Plex Mono, monospace" fill="${css("--ink-faint")}">${v.toFixed(1)}</text>`;
+    }
+    [0,365,730,1095,1460].forEach(d => {
+      out += `<text x="${X(d)}" y="${H-12}" text-anchor="middle" font-size="11" font-family="IBM Plex Mono, monospace" fill="${css("--ink-faint")}">${d}</text>`;
+    });
+    out += `<text x="${M.l}" y="${H-12}" text-anchor="start" font-size="11" font-family="IBM Plex Sans, sans-serif" fill="${css("--ink-faint")}" transform="translate(0,0)"></text>`;
+    const etiquetas = [];
+    series.forEach(k => {
+      const s = D.curva[k]; if(!s) return;
+      const color = css(COLOR_METODO[k]);
+      const d = s.dia.map((x,i) => `${i ? "L" : "M"}${X(x).toFixed(1)},${Y(s.rmse[i]).toFixed(1)}`).join("");
+      out += `<path d="${d}" fill="none" stroke="${color}" stroke-width="2" stroke-linejoin="round"/>`;
+      const fin = s.rmse[s.rmse.length-1];
+      etiquetas.push({y:Y(fin), t:fin.toFixed(3), color});
+    });
+    etiquetas.sort((a,b) => a.y - b.y);
+    let ultimo = -99;
+    etiquetas.forEach(e => {
+      const y = Math.max(e.y, ultimo + 13); ultimo = y;
+      out += `<text x="${W-M.r+7}" y="${y+4}" font-size="11.5" font-family="IBM Plex Mono, monospace" fill="${e.color}">${e.t}</text>`;
+    });
+    out += `<text x="${(W-M.r+M.l)/2}" y="${H-1}" text-anchor="middle" font-size="11.5" font-family="IBM Plex Sans, sans-serif" fill="${css("--ink-faint")}">días transcurridos desde el último Td observado</text>`;
+    svg.innerHTML = out;
+    document.getElementById("leyenda-curva").innerHTML = series.slice().reverse().map(k =>
+      `<span><i style="background:${css(COLOR_METODO[k])}"></i>${NOMBRE_METODO[k]}</span>`).join("");
+  }
+  curva(SERIES_POCAS);
+  (function(){
+    const pocas = document.getElementById("curva-pocas"), todas = document.getElementById("curva-todas");
+    const elegir = (b, s) => {
+      pocas.setAttribute("aria-pressed", String(b === pocas));
+      todas.setAttribute("aria-pressed", String(b === todas));
+      curva(s);
+    };
+    pocas.addEventListener("click", () => elegir(pocas, SERIES_POCAS));
+    todas.addEventListener("click", () => elegir(todas, SERIES_TODAS));
+  })();
+
+  /* ---- arranque del mapa --------------------------------------------- */
+  (async function(){
+    lienzo.width = D.meta.nLon; lienzo.height = D.meta.nLat;
+    imagen = ctx.createImageData(D.meta.nLon, D.meta.nLat);
+    capas = {
+      categoria: await inflar(D.capas.categoria),
+      zona: await inflar(D.capas.zona),
+      muestreo: await inflar(D.capas.muestreo)
+    };
+    pintar();
+  })().catch(e => {
+    lectura.innerHTML = '<span class="sub">No se pudo construir el mapa en este navegador.</span>';
+    console.error(e);
+  });
+
+  const mq = window.matchMedia("(prefers-color-scheme: dark)");
+  mq.addEventListener && mq.addEventListener("change", () => { if(capas) pintar(); });
+})();
+</script>
+
+</body></html>
