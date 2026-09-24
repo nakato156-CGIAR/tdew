@@ -113,22 +113,7 @@ section > .ancha > * + *{margin-top:18px}
 .nota{font-size:12.5px; color:var(--ink-faint); line-height:1.55}
 
 /* --- comparacion de modelos --------------------------------------------- */
-.comparativa{display:grid; grid-template-columns:1.6fr 1fr; gap:8px 48px; align-items:start}
-@media (max-width:760px){.comparativa{grid-template-columns:1fr; gap:34px}}
-.comparativa-grafico svg{display:block; width:100%; height:auto; overflow:visible}
-.familias{display:flex; flex-direction:column}
-.familia{padding-block:17px}
-.familia:first-child{padding-top:2px}
-.familia:last-child{padding-bottom:2px}
-.familia + .familia{border-top:1px solid var(--line-soft)}
-.familia h3{font-family:"IBM Plex Sans",sans-serif; font-size:14.5px; margin-bottom:5px}
-.familia p{font-size:13.5px; line-height:1.55; color:var(--ink-soft)}
-.familia-modelos{font-family:"IBM Plex Mono",monospace; font-size:11px; color:var(--ink-faint);
-  margin-top:7px; letter-spacing:.01em}
-.conclusion-franja{margin-top:8px; padding:22px 26px; background:var(--surface-2);
-  border-radius:3px; display:flex; flex-direction:column; gap:7px}
-.conclusion-frase{font-family:"IBM Plex Serif",Georgia,serif; font-size:19px; line-height:1.42;
-  font-weight:600; max-width:78ch}
+.explicador-modelos svg{display:block; width:100%; height:auto}
 
 /* --- tablas ------------------------------------------------------------ */
 .tabla-caja{overflow-x:auto; border:1px solid var(--line); border-radius:3px; background:var(--surface)}
@@ -252,48 +237,161 @@ code{font-family:"IBM Plex Mono",monospace; font-size:.92em; background:var(--su
 <section>
   <div class="ancha">
     <p class="eyebrow">Qué hace cada modelo</p>
-    <h2>Todos ven el mismo historial de Td y la misma Tmin del período a rellenar. Lo que
-      cambia es cómo cruzan el bloque oculto.</h2>
-    <p class="sub" style="max-width:var(--measure)">Seis formas de resolver el mismo problema,
-      del ajuste más simple al modelo entrenado para el caso. La cifra es el RMSE de cada uno
-      sobre la mayor muestra en la que se midió.</p>
+    <h2>Seis métodos para rellenar un bloque oculto</h2>
+    <p class="sub" style="max-width:var(--measure)">Todos reciben la misma entrada — historial
+      de Td y Tmin del período faltante — pero difieren en cómo generan los cuatro años sin
+      observaciones.</p>
 
-    <div class="comparativa">
-      <div class="comparativa-grafico">
-        <svg id="fig-modelos" viewBox="0 0 620 250"></svg>
-        <p class="fig-nota">RMSE en °C, menor es mejor · cinco métodos ordenados sobre las
-          17.041 celdas del muestreo nacional. <strong>†</strong> La TCN no entra en ese
-          orden: solo existe medida sobre las 2.048 celdas de su panel departamental, una
-          población distinta, así que se marca aparte en la misma escala.</p>
-      </div>
-      <div class="familias">
-        <div class="familia">
-          <h3>Sin memoria</h3>
-          <p>No usan el historial de Td más allá de un ajuste estadístico simple con Tmin o
-            con el día del año.</p>
-          <p class="familia-modelos">climatología · Td = Tmin · zone_ols</p>
-        </div>
-        <div class="familia">
-          <h3>Autorregresivo</h3>
-          <p>Alimenta sus propios rezagos de Td dentro del bloque oculto: el error del día 1
-            entra como dato del día 2 y se realimenta durante 1.461 días.</p>
-          <p class="familia-modelos">Palacios · tuned</p>
-        </div>
-        <div class="familia">
-          <h3>Pasada única</h3>
-          <p>Produce el bloque entero de una vez sin consumir su propia salida: no acumula
-            deriva, pero tampoco se recondiciona con lo ya observado.</p>
-          <p class="familia-modelos">TCN directa · TimesFM 3</p>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="ancha">
-    <div class="conclusion-franja">
-      <p class="eyebrow">El hallazgo</p>
-      <p class="conclusion-frase">Sin ajustarse al problema, TimesFM termina primero sobre el
-        muestreo nacional — y le sigue ganando a la TCN entrenada para estos departamentos en
-        el único terreno donde ambas se midieron sobre las mismas celdas.</p>
+    <div class="explicador-modelos">
+      <svg viewBox="0 0 1672 750" role="img" aria-label="Diagrama de las tres familias de
+        métodos para rellenar el bloque oculto, con sus resultados generales">
+        <defs>
+          <style>
+            .xm-panel{fill:var(--surface);stroke:var(--line);stroke-width:1.2}
+            .xm-surface{fill:var(--surface)}
+            .xm-surface2{fill:var(--surface-2)}
+            .xm-ink{fill:var(--ink)}
+            .xm-soft{fill:var(--ink-soft)}
+            .xm-faint{fill:var(--ink-faint)}
+            .xm-line{stroke:var(--line);stroke-width:1}
+            .xm-dash{stroke:var(--ink-faint);stroke-width:1.25;stroke-dasharray:4 5}
+            .xm-serif{font-family:"IBM Plex Serif",Georgia,serif}
+            .xm-sans{font-family:"IBM Plex Sans",sans-serif}
+            .xm-h2{font:600 30px "IBM Plex Serif",Georgia,serif;fill:var(--ink)}
+            .xm-h3{font:600 18px "IBM Plex Sans",sans-serif}
+            .xm-body{font:400 16px "IBM Plex Sans",sans-serif;fill:var(--ink-soft)}
+            .xm-small{font:400 13px "IBM Plex Sans",sans-serif;fill:var(--ink-soft)}
+            .xm-tiny{font:400 11px "IBM Plex Mono",monospace;fill:var(--ink-faint)}
+            .xm-model{font:500 14px "IBM Plex Mono",monospace;fill:var(--ink)}
+            .xm-result-title{font:600 24px "IBM Plex Serif",Georgia,serif;fill:var(--ink)}
+            .xm-result-name{font:600 20px "IBM Plex Serif",Georgia,serif;fill:var(--ink)}
+            .xm-result-label{font:500 11px "IBM Plex Mono",monospace;letter-spacing:1px;fill:var(--ink-faint)}
+            .xm-metric{font:400 13px "IBM Plex Mono",monospace;fill:var(--ink-soft)}
+            .xm-metricv{font:500 21px "IBM Plex Mono",monospace;fill:var(--ink)}
+          </style>
+          <marker id="xmArrowAmber" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--clim)"/></marker>
+          <marker id="xmArrowGreen" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--tfm)"/></marker>
+          <marker id="xmArrowBlue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--tuned)"/></marker>
+        </defs>
+
+        <g transform="translate(0,-191)">
+        <rect x="40" y="191" width="1568" height="498" rx="5" class="xm-panel"/>
+        <text x="77" y="245" class="xm-h2">La diferencia está en cómo recorren el bloque oculto</text>
+
+        <rect x="78" y="327" width="273" height="237" rx="5" class="xm-surface2" stroke="var(--line)" stroke-width="1.2"/>
+        <ellipse cx="113" cy="363" rx="12" ry="5" fill="none" stroke="var(--ink-soft)" stroke-width="2"/>
+        <path d="M101 363v18c0 3 5 5 12 5s12-2 12-5v-18" fill="none" stroke="var(--ink-soft)" stroke-width="2"/>
+        <path d="M101 372c0 3 5 5 12 5s12-2 12-5" fill="none" stroke="var(--ink-soft)" stroke-width="2"/>
+        <text x="145" y="372" class="xm-serif xm-ink" font-size="21" font-weight="600">Entrada común</text>
+
+        <rect x="100" y="405" width="228" height="60" rx="5" class="xm-surface" stroke="var(--line)"/>
+        <polyline points="117,445 126,433 135,438 145,423" fill="none" stroke="var(--ink-soft)" stroke-width="2"/>
+        <circle cx="117" cy="445" r="2.2" fill="var(--ink-soft)"/><circle cx="126" cy="433" r="2.2" fill="var(--ink-soft)"/><circle cx="135" cy="438" r="2.2" fill="var(--ink-soft)"/><circle cx="145" cy="423" r="2.2" fill="var(--ink-soft)"/>
+        <text x="166" y="431" class="xm-body">Historial de Td</text><text x="166" y="453" class="xm-body">hasta 2012</text>
+
+        <rect x="100" y="475" width="228" height="60" rx="5" class="xm-surface" stroke="var(--line)"/>
+        <rect x="119" y="489" width="8" height="26" rx="4" fill="none" stroke="var(--ink-soft)" stroke-width="2"/>
+        <circle cx="123" cy="519" r="7" fill="none" stroke="var(--ink-soft)" stroke-width="2"/>
+        <line x1="123" y1="498" x2="123" y2="516" stroke="var(--ink-soft)" stroke-width="2"/>
+        <text x="166" y="501" class="xm-body">Tmin del período</text><text x="166" y="523" class="xm-body">a rellenar</text>
+
+        <path d="M351 415 C404 415, 398 297, 489 297" fill="none" stroke="var(--ink-soft)" stroke-width="1.6" marker-end="url(#xmArrowAmber)"/>
+        <path d="M351 433 C411 433, 420 433, 489 433" fill="none" stroke="var(--ink-soft)" stroke-width="1.6" marker-end="url(#xmArrowGreen)"/>
+        <path d="M351 451 C404 451, 398 583, 489 583" fill="none" stroke="var(--ink-soft)" stroke-width="1.6" marker-end="url(#xmArrowBlue)"/>
+
+        <line x1="489" y1="399" x2="1566" y2="399" class="xm-line"/>
+        <line x1="489" y1="550" x2="1566" y2="550" class="xm-line"/>
+
+        <!-- Familia 1 -->
+        <circle cx="519" cy="288" r="18" fill="var(--clim)"/><text x="519" y="294" text-anchor="middle" class="xm-sans" font-size="17" font-weight="700" fill="#171008">1</text>
+        <text x="562" y="291" class="xm-h3" fill="var(--clim)">SIN MEMORIA</text>
+        <text x="562" y="316" class="xm-body">Usa señales contemporáneas o estadísticas fijas;</text>
+        <text x="562" y="339" class="xm-body">no mantiene estado dentro del bloque.</text>
+        <rect x="562" y="351" width="318" height="32" rx="4" class="xm-surface2"/>
+        <text x="579" y="372" class="xm-model">climatología · Td = Tmin · zone_ols</text>
+
+        <text x="997" y="282" class="xm-small">Cada día se predice de forma independiente</text>
+        <line x1="975" y1="330" x2="1570" y2="330" class="xm-dash"/>
+        <circle cx="1005" cy="330" r="6" class="xm-faint"/><circle cx="1040" cy="330" r="6" class="xm-faint"/><circle cx="1075" cy="330" r="6" class="xm-faint"/>
+        <rect x="1129" y="299" width="260" height="61" rx="9" class="xm-surface" stroke="var(--clim)" stroke-width="1.2" stroke-dasharray="4 4"/>
+        <g fill="var(--clim)"><circle cx="1157" cy="330" r="7"/><circle cx="1224" cy="330" r="7"/><circle cx="1290" cy="330" r="7"/><circle cx="1357" cy="330" r="7"/></g>
+        <g fill="var(--clim)" class="xm-sans" font-size="17"><text x="1152" y="316">↓</text><text x="1219" y="316">↓</text><text x="1285" y="316">↓</text><text x="1352" y="316">↓</text></g>
+        <circle cx="1442" cy="330" r="6" class="xm-faint"/><circle cx="1477" cy="330" r="6" class="xm-faint"/><circle cx="1512" cy="330" r="6" class="xm-faint"/>
+        <text x="997" y="368" class="xm-tiny">2012</text><text x="1183" y="379" class="xm-tiny">4 años sin observaciones</text><text x="1491" y="368" class="xm-tiny">2016</text>
+
+        <!-- Familia 2 -->
+        <circle cx="519" cy="431" r="18" fill="var(--tfm)"/><text x="519" y="437" text-anchor="middle" class="xm-sans" font-size="17" font-weight="700" fill="#F4F8FA">2</text>
+        <text x="562" y="434" class="xm-h3" fill="var(--tfm)">PASADA ÚNICA</text>
+        <text x="562" y="459" class="xm-body">Genera el bloque completo de una sola vez,</text>
+        <text x="562" y="482" class="xm-body">sin retroalimentar sus propias salidas.</text>
+        <rect x="562" y="495" width="239" height="32" rx="4" class="xm-surface2"/>
+        <text x="579" y="516" class="xm-model">TimesFM 3 · TCN directa</text>
+
+        <text x="997" y="426" class="xm-small">Una sola pasada para todo el bloque</text>
+        <line x1="975" y1="478" x2="1570" y2="478" class="xm-dash"/>
+        <circle cx="1005" cy="478" r="6" class="xm-faint"/><circle cx="1040" cy="478" r="6" class="xm-faint"/><circle cx="1075" cy="478" r="6" class="xm-faint"/>
+        <rect x="1129" y="448" width="260" height="61" rx="9" class="xm-surface" stroke="var(--tfm)" stroke-width="1.2" stroke-dasharray="4 4"/>
+        <line x1="1150" y1="458" x2="1366" y2="458" stroke="var(--tfm)" stroke-width="1.5" marker-end="url(#xmArrowGreen)"/>
+        <g fill="var(--tfm)"><circle cx="1157" cy="478" r="7"/><circle cx="1224" cy="478" r="7"/><circle cx="1290" cy="478" r="7"/><circle cx="1357" cy="478" r="7"/></g>
+        <circle cx="1442" cy="478" r="6" class="xm-faint"/><circle cx="1477" cy="478" r="6" class="xm-faint"/><circle cx="1512" cy="478" r="6" class="xm-faint"/>
+        <text x="997" y="516" class="xm-tiny">2012</text><text x="1183" y="527" class="xm-tiny">4 años sin observaciones</text><text x="1491" y="516" class="xm-tiny">2016</text>
+
+        <!-- Familia 3 -->
+        <circle cx="519" cy="582" r="18" fill="var(--tuned)"/><text x="519" y="588" text-anchor="middle" class="xm-sans" font-size="17" font-weight="700" fill="#F4F8FA">3</text>
+        <text x="562" y="585" class="xm-h3" fill="var(--tuned)">AUTORREGRESIVO</text>
+        <text x="562" y="610" class="xm-body">Avanza día a día usando predicciones previas</text>
+        <text x="562" y="633" class="xm-body">como entrada.</text>
+        <rect x="562" y="645" width="163" height="32" rx="4" class="xm-surface2"/>
+        <text x="579" y="666" class="xm-model">Palacios · tuned</text>
+
+        <text x="997" y="578" class="xm-small">Predicción secuencial, usando salidas previas</text>
+        <line x1="975" y1="621" x2="1570" y2="621" class="xm-dash"/>
+        <circle cx="1005" cy="621" r="6" class="xm-faint"/><circle cx="1040" cy="621" r="6" class="xm-faint"/><circle cx="1075" cy="621" r="6" class="xm-faint"/>
+        <rect x="1129" y="591" width="260" height="61" rx="9" class="xm-surface" stroke="var(--tuned)" stroke-width="1.2" stroke-dasharray="4 4"/>
+        <g fill="var(--tuned)"><circle cx="1157" cy="621" r="7"/><circle cx="1224" cy="621" r="7"/><circle cx="1290" cy="621" r="7"/><circle cx="1357" cy="621" r="7"/></g>
+        <g fill="var(--tuned)" class="xm-sans" font-size="18"><text x="1178" y="628">→</text><text x="1245" y="628">→</text><text x="1311" y="628">→</text></g>
+        <circle cx="1442" cy="621" r="6" class="xm-faint"/><circle cx="1477" cy="621" r="6" class="xm-faint"/><circle cx="1512" cy="621" r="6" class="xm-faint"/>
+        <text x="997" y="659" class="xm-tiny">2012</text><text x="1183" y="670" class="xm-tiny">4 años sin observaciones</text><text x="1491" y="659" class="xm-tiny">2016</text>
+
+        <!-- Resultados -->
+        <line x1="40" y1="703" x2="1608" y2="703" stroke="var(--line)"/>
+        <text x="72" y="727" class="xm-result-title">Resultados generales</text>
+        <text x="355" y="727" class="xm-serif xm-soft" font-size="15">Qué método destaca en cada categoría (menor RMSE es mejor).</text>
+
+        <line x1="443" y1="744" x2="443" y2="822" stroke="var(--line)"/>
+        <line x1="811" y1="744" x2="811" y2="822" stroke="var(--line)"/>
+        <line x1="1165" y1="744" x2="1165" y2="822" stroke="var(--line)"/>
+        <line x1="40" y1="834" x2="1608" y2="834" stroke="var(--line)"/>
+
+        <text x="78" y="762" class="xm-result-label" fill="var(--tfm)">MEJOR COMPARABLE NACIONAL</text>
+        <text x="78" y="789" class="xm-result-name" fill="var(--tfm)">TimesFM 3</text>
+        <text x="78" y="816" class="xm-metric">RMSE</text><text x="133" y="817" class="xm-metricv" fill="var(--tfm)">1.154</text>
+
+        <circle cx="478" cy="769" r="15" fill="var(--clim)"/><text x="478" y="775" text-anchor="middle" class="xm-sans" font-size="15" font-weight="700" fill="#171008">1</text>
+        <text x="510" y="762" class="xm-result-label" fill="var(--clim)">MEJOR SIN MEMORIA</text>
+        <text x="510" y="789" class="xm-result-name">climatología</text>
+        <text x="510" y="816" class="xm-metric">RMSE</text><text x="565" y="817" class="xm-metricv">1.535</text>
+
+        <circle cx="848" cy="769" r="15" fill="var(--tuned)"/><text x="848" y="775" text-anchor="middle" class="xm-sans" font-size="15" font-weight="700" fill="#F4F8FA">3</text>
+        <text x="880" y="762" class="xm-result-label" fill="var(--tuned)">MEJOR AUTORREGRESIVO</text>
+        <text x="880" y="789" class="xm-result-name">Palacios · tuned</text>
+        <text x="880" y="816" class="xm-metric">RMSE</text><text x="935" y="817" class="xm-metricv">1.219</text>
+
+        <rect x="1195" y="734" width="387" height="91" rx="5" class="xm-surface" stroke="var(--line)"/>
+        <text x="1222" y="757" class="xm-result-label" fill="var(--tcn)">PANEL DEPARTAMENTAL</text>
+        <text x="1222" y="786" class="xm-result-name">TCN directa</text>
+        <text x="1222" y="813" class="xm-metric">RMSE</text><text x="1277" y="814" class="xm-metricv" fill="var(--tcn)">0.841</text>
+
+        <!-- Como leer -->
+        <text x="47" y="875" class="xm-serif xm-ink" font-size="20" font-weight="600">Cómo leer sus cifras</text>
+        <line x1="848" y1="849" x2="848" y2="918" stroke="var(--line)"/>
+        <text x="278" y="869" class="xm-sans xm-ink" font-size="14" font-weight="600">Comparables en el muestreo nacional (17,041 celdas)</text>
+        <text x="278" y="894" class="xm-sans xm-soft" font-size="14">TimesFM 3, Palacios · tuned, climatología, zone_ols y Td = Tmin.</text>
+        <text x="936" y="869" class="xm-sans xm-ink" font-size="14" font-weight="600">TCN directa se reporta aparte</text>
+        <text x="936" y="894" class="xm-sans xm-soft" font-size="14">Solo existe en el panel departamental (2,048 celdas), por lo que</text>
+        <text x="936" y="915" class="xm-sans xm-soft" font-size="14">no compite directamente en el ranking nacional.</text>
+        </g>
+      </svg>
     </div>
   </div>
 </section>
@@ -840,45 +938,6 @@ code{font-family:"IBM Plex Mono",monospace; font-size:.92em; background:var(--su
     svg.innerHTML = o;
     return {orden, iMejor, X, M, filaAlto};
   }
-
-  /* ---- figura 0: comparacion editorial de los seis modelos ------------
-     Reutiliza dotPlot con las mismas cifras que ya aparecen mas abajo en la
-     pagina: los cinco metodos del muestreo nacional (D.tablas.nacional,
-     split ll4, la misma fuente de la figura "Ranking global por RMSE")
-     entran al orden por valor. La TCN NO entra en ese orden: solo existe
-     medida en el panel departamental (D.tablas.departamental, la misma
-     fuente de "Comparacion multimetrica"), una poblacion de celdas mas
-     facil que la nacional, asi que ordenarla junto a las otras cinco por
-     valor crudo exageraria su lugar -- de hecho, en el unico panel donde
-     se midio junto a TimesFM sobre las mismas celdas, TimesFM le gana
-     (0.800 contra 0.841). Por eso se dibuja aparte, en la misma escala,
-     como fila de referencia con marcador hueco y linea discontinua.
-     Ninguna cifra se calcula de nuevo: se agrupan las que ya pasan el
-     control de paridad de datos.js. --------------------------------- */
-  (function(){
-    const FAMILIA = {climatology:"sin memoria", td_eq_tmin:"sin memoria", zone_ols:"sin memoria",
-      tuned:"autorregresivo", timesfm:"pasada única", tcn_direct:"pasada única"};
-    const nac = D.tablas.nacional.filter(r => r.split === "ll4");
-    const items = nac.map(r => ({n: etiquetaPlana(r.method), fam: FAMILIA[r.method],
-      v: r.rmse, focal: r.method === "timesfm"}));
-    const tcnFilas = D.tablas.departamental.filter(r => r.model === "tcn_direct");
-    const tcnRmse = tcnFilas.reduce((a, r) => a + r.rmse, 0) / tcnFilas.length;
-
-    const svg = document.getElementById("fig-modelos");
-    const GAP = 0.4; // fraccion de fila que se deja como aire antes de la referencia
-    const {X, M, filaAlto} = dotPlot(svg, {items, criterio: "min", decimales: 3,
-      ancho: 600, filaAlto: 36, etiquetaAncho: 200, filasExtra: GAP + 1});
-
-    const yDiv = M.t + (items.length + GAP / 2) * filaAlto;
-    const yTcn = M.t + (items.length + GAP + 0.5) * filaAlto;
-    const xTcn = X(tcnRmse);
-    let extra = `<line x1="${M.l}" y1="${yDiv}" x2="600" y2="${yDiv}" stroke="var(--fig-axis)" stroke-width="1" stroke-dasharray="2 3"/>`;
-    extra += `<text x="${M.l - 12}" y="${yTcn + 4}" text-anchor="end" font-size="12.5" font-family="${SANS}"><tspan fill="var(--fig-secondary)">${etiquetaPlana("tcn_direct")}</tspan> <tspan font-size="10" font-family="${MONO}" fill="var(--fig-muted)">${FAMILIA.tcn_direct}</tspan></text>`;
-    extra += `<line x1="${M.l}" y1="${yTcn}" x2="${xTcn}" y2="${yTcn}" stroke="var(--fig-grid)" stroke-width="1.5" stroke-dasharray="1 3"/>`;
-    extra += `<circle cx="${xTcn}" cy="${yTcn}" r="4" fill="none" stroke="var(--fig-muted)" stroke-width="1.5"/>`;
-    extra += `<text x="${xTcn + 13}" y="${yTcn + 4}" font-size="12" font-family="${MONO}" fill="var(--fig-muted)">${F(tcnRmse, 3)}†</text>`;
-    svg.insertAdjacentHTML("beforeend", extra);
-  })();
 
   /* ---- figura 1: ranking global por RMSE ----------------------------- */
   (function(){
