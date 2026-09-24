@@ -272,6 +272,11 @@ code{font-family:"IBM Plex Mono",monospace; font-size:.92em; background:var(--su
           <marker id="xmArrowAmber" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--clim)"/></marker>
           <marker id="xmArrowGreen" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--tfm)"/></marker>
           <marker id="xmArrowBlue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--tuned)"/></marker>
+          <symbol id="xmCrown" viewBox="0 0 24 20">
+            <path d="M3 17h18v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-2z"/>
+            <path d="M3 8l4.6 4.4L12 5l4.4 7.4L21 8l-1.7 9H4.7L3 8z"/>
+            <circle cx="3" cy="8" r="1.7"/><circle cx="12" cy="5" r="1.9"/><circle cx="21" cy="8" r="1.7"/>
+          </symbol>
         </defs>
 
         <g transform="translate(0,-191)">
@@ -324,8 +329,8 @@ code{font-family:"IBM Plex Mono",monospace; font-size:.92em; background:var(--su
         <text x="562" y="434" class="xm-h3" fill="var(--tfm)">PASADA ÚNICA</text>
         <text x="562" y="459" class="xm-body">Genera el bloque completo de una sola vez,</text>
         <text x="562" y="482" class="xm-body">sin retroalimentar sus propias salidas.</text>
-        <rect x="562" y="495" width="239" height="32" rx="4" class="xm-surface2"/>
-        <text x="579" y="516" class="xm-model">TimesFM 3 · TCN directa</text>
+        <rect x="562" y="495" width="120" height="32" rx="4" class="xm-surface2"/>
+        <text x="579" y="516" class="xm-model">TimesFM 3</text>
 
         <text x="997" y="426" class="xm-small">Una sola pasada para todo el bloque</text>
         <line x1="975" y1="478" x2="1570" y2="478" class="xm-dash"/>
@@ -355,41 +360,35 @@ code{font-family:"IBM Plex Mono",monospace; font-size:.92em; background:var(--su
 
         <!-- Resultados -->
         <line x1="40" y1="703" x2="1608" y2="703" stroke="var(--line)"/>
-        <text x="72" y="727" class="xm-result-title">Resultados generales</text>
-        <text x="355" y="727" class="xm-serif xm-soft" font-size="15">Qué método destaca en cada categoría (menor RMSE es mejor).</text>
+        <text x="72" y="727" class="xm-result-title">Los tres ganadores</text>
+        <text x="330" y="727" class="xm-serif xm-soft" font-size="15">El mejor de cada familia, sobre las 17.041 celdas del muestreo nacional (menor RMSE es mejor).</text>
 
-        <line x1="443" y1="744" x2="443" y2="822" stroke="var(--line)"/>
-        <line x1="811" y1="744" x2="811" y2="822" stroke="var(--line)"/>
-        <line x1="1165" y1="744" x2="1165" y2="822" stroke="var(--line)"/>
-        <line x1="40" y1="834" x2="1608" y2="834" stroke="var(--line)"/>
+        <g>
+          <rect x="40" y="748" width="500" height="170" rx="8" class="xm-surface" stroke="var(--tfm)" stroke-width="1.4"/>
+          <use href="#xmCrown" x="274" y="764" width="32" height="26" fill="var(--tfm)"/>
+          <text x="290" y="814" text-anchor="middle" class="xm-result-label" fill="var(--tfm)">MEJOR COMPARABLE NACIONAL</text>
+          <text x="290" y="846" text-anchor="middle" class="xm-result-name" font-size="23" fill="var(--tfm)">TimesFM 3</text>
+          <text x="290" y="876" text-anchor="middle" class="xm-metric">RMSE</text>
+          <text x="290" y="904" text-anchor="middle" class="xm-metricv" font-size="26" fill="var(--tfm)">1.154</text>
+        </g>
 
-        <text x="78" y="762" class="xm-result-label" fill="var(--tfm)">MEJOR COMPARABLE NACIONAL</text>
-        <text x="78" y="789" class="xm-result-name" fill="var(--tfm)">TimesFM 3</text>
-        <text x="78" y="816" class="xm-metric">RMSE</text><text x="133" y="817" class="xm-metricv" fill="var(--tfm)">1.154</text>
+        <g>
+          <rect x="574" y="748" width="500" height="170" rx="8" class="xm-surface" stroke="var(--clim)" stroke-width="1.4"/>
+          <use href="#xmCrown" x="808" y="764" width="32" height="26" fill="var(--clim)"/>
+          <text x="824" y="814" text-anchor="middle" class="xm-result-label" fill="var(--clim)">MEJOR SIN MEMORIA</text>
+          <text x="824" y="846" text-anchor="middle" class="xm-result-name" font-size="23" fill="var(--clim)">climatología</text>
+          <text x="824" y="876" text-anchor="middle" class="xm-metric">RMSE</text>
+          <text x="824" y="904" text-anchor="middle" class="xm-metricv" font-size="26" fill="var(--clim)">1.535</text>
+        </g>
 
-        <circle cx="478" cy="769" r="15" fill="var(--clim)"/><text x="478" y="775" text-anchor="middle" class="xm-sans" font-size="15" font-weight="700" fill="#171008">1</text>
-        <text x="510" y="762" class="xm-result-label" fill="var(--clim)">MEJOR SIN MEMORIA</text>
-        <text x="510" y="789" class="xm-result-name">climatología</text>
-        <text x="510" y="816" class="xm-metric">RMSE</text><text x="565" y="817" class="xm-metricv">1.535</text>
-
-        <circle cx="848" cy="769" r="15" fill="var(--tuned)"/><text x="848" y="775" text-anchor="middle" class="xm-sans" font-size="15" font-weight="700" fill="#F4F8FA">3</text>
-        <text x="880" y="762" class="xm-result-label" fill="var(--tuned)">MEJOR AUTORREGRESIVO</text>
-        <text x="880" y="789" class="xm-result-name">Palacios · tuned</text>
-        <text x="880" y="816" class="xm-metric">RMSE</text><text x="935" y="817" class="xm-metricv">1.219</text>
-
-        <rect x="1195" y="734" width="387" height="91" rx="5" class="xm-surface" stroke="var(--line)"/>
-        <text x="1222" y="757" class="xm-result-label" fill="var(--tcn)">PANEL DEPARTAMENTAL</text>
-        <text x="1222" y="786" class="xm-result-name">TCN directa</text>
-        <text x="1222" y="813" class="xm-metric">RMSE</text><text x="1277" y="814" class="xm-metricv" fill="var(--tcn)">0.841</text>
-
-        <!-- Como leer -->
-        <text x="47" y="875" class="xm-serif xm-ink" font-size="20" font-weight="600">Cómo leer sus cifras</text>
-        <line x1="848" y1="849" x2="848" y2="918" stroke="var(--line)"/>
-        <text x="278" y="869" class="xm-sans xm-ink" font-size="14" font-weight="600">Comparables en el muestreo nacional (17,041 celdas)</text>
-        <text x="278" y="894" class="xm-sans xm-soft" font-size="14">TimesFM 3, Palacios · tuned, climatología, zone_ols y Td = Tmin.</text>
-        <text x="936" y="869" class="xm-sans xm-ink" font-size="14" font-weight="600">TCN directa se reporta aparte</text>
-        <text x="936" y="894" class="xm-sans xm-soft" font-size="14">Solo existe en el panel departamental (2,048 celdas), por lo que</text>
-        <text x="936" y="915" class="xm-sans xm-soft" font-size="14">no compite directamente en el ranking nacional.</text>
+        <g>
+          <rect x="1108" y="748" width="500" height="170" rx="8" class="xm-surface" stroke="var(--tuned)" stroke-width="1.4"/>
+          <use href="#xmCrown" x="1342" y="764" width="32" height="26" fill="var(--tuned)"/>
+          <text x="1358" y="814" text-anchor="middle" class="xm-result-label" fill="var(--tuned)">MEJOR AUTORREGRESIVO</text>
+          <text x="1358" y="846" text-anchor="middle" class="xm-result-name" font-size="23" fill="var(--tuned)">Palacios · tuned</text>
+          <text x="1358" y="876" text-anchor="middle" class="xm-metric">RMSE</text>
+          <text x="1358" y="904" text-anchor="middle" class="xm-metricv" font-size="26" fill="var(--tuned)">1.219</text>
+        </g>
         </g>
       </svg>
     </div>
