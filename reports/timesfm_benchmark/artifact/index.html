@@ -85,7 +85,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
     <div class="metrics" aria-label="Resultados principales">
       <div class="metric primary"><span class="label">RMSE · TimesFM</span><strong id="kpi-rmse-timesfm">1.154 °C</strong><span>vs. <span class="num" id="kpi-rmse-palacios">1.219 °C</span> de Palacios</span></div>
       <div class="metric"><span class="label">Ventaja frente a Palacios</span><strong id="kpi-delta-palacios">0.066 °C</strong><span>menos RMSE en el mismo backtest</span></div>
-      <div class="metric"><span class="label">Consistencia de la ventaja</span><strong id="kpi-frac-celdas">99.2 %</strong><span>de celdas favorables y <span class="num" id="kpi-zonas">38/38</span> zonas climáticas medidas</span></div>
+      <div class="metric"><span class="label">Consistencia de la ventaja</span><strong id="kpi-frac-celdas">99.2 %</strong><span>de celdas favorables y <span class="num" id="kpi-zonas">38/41</span> zonas climáticas medidas</span></div>
     </div>
   </div>
   <div class="wrap protocol-strip" aria-label="Esquema del backtest">
@@ -196,7 +196,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
       <article class="limit"><span class="label">Licencia</span><h3>TimesFM 3 no permite uso comercial o productivo</h3><p>Sus pesos usan <code>timesfm-non-commercial-license-v1.0</code>. TimesFM 2.5 es Apache-2.0, pero en esa prueba de compatibilidad obtuvo <strong>1.5257</strong> de RMSE frente a <strong>1.2884</strong> de climatología.</p></article>
       <article class="limit"><span class="label">Cómputo</span><h3>La pasada es mucho más lenta</h3><p>En una RTX A2000 de 12 GB, TimesFM procesa <strong>5.09 celdas/s</strong>: <strong>23 h 48 min</strong> para los cuatro departamentos y <strong>6.4 días</strong> extrapolados al grid de 2 818 404 celdas. Palacios cubre el grid completo en <strong>20 min</strong>.</p></article>
       <article class="limit"><span class="label">Sesgo y QC</span><h3>El error cuadrático mejora, el centrado no siempre</h3><p>El sesgo de TimesFM es <strong>+0.180</strong>, <strong>−0.126</strong> y <strong>+0.105 °C</strong> según el bloque. Además, <strong>0.12 %</strong> de sus predicciones queda fuera del rango de QC de PISCO, frente a <strong>0.08 %</strong> de la TCN.</p></article>
-      <article class="limit"><span class="label">Selección</span><h3>La variante se eligió sobre el mismo bloque reportado</h3><p>Se evaluaron diez variantes de TimesFM en ese bloque. La ganadora supera a la segunda por <strong>0.023 °C</strong>, seis veces el semiancho del intervalo bootstrap. El mismo bloque, por diseño, participa en la selección de variante y en el resultado final.</p></article>
+      <article class="limit"><span class="label">Selección</span><h3>La variante se eligió sobre el mismo bloque reportado</h3><p>Se evaluaron nueve variantes de TimesFM en ese bloque. La ganadora supera a la segunda por <strong>0.023 °C</strong>, seis veces el semiancho del intervalo bootstrap. El mismo bloque, por diseño, participa en la selección de variante y en el resultado final.</p></article>
     </div>
   </div>
 </section>
@@ -238,13 +238,14 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
     const pal = D.tablas.nacional.find(r => r.split === "ll4" && r.method === "tuned");
     const eff = D.tablas.efectos.find(r => r.split === "ll4" && r.comparison === "timesfm_vs_tuned");
     const zonasMedidas = Object.values(D.zonas).filter(m => m && m.timesfm).length;
+    const zonasTotales = Object.keys(D.etiquetasZona).length;
     if(tfm) document.getElementById("kpi-rmse-timesfm").textContent = `${tfm.rmse.toFixed(3)} °C`;
     if(pal) document.getElementById("kpi-rmse-palacios").textContent = `${pal.rmse.toFixed(3)} °C`;
     if(eff){
       document.getElementById("kpi-delta-palacios").textContent = `${eff.delta_rmse_C.toFixed(3)} °C`;
       document.getElementById("kpi-frac-celdas").textContent = `${(eff.frac_cells_focal_wins * 100).toFixed(1)} %`;
     }
-    document.getElementById("kpi-zonas").textContent = `${zonasMedidas}/${zonasMedidas}`;
+    document.getElementById("kpi-zonas").textContent = `${zonasMedidas}/${zonasTotales}`;
   })();
 
   /* ---- descompresión de las capas ---------------------------------- */
