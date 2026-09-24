@@ -1,621 +1,251 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#faf9f5;color:#141413}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Reconstrucción de Td en el Perú</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Serif:wght@500;600&display=swap">
 <style>
 :root{
-  --ground:#F4F6F9; --surface:#FFFFFF; --surface-2:#EDF1F5;
-  --ink:#141E28; --ink-soft:#54646F; --ink-faint:#8494A0;
-  --line:#DBE2E9; --line-soft:#E9EEF3;
-  --sea:#E4EAF0; --land:#B9C6D1; --land-ext:#D8DEE4; --fuera:#B02A1E;
-  --tfm-suave:#8FCDBD;
+  color-scheme:light;
+  --ground:#F5F7F8; --surface:#FFFFFF; --surface-2:#EEF2F4;
+  --ink:#17212A; --ink-soft:#53636F; --ink-faint:#81909B;
+  --line:#DCE3E7; --line-soft:#E9EEF1;
+  --sea:#E7EDF0; --land:#BCC8D0; --land-ext:#D8DEE3; --fuera:#B02A1E;
+  --tfm-suave:#A5D5C9;
   --lima:#E69F00; --cusco:#0072B2; --loreto:#009E73; --sanmartin:#D55E00;
-  --tfm:#009E73; --tuned:#0072B2; --clim:#E69F00; --tcn:#D55E00;
+  --tfm:#008C6A; --tuned:#1769AA; --clim:#D89200; --tcn:#C95512;
   --ols:#56B4E9; --tmin:#CC79A7;
   --ramp0:#E3EFEC; --ramp1:#9CC9BE; --ramp2:#4E9E8B; --ramp3:#1D7460; --ramp4:#0A4A3C;
-  --ok:#0A7D5A; --warn:#B45309; --crit:#B02A1E;
-  --measure:68ch;
-  /* Roles semanticos para las figuras. No definen color propio: apuntan a la
-     paleta ya establecida, para que las figuras cambien con ella. */
+  --ok:#087A59; --warn:#A75B09; --crit:#A33A30;
+  --measure:66ch;
   --fig-primary:var(--tfm); --fig-secondary:var(--ink-soft); --fig-muted:var(--ink-faint);
   --fig-grid:var(--line-soft); --fig-axis:var(--line); --fig-highlight:var(--ink);
   --fig-scale-low:var(--ramp0); --fig-scale-high:var(--ramp4);
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
   --ground:#0C131A; --surface:#121B23; --surface-2:#18242E;
-  --ink:#E4ECF2; --ink-soft:#93A4B1; --ink-faint:#687885;
-  --line:#22303B; --line-soft:#1B2831;
+  --ink:#E4ECF2; --ink-soft:#9AABB7; --ink-faint:#71808C;
+  --line:#25333E; --line-soft:#1B2831;
   --sea:#101A22; --land:#3A4C5A; --land-ext:#1E2A34; --fuera:#E0776B;
-  --tfm-suave:#1F6B5B;
-  --ramp0:#12322B; --ramp1:#1D6353; --ramp2:#2E8F77; --ramp3:#4DB89B; --ramp4:#86DCC3;
+  --tfm-suave:#1F6B5B; --ramp0:#12322B; --ramp1:#1D6353; --ramp2:#2E8F77; --ramp3:#4DB89B; --ramp4:#86DCC3;
   --ok:#4DB89B; --warn:#E0A253; --crit:#E0776B;
 }}
-:root[data-theme="dark"]{
-  --ground:#0C131A; --surface:#121B23; --surface-2:#18242E;
-  --ink:#E4ECF2; --ink-soft:#93A4B1; --ink-faint:#687885;
-  --line:#22303B; --line-soft:#1B2831;
-  --sea:#101A22; --land:#3A4C5A; --land-ext:#1E2A34; --fuera:#E0776B;
-  --tfm-suave:#1F6B5B;
-  --ramp0:#12322B; --ramp1:#1D6353; --ramp2:#2E8F77; --ramp3:#4DB89B; --ramp4:#86DCC3;
-  --ok:#4DB89B; --warn:#E0A253; --crit:#E0776B;
-}
 *{box-sizing:border-box}
-body{
-  background:var(--ground); color:var(--ink);
-  font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
-  font-size:16px; line-height:1.62; margin:0;
-  padding-inline:20px; padding-block:0 72px;
-  -webkit-font-smoothing:antialiased;
-}
-.envoltura{max-width:var(--measure); margin-inline:auto}
-.ancha{max-width:1080px; margin-inline:auto}
-h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif; text-wrap:balance; margin:0}
-h1{font-size:clamp(28px,5.2vw,42px); line-height:1.16; font-weight:600; letter-spacing:-.015em}
-h2{font-size:clamp(21px,3.4vw,27px); font-weight:600; line-height:1.28}
-h3{font-size:17px; font-weight:600}
-p{margin:0}
-a{color:inherit}
-.eyebrow{
-  font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:11px;
-  letter-spacing:.14em; text-transform:uppercase; color:var(--ink-faint);
-}
-.num{font-family:"IBM Plex Mono",ui-monospace,monospace; font-variant-numeric:tabular-nums}
-
-/* --- encabezado ------------------------------------------------------- */
-header{padding-block:56px 34px; border-bottom:1px solid var(--line)}
-header .tesis{margin-top:18px; font-size:19px; color:var(--ink-soft); max-width:60ch}
-.destacados{display:flex; flex-wrap:wrap; gap:26px 44px; margin-top:32px}
-.destacado .cifra{font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums;
-  font-size:30px; line-height:1.1; color:var(--tfm); font-weight:500}
-.destacado .pie{font-size:13px; color:var(--ink-soft); margin-top:5px; max-width:23ch}
-
-section{padding-block:46px; border-bottom:1px solid var(--line-soft)}
-section > .envoltura > * + *,
-section > .ancha > * + *{margin-top:18px}
-.sub{color:var(--ink-soft); font-size:15px}
-
-/* --- mapa -------------------------------------------------------------- */
-.mapa-caja{display:grid; grid-template-columns:minmax(0,1fr) 250px; gap:28px; align-items:start}
-@media (max-width:760px){.mapa-caja{grid-template-columns:1fr}}
-.lienzo-marco{position:relative; background:var(--sea); border:1px solid var(--line);
-  border-radius:3px; overflow:hidden; display:flex; justify-content:center}
-#mapa{display:block; width:100%; height:auto; max-height:760px; object-fit:contain;
-  image-rendering:pixelated; cursor:crosshair}
-@media (max-width:760px){#mapa{max-height:none}}
-.capas{display:flex; flex-direction:column; gap:7px}
-.capas button{
-  font-family:inherit; font-size:13.5px; text-align:left; cursor:pointer;
-  background:var(--surface); color:var(--ink); border:1px solid var(--line);
-  border-radius:3px; padding:9px 11px; line-height:1.35;
-}
-.capas button[aria-pressed="true"]{border-color:var(--tfm); background:var(--surface-2);
-  box-shadow:inset 2px 0 0 var(--tfm)}
-.capas button:focus-visible{outline:2px solid var(--tfm); outline-offset:2px}
-.leyenda{margin-top:16px; font-size:12.5px; color:var(--ink-soft); display:flex;
-  flex-direction:column; gap:6px}
-.leyenda .fila{display:flex; align-items:center; gap:8px}
-.muestra{width:13px; height:13px; border-radius:2px; flex:none; border:1px solid rgba(0,0,0,.14)}
-.rampa{height:9px; border-radius:2px; background:linear-gradient(90deg,var(--ramp0),var(--ramp1),var(--ramp2),var(--ramp3),var(--ramp4))}
-#lectura{
-  min-height:82px; margin-top:14px; padding:11px 12px; border:1px solid var(--line);
-  border-radius:3px; background:var(--surface); font-size:13px; line-height:1.5;
-}
-#lectura .titulo{font-weight:600}
-.bloque-zona{margin-top:10px; padding-top:9px; border-top:1px solid var(--line)}
-.cabecera-zona{font-family:"IBM Plex Mono",monospace; font-size:10px; letter-spacing:.08em;
-  text-transform:uppercase; color:var(--ink-faint)}
-.medido-en{font-size:12.5px; color:var(--ink-faint); margin:0 0 8px; line-height:1.5}
-.medido-en strong{color:var(--ink-soft); font-weight:500}
-#lectura dl{display:grid; grid-template-columns:auto 1fr; gap:2px 12px; margin:7px 0 0}
-#lectura dt{color:var(--ink-soft)}
-#lectura dd{margin:0; font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums}
-.nota{font-size:12.5px; color:var(--ink-faint); line-height:1.55}
-
-/* --- comparacion de modelos --------------------------------------------- */
-.explicador-modelos svg{display:block; width:100%; height:auto}
-
-/* --- tablas ------------------------------------------------------------ */
-.tabla-caja{overflow-x:auto; border:1px solid var(--line); border-radius:3px; background:var(--surface)}
-table{border-collapse:collapse; width:100%; font-size:13.5px; min-width:520px}
-th,td{padding:8px 12px; text-align:right; white-space:nowrap; border-bottom:1px solid var(--line-soft)}
-th:first-child,td:first-child{text-align:left}
-thead th{font-family:"IBM Plex Mono",monospace; font-size:10.5px; letter-spacing:.08em;
-  text-transform:uppercase; color:var(--ink-faint); font-weight:500; background:var(--surface-2)}
-tbody td:not(:first-child){font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums}
-tbody tr:last-child td{border-bottom:none}
-td.mejor{font-weight:600; color:var(--ok)}
-td.mejor::after{content:" ▪"; font-size:8px; vertical-align:middle; opacity:.65}
-tr.foco td:first-child{box-shadow:inset 3px 0 0 var(--tfm)}
-.pill{display:inline-block; width:9px; height:9px; border-radius:2px; margin-right:7px;
-  vertical-align:baseline}
-
-/* --- figuras cientificas ------------------------------------------------ */
-.fig{margin:44px 0 0; padding:0}
-.fig figcaption{display:flex; flex-direction:column; gap:3px; margin-bottom:18px}
-.fig-titulo{font-family:"IBM Plex Serif",Georgia,serif; font-size:16px; font-weight:600}
-.fig-sub{font-size:13px; color:var(--fig-muted); line-height:1.5; max-width:74ch}
-.fig svg{display:block; width:100%; height:auto; overflow:visible}
-.pestanas{display:flex; flex-wrap:wrap; gap:0 4px; margin-bottom:16px;
-  border-bottom:1px solid var(--fig-axis)}
-.pestanas button{
-  font-family:inherit; font-size:13px; cursor:pointer; background:none; color:var(--fig-muted);
-  border:none; border-bottom:2px solid transparent; padding:6px 10px; margin-bottom:-1px;
-}
-.pestanas button[aria-selected="true"]{color:var(--ink); border-bottom-color:var(--fig-primary)}
-.pestanas button:focus-visible{outline:2px solid var(--fig-primary); outline-offset:-2px}
-.fig-nota{font-size:12.5px; color:var(--fig-muted); margin-top:12px; line-height:1.55;
-  max-width:74ch}
-
-/* --- grafico ----------------------------------------------------------- */
-.grafico{position:relative; background:var(--surface); border:1px solid var(--line);
-  border-radius:3px; padding:14px 14px 8px}
-#curva{display:block; width:100%; height:auto}
-.leyenda-linea{display:flex; flex-wrap:wrap; gap:8px 18px; margin-top:10px; font-size:12.5px}
-.leyenda-linea span{display:flex; align-items:center; gap:7px; color:var(--ink-soft)}
-.leyenda-linea i{width:16px; height:3px; border-radius:2px; display:inline-block}
-
-/* --- objeciones -------------------------------------------------------- */
-.objecion{border-left:3px solid var(--crit); padding:2px 0 2px 16px}
-.objecion + .objecion{margin-top:22px}
-.objecion h3{font-family:"IBM Plex Sans",sans-serif; font-size:15px; margin-bottom:5px}
-.objecion p{font-size:14px; color:var(--ink-soft); line-height:1.6}
-
-footer{padding-top:34px; font-size:12.5px; color:var(--ink-faint); line-height:1.6}
-code{font-family:"IBM Plex Mono",monospace; font-size:.92em; background:var(--surface-2);
-  padding:1px 4px; border-radius:2px}
-@media (prefers-reduced-motion:reduce){*{animation:none!important; transition:none!important}}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--ground);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+a{color:inherit}.wrap{width:min(1120px,calc(100% - 40px));margin-inline:auto}.measure{max-width:var(--measure)}
+h1,h2,h3{font-family:"IBM Plex Serif",Georgia,serif;text-wrap:balance;margin:0}
+h1{font-size:clamp(29px,4.1vw,48px);line-height:1.08;letter-spacing:-.026em;font-weight:600;max-width:24ch}
+h2{font-size:clamp(28px,4vw,42px);line-height:1.13;letter-spacing:-.02em;font-weight:600;max-width:20ch}
+h3{font-size:18px;line-height:1.3;font-weight:600}p{margin:0}.num{font-family:"IBM Plex Mono",ui-monospace,monospace;font-variant-numeric:tabular-nums}
+.sub{color:var(--ink-soft);font-size:15px}
+.eyebrow{font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-faint)}
+.hero{padding:72px 0 42px;background:var(--surface);border-bottom:1px solid var(--line)}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1.45fr) minmax(320px,.75fr);gap:56px;align-items:end}
+.hero .lead{font-size:19px;line-height:1.55;color:var(--ink-soft);max-width:58ch;margin-top:24px}
+.hero .lead strong{color:var(--ink);font-weight:600}
+.metrics{display:grid;grid-template-columns:1fr;gap:1px;background:var(--line);border:1px solid var(--line);border-radius:7px;overflow:hidden}
+.metric{background:var(--surface);padding:18px 22px}.metric .label{display:block;font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);margin-bottom:8px}.metric strong{display:block;font-family:"IBM Plex Mono",monospace;font-size:30px;line-height:1;color:var(--ink);font-weight:500}.metric span{display:block;color:var(--ink-soft);font-size:13px;margin-top:7px;line-height:1.45}.metric.primary strong{color:var(--tfm)}
+.protocol-strip{margin-top:38px;border-top:1px solid var(--line);padding-top:22px;display:grid;grid-template-columns:1fr auto 1.2fr auto 1fr;gap:14px;align-items:center;color:var(--ink-soft);font-size:13px}
+.protocol-strip .stage strong{display:block;color:var(--ink);font-size:14px;margin-bottom:2px}.protocol-strip .arrow{color:var(--ink-faint)}
+.story-nav{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--ground) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line-soft)}
+.story-nav .wrap{display:flex;gap:24px;overflow-x:auto;padding-block:11px}.story-nav a{white-space:nowrap;text-decoration:none;font-size:12.5px;color:var(--ink-soft)}.story-nav a:hover{color:var(--ink)}
+section{padding:74px 0;border-bottom:1px solid var(--line-soft);scroll-margin-top:48px}.section-head{display:grid;grid-template-columns:170px minmax(0,1fr);gap:32px;align-items:start;margin-bottom:34px}.section-copy{max-width:var(--measure)}.section-copy>p{color:var(--ink-soft);margin-top:15px}.section-index{padding-top:8px}
+.readout{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:6px;overflow:hidden;margin:28px 0}.readout>div{background:var(--surface);padding:18px}.readout strong{display:block;font-family:"IBM Plex Mono",monospace;font-size:18px}.readout span{display:block;color:var(--ink-soft);font-size:12.5px;margin-top:4px}
+.fig{margin:40px 0 0}.fig figcaption{margin-bottom:16px}.fig-titulo{display:block;font-family:"IBM Plex Serif",Georgia,serif;font-size:18px;font-weight:600}.fig-sub{display:block;margin-top:4px;font-size:13px;color:var(--fig-muted);line-height:1.5;max-width:78ch}.fig svg{display:block;width:100%;height:auto;overflow:visible}.fig-nota,.nota{font-size:12.5px;color:var(--fig-muted);line-height:1.55;max-width:78ch}.fig-nota{margin-top:12px}
+.chart-shell{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:18px}.chart-shell .fig:first-child{margin-top:0}
+.finding{margin-top:28px;padding:18px 20px;border-left:3px solid var(--tfm);background:var(--surface);font-size:14px;color:var(--ink-soft)}.finding strong{color:var(--ink)}
+.model-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}.model-card{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px}.model-card .tag{font-family:"IBM Plex Mono",monospace;font-size:10px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-faint)}.model-card h3{margin-top:8px}.model-card p{font-size:13.5px;color:var(--ink-soft);margin-top:8px}.model-card code{display:inline-block;margin-top:12px}
+.horizon-layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,.7fr);gap:28px;align-items:start}.horizon-layout>*{min-width:0}.side-note{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px}.side-note h3{font-family:"IBM Plex Sans",sans-serif;font-size:15px}.side-note p{font-size:13.5px;color:var(--ink-soft);margin-top:8px}
+.capa-row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 14px}.capas{display:flex;flex-direction:column;gap:7px}.capas button,.capa-row button{font-family:inherit;font-size:13px;text-align:left;cursor:pointer;background:var(--surface);color:var(--ink-soft);border:1px solid var(--line);border-radius:4px;padding:8px 11px;line-height:1.35}.capas button[aria-pressed="true"],.capa-row button[aria-pressed="true"]{border-color:var(--tfm);color:var(--ink);box-shadow:inset 2px 0 0 var(--tfm)}
+.grafico{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 16px 10px}#curva{display:block;width:100%;height:auto}.leyenda-linea{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:10px;font-size:12.5px}.leyenda-linea span{display:flex;align-items:center;gap:7px;color:var(--ink-soft)}.leyenda-linea i{width:16px;height:3px;border-radius:2px;display:inline-block}
+.scope-warning{margin:34px 0 0;background:color-mix(in srgb,var(--warn) 7%,var(--surface));border:1px solid color-mix(in srgb,var(--warn) 30%,var(--line));border-radius:6px;padding:18px 20px}.scope-warning h3{font-family:"IBM Plex Sans",sans-serif;font-size:15px}.scope-warning p{font-size:13.5px;color:var(--ink-soft);margin-top:6px}
+.mapa-caja{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:24px;align-items:start;margin-top:26px}.lienzo-marco{position:relative;background:var(--sea);border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex;justify-content:center}#mapa{display:block;width:100%;height:auto;max-height:700px;object-fit:contain;image-rendering:pixelated;cursor:crosshair}.leyenda{margin-top:14px;font-size:12.5px;color:var(--ink-soft);display:flex;flex-direction:column;gap:6px}.leyenda .fila{display:flex;align-items:center;gap:8px}.muestra{width:13px;height:13px;border-radius:2px;flex:none;border:1px solid rgba(0,0,0,.14)}.rampa{height:9px;border-radius:2px;background:linear-gradient(90deg,var(--ramp0),var(--ramp1),var(--ramp2),var(--ramp3),var(--ramp4))}#lectura{min-height:82px;margin-top:14px;padding:11px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);font-size:13px;line-height:1.5}#lectura .titulo{font-weight:600}.bloque-zona{margin-top:10px;padding-top:9px;border-top:1px solid var(--line)}.cabecera-zona{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}.medido-en{font-size:12.5px;color:var(--ink-faint);margin:0 0 8px;line-height:1.5}.medido-en strong{color:var(--ink-soft);font-weight:500}#lectura dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:7px 0 0}#lectura dt{color:var(--ink-soft)}#lectura dd{margin:0;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.tabla-caja{max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--surface)}table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}#t-horizonte{min-width:0}#t-horizonte th,#t-horizonte td{padding-inline:10px}th,td{padding:8px 12px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line-soft)}th:first-child,td:first-child{text-align:left}thead th{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;background:var(--surface-2)}tbody td:not(:first-child){font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}tbody tr:last-child td{border-bottom:none}td.mejor{font-weight:600;color:var(--ok)}td.mejor::after{content:" ▪";font-size:8px;vertical-align:middle;opacity:.65}tr.foco td:first-child{box-shadow:inset 3px 0 0 var(--tfm)}.pill{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:7px;vertical-align:baseline}
+.pestanas{display:flex;flex-wrap:wrap;gap:0 4px;margin-bottom:16px;border-bottom:1px solid var(--fig-axis)}.pestanas button{font-family:inherit;font-size:13px;cursor:pointer;background:none;color:var(--fig-muted);border:none;border-bottom:2px solid transparent;padding:6px 10px;margin-bottom:-1px}.pestanas button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--fig-primary)}
+.limit-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:30px}.limit{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:22px}.limit .label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}.limit h3{margin-top:8px}.limit p{font-size:13.5px;color:var(--ink-soft);margin-top:9px}.limit strong{color:var(--ink);font-weight:600}
+.details{margin-top:28px;border-top:1px solid var(--line)}details{border-bottom:1px solid var(--line);padding:16px 0}summary{cursor:pointer;font-weight:600}details p{color:var(--ink-soft);font-size:14px;max-width:var(--measure);margin-top:12px}code{font-family:"IBM Plex Mono",monospace;font-size:.92em;background:var(--surface-2);padding:1px 4px;border-radius:2px}
+footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1.6}
+@media(max-width:820px){body{overflow-x:hidden}.hero-grid,.section-head,.horizon-layout,.mapa-caja{grid-template-columns:1fr}.hero-grid{gap:34px}.hero{padding-top:48px}.section-head{gap:8px}.section-index{padding-top:0}.protocol-strip{grid-template-columns:1fr;gap:8px}.protocol-strip .arrow{display:none}.model-grid,.readout,.limit-grid{grid-template-columns:1fr}.story-nav{position:static}section{padding:54px 0;scroll-margin-top:0}.mapa-caja{margin-top:18px}#mapa{max-height:none}.hero-grid>*,.horizon-layout>*,.mapa-caja>*{min-width:0}.fig{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}.fig svg{width:620px;min-width:620px;max-width:none}.grafico{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}#curva{width:620px;min-width:620px;max-width:none}.tabla-caja{max-width:100%;overflow-x:auto}.side-note{min-width:0}}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
+</head>
+<body>
 
-<header class="envoltura">
-  <p class="eyebrow">Punto de rocío diario · PISCO · bloque oculto 2013–2016</p>
-  <h1>Un modelo que nunca vio estos datos reconstruye Td mejor que los dos que sí</h1>
-  <p class="tesis">TimesFM 3, usado sin entrenar ni ajustar, queda por debajo del método
-    publicado de Palacios y de la TCN entrenada para el problema, sobre las mismas celdas,
-    los mismos días y bajo el mismo protocolo. El mecanismo está identificado y las
-    contrapartidas medidas.</p>
-  <div class="destacados">
-    <div class="destacado">
-      <div class="cifra">1.154</div>
-      <div class="pie">RMSE °C contra 1.219 del método de Palacios, sobre las mismas 17.041 celdas de su backtest</div>
+<header class="hero">
+  <div class="wrap hero-grid">
+    <div>
+      <p class="eyebrow">Reconstrucción de punto de rocío · PISCO · backtest 2013–2016</p>
+      <h1>Cuatro años sin observar Td. TimesFM reduce el RMSE frente a Palacios.</h1>
+      <p class="lead">Se compararon los métodos sobre <strong>las mismas celdas, los mismos días y el mismo bloque oculto</strong>. TimesFM 3 obtuvo el menor RMSE del backtest, pero esa mejora viene con restricciones de licencia, mucho más cómputo y un sesgo menos estable.</p>
     </div>
-    <div class="destacado">
-      <div class="cifra">99.2 %</div>
-      <div class="pie">de las celdas donde gana, y las 38 zonas climáticas muestreadas sin excepción</div>
+    <div class="metrics" aria-label="Resultados principales">
+      <div class="metric primary"><span class="label">RMSE · TimesFM</span><strong id="kpi-rmse-timesfm">1.154 °C</strong><span>vs. <span class="num" id="kpi-rmse-palacios">1.219 °C</span> de Palacios</span></div>
+      <div class="metric"><span class="label">Ventaja frente a Palacios</span><strong id="kpi-delta-palacios">0.066 °C</strong><span>menos RMSE en el mismo backtest</span></div>
+      <div class="metric"><span class="label">Consistencia de la ventaja</span><strong id="kpi-frac-celdas">99.2 %</strong><span>de celdas favorables y <span class="num" id="kpi-zonas">38/38</span> zonas climáticas medidas</span></div>
     </div>
-    <div class="destacado">
-      <div class="cifra">0</div>
-      <div class="pie">datos de este problema vistos durante su entrenamiento</div>
-    </div>
+  </div>
+  <div class="wrap protocol-strip" aria-label="Esquema del backtest">
+    <div class="stage"><strong>Hasta 2012</strong>Td observado disponible como contexto</div>
+    <span class="arrow">→</span>
+    <div class="stage"><strong>2013–2016</strong>Td oculto durante 1 461 días; Tmin sí está disponible</div>
+    <span class="arrow">→</span>
+    <div class="stage"><strong>Evaluación</strong>Reconstruir Td y comparar contra la observación retenida</div>
   </div>
 </header>
+<nav class="story-nav" aria-label="Secciones">
+  <div class="wrap">
+    <a href="#resultado">Resultado</a><a href="#horizonte">Horizonte</a><a href="#alcance">Alcance</a><a href="#escala">Escala</a><a href="#limites">Límites</a><a href="#protocolo">Protocolo</a>
+  </div>
+</nav>
 
-<section>
-  <div class="ancha">
-    <p class="eyebrow">Dónde se mide</p>
-    <h2>La rejilla real, no un mapa ilustrativo</h2>
-    <p class="sub">Cada píxel es una celda de 0,01° del producto PISCO. La rejilla tiene
-      <span class="num">2 818 404</span> celdas y cubre la caja envolvente del país, no el
-      país: algo más de la mitad de sus celdas con tierra está en Brasil, Bolivia, Ecuador o
-      Colombia. El estudio trabaja sobre los cuatro departamentos resaltados y sobre el
-      muestreo de <span class="num">17 041</span> celdas del backtest, que toca 38 de las 41
-      zonas climáticas SENAMHI.</p>
-    <p class="sub"><strong>De ese muestreo, <span class="num">8 755</span> celdas —el
-      51,4 %— caen fuera del territorio peruano.</strong> No es un artefacto de este trabajo:
-      es el marco de muestreo del backtest publicado, que sortea buckets completos sobre toda
-      la rejilla. No afecta a la comparación, porque todos los métodos se puntúan sobre las
-      mismas celdas y las cifras publicadas del paper salen de esa misma muestra, pero sí
-      obliga a no llamarla «nacional» sin más.</p>
+<section id="resultado">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow section-index">01 · Resultado principal</p>
+      <div class="section-copy">
+        <h2>TimesFM obtiene menor RMSE que Palacios</h2>
+        <p>La comparación usa el bloque oculto 2013–2016 y reproduce las cifras publicadas de Palacios y de la climatología antes de incorporar TimesFM.</p>
+      </div>
+    </div>
+    <div class="chart-shell">
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">RMSE global</span><span class="fig-sub">Menor es mejor. 17 041 celdas y 24 896 901 pares observación–predicción.</span></figcaption>
+        <svg id="fig-ranking" viewBox="0 0 760 210"></svg>
+      </figure>
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">Diferencia frente a cada alternativa</span><span class="fig-sub">ΔRMSE = RMSE de la alternativa − RMSE de TimesFM. Valores positivos favorecen a TimesFM.</span></figcaption>
+        <svg id="fig-efectos" viewBox="0 0 950 192"></svg>
+        <p class="fig-nota">Frente a Palacios, el IC bootstrap del 95 % va de 0.065 a 0.066 °C. El remuestreo es por celdas, con 1 000 remuestreos. La prueba por permutación usa 5 000 permutaciones y reporta p = 0.0002 en las cuatro comparaciones.</p>
+      </figure>
+    </div>
+    <div class="finding"><strong>La brecha principal es pequeña en magnitud absoluta:</strong> 0.066 °C de RMSE frente a Palacios. La pregunta útil no es solo si existe, sino si se mantiene al aumentar el horizonte y al cambiar de región.</div>
+
+    <div class="model-grid" aria-label="Estrategias de predicción">
+      <article class="model-card"><span class="tag">Sin memoria</span><h3>Cada día se resuelve por separado</h3><p>Climatología, <code>Td = Tmin</code> y <code>zone_ols</code> no mantienen estado dentro del bloque.</p></article>
+      <article class="model-card"><span class="tag">Pasada única</span><h3>TimesFM genera el bloque completo</h3><p>Produce los cuatro años en una sola pasada y no vuelve a usar sus propias salidas como entrada.</p></article>
+      <article class="model-card"><span class="tag">Autorregresivo</span><h3>Palacios avanza día a día</h3><p>Las predicciones previas vuelven a entrar al modelo mientras recorre el bloque oculto.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="horizonte">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow section-index">02 · Horizonte</p>
+      <div class="section-copy"><h2>La diferencia aparece al alargar el bloque</h2><p>En los primeros días Palacios tiene la ventaja. Después, su RMSE acumulado crece mientras TimesFM no sigue la misma pendiente.</p></div>
+    </div>
+    <div class="horizon-layout">
+      <div>
+        <div class="capa-row"><button type="button" id="curva-pocas" aria-pressed="true">Competidores principales</button><button type="button" id="curva-todas" aria-pressed="false">Añadir líneas base</button></div>
+        <div class="grafico"><svg id="curva" viewBox="0 0 760 340" role="img" aria-label="RMSE acumulado por día del bloque oculto"></svg><div class="leyenda-linea" id="leyenda-curva"></div></div>
+      </div>
+      <aside class="side-note"><h3>Skill vs. climatología por horizonte</h3><p>TimesFM a cuatro años alcanza prácticamente el mismo skill que Palacios a un año.</p><div class="tabla-caja" style="margin-top:14px"><table id="t-horizonte"></table></div></aside>
+    </div>
+  </div>
+</section>
+
+<section id="alcance">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow section-index">03 · Alcance</p>
+      <div class="section-copy"><h2>El resultado global no equivale a un promedio del Perú</h2><p>El backtest usa la caja envolvente del producto PISCO. De sus 17 041 celdas, 8 755 están fuera del territorio peruano.</p></div>
+    </div>
+    <div class="scope-warning"><h3>51.4 % del muestreo cae fuera del Perú</h3><p>Esto no cambia la comparación interna porque todos los métodos se puntúan sobre las mismas celdas y días. Sí cambia cómo debe interpretarse el agregado: es el backtest de Palacios sobre la rejilla, no un promedio nacional del territorio peruano.</p></div>
     <div class="mapa-caja">
+      <div><div class="lienzo-marco"><canvas id="mapa"></canvas></div><p class="nota" style="margin-top:10px">Cada píxel representa una celda de 0.01°. Los contornos departamentales son una referencia visual de resolución simple.</p></div>
       <div>
-        <div class="lienzo-marco"><canvas id="mapa"></canvas></div>
-        <p class="nota" style="margin-top:10px">Proyección equirectangular simple. A escala de
-          país distorsiona las áreas hacia el sur, pero conserva la posición relativa, que es
-          lo que esta figura tiene que comunicar. Los contornos departamentales provienen de
-          una fuente comunitaria de resolución simple, no oficial: el propio manifiesto del
-          protocolo advierte que celdas cercanas al borde podrían quedar mal clasificadas por
-          unos pocos kilómetros.</p>
-      </div>
-      <div>
-        <p class="medido-en">El mapa abre en <strong>lo efectivamente calculado</strong>.
-          Los cuatro departamentos están cubiertos celda por celda desde la pasada de escala;
-          el muestreo del backtest aporta los puntos dispersos del resto de la rejilla. Las
-          otras dos capas muestran el alcance del estudio y una métrica agregada por zona
-          climática, que no es una medición celda a celda.</p>
-        <div class="capas" role="group" aria-label="Capas del mapa">
-          <button type="button" data-capa="muestreo" aria-pressed="true">Dónde se ha medido TimesFM</button>
-          <button type="button" data-capa="regiones" aria-pressed="false">Alcance del estudio</button>
-          <button type="button" data-capa="skill" aria-pressed="false">Skill por zona climática</button>
-        </div>
-        <div class="leyenda" id="leyenda"></div>
-        <div id="lectura"><span class="sub">Pasa el cursor sobre el mapa.</span></div>
+        <div class="capas" role="group" aria-label="Capas del mapa"><button type="button" data-capa="muestreo" aria-pressed="true">Celdas con medición</button><button type="button" data-capa="regiones" aria-pressed="false">Cuatro departamentos</button><button type="button" data-capa="skill" aria-pressed="false">Skill por zona climática</button></div>
+        <div class="leyenda" id="leyenda"></div><div id="lectura"><span class="sub">Pasa el cursor sobre el mapa.</span></div>
       </div>
     </div>
+
+    <div class="section-head" style="margin-top:64px">
+      <p class="eyebrow section-index">Panel departamental</p>
+      <div class="section-copy"><h2>En cuatro departamentos, TimesFM gana por RMSE en los cuatro</h2><p>Este panel usa 2 048 celdas, 512 por departamento, y 1 461 días. Aquí también entra la TCN directa, porque fue entrenada para estos departamentos.</p></div>
+    </div>
+    <figure class="fig"><figcaption><span class="fig-titulo">RMSE por departamento y método</span><span class="fig-sub">Menor es mejor. El contorno marca el mejor método de cada fila.</span></figcaption><svg id="fig-heatmap" viewBox="0 0 760 230"></svg></figure>
+    <figure class="fig"><figcaption><span class="fig-titulo">La lectura cambia según la métrica</span><span class="fig-sub">RMSE y MAE premian error bajo; sesgo premia cercanía a cero; r y skill premian valores altos; fuera de QC premia valores bajos.</span></figcaption><div class="pestanas" role="tablist" id="pestanas-metrica"></div><svg id="fig-metrica" viewBox="0 0 760 250"></svg><p class="fig-nota" id="nota-metrica"></p></figure>
+    <p class="nota" style="margin-top:14px">La TCN supera a Palacios en tres departamentos y pierde en Lima por 0.003 °C. TimesFM obtiene el menor RMSE en los cuatro.</p>
   </div>
 </section>
 
-<section>
-  <div class="ancha">
-    <p class="eyebrow">Qué hace cada modelo</p>
-    <h2>Seis métodos para rellenar un bloque oculto</h2>
-    <p class="sub" style="max-width:var(--measure)">Todos reciben la misma entrada — historial
-      de Td y Tmin del período faltante — pero difieren en cómo generan los cuatro años sin
-      observaciones.</p>
+<section id="escala">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow section-index">04 · Prueba de escala</p>
+      <div class="section-copy"><h2>TimesFM cubrió las 436 519 celdas de los cuatro departamentos</h2><p>La inferencia completa tomó 23 h 48 min. Para comparar contra Palacios, la puntuación usa las 61 113 celdas que su implementación alcanzó, con exactamente los mismos días para los tres métodos.</p></div>
+    </div>
+    <div class="readout"><div><strong>436 519</strong><span>celdas predichas por TimesFM</span></div><div><strong>61 113</strong><span>celdas comunes usadas para puntuar</span></div><div><strong>89 286 093</strong><span>pares predicción–observación</span></div></div>
+    <figure class="fig"><figcaption><span class="fig-titulo">RMSE agregado de los cuatro departamentos</span><span class="fig-sub">Reponderado por el número real de celdas de cada departamento.</span></figcaption><svg id="fig-escala" viewBox="0 0 760 130"></svg></figure>
+    <figure class="fig"><figcaption><span class="fig-titulo">RMSE por departamento</span><span class="fig-sub">89.3 millones de pares puntuados. El contorno marca el mejor de cada fila.</span></figcaption><svg id="fig-escala-mapa" viewBox="0 0 760 200"></svg></figure>
+    <p class="nota" style="margin-top:14px">La submuestra de puntuación es estratificada y proporcional. No es cobertura completa de Palacios: su corrida sobre toda la rejilla fue eliminada por memoria.</p>
+  </div>
+</section>
 
-    <div class="explicador-modelos">
-      <svg viewBox="0 0 1672 750" role="img" aria-label="Diagrama de las tres familias de
-        métodos para rellenar el bloque oculto, con sus resultados generales">
-        <defs>
-          <style>
-            .xm-panel{fill:var(--surface);stroke:var(--line);stroke-width:1.2}
-            .xm-surface{fill:var(--surface)}
-            .xm-surface2{fill:var(--surface-2)}
-            .xm-ink{fill:var(--ink)}
-            .xm-soft{fill:var(--ink-soft)}
-            .xm-faint{fill:var(--ink-faint)}
-            .xm-line{stroke:var(--line);stroke-width:1}
-            .xm-dash{stroke:var(--ink-faint);stroke-width:1.25;stroke-dasharray:4 5}
-            .xm-serif{font-family:"IBM Plex Serif",Georgia,serif}
-            .xm-sans{font-family:"IBM Plex Sans",sans-serif}
-            .xm-h2{font:600 30px "IBM Plex Serif",Georgia,serif;fill:var(--ink)}
-            .xm-h3{font:600 18px "IBM Plex Sans",sans-serif}
-            .xm-body{font:400 16px "IBM Plex Sans",sans-serif;fill:var(--ink-soft)}
-            .xm-small{font:400 13px "IBM Plex Sans",sans-serif;fill:var(--ink-soft)}
-            .xm-tiny{font:400 11px "IBM Plex Mono",monospace;fill:var(--ink-faint)}
-            .xm-model{font:500 14px "IBM Plex Mono",monospace;fill:var(--ink)}
-            .xm-result-title{font:600 24px "IBM Plex Serif",Georgia,serif;fill:var(--ink)}
-            .xm-result-name{font:600 20px "IBM Plex Serif",Georgia,serif;fill:var(--ink)}
-            .xm-result-label{font:500 11px "IBM Plex Mono",monospace;letter-spacing:1px;fill:var(--ink-faint)}
-            .xm-metric{font:400 13px "IBM Plex Mono",monospace;fill:var(--ink-soft)}
-            .xm-metricv{font:500 21px "IBM Plex Mono",monospace;fill:var(--ink)}
-          </style>
-          <marker id="xmArrowAmber" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--clim)"/></marker>
-          <marker id="xmArrowGreen" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--tfm)"/></marker>
-          <marker id="xmArrowBlue" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8 z" fill="var(--tuned)"/></marker>
-          <symbol id="xmCrown" viewBox="0 0 24 20">
-            <path d="M3 17h18v2a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-2z"/>
-            <path d="M3 8l4.6 4.4L12 5l4.4 7.4L21 8l-1.7 9H4.7L3 8z"/>
-            <circle cx="3" cy="8" r="1.7"/><circle cx="12" cy="5" r="1.9"/><circle cx="21" cy="8" r="1.7"/>
-          </symbol>
-        </defs>
-
-        <g transform="translate(0,-191)">
-        <rect x="40" y="191" width="1568" height="498" rx="5" class="xm-panel"/>
-        <text x="77" y="245" class="xm-h2">La diferencia está en cómo recorren el bloque oculto</text>
-
-        <rect x="78" y="327" width="273" height="237" rx="5" class="xm-surface2" stroke="var(--line)" stroke-width="1.2"/>
-        <ellipse cx="113" cy="363" rx="12" ry="5" fill="none" stroke="var(--ink-soft)" stroke-width="2"/>
-        <path d="M101 363v18c0 3 5 5 12 5s12-2 12-5v-18" fill="none" stroke="var(--ink-soft)" stroke-width="2"/>
-        <path d="M101 372c0 3 5 5 12 5s12-2 12-5" fill="none" stroke="var(--ink-soft)" stroke-width="2"/>
-        <text x="145" y="372" class="xm-serif xm-ink" font-size="21" font-weight="600">Entrada común</text>
-
-        <rect x="100" y="405" width="228" height="60" rx="5" class="xm-surface" stroke="var(--line)"/>
-        <polyline points="117,445 126,433 135,438 145,423" fill="none" stroke="var(--ink-soft)" stroke-width="2"/>
-        <circle cx="117" cy="445" r="2.2" fill="var(--ink-soft)"/><circle cx="126" cy="433" r="2.2" fill="var(--ink-soft)"/><circle cx="135" cy="438" r="2.2" fill="var(--ink-soft)"/><circle cx="145" cy="423" r="2.2" fill="var(--ink-soft)"/>
-        <text x="166" y="431" class="xm-body">Historial de Td</text><text x="166" y="453" class="xm-body">hasta 2012</text>
-
-        <rect x="100" y="475" width="228" height="60" rx="5" class="xm-surface" stroke="var(--line)"/>
-        <rect x="119" y="489" width="8" height="26" rx="4" fill="none" stroke="var(--ink-soft)" stroke-width="2"/>
-        <circle cx="123" cy="519" r="7" fill="none" stroke="var(--ink-soft)" stroke-width="2"/>
-        <line x1="123" y1="498" x2="123" y2="516" stroke="var(--ink-soft)" stroke-width="2"/>
-        <text x="166" y="501" class="xm-body">Tmin del período</text><text x="166" y="523" class="xm-body">a rellenar</text>
-
-        <path d="M351 415 C404 415, 398 297, 489 297" fill="none" stroke="var(--ink-soft)" stroke-width="1.6" marker-end="url(#xmArrowAmber)"/>
-        <path d="M351 433 C411 433, 420 433, 489 433" fill="none" stroke="var(--ink-soft)" stroke-width="1.6" marker-end="url(#xmArrowGreen)"/>
-        <path d="M351 451 C404 451, 398 583, 489 583" fill="none" stroke="var(--ink-soft)" stroke-width="1.6" marker-end="url(#xmArrowBlue)"/>
-
-        <line x1="489" y1="399" x2="1566" y2="399" class="xm-line"/>
-        <line x1="489" y1="550" x2="1566" y2="550" class="xm-line"/>
-
-        <!-- Familia 1 -->
-        <circle cx="519" cy="288" r="18" fill="var(--clim)"/><text x="519" y="294" text-anchor="middle" class="xm-sans" font-size="17" font-weight="700" fill="#171008">1</text>
-        <text x="562" y="291" class="xm-h3" fill="var(--clim)">SIN MEMORIA</text>
-        <text x="562" y="316" class="xm-body">Usa señales contemporáneas o estadísticas fijas;</text>
-        <text x="562" y="339" class="xm-body">no mantiene estado dentro del bloque.</text>
-        <rect x="562" y="351" width="318" height="32" rx="4" class="xm-surface2"/>
-        <text x="579" y="372" class="xm-model">climatología · Td = Tmin · zone_ols</text>
-
-        <text x="997" y="282" class="xm-small">Cada día se predice de forma independiente</text>
-        <line x1="975" y1="330" x2="1570" y2="330" class="xm-dash"/>
-        <circle cx="1005" cy="330" r="6" class="xm-faint"/><circle cx="1040" cy="330" r="6" class="xm-faint"/><circle cx="1075" cy="330" r="6" class="xm-faint"/>
-        <rect x="1129" y="299" width="260" height="61" rx="9" class="xm-surface" stroke="var(--clim)" stroke-width="1.2" stroke-dasharray="4 4"/>
-        <g fill="var(--clim)"><circle cx="1157" cy="330" r="7"/><circle cx="1224" cy="330" r="7"/><circle cx="1290" cy="330" r="7"/><circle cx="1357" cy="330" r="7"/></g>
-        <g fill="var(--clim)" class="xm-sans" font-size="17"><text x="1152" y="316">↓</text><text x="1219" y="316">↓</text><text x="1285" y="316">↓</text><text x="1352" y="316">↓</text></g>
-        <circle cx="1442" cy="330" r="6" class="xm-faint"/><circle cx="1477" cy="330" r="6" class="xm-faint"/><circle cx="1512" cy="330" r="6" class="xm-faint"/>
-        <text x="997" y="368" class="xm-tiny">2012</text><text x="1183" y="379" class="xm-tiny">4 años sin observaciones</text><text x="1491" y="368" class="xm-tiny">2016</text>
-
-        <!-- Familia 2 -->
-        <circle cx="519" cy="431" r="18" fill="var(--tfm)"/><text x="519" y="437" text-anchor="middle" class="xm-sans" font-size="17" font-weight="700" fill="#F4F8FA">2</text>
-        <text x="562" y="434" class="xm-h3" fill="var(--tfm)">PASADA ÚNICA</text>
-        <text x="562" y="459" class="xm-body">Genera el bloque completo de una sola vez,</text>
-        <text x="562" y="482" class="xm-body">sin retroalimentar sus propias salidas.</text>
-        <rect x="562" y="495" width="120" height="32" rx="4" class="xm-surface2"/>
-        <text x="579" y="516" class="xm-model">TimesFM 3</text>
-
-        <text x="997" y="426" class="xm-small">Una sola pasada para todo el bloque</text>
-        <line x1="975" y1="478" x2="1570" y2="478" class="xm-dash"/>
-        <circle cx="1005" cy="478" r="6" class="xm-faint"/><circle cx="1040" cy="478" r="6" class="xm-faint"/><circle cx="1075" cy="478" r="6" class="xm-faint"/>
-        <rect x="1129" y="448" width="260" height="61" rx="9" class="xm-surface" stroke="var(--tfm)" stroke-width="1.2" stroke-dasharray="4 4"/>
-        <line x1="1150" y1="458" x2="1366" y2="458" stroke="var(--tfm)" stroke-width="1.5" marker-end="url(#xmArrowGreen)"/>
-        <g fill="var(--tfm)"><circle cx="1157" cy="478" r="7"/><circle cx="1224" cy="478" r="7"/><circle cx="1290" cy="478" r="7"/><circle cx="1357" cy="478" r="7"/></g>
-        <circle cx="1442" cy="478" r="6" class="xm-faint"/><circle cx="1477" cy="478" r="6" class="xm-faint"/><circle cx="1512" cy="478" r="6" class="xm-faint"/>
-        <text x="997" y="516" class="xm-tiny">2012</text><text x="1183" y="527" class="xm-tiny">4 años sin observaciones</text><text x="1491" y="516" class="xm-tiny">2016</text>
-
-        <!-- Familia 3 -->
-        <circle cx="519" cy="582" r="18" fill="var(--tuned)"/><text x="519" y="588" text-anchor="middle" class="xm-sans" font-size="17" font-weight="700" fill="#F4F8FA">3</text>
-        <text x="562" y="585" class="xm-h3" fill="var(--tuned)">AUTORREGRESIVO</text>
-        <text x="562" y="610" class="xm-body">Avanza día a día usando predicciones previas</text>
-        <text x="562" y="633" class="xm-body">como entrada.</text>
-        <rect x="562" y="645" width="163" height="32" rx="4" class="xm-surface2"/>
-        <text x="579" y="666" class="xm-model">Palacios · tuned</text>
-
-        <text x="997" y="578" class="xm-small">Predicción secuencial, usando salidas previas</text>
-        <line x1="975" y1="621" x2="1570" y2="621" class="xm-dash"/>
-        <circle cx="1005" cy="621" r="6" class="xm-faint"/><circle cx="1040" cy="621" r="6" class="xm-faint"/><circle cx="1075" cy="621" r="6" class="xm-faint"/>
-        <rect x="1129" y="591" width="260" height="61" rx="9" class="xm-surface" stroke="var(--tuned)" stroke-width="1.2" stroke-dasharray="4 4"/>
-        <g fill="var(--tuned)"><circle cx="1157" cy="621" r="7"/><circle cx="1224" cy="621" r="7"/><circle cx="1290" cy="621" r="7"/><circle cx="1357" cy="621" r="7"/></g>
-        <g fill="var(--tuned)" class="xm-sans" font-size="18"><text x="1178" y="628">→</text><text x="1245" y="628">→</text><text x="1311" y="628">→</text></g>
-        <circle cx="1442" cy="621" r="6" class="xm-faint"/><circle cx="1477" cy="621" r="6" class="xm-faint"/><circle cx="1512" cy="621" r="6" class="xm-faint"/>
-        <text x="997" y="659" class="xm-tiny">2012</text><text x="1183" y="670" class="xm-tiny">4 años sin observaciones</text><text x="1491" y="659" class="xm-tiny">2016</text>
-
-        <!-- Resultados -->
-        <line x1="40" y1="703" x2="1608" y2="703" stroke="var(--line)"/>
-        <text x="72" y="727" class="xm-result-title">Los tres ganadores</text>
-        <text x="330" y="727" class="xm-serif xm-soft" font-size="15">El mejor de cada familia, sobre las 17.041 celdas del muestreo nacional (menor RMSE es mejor).</text>
-
-        <g>
-          <rect x="40" y="748" width="500" height="170" rx="8" class="xm-surface" stroke="var(--tfm)" stroke-width="1.4"/>
-          <use href="#xmCrown" x="274" y="764" width="32" height="26" fill="var(--tfm)"/>
-          <text x="290" y="814" text-anchor="middle" class="xm-result-label" fill="var(--tfm)">MEJOR COMPARABLE NACIONAL</text>
-          <text x="290" y="846" text-anchor="middle" class="xm-result-name" font-size="23" fill="var(--tfm)">TimesFM 3</text>
-          <text x="290" y="876" text-anchor="middle" class="xm-metric">RMSE</text>
-          <text x="290" y="904" text-anchor="middle" class="xm-metricv" font-size="26" fill="var(--tfm)">1.154</text>
-        </g>
-
-        <g>
-          <rect x="574" y="748" width="500" height="170" rx="8" class="xm-surface" stroke="var(--clim)" stroke-width="1.4"/>
-          <use href="#xmCrown" x="808" y="764" width="32" height="26" fill="var(--clim)"/>
-          <text x="824" y="814" text-anchor="middle" class="xm-result-label" fill="var(--clim)">MEJOR SIN MEMORIA</text>
-          <text x="824" y="846" text-anchor="middle" class="xm-result-name" font-size="23" fill="var(--clim)">climatología</text>
-          <text x="824" y="876" text-anchor="middle" class="xm-metric">RMSE</text>
-          <text x="824" y="904" text-anchor="middle" class="xm-metricv" font-size="26" fill="var(--clim)">1.535</text>
-        </g>
-
-        <g>
-          <rect x="1108" y="748" width="500" height="170" rx="8" class="xm-surface" stroke="var(--tuned)" stroke-width="1.4"/>
-          <use href="#xmCrown" x="1342" y="764" width="32" height="26" fill="var(--tuned)"/>
-          <text x="1358" y="814" text-anchor="middle" class="xm-result-label" fill="var(--tuned)">MEJOR AUTORREGRESIVO</text>
-          <text x="1358" y="846" text-anchor="middle" class="xm-result-name" font-size="23" fill="var(--tuned)">Palacios · tuned</text>
-          <text x="1358" y="876" text-anchor="middle" class="xm-metric">RMSE</text>
-          <text x="1358" y="904" text-anchor="middle" class="xm-metricv" font-size="26" fill="var(--tuned)">1.219</text>
-        </g>
-        </g>
-      </svg>
+<section id="limites">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow section-index">05 · Límites</p>
+      <div class="section-copy"><h2>El menor RMSE no resuelve la decisión de uso</h2><p>La mejora de precisión convive con cuatro restricciones que importan para producción y para interpretar el benchmark.</p></div>
+    </div>
+    <div class="limit-grid">
+      <article class="limit"><span class="label">Licencia</span><h3>TimesFM 3 no permite uso comercial o productivo</h3><p>Sus pesos usan <code>timesfm-non-commercial-license-v1.0</code>. TimesFM 2.5 es Apache-2.0, pero en esa prueba de compatibilidad obtuvo <strong>1.5257</strong> de RMSE frente a <strong>1.2884</strong> de climatología.</p></article>
+      <article class="limit"><span class="label">Cómputo</span><h3>La pasada es mucho más lenta</h3><p>En una RTX A2000 de 12 GB, TimesFM procesa <strong>5.09 celdas/s</strong>: <strong>23 h 48 min</strong> para los cuatro departamentos y <strong>6.4 días</strong> extrapolados al grid de 2 818 404 celdas. Palacios cubre el grid completo en <strong>20 min</strong>.</p></article>
+      <article class="limit"><span class="label">Sesgo y QC</span><h3>El error cuadrático mejora, el centrado no siempre</h3><p>El sesgo de TimesFM es <strong>+0.180</strong>, <strong>−0.126</strong> y <strong>+0.105 °C</strong> según el bloque. Además, <strong>0.12 %</strong> de sus predicciones queda fuera del rango de QC de PISCO, frente a <strong>0.08 %</strong> de la TCN.</p></article>
+      <article class="limit"><span class="label">Selección</span><h3>La variante se eligió sobre el mismo bloque reportado</h3><p>Se evaluaron diez variantes de TimesFM en ese bloque. La ganadora supera a la segunda por <strong>0.023 °C</strong>, seis veces el semiancho del intervalo bootstrap. El mismo bloque, por diseño, participa en la selección de variante y en el resultado final.</p></article>
     </div>
   </div>
 </section>
 
-<section>
-  <div class="ancha">
-    <p class="eyebrow">La comparación</p>
-    <h2>Sobre las 17.041 celdas del backtest de Palacios</h2>
-    <p class="sub" style="max-width:var(--measure)">Bloque oculto 2013–2016,
-      <span class="num">24 896 901</span> pares observación–predicción. Las filas de
-      <code>tuned</code> y climatología reproducen exactamente las cifras publicadas del
-      paper, lo que confirma que la comparación se hace sobre el mismo terreno.</p>
-    <figure class="fig">
-      <figcaption>
-        <span class="fig-titulo">Ranking global por RMSE</span>
-        <span class="fig-sub">Menor es mejor · 17.041 celdas del backtest, 24.896.901 pares
-          observación–predicción del bloque oculto 2013–2016</span>
-      </figcaption>
-      <svg id="fig-ranking" viewBox="0 0 760 210"></svg>
-    </figure>
-
-    <figure class="fig">
-      <figcaption>
-        <span class="fig-titulo">Ventaja de TimesFM sobre cada alternativa</span>
-        <span class="fig-sub">ΔRMSE = RMSE de la alternativa − RMSE de TimesFM, en °C · a la
-          derecha de cero, ventaja de TimesFM · las mismas 17.041 celdas del backtest</span>
-      </figcaption>
-      <svg id="fig-efectos" viewBox="0 0 950 192"></svg>
-      <p class="fig-nota">Con 17.041 celdas, el intervalo de confianza del 95 % por bootstrap
-        (1.000 remuestreos) es más estrecho que el propio punto en las cuatro comparaciones: el
-        de TimesFM contra Palacios va de 0,065 a 0,066 °C. Dibujarlo como barra lo haría
-        indistinguible del punto o exigiría exagerar su ancho, así que esta figura no lo
-        representa gráficamente: el intervalo exacto va en la columna numérica de la derecha,
-        junto al tamaño de efecto y a la fracción de celdas donde gana TimesFM. El remuestreo es
-        de celdas y no de días, para respetar la autocorrelación temporal dentro de cada serie,
-        y el valor de p por permutación es 0,0002 en las cuatro comparaciones, el mínimo
-        alcanzable con 5.000 permutaciones.</p>
-    </figure>
-
-    <h3 style="margin-top:44px">Cómo se comporta cada uno al alargar el horizonte</h3>
-    <p class="medido-en"><strong>Mismas 17.041 celdas</strong>, tres bloques ocultos distintos</p>
-    <div class="tabla-caja"><table id="t-horizonte"></table></div>
-    <p class="nota" style="max-width:var(--measure)">El skill del método de Palacios decae de
-      forma ordenada al alargar el bloque y el propio paper lo describe como crecimiento
-      esperado del error. El de TimesFM no sigue esa pendiente. Dicho de otro modo, TimesFM a
-      cuatro años alcanza el mismo skill que el método de Palacios a uno.</p>
-
-    <h3 style="margin-top:44px">Panel departamental, con la TCN en la mesa</h3>
-    <p class="sub" style="max-width:var(--measure)">2.048 celdas, 512 por departamento, y los
-      mismos 1.461 días. Es la única mesa donde la TCN de reconstrucción continua es
-      comparable, porque solo existe entrenada sobre estos departamentos.</p>
-
-    <figure class="fig">
-      <figcaption>
-        <span class="fig-titulo">Comparación multimétrica</span>
-        <span class="fig-sub">Cada métrica tiene su escala y su criterio de optimización. El
-          relleno señala el <strong>método focal</strong>, que es el mismo en todos los
-          paneles; el anillo y la negrita señalan el <strong>mejor valor de esa métrica</strong>,
-          que no siempre coincide.</span>
-      </figcaption>
-      <div class="pestanas" role="tablist" id="pestanas-metrica"></div>
-      <svg id="fig-metrica" viewBox="0 0 760 250"></svg>
-      <p class="fig-nota" id="nota-metrica"></p>
-    </figure>
-
-    <figure class="fig">
-      <figcaption>
-        <span class="fig-titulo">Consistencia regional</span>
-        <span class="fig-sub">RMSE por departamento y método; menor es mejor. El objetivo no
-          es solo quién tiene el mejor promedio, sino si la ventaja se sostiene en las cuatro
-          regiones.</span>
-      </figcaption>
-      <svg id="fig-heatmap" viewBox="0 0 760 230"></svg>
-    </figure>
-
-    <p class="nota" style="max-width:var(--measure)">La TCN supera al método de Palacios en
-      tres de los cuatro departamentos y pierde en Lima por 0.003 °C. TimesFM gana en los
-      cuatro. Es el matiz que respalda mirar por departamento y no solo el agregado.</p>
-  </div>
-</section>
-
-<section>
-  <div class="ancha">
-    <p class="eyebrow">A escala</p>
-    <h2>Los cuatro departamentos completos, celda por celda</h2>
-    <p class="sub" style="max-width:var(--measure)">Las comparaciones anteriores se apoyan en
-      muestras: 17.041 celdas sorteadas en el backtest, 2.048 en el panel departamental. La
-      objeción natural es si la ventaja sobrevive al pasar de una muestra a la rejilla entera.
-      TimesFM predijo los 1.461 días de las <span class="num">436 519</span> celdas de Lima,
-      Cusco, Loreto y San Martín, sin hueco, en 23 h 48 min de GPU continua.</p>
-    <p class="sub" style="max-width:var(--measure)">La puntuación se hace sobre las
-      <span class="num">61 113</span> celdas que el método de Palacios alcanzó —el 14 % de cada
-      departamento, proporcional, porque su implementación agota la memoria de la máquina sobre
-      la rejilla completa—, lo que da <span class="num">89 286 093</span> pares de predicción y
-      observación. La ventaja se sostiene, y en los cuatro departamentos.</p>
-
-    <figure class="fig">
-      <figcaption>
-        <span class="fig-titulo">RMSE a escala, agregado de los cuatro departamentos</span>
-        <span class="fig-sub">Reponderado por el número real de celdas de cada departamento,
-          de modo que Loreto pesa lo que le corresponde. Menor es mejor.</span>
-      </figcaption>
-      <svg id="fig-escala" viewBox="0 0 760 130"></svg>
-    </figure>
-
-    <figure class="fig">
-      <figcaption>
-        <span class="fig-titulo">Por departamento</span>
-        <span class="fig-sub">RMSE en °C sobre los 89,3 millones de pares puntuados. El mejor
-          de cada fila va en negrita y con contorno.</span>
-      </figcaption>
-      <svg id="fig-escala-mapa" viewBox="0 0 760 200"></svg>
-    </figure>
-
-    <p class="nota" style="max-width:var(--measure)">Ninguna cifra de esta sección proviene de
-      una muestra de conveniencia: la submuestra es estratificada y proporcional, y las tres
-      series se puntúan sobre exactamente las mismas celdas y los mismos días.</p>
-  </div>
-</section>
-
-<section>
-  <div class="ancha">
-    <p class="eyebrow">Por qué gana</p>
-    <h2>El error de los rivales crece; el suyo no</h2>
-    <p class="sub" style="max-width:var(--measure)">RMSE acumulado día a día dentro del bloque
-      oculto, sobre las 17.041 celdas. En los primeros días el método de Palacios va por
-      delante, porque todavía tiene Td observado cerca. TimesFM lo alcanza y lo pasa a medida
-      que la realimentación autorregresiva acumula deriva.</p>
-    <div class="capas" style="flex-direction:row; flex-wrap:wrap; margin-bottom:12px">
-      <button type="button" id="curva-pocas" aria-pressed="true">Solo los competidores</button>
-      <button type="button" id="curva-todas" aria-pressed="false">Añadir líneas base débiles</button>
+<section id="protocolo" style="border-bottom:none">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow section-index">06 · Protocolo</p>
+      <div class="section-copy"><h2>Qué entra al modelo y qué se mantiene oculto</h2><p>El contexto termina el 31 de diciembre del último año de entrenamiento. Ningún Td del bloque oculto entra al modelo. Tmin sí entra porque es exógeno y Palacios también lo utiliza.</p></div>
     </div>
-    <div class="grafico">
-      <svg id="curva" viewBox="0 0 760 340" role="img"
-           aria-label="RMSE acumulado por día del bloque oculto, cinco métodos"></svg>
-      <div class="leyenda-linea" id="leyenda-curva"></div>
+    <div class="details">
+      <details open><summary>Control de comparabilidad</summary><p>Antes de incorporar TimesFM se reprodujeron las cifras publicadas. La climatología, Tmin y Td observado del panel nuevo coincidieron con los archivos originales con diferencia exactamente cero.</p></details>
+      <details><summary>Qué significa el agregado global</summary><p>El muestreo del backtest cubre la caja envolvente de PISCO y no el territorio peruano. Por eso 51.4 % de las celdas está fuera del país. Todos los métodos comparten ese mismo marco de evaluación.</p></details>
+      <details><summary>Qué ocurrió en la corrida completa de Palacios</summary><p>La implementación agotó la memoria sobre la rejilla completa: la corrida terminó con <code>rc=137</code> tras 3 h 14 min y unos 100 GB, en el bucket 8 190 de 8 192. Por eso la comparación de escala se limita a las 61 113 celdas alcanzadas por ese método.</p></details>
     </div>
   </div>
 </section>
-
-<section>
-  <div class="envoltura">
-    <p class="eyebrow">Qué cuesta</p>
-    <h2>Tres objeciones, las tres medidas</h2>
-    <div class="objecion">
-      <h3>La licencia no tiene alternativa viable</h3>
-      <p>Los pesos de TimesFM 3.0 están bajo <code>timesfm-non-commercial-license-v1.0</code>
-        y no permiten uso comercial ni productivo. La versión 2.5, que sí es Apache-2.0, da
-        <span class="num">1.5257</span> de RMSE contra <span class="num">1.2884</span> de la
-        climatología: no alcanza ni al piso. La causa es arquitectónica. La 3.0 procesa las
-        covariables dentro del modelo; la 2.5 ajusta una regresión lineal externa y predice el
-        residuo. Se probaron los dos órdenes y ninguno alcanza a la climatología. Como la
-        ventaja de TimesFM depende por completo de la covariable Tmin, la restricción recae
-        sobre la única parte que hace útil al modelo.</p>
-    </div>
-    <div class="objecion">
-      <h3>El costo es de dos a tres órdenes de magnitud mayor</h3>
-      <p>Ya no es una estimación de banco: la pasada de escala se cronometró entera. En una
-        RTX A2000 de 12 GB con TF32 activo, <span class="num">5,09</span> celdas/s a contexto
-        completo, es decir <span class="num">23 h 48 min</span> para los cuatro departamentos
-        y, extrapolando al mismo ritmo, <span class="num">6,4</span> días para las 2.818.404
-        celdas del grid nacional. El método de Palacios cubre el grid completo en
-        <span class="num">20</span> minutos. La tarjeta está limitada por potencia, ya en el
-        máximo de su firmware, de modo que el margen no está en la configuración del software.</p>
-    </div>
-    <div class="objecion">
-      <h3>El sesgo varía con el periodo</h3>
-      <p>TimesFM queda en <span class="num">+0.180</span>, <span class="num">−0.126</span> y
-        <span class="num">+0.105</span> °C según el bloque, mientras el método de Palacios se
-        mantiene cerca de cero. Gana en error cuadrático y pierde en centrado. Además produce
-        algo más de predicciones fuera del rango de control de calidad de PISCO,
-        <span class="num">0,12 %</span> contra <span class="num">0,08 %</span> de la TCN, que
-        es la dirección esperable de un modelo que no conoce las restricciones físicas del
-        problema.</p>
-    </div>
-  </div>
-</section>
-
-<section style="border-bottom:none">
-  <div class="envoltura">
-    <p class="eyebrow">Cómo leer esto</p>
-    <h2>Protocolo y controles</h2>
-    <p class="sub">Los bloques de años no se inventaron para este trabajo: son los mismos que
-      define el backtest de Palacios y bajo los que reporta sus cifras. El contexto termina el
-      31 de diciembre del último año de entrenamiento y ningún valor de Td del bloque oculto
-      entra al modelo, ni directamente ni a través de la climatología. Tmin sí, porque es
-      exógeno y el método de Palacios también lo usa: igualar la entrada hace que la
-      comparación mida el modelo y no el acceso a datos.</p>
-    <p class="sub">Antes de comparar nada se reprodujeron las cifras publicadas y se verificó
-      que la climatología, el Tmin y el Td observado del panel nuevo coincidieran con los
-      archivos originales con diferencia exactamente cero.</p>
-    <p class="sub">Las diez variantes de TimesFM se evaluaron sobre el mismo bloque que
-      después se reporta, por decisión explícita. La ventaja que eso introduce se midió en
-      lugar de dejarse como advertencia: la brecha entre la ganadora y la segunda es de
-      <span class="num">0.023</span> °C, seis veces el semiancho del intervalo bootstrap, de
-      modo que la elección no es intercambiable.</p>
-    <p class="sub">Una precisión sobre el alcance geográfico: el muestreo del backtest cubre
-      la caja envolvente del producto y no el territorio peruano, de modo que el 51,4 % de sus
-      celdas está fuera del país. Eso no invalida ninguna comparación, porque todos los
-      métodos comparten celdas y días y las cifras publicadas del paper salen de la misma
-      muestra, pero conviene tenerlo presente al leer los agregados: no son un promedio del
-      Perú. Las cuatro regiones del estudio sí están enteramente dentro del país.</p>
-    <p class="sub">La prueba de escala ya está cerrada: TimesFM cubrió las 436.519 celdas de
-      los cuatro departamentos el 23 de septiembre de 2026, en 23 h 48 min. La puntuación se
-      hace sobre la submuestra de 61.113 celdas que el método de Palacios alcanzó, porque su
-      implementación agota la memoria de la máquina sobre la rejilla completa: la corrida fue
-      eliminada por el núcleo con <code>rc=137</code> tras 3 h 14 min y unos 100 GB, en el
-      bucket 8.190 de 8.192. Está anotado como <code>tdew-x46.8</code>, con prioridad alta,
-      porque el protocolo de producción son 2.818.404 celdas.</p>
-    <footer>
-      Bead <code>tdew-214</code>. Las cifras provienen de <code>reports/timesfm_benchmark/</code>
-      y esta página no recalcula ninguna: un control aborta la construcción si algo se desvía
-      de su CSV de origen. La implementación y el análisis se hicieron con asistencia de
-      Claude Code; conviene validar las conclusiones con el equipo antes de tomarlas como
-      definitivas, conforme a la política de uso de IA del CIP.
-    </footer>
-  </div>
-</section>
-
+<footer><div class="wrap">Bead <code>tdew-214</code>. Las cifras provienen de <code>reports/timesfm_benchmark/</code>; la página no recalcula resultados y aborta la construcción si algo se desvía de su CSV de origen. La implementación y el análisis se hicieron con asistencia de Claude Code y deben validarse con el equipo antes de considerarse definitivos, según la política de uso de IA del CIP.</div></footer>
 <script src="datos.js"></script>
 <script>
 (function(){
   "use strict";
   const D = window.DATOS;
+  if(!D){
+    document.documentElement.classList.add("sin-datos");
+    document.querySelectorAll("svg[id^=fig-], #curva").forEach(svg => {
+      svg.setAttribute("viewBox", "0 0 760 120");
+      svg.innerHTML = `<text x="380" y="58" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="14" fill="var(--ink-faint)">La figura se dibuja al cargar datos.js</text>`;
+    });
+    const lectura = document.getElementById("lectura");
+    if(lectura) lectura.innerHTML = '<span class="sub">El mapa interactivo se dibuja al cargar datos.js.</span>';
+    return;
+  }
   const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+
+  /* ---- KPIs del hero: derivados del mismo DATOS que alimenta las figuras --- */
+  (function(){
+    const tfm = D.tablas.nacional.find(r => r.split === "ll4" && r.method === "timesfm");
+    const pal = D.tablas.nacional.find(r => r.split === "ll4" && r.method === "tuned");
+    const eff = D.tablas.efectos.find(r => r.split === "ll4" && r.comparison === "timesfm_vs_tuned");
+    const zonasMedidas = Object.values(D.zonas).filter(m => m && m.timesfm).length;
+    if(tfm) document.getElementById("kpi-rmse-timesfm").textContent = `${tfm.rmse.toFixed(3)} °C`;
+    if(pal) document.getElementById("kpi-rmse-palacios").textContent = `${pal.rmse.toFixed(3)} °C`;
+    if(eff){
+      document.getElementById("kpi-delta-palacios").textContent = `${eff.delta_rmse_C.toFixed(3)} °C`;
+      document.getElementById("kpi-frac-celdas").textContent = `${(eff.frac_cells_focal_wins * 100).toFixed(1)} %`;
+    }
+    document.getElementById("kpi-zonas").textContent = `${zonasMedidas}/${zonasMedidas}`;
+  })();
 
   /* ---- descompresión de las capas ---------------------------------- */
   async function inflar(b64){
@@ -992,15 +622,14 @@ code{font-family:"IBM Plex Mono",monospace; font-size:.92em; background:var(--su
     svg.innerHTML = o;
   })();
 
-  /* ---- tabla de horizonte: 3x6, se lee mejor como tabla que como figura -- */
+  /* ---- tabla compacta de horizonte: el gráfico ya muestra RMSE; aquí se compara skill ---- */
   (function(){
     const ordenH = {ll1:"1 año · 366 d", ll2:"2 años · 731 d", ll4:"4 años · 1 461 d"};
     const filas = ["ll1","ll2","ll4"].map(sp => {
       const g = k => D.tablas.nacional.find(r => r.split === sp && r.method === k);
-      return {c:[ordenH[sp], f(g("timesfm").rmse), f(g("tuned").rmse), f(g("climatology").rmse),
-        f(g("timesfm").skill_vs_clim,4), f(g("tuned").skill_vs_clim,4)]};
+      return {c:[ordenH[sp], f(g("timesfm").skill_vs_clim,4), f(g("tuned").skill_vs_clim,4)]};
     });
-    tabla("t-horizonte", ["horizonte","TimesFM","Palacios","climatología","skill TimesFM","skill Palacios"], filas);
+    tabla("t-horizonte", ["horizonte","TimesFM","Palacios"], filas);
   })();
 
   /* ---- figura 3: comparacion multimetrica con pestanas --------------- */
@@ -1231,4 +860,6 @@ code{font-family:"IBM Plex Mono",monospace; font-size:.92em; background:var(--su
 })();
 </script>
 
-</body></html>
+
+</body>
+</html>
