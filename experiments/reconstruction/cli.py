@@ -254,6 +254,7 @@ def main(argv: list[str] | None = None) -> int:
         },
         experiment_name="tdew-reconstruction",
     ) as active_run:
+        mlflow.set_tag("stage", "fitting")
         if args.model == "tcn":
             predictions = run_tcn(
                 canonical,
@@ -284,6 +285,7 @@ def main(argv: list[str] | None = None) -> int:
             if best_alphas is not None:
                 predictions["TD_pred"] = apply_shrinkage(predictions, best_alphas)
                 predictions["model"] = predictions["model"] + "_calibrated"
+        mlflow.set_tag("stage", "scoring")
         args.output.parent.mkdir(parents=True, exist_ok=True)
         predictions.to_parquet(args.output, index=False)
         metadata = {
@@ -313,6 +315,7 @@ def main(argv: list[str] | None = None) -> int:
             mlflow.log_artifact(str(checkpoint_artifact), artifact_path="checkpoints")
         if args.input.is_dir() and (args.input / "manifest.json").exists():
             mlflow.log_artifact(str(args.input / "manifest.json"), artifact_path="dataset")
+        mlflow.set_tag("stage", "done")
 
         panel_id = args.panel_ids.stem if args.panel_ids else "unrestricted"
         panel_file = str(args.panel_ids) if args.panel_ids else None

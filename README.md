@@ -22,6 +22,69 @@ Inspiration / related work:
 
 ---
 
+## Experimentos de deep learning y dónde están sus métricas
+
+Además del modelo de producción descrito en este README, el repositorio compara
+variantes de deep learning y un modelo de fundación zero-shot contra el método de
+anomalías. Sus métricas no viven en un solo lugar, y conviene saber dónde buscar
+cada una.
+
+### MLflow: runs con entrenamiento real
+
+Los runs con entrenamiento efectivo —baselines de la semana 1, ablaciones y TCN—
+se registran con MLflow sobre `sqlite:///mlflow.db`. El servidor se levanta con:
+
+```bash
+uv run mlflow server --backend-store-uri sqlite:///mlflow.db --host 0.0.0.0 --port 5000
+```
+
+En MLflow 3.x, al abrir un experimento la UI aterriza por defecto en la pestaña
+Overview/Traces, pensada para trazas de LLM. Este proyecto no genera trazas, así
+que esa pestaña queda vacía sin que eso indique ningún problema. Los runs con
+métricas están en la pestaña Runs, a la que se llega agregando `/runs` a la URL
+(por ejemplo `http://<host>:5000/#/experiments/1/runs`):
+
+| experimento | runs | métricas |
+|---|---|---|
+| `tdew-week1` (id 1) | baselines por sitio (`week1-baseline`); ablaciones del TCN (`x46.1-ablation-*`); TCN con atención (`week1-tcn-attention`) | `test_rmse`/`validation_rmse`/`test_mae`/`test_skill_vs_clim` para baselines; `val_rmse_pooled` y `val_rmse_<sitio>` para las ablaciones; `val_rmse`, `val_mae`, `val_bias`, `val_r`, `val_skill_vs_clim`, `train_loss` para el TCN con atención |
+| `tdew-reconstruction` (id 2) | reconstrucción continua de Td (`td-reconstruction`), con TCN y baselines ridge/histgb | `rmse`, `mae`, `bias`, `r` agregados, y desagregados por departamento (`Cusco_rmse`, `Lima_rmse`, `Loreto_rmse`, `San Martin_rmse`) |
+
+Dentro de `tdew-reconstruction`, los runs que importan para comparar contra
+TimesFM son los que tienen `model=tcn`, protocolo `ll4`, `feature_set=exogenous_full`
+y semilla 0: son la fuente de la fila "TCN directa" del panel departamental que se
+describe más abajo.
+
+### TimesFM: zero-shot, sin MLflow
+
+Las nueve variantes de TimesFM no entrenan —no hay pesos que ajustar— así que no
+generan runs de MLflow. Sus métricas viven enteramente en
+[`reports/timesfm_benchmark/`](reports/timesfm_benchmark/):
+
+- [`reports/timesfm_benchmark/README.md`](reports/timesfm_benchmark/README.md):
+  el reporte completo, con las nueve variantes, el protocolo y los cuatro niveles
+  de medición.
+- [`reports/timesfm_benchmark/TRACEABILITY.md`](reports/timesfm_benchmark/TRACEABILITY.md):
+  de dónde sale cada cifra y cómo reproducirla.
+- [`reports/timesfm_benchmark/artifact/index.html`](reports/timesfm_benchmark/artifact/index.html):
+  la página interactiva equivalente, con las mismas cifras embebidas en
+  `datos.js` — leaderboards de cribado, nacional, departamental y escala, tamaños
+  de efecto, calibración probabilística y un mapa coroplético del Perú.
+
+Las nueve variantes evaluadas: `uni_td_full`, `uni_anom_full`, `tmin_td_full`,
+`tmin_anom_full` (la ganadora en cribado y nacional), `tmin_doy_td_full`,
+`tmin_td_med`, `tmin_td_short`, `tmin_td_symavg`, `tmin_td_znorm`.
+
+Las métricas que expone el artifact, por nivel de medición:
+
+| nivel | celdas | métricas |
+|---|---|---|
+| cribado | 1.106 | `rmse`, skill vs. climatología, celdas/s, y CRPS con cobertura del 80 % para la variante ganadora |
+| nacional | 17.041 (comparación pareada contra la cifra publicada por Palacios) | `rmse`, `mae`, sesgo, `r`, skill vs. climatología, y tamaños de efecto (`ΔRMSE`, IC 95 %, `d` de Cohen, `p`) |
+| departamental | 2.048 (única mesa donde compite la TCN) | `rmse`, `mae`, sesgo, `r`, skill vs. climatología y fracción fuera de rango de control de calidad, agregado y por departamento (Cusco, Lima, Loreto, San Martín) |
+| escala | 436.519 | las mismas métricas del nivel nacional sobre el grid completo de los cuatro departamentos, más el costo medido en celdas/s |
+
+---
+
 ## Quickstart (bash: full pipeline)
 
 You have two ways to run the pipeline:
