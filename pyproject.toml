@@ -13,7 +13,9 @@ dependencies = [
     "numpy>=2.0",
     "pandas>=2.1",
     "pyarrow>=15",
+    "pyyaml>=6.0",
     "statsmodels>=0.14",
+    "scikit-learn>=1.5",
     "tqdm>=4.66",
     "dask[distributed]>=2024.1",
     "nvidia-ml-py>=13.610.43",
@@ -65,6 +67,10 @@ tracking = [
     "dvc>=3.67",
     "mlflow>=3.0",
     "pytest>=8",
+]
+timesfm = [
+    "jax>=0.4",
+    "timesfm[torch]>=3.0",
 ]
 
 # Only the algorithm package is installable; HPC_code/ and Local/ are run as scripts.
