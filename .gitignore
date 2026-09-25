@@ -119,3 +119,10 @@ experiments/*/checkpoints/
 # es experiments/tcn/audit_x46/out/, no reports/week1_tcn_audit/.
 experiments/tcn/audit_x46/out/
 reports/week1_tcn_audit/*.npz
+
+reports/paper/refs_pdf/
+reports/paper/*.typ
+# Rendered manuscripts are outputs; the Word reference document is an input the build
+# needs, so it is tracked.
+reports/paper/*.docx
+!reports/paper/reference-taac.docx

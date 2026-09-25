@@ -1,0 +1,113 @@
+---
+title: "Online Resource 1 --- Extending the PISCO gridded dew-point record for Peru (2017--2020) from the continued minimum-temperature record, using per-climate-zone seasonal model selection"
+date: last-modified
+bibliography: references.bib
+csl: springer-basic-author-date.csl
+crossref:
+  fig-title: "Fig."
+  fig-prefix: "Fig."
+  tbl-title: "Table"
+  tbl-prefix: "Table"
+format:
+  # The journal requires Word or LaTeX. docx is the submission artefact; typst is kept
+  # because it is what we read, and the two come from one source.
+  docx:
+    reference-doc: reference-taac.docx
+    number-sections: true
+  typst:
+    toc: false
+    number-sections: true
+    papersize: a4
+    margin: {x: 2.5cm, y: 2.5cm}
+    include-in-header: taac_format.typ
+---
+
+
+### Predictor-version sensitivity {#sec-supp-version}
+
+The two PISCO minimum-temperature releases yield different fitted models of comparable accuracy.
+Each release was run through the identical pipeline, fitted and scored on itself, over
+$7.32 \times 10^{6}$ (cell, day-of-year) fits. The fitted coefficients differ, most clearly in the
+contemporaneous sensitivity:
+
+| Coefficient | v1.1 mean | v1.2 mean | Mean $\Delta$ | Mean $\lvert\Delta\rvert$ | Pearson $r$ |
+|:---|---:|---:|---:|---:|---:|
+| $T_{\min}$ anomaly | 0.452 | 0.370 | $-0.083$ | 0.130 | 0.685 |
+| $T_d$ lag 1 | 0.782 | 0.813 | $+0.031$ | 0.047 | 0.925 |
+| $T_d$ lag 2 | $-0.019$ | $-0.031$ | $-0.012$ | 0.026 | 0.920 |
+| $T_{\min}$ lag 1 | $-0.236$ | $-0.182$ | $+0.054$ | 0.092 | 0.669 |
+| $R^{2}$ (anomalies) | 0.787 | 0.778 | $-0.009$ | 0.019 | 0.953 |
+
+: Coefficients fitted on PISCO v1.1 against v1.2 minimum temperature, paired over identical fits.
+The contemporaneous sensitivity differs most. {#tbl-supp-coef}
+
+The two self-consistent pipelines agree with one another to $\mathrm{RMSE} = 0.610$ °C
+($r = 0.995$) with a mean offset of $-0.300$ °C. Scored against observed dew point they are
+nevertheless of comparable accuracy, v1.1 giving marginally lower error and v1.2 being better
+centred:
+
+| Predictor version | RMSE | MAE | Bias | Pearson $r$ |
+|:---|---:|---:|---:|---:|
+| v1.1 | 1.127 | 0.844 | $+0.443$ | 0.982 |
+| v1.2 | 1.136 | 0.867 | $+0.143$ | 0.979 |
+
+: Accuracy against observed dew point for each predictor version ($n = 7.3 \times 10^{6}$).
+{#tbl-supp-acc}
+
+The accuracy difference between releases, $0.009$ °C, is negligible against the $0.307$ °C
+improvement the selected model achieves over climatology: as predictors of dew point the two are
+effectively equivalent, and choosing v1.2 costs nothing. What differs is the fitted relationship,
+with a paired correlation of only $0.685$ on the contemporaneous term, which is why we fit and
+predict on the same release.
+
+Note that the $-0.300$ °C offset above is the difference between two **internally consistent**
+pipelines, each fitted and applied to its own release. It is not a measurement of the penalty for
+mixing releases, a configuration we did not run; the case for consistency here is that coefficients
+should correspond to the predictor actually supplied, not an estimated error bound.
+
+This fixed five-predictor configuration also carries a December warm bias of $+1.45$ °C, which
+per-zone seasonal selection removes (Sect. 4.2 of the main manuscript).
+
+### Computational characterisation {#sec-supp-compute}
+
+Fitting $2.8 \times 10^{6}$ cells $\times$ 366 days of year is dominated by memory traffic rather
+than arithmetic, which determines how the method scales.
+
+On CPUs, parallel efficiency $E(p) = T(1)/(p\,T(p))$ is essentially independent of problem size,
+indicating that the limit is memory bandwidth rather than parallel overhead:
+
+| Workers $p$ | $N = 512$ | $N = 1024$ | $N = 2048$ |
+|---:|---:|---:|---:|
+| 2 | 0.939 | 0.917 | 0.912 |
+| 4 | 0.830 | 0.826 | 0.824 |
+| 8 | 0.709 | 0.704 | 0.699 |
+| 16 | 0.562 | 0.560 | 0.557 |
+| 32 | 0.345 | 0.342 | 0.337 |
+
+: Strong-scaling efficiency $E(p)$ for three problem sizes ($N$ = grid cells). Efficiency at fixed
+$p$ varies by less than 0.01 across a fourfold change in $N$. {#tbl-supp-cpu}
+
+Weak scaling at constant work per worker gives $E = 1.000$, $0.927$ and $0.846$ at $p = 1, 2, 4$.
+
+On a single GPU the same conclusion follows from a roofline analysis. With measured bandwidth
+633 GB s⁻¹ and 4200 GFLOPS double precision, the ridge lies at an arithmetic intensity of
+approximately 6.6 FLOP B⁻¹, whereas the pipeline operates between 0.08 and 0.61:
+
+| Stage | Arithmetic intensity (FLOP B⁻¹) | GFLOPS | Regime |
+|:---|---:|---:|:---|
+| Assemble | 0.114 | 44.7 | memory-bound |
+| Convolve | 0.083 | 24.8 | memory-bound |
+| Solve | 0.615 | 320 | memory-bound |
+| Total | 0.105 | 36.1 | memory-bound |
+
+: Roofline position of each pipeline stage at $N = 512$ cells. All stages lie far below the ridge.
+{#tbl-supp-gpu}
+
+Solver throughput reaches $2.09 \times 10^{9}$ fits s⁻¹ at large batch sizes. The practical
+consequence is that the implementation is bounded by data movement, so the productive optimisations
+are those that reduce traffic, and the full-domain fit remains tractable on a single device.
+
+## References {.unnumbered}
+
+::: {#refs}
+:::
