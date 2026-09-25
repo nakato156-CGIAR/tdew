@@ -113,6 +113,9 @@ mlruns/
 # el directorio se versiona por su ruta, no por su contenido.
 experiments/*/checkpoints/
 
-# Submuestras materializadas de la auditoria del TCN (experiments/tcn/audit_x46):
-# ~30 MB, regenerables con semilla fija por 03_build_sample.py.
+# Submuestras materializadas de la auditoria del TCN, regenerables con
+# semilla fija por experiments/tcn/audit_x46/03_build_sample.py (pueden
+# pesar varios GB, p.ej. sample_train_big.npz). El directorio de salida real
+# es experiments/tcn/audit_x46/out/, no reports/week1_tcn_audit/.
+experiments/tcn/audit_x46/out/
 reports/week1_tcn_audit/*.npz
