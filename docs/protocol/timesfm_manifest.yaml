@@ -1,0 +1,177 @@
+# Manifest — benchmark de TimesFM contra el metodo de Palacios y la TCN
+#
+# Entregable del bead tdew-214. Congela el protocolo de comparacion: que celdas,
+# que dias, que rivales, que metricas y que decisiones quedan fuera. Cualquier
+# cambio posterior a este archivo es un cambio de protocolo y debe justificarse.
+#
+# No inventar valores: los campos marcados PENDIENTE se resuelven con una medicion
+# y se escriben aqui cuando exista.
+
+version: 1
+frozen_on: "2026-09-22"
+bead: tdew-214
+plan: /home/cvelasquez/.claude/plans/humming-wiggling-deer.md
+
+enmiendas:
+  - fecha: "2026-09-25"
+    cambio: >
+      Se retira la variante alternativa sobre pesos de TimesFM 2.5
+      (tmin_td_25) y las 10 variantes zero-shot pasan a ser 9.
+    motivo: >
+      El alcance del proyecto es investigacion; no hay despliegue en
+      produccion ni fin comercial, asi que la restriccion
+      "non-commercial, non-production" de los pesos de 3.0 no aplica. La
+      variante 2.5 existia solo para cuantificar el costo de esa
+      restriccion en caso de uso operativo, y decidido el usuario que ese
+      caso no se da, la comparacion queda fuera de alcance.
+
+modelo_evaluado:
+  nombre: TimesFM
+  version_principal: "3.0"
+  checkpoint: google/timesfm-3.0-pytorch
+  parametros: 330M
+  entrenamiento: ninguno (zero-shot puro; no se ajusta ni un peso)
+  licencia_codigo: Apache-2.0
+  licencia_pesos_3_0: timesfm-non-commercial-license-v1.0
+  alcance_de_uso: >
+    Investigacion. Sin despliegue en produccion ni entrega a usuarios
+    finales, condicion bajo la cual timesfm-non-commercial-license-v1.0
+    permite el uso de los pesos.
+
+rivales:
+  - id: climatology
+    descripcion: media historica por (ID, doy) sobre los anios de train del split
+    columna: pred_clim
+  - id: td_eq_tmin
+    descripcion: Td = Tmin sin transformar
+    columna: pred_tmin
+  - id: zone_ols
+    descripcion: regresion lineal Td ~ a + b*Tmin, un ajuste por zona climatica SENAMHI
+    columna: pred_ols
+  - id: tuned
+    descripcion: >
+      El metodo que propone Palacios en el paper: regresion local ponderada por
+      (ID, doy) sobre anomalias, kernel tricube en ventana de dia del anio, con
+      seleccion de receta y semiancho por zona SENAMHI x doy (MultiLLR-style,
+      arXiv:1809.07394). Pronostico autorregresivo, sin ver Td observado dentro
+      del bloque oculto.
+    columna: pred_tuned
+    fuente: HPC_code_tunning/backtest.py (modo refit-only, variante "a")
+  - id: tcn_directa
+    descripcion: >
+      TCN de reconstruccion continua, congelada en modo directo, feature set
+      exogenous_full, longitud de contexto L=7, 250 pasos, batch 1.024.
+    fuente: experiments/reconstruction/, reports/reconstruccion_continua/INFORME_TECNICO.md
+    alcance: solo el nivel departamental (no existe entrenada sobre el panel nacional)
+
+splits:
+  fuente: HPC_code_tunning/backtest.py:61-66
+  train_start: 1981
+  definicion:
+    - id: ll1
+      train_hasta: 2015
+      oculto: [2016, 2016]
+      dias_horizonte: 366
+    - id: ll2
+      train_hasta: 2014
+      oculto: [2015, 2016]
+      dias_horizonte: 731
+    - id: ll4
+      train_hasta: 2012
+      oculto: [2013, 2016]
+      dias_horizonte: 1461
+      papel: headline; es el que reporta el paper y el que imita el hueco real 2017-2020
+
+niveles:
+  - id: cribado
+    celdas: 1106
+    seleccion: >
+      Muestra estratificada por zona SENAMHI sobre las celdas del backtest de
+      Palacios: hasta 40 celdas por zona, numpy.random.default_rng(20260922).
+      Toca las 38 zonas que el muestreo de 64 buckets alcanza.
+    archivo: reports/timesfm_benchmark/panels/cribado_estratificado.csv
+    splits: [ll4]
+    proposito: comparar las 9 variantes entre si
+  - id: nacional
+    celdas: 17041
+    seleccion: >
+      Las mismas celdas del backtest de Palacios (64 buckets completos, cada uno
+      una rejilla nacional). Cubre las 38 zonas alcanzadas.
+    archivo: reports/timesfm_benchmark/panels/nacional_17041.csv
+    splits: [ll1, ll2, ll4]
+    proposito: comparacion pareada contra la cifra publicada
+  - id: departamental
+    celdas: 8192
+    seleccion: panel ll4 del protocolo de reconstruccion, 2.048 celdas por departamento
+    fuente: experiments/reconstruction/protocol.py
+    splits: [ll4]
+    proposito: unica mesa donde la TCN es comparable
+  - id: escala
+    celdas: 436519
+    seleccion: las cuatro listas completas de Data/silver/department_grid_ids/
+    splits: [ll4]
+    proposito: medir coste y estabilidad a volumen real
+
+reglas:
+  - El contexto termina el 31 de diciembre de train_hasta. Ningun valor de Td del
+    bloque oculto entra al contexto, ni directamente ni via climatologia.
+  - La climatologia se recalcula solo con los anios de train de cada split, igual
+    que HPC_code_tunning/backtest.py:72-79.
+  - Tmin del bloque oculto si se entrega como covariable: es exogeno, existe en
+    todo el rango y es exactamente la informacion que consume el metodo de
+    Palacios. Igualarla hace que la comparacion mida el modelo.
+  - make_positive=False siempre. El valor por defecto del Evaluator recorta los
+    negativos y Cusco tiene Td negativo.
+  - La covariable futura mide exactamente contexto + horizonte. Un ancho distinto
+    cambia el horizonte dentro del modelo sin aviso (timesfm3/torch/model.py:395-396).
+  - Todos los metodos se puntuan sobre la interseccion exacta de celdas y dias.
+
+seleccion_de_variante:
+  decision_del_usuario: >
+    Las 9 variantes se evaluan directamente sobre el split que despues se
+    reporta, y se reporta la mejor. No se usan folds de desarrollo.
+  consecuencia: >
+    La cifra de la ganadora incluye la ventaja de haber probado nueve veces contra
+    el mismo bloque. Se mide y se publica: dispersion entre variantes y distancia
+    de la mejor a la mediana, en RMSE y en skill. Es el analogo de la comprobacion
+    que Palacios hizo sobre su propia reseleccion (0,0088 de skill, PAPER_PLAN.md:275).
+  se_reporta_la_tabla_completa: true
+
+metricas:
+  puntuales:
+    fuente: tdew_estimation/metrics.py:21 (regression_metrics)
+    lista: [n, rmse, mae, bias, r, skill_vs_clim]
+  efecto:
+    fuente: HPC_code_tunning/effect_sizes.py
+    lista:
+      - delta_rmse con IC 95 % por block-bootstrap de ubicacion (1.000 remuestreos)
+      - fraccion de celdas donde gana
+      - Cohen's d pareado sobre diferencias por ubicacion
+      - p-valor de permutacion por sign-flip (5.000)
+  probabilisticas:
+    aplica_a: solo TimesFM (los rivales son deterministas)
+    lista: [pinball por decil, pinball_medio, crps_aprox, cobertura_80, anchura_80]
+    limitacion: >
+      Solo hay nueve deciles (0,1 a 0,9). El intervalo mas ancho computable es el
+      80 %; no existen q05 ni q95, de modo que no se puede reportar cobertura al
+      90 % ni al 95 %. El CRPS es una aproximacion por cuadratura sobre esos nueve
+      niveles y queda sesgado a la baja porque ignora las colas.
+  desagregaciones: [zona SENAMHI, departamento, mes, anio de horizonte]
+  agregado_departamental: >
+    RMSE ALL reponderado por celdas reales de cada departamento, siguiendo
+    experiments/tcn/audit_x46/04_compare_predictors.py:27,72-79, para que sea
+    comparable con las filas site=ALL de reports/week1_baselines/leaderboard.csv.
+
+coste:
+  hardware: NVIDIA RTX A2000 12GB
+  barrido: reports/timesfm_benchmark/coste_throughput.csv
+  resumen: PENDIENTE
+
+fuera_de_alcance:
+  - Fine-tuning y LoRA. El paquete instalado es solo de inferencia.
+  - La TCN de Semana 1 (experiments/tcn/), que predice Td(t+1) a un dia vista:
+    es otra tarea y sus cifras no van en la misma tabla.
+  - La reseleccion de recetas de Palacios (variante "b"). Se usa el modo
+    refit-only, que es el que produjo las cifras publicadas.
+  - Una pasada de TimesFM sobre las 2,8 M celdas nacionales. Se extrapola el
+    coste desde lo medido.
