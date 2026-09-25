@@ -110,7 +110,7 @@ which is $O(1/p)$ for $p \gg 1/\gamma$. Crucially the work $W$ **cancels**: one 
 every problem size — exactly the superimposed curves. A single least-squares fit over all three sizes
 gives $\gamma \approx 0.063$ (predicted $E(8)=0.71$, $E(32)=0.35$ vs measured 0.70–0.71 / 0.34–0.35)
 and a speedup ceiling $S(\infty) = 1+1/\gamma \approx 17$, consistent with the plateau in
-@fig-cpu-speedup. Full derivation in the PRAM complexity document (`tdew_estimation_pram.qmd`,
+@fig-cpu-speedup. Full derivation in the PRAM complexity document (`pram/tdew_estimation_pram.qmd`,
 "Theoretical Efficiency" section).
 
 ---
@@ -176,7 +176,7 @@ the floor — the bandwidth utilization $\eta(M)=T_{bound}/T_{meas}$ — is the 
 efficiency: `solve` reaches $\eta \approx 0.9$ at the largest M (essentially at its roofline), while
 `convolve` is launch-overhead dominated at small M (flat ≈ 7 ms, $\eta \approx 0.1$) and climbs as the
 batch fills the device — precisely why the GPU wants **large buckets**. Derivation in
-`tdew_estimation_pram.qmd`, "Theoretical Efficiency" section.
+`pram/tdew_estimation_pram.qmd`, "Theoretical Efficiency" section.
 
 ---
 

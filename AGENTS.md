@@ -139,11 +139,11 @@ This repo estimates daily dewpoint temperature (`TDEW`) for Peru. The production
 - `tdew_estimation/` — the production algorithm: climatology (`climatology.py`), anomaly regression training (`anomaly_train.py`, `anomaly_dask.py`), bucketed I/O (`bucketed_data.py`, `bucket_layout.py`, `parquet_io.py`), forecasting (`forecast.py`), metrics/provenance (`metrics.py`, `provenance.py`, `experiment_tracking.py`), and deep models under `tdew_estimation/models/` (TCN + attention pooling).
 - `pipeline/` — ZenML-orchestrated ETL from raw PISCO climate rasters to model-ready tables (`bronze.py` → `silver.py` → `gold.py` → `features.py` → `normalize.py` → `sequences.py`/`qc.py`), driven by the DVC stages in `dvc.yaml`.
 - `experiments/` — comparisons against the production anomaly model: `baselines/` (simple baselines), `tcn/` (`TCNAttentionModel`, predicts next-day dewpoint anomaly `Td(t+1)` across the four project sites — Lima, Cusco, Loreto, San Martín), `reconstruction/` (continuous `Td` reconstruction protocol, independent of the `Td(t+1)` protocol), `timesfm/` (zero-shot TimesFM 3.0 benchmark).
-- `HPC_code/` — SLURM/GPU runners for the production pipeline at scale (multi-node CPU via `dask-jobqueue`, single-GPU via a batched-WLS CuPy kernel) and the scaling-benchmark harness referenced in `tdew_estimation_pram.qmd`.
+- `HPC_code/` — SLURM/GPU runners for the production pipeline at scale (multi-node CPU via `dask-jobqueue`, single-GPU via a batched-WLS CuPy kernel) and the scaling-benchmark harness referenced in `reports/pram/tdew_estimation_pram.qmd`.
 - `HPC_code_tunning/` — GPU-accelerated search over the DOY half-window `h` and feature set, per SENAMHI climate zone, replacing the fixed global `h=11` used in production.
 - `Local/run_pipeline.sh` — single-machine end-to-end runner (climatology → bucketed dataset → Dask training → DOY completeness check → patch).
 - `Data/` (`bronze`/`silver`/`gold`/`qc`) — DVC-tracked data lake. `Wiki/` is a separate knowledge base with its own `CLAUDE.md`/`AGENTS.md`.
-- `reports/`, `docs/`, and the Quarto sources (`tdew_estimation_pram*.qmd`, `TDEW_Avance_Parcial*.qmd`) — the PRAM pseudocode, methodology, and benchmark write-ups, rendered to PDF/DOCX.
+- `reports/`, `docs/` — benchmark write-ups and results. The PRAM pseudocode/methodology Quarto sources (`tdew_estimation_pram*.qmd`, `TDEW_Avance_Parcial_typst.qmd`, `pram_appendix.qmd`, plus `references.bib`/`apa.csl`/`typst-preamble.typ`) live under `reports/pram/`; their rendered PDF/DOCX outputs live in `docs/pram/`.
 - Experiment tracking uses MLflow (`mlflow.db`, `mlruns/`), separate from the bd/Notion task mapping described above.
 
 ## Conventions & Patterns

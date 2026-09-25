@@ -3,8 +3,8 @@
 This repository contains the code used to estimate daily dewpoint temperature (`td`) needed to run Simcast workflows when `td` is not directly available.
 
 PRAM pseudocode and Big-O complexity are documented in:
-- `tdew_estimation_pram.qmd` (Quarto source, Typst format)
-- `tdew_estimation_pram.pdf` (rendered PDF)
+- `reports/pram/tdew_estimation_pram.qmd` (Quarto source, Typst format)
+- `docs/pram/tdew_estimation_pram.pdf` (rendered PDF)
 
 The core approach implemented here is an **anomaly-based local linear regression model** (“anomaly model”) that:
 - builds a **daily climatology** for each grid cell (`ID`) and day-of-year (`doy`)
