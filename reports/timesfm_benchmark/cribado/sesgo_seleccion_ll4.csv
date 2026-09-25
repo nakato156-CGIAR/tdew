@@ -1,0 +1,2 @@
+split,n_variantes,rmse_mejor,rmse_mediana,rmse_peor,dispersion_rmse,skill_mejor,skill_mediana,dispersion_skill,rmse_segunda,brecha_primera_segunda,segunda_variante
+ll4,10,0.8432391538848232,0.8797015205931373,1.5257423693147616,0.03646236670831415,0.3455080486000759,0.3172072688869416,0.028300779713134272,0.8664747257231509,0.023235571838327695,tmin_doy_td_full

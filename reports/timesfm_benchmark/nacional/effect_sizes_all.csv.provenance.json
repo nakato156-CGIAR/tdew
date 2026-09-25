@@ -1,0 +1,35 @@
+{
+  "autoregressive": false,
+  "bead_id": "tdew-214",
+  "climatology_role": "target_anomaly_base",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-09-24T19:20:46+00:00",
+  "git_commit": "e99316d1ef216cbab008c6af078a33cdff9d7009",
+  "inputs": [
+    "TMIN_anom"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest.yaml@2026-09-22",
+  "mlflow_run_id": null,
+  "model_family": "timesfm-3.0",
+  "model_id": "google/timesfm-3.0-pytorch",
+  "notes": null,
+  "output_files": [
+    "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/nacional/effect_sizes_all.csv"
+  ],
+  "panel_cell_count": 17041,
+  "panel_file": "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/panels/nacional_17041.csv",
+  "panel_id": "nacional_17041",
+  "run_id": "da95405289f14cafa949e32a3667a9c5",
+  "seeds": [],
+  "split_id": "ll4",
+  "target_type": "td_anomaly",
+  "test_period": [
+    "2013-01-01",
+    "2016-12-31"
+  ],
+  "trained": false,
+  "training_period": null,
+  "validation_period": null,
+  "variant_label": "tmin_anom_full"
+}
