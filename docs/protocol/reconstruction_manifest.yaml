@@ -1,0 +1,48 @@
+version: 1
+frozen_on: "2026-09-21"
+bead: tdew-x46.3
+target: "Reconstruccion diaria contemporanea de Td"
+
+departments:
+  - Lima
+  - Cusco
+  - Loreto
+  - San Martin
+
+protocols:
+  dev_a:
+    train: [1981, 2004]
+    hidden: [2005, 2008]
+    panel_cells_per_department: 512
+  dev_b:
+    train: [1981, 2008]
+    hidden: [2009, 2012]
+    panel_cells_per_department: 512
+  ll4:
+    train: [1981, 2012]
+    hidden: [2013, 2016]
+    panel_cells_per_department: 2048
+    sealed: true
+  production:
+    train: [1981, 2016]
+    hidden: [2017, 2020]
+    panel_cells_per_department: null
+
+rules:
+  contemporary_tmin_tmax: true
+  observed_td_inside_hidden_block: false
+  climatology_train_only: true
+  normalization_train_only: true
+  pisco_qc_range_celsius: [-25.0, 30.0]
+  parity_tolerance_celsius: 0.0001
+
+approval:
+  bootstrap_resamples: 1000
+  sign_flip_permutations: 5000
+  seeds: [0, 1, 2]
+  departments: [Lima, Cusco, Loreto, San Martin]
+  require_bootstrap_upper_below_zero: true
+  require_department_rmse_win: true
+  require_positive_skill_by_department_and_horizon_year: true
+  maximum_absolute_bias: "max(0.10, abs(tuned_bias))"
+
