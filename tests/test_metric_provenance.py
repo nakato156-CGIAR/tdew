@@ -76,6 +76,13 @@ EXCLUDED_FILES = {
         "panel de celdas (lista de IDs), no una metrica -- se referencia como panel_file en otros registros",
     REPORTS_ROOT / "timesfm_benchmark/panels/nacional_17041.csv":
         "panel de celdas (lista de IDs), no una metrica -- se referencia como panel_file en otros registros",
+    REPORTS_ROOT / "paper/scripts/validation_by_support.csv":
+        "reports/paper/scripts/validation_by_support.py lee desde una ruta externa "
+        "(RES/BACKTEST_ROOT fuera del repo) y no pasa por tdew_estimation.provenance -- "
+        "salida ad hoc del backtest para el paper, no un run instrumentado",
+    REPORTS_ROOT / "paper/scripts/zone_table_supplement.csv":
+        "conteo de celdas por zona de clasificacion climatica (analogo a un panel de "
+        "celdas), no una metrica de precision de pronostico",
 }
 
 REQUIRED_FIELDS = (
