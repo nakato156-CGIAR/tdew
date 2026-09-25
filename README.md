@@ -22,66 +22,66 @@ Inspiration / related work:
 
 ---
 
-## Experimentos de deep learning y dónde están sus métricas
+## Deep learning experiments and where their metrics live
 
-Además del modelo de producción descrito en este README, el repositorio compara
-variantes de deep learning y un modelo de fundación zero-shot contra el método de
-anomalías. Sus métricas no viven en un solo lugar, y conviene saber dónde buscar
-cada una.
+Besides the production model described in this README, the repository compares
+deep learning variants and a zero-shot foundation model against the anomaly
+method. Their metrics don't live in a single place, so it's worth knowing where
+to look for each one.
 
-### MLflow: runs con entrenamiento real
+### MLflow: runs with real training
 
-Los runs con entrenamiento efectivo —baselines de la semana 1, ablaciones y TCN—
-se registran con MLflow sobre `sqlite:///mlflow.db`. El servidor se levanta con:
+Runs with actual training — week 1 baselines, ablations, and the TCN — are
+logged with MLflow against `sqlite:///mlflow.db`. Start the server with:
 
 ```bash
 uv run mlflow server --backend-store-uri sqlite:///mlflow.db --host 0.0.0.0 --port 5000
 ```
 
-En MLflow 3.x, al abrir un experimento la UI aterriza por defecto en la pestaña
-Overview/Traces, pensada para trazas de LLM. Este proyecto no genera trazas, así
-que esa pestaña queda vacía sin que eso indique ningún problema. Los runs con
-métricas están en la pestaña Runs, a la que se llega agregando `/runs` a la URL
-(por ejemplo `http://<host>:5000/#/experiments/1/runs`):
+In MLflow 3.x, opening an experiment lands the UI on the Overview/Traces tab by
+default, which is meant for LLM traces. This project doesn't generate traces,
+so that tab shows up empty without indicating any problem. Runs with metrics
+are in the Runs tab, reached by appending `/runs` to the URL (for example
+`http://<host>:5000/#/experiments/1/runs`):
 
-| experimento | runs | métricas |
+| experiment | runs | metrics |
 |---|---|---|
-| `tdew-week1` (id 1) | baselines por sitio (`week1-baseline`); ablaciones del TCN (`x46.1-ablation-*`); TCN con atención (`week1-tcn-attention`) | `test_rmse`/`validation_rmse`/`test_mae`/`test_skill_vs_clim` para baselines; `val_rmse_pooled` y `val_rmse_<sitio>` para las ablaciones; `val_rmse`, `val_mae`, `val_bias`, `val_r`, `val_skill_vs_clim`, `train_loss` para el TCN con atención |
-| `tdew-reconstruction` (id 2) | reconstrucción continua de Td (`td-reconstruction`), con TCN y baselines ridge/histgb | `rmse`, `mae`, `bias`, `r` agregados, y desagregados por departamento (`Cusco_rmse`, `Lima_rmse`, `Loreto_rmse`, `San Martin_rmse`) |
+| `tdew-week1` (id 1) | per-site baselines (`week1-baseline`); TCN ablations (`x46.1-ablation-*`); attention TCN (`week1-tcn-attention`) | `test_rmse`/`validation_rmse`/`test_mae`/`test_skill_vs_clim` for baselines; `val_rmse_pooled` and `val_rmse_<site>` for the ablations; `val_rmse`, `val_mae`, `val_bias`, `val_r`, `val_skill_vs_clim`, `train_loss` for the attention TCN |
+| `tdew-reconstruction` (id 2) | continuous Td reconstruction (`td-reconstruction`), with the TCN and ridge/histgb baselines | aggregated `rmse`, `mae`, `bias`, `r`, plus per-department breakdowns (`Cusco_rmse`, `Lima_rmse`, `Loreto_rmse`, `San Martin_rmse`) |
 
-Dentro de `tdew-reconstruction`, los runs que importan para comparar contra
-TimesFM son los que tienen `model=tcn`, protocolo `ll4`, `feature_set=exogenous_full`
-y semilla 0: son la fuente de la fila "TCN directa" del panel departamental que se
-describe más abajo.
+Within `tdew-reconstruction`, the runs that matter for comparing against
+TimesFM are the ones with `model=tcn`, protocol `ll4`, `feature_set=exogenous_full`,
+and seed 0: they're the source of the "direct TCN" row in the departmental
+panel described below.
 
-### TimesFM: zero-shot, sin MLflow
+### TimesFM: zero-shot, no MLflow
 
-Las nueve variantes de TimesFM no entrenan —no hay pesos que ajustar— así que no
-generan runs de MLflow. Sus métricas viven enteramente en
+The nine TimesFM variants don't train — there are no weights to fit — so they
+don't produce MLflow runs. Their metrics live entirely in
 [`reports/timesfm_benchmark/`](reports/timesfm_benchmark/):
 
 - [`reports/timesfm_benchmark/README.md`](reports/timesfm_benchmark/README.md):
-  el reporte completo, con las nueve variantes, el protocolo y los cuatro niveles
-  de medición.
+  the full report, with the nine variants, the protocol, and the four
+  measurement levels.
 - [`reports/timesfm_benchmark/TRACEABILITY.md`](reports/timesfm_benchmark/TRACEABILITY.md):
-  de dónde sale cada cifra y cómo reproducirla.
+  where each figure comes from and how to reproduce it.
 - [`reports/timesfm_benchmark/artifact/index.html`](reports/timesfm_benchmark/artifact/index.html):
-  la página interactiva equivalente, con las mismas cifras embebidas en
-  `datos.js` — leaderboards de cribado, nacional, departamental y escala, tamaños
-  de efecto, calibración probabilística y un mapa coroplético del Perú.
+  the equivalent interactive page, with the same figures embedded in
+  `datos.js` — screening, national, departmental, and scale leaderboards,
+  effect sizes, probabilistic calibration, and a choropleth map of Peru.
 
-Las nueve variantes evaluadas: `uni_td_full`, `uni_anom_full`, `tmin_td_full`,
-`tmin_anom_full` (la ganadora en cribado y nacional), `tmin_doy_td_full`,
+The nine variants evaluated: `uni_td_full`, `uni_anom_full`, `tmin_td_full`,
+`tmin_anom_full` (the winner in screening and national), `tmin_doy_td_full`,
 `tmin_td_med`, `tmin_td_short`, `tmin_td_symavg`, `tmin_td_znorm`.
 
-Las métricas que expone el artifact, por nivel de medición:
+The metrics the artifact exposes, per measurement level:
 
-| nivel | celdas | métricas |
+| level | cells | metrics |
 |---|---|---|
-| cribado | 1.106 | `rmse`, skill vs. climatología, celdas/s, y CRPS con cobertura del 80 % para la variante ganadora |
-| nacional | 17.041 (comparación pareada contra la cifra publicada por Palacios) | `rmse`, `mae`, sesgo, `r`, skill vs. climatología, y tamaños de efecto (`ΔRMSE`, IC 95 %, `d` de Cohen, `p`) |
-| departamental | 2.048 (única mesa donde compite la TCN) | `rmse`, `mae`, sesgo, `r`, skill vs. climatología y fracción fuera de rango de control de calidad, agregado y por departamento (Cusco, Lima, Loreto, San Martín) |
-| escala | 436.519 | las mismas métricas del nivel nacional sobre el grid completo de los cuatro departamentos, más el costo medido en celdas/s |
+| screening | 1,106 | `rmse`, skill vs. climatology, cells/s, and CRPS with 80% coverage for the winning variant |
+| national | 17,041 (paired comparison against the figure published by Palacios) | `rmse`, `mae`, bias, `r`, skill vs. climatology, and effect sizes (`ΔRMSE`, 95% CI, Cohen's `d`, `p`) |
+| departmental | 2,048 (the only table where the TCN competes) | `rmse`, `mae`, bias, `r`, skill vs. climatology, and out-of-range QC fraction, aggregated and per department (Cusco, Lima, Loreto, San Martín) |
+| scale | 436,519 | the same national-level metrics over the full grid of the four departments, plus cost measured in cells/s |
 
 ---
 
