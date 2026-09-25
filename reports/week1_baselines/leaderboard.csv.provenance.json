@@ -1,0 +1,72 @@
+{
+  "autoregressive": false,
+  "bead_id": "tdew-x46",
+  "climatology_role": "target_anomaly_base",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-09-24T19:20:46+00:00",
+  "git_commit": "e99316d1ef216cbab008c6af078a33cdff9d7009",
+  "inputs": [
+    "const",
+    "TMIN_anom_lag0",
+    "TMIN_anom_lag1",
+    "TD_anom_lag1",
+    "TD_anom_lag2",
+    "TD_anom_lag3",
+    "TD_anom_lag7",
+    "TD_anom_lag30",
+    "sin_doy_target",
+    "cos_doy_target",
+    "DEM",
+    "TDI",
+    "X",
+    "Y",
+    "LST_DAY_target",
+    "LST_NIGHT_target",
+    "region_Sierra",
+    "region_Selva",
+    "TMIN_anom_lag0_x_Sierra",
+    "TMIN_anom_lag1_x_Sierra",
+    "TD_anom_lag1_x_Sierra",
+    "TD_anom_lag2_x_Sierra",
+    "TD_anom_lag3_x_Sierra",
+    "TD_anom_lag7_x_Sierra",
+    "TD_anom_lag30_x_Sierra",
+    "TMIN_anom_lag0_x_Selva",
+    "TMIN_anom_lag1_x_Selva",
+    "TD_anom_lag1_x_Selva",
+    "TD_anom_lag2_x_Selva",
+    "TD_anom_lag3_x_Selva",
+    "TD_anom_lag7_x_Selva",
+    "TD_anom_lag30_x_Selva"
+  ],
+  "manifest_ref": "docs/protocol/week1_manifest.yaml@2026-09-15",
+  "mlflow_run_id": null,
+  "model_family": "week1_baseline",
+  "model_id": "generalist_mlr",
+  "notes": null,
+  "output_files": [
+    "/home/cvelasquez/Code/tdew/reports/week1_baselines/leaderboard.csv"
+  ],
+  "panel_cell_count": 436519,
+  "panel_file": null,
+  "panel_id": "ALL",
+  "run_id": "0000876ed13843ca9c41d775d05d03ce",
+  "seeds": [],
+  "split_id": "validation+test",
+  "target_type": "td_anomaly",
+  "test_period": [
+    "2015-01-01",
+    "2016-12-31"
+  ],
+  "trained": true,
+  "training_period": [
+    "2002-01-01",
+    "2012-12-31"
+  ],
+  "validation_period": [
+    "2013-01-01",
+    "2014-12-31"
+  ],
+  "variant_label": "generalist_mlr@ALL"
+}

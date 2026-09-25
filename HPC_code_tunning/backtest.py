@@ -46,6 +46,7 @@ _HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(_HERE))
 sys.path.insert(0, str(_HERE.parent))
 
+from tdew_estimation import provenance as prov  # noqa: E402
 from tdew_estimation.anomaly_train import AnomalyTrainingConfig  # noqa: E402
 from tdew_estimation.bucket_layout import bucket_dir, discover_bucket_ids  # noqa: E402
 from tdew_estimation.parquet_io import as_path, read_parquet_any  # noqa: E402
@@ -64,6 +65,111 @@ SPLITS: Dict[str, Tuple[int, Tuple[int, int]]] = {
     "ll4": (2012, (2013, 2016)),
 }
 TRAIN_START = 1981
+
+# Provenance metadata for the four-method ladder this module produces. This is
+# the single source of truth for it: experiments/timesfm/evaluate.py imports
+# this dict rather than re-declaring it, so the two never drift apart. See
+# docs/protocol/timesfm_manifest.yaml, section `rivales`, for the reasoning
+# behind each field.
+RIVAL_PROVENANCE: Dict[str, Dict[str, object]] = {
+    "climatology": dict(
+        model_family="statistical_baseline",
+        model_id="climatology",
+        trained=True,
+        autoregressive=False,
+        target_type="td_raw",
+        climatology_used=True,
+        climatology_role="is_the_method",
+        inputs=("doy",),
+    ),
+    "td_eq_tmin": dict(
+        model_family="statistical_baseline",
+        model_id="td_eq_tmin",
+        trained=False,
+        autoregressive=False,
+        target_type="td_raw",
+        climatology_used=False,
+        climatology_role=None,
+        inputs=("TMIN",),
+    ),
+    "zone_ols": dict(
+        model_family="statistical_baseline",
+        model_id="zone_ols",
+        trained=True,
+        autoregressive=False,
+        target_type="td_raw",
+        climatology_used=False,
+        climatology_role=None,
+        inputs=("TMIN",),
+    ),
+    "tuned": dict(
+        model_family="statistical_palacios",
+        model_id="tuned",
+        trained=True,
+        autoregressive=True,
+        # feature_spec.py:59 fixes TARGET_COL="TD_anom"; forecast_zoned.py:191
+        # reconstructs the physical value as `acc + td_clim[d]` only at the end.
+        # Same anomaly-space pattern as a TimesFM TD_anom variant, which this
+        # codebase already codes as climatology_used=True/target_type=td_anomaly
+        # (see experiments/timesfm/variants.py::Variant.climatology_role) --
+        # scored here the same way for consistency.
+        target_type="td_anomaly",
+        climatology_used=True,
+        climatology_role="target_anomaly_base",
+        inputs=("TMIN_anom", "TD_anom_lag"),
+    ),
+}
+
+
+def build_rival_provenance(
+    method: str,
+    *,
+    split: str,
+    cells: int,
+    bead_id: str,
+    manifest_ref: str,
+    panel_id: str,
+    panel_file: Optional[str],
+    output_files: Tuple[str, ...],
+) -> prov.MetricProvenance:
+    """The provenance record for one of the four ladder methods on one split.
+
+    ``manifest_ref`` is a parameter, not a constant, because the same four
+    methods get cited from two different governing documents depending on who
+    is asking: PAPER_PLAN.md when this module runs on its own, or
+    docs/protocol/timesfm_manifest.yaml when experiments/timesfm/evaluate.py
+    cites them as rivals inside the TimesFM benchmark.
+    """
+    meta = RIVAL_PROVENANCE[method]
+    train_end_year, holdout_years = SPLITS[split]
+    training_period = (
+        (f"{TRAIN_START}-01-01", f"{train_end_year}-12-31") if meta["trained"] else None
+    )
+    test_period = (f"{holdout_years[0]}-01-01", f"{holdout_years[1]}-12-31")
+    return prov.MetricProvenance(
+        run_id=prov.new_run_id(),
+        generated_at=prov.now_iso(),
+        git_commit=prov.git_commit(),
+        bead_id=bead_id,
+        manifest_ref=manifest_ref,
+        model_family=meta["model_family"],
+        model_id=meta["model_id"],
+        variant_label=method,
+        trained=meta["trained"],
+        training_period=training_period,
+        validation_period=None,
+        test_period=test_period,
+        split_id=split,
+        autoregressive=meta["autoregressive"],
+        target_type=meta["target_type"],
+        climatology_used=meta["climatology_used"],
+        climatology_role=meta["climatology_role"],
+        inputs=meta["inputs"],
+        panel_id=panel_id,
+        panel_cell_count=cells,
+        panel_file=panel_file,
+        output_files=output_files,
+    )
 
 
 # ---------------------------------------------------------------------------------------
@@ -187,6 +293,10 @@ def run_backtest(
     split_names: Sequence[str],
     bucket_ids: Sequence[int],
     out_root: Path,
+    bead_id: str = "tdew-214",
+    manifest_ref: str = "PAPER_PLAN.md#5,9",
+    panel_id: str = "unspecified",
+    panel_file: Optional[str] = None,
 ) -> pd.DataFrame:
     """Read each bucket shard once, run every requested split from it, finalize + score all."""
     from HPC_code_tunning.train_zoned import train_bucket_zoned  # GPU import, kept lazy
@@ -210,7 +320,10 @@ def run_backtest(
 
     all_metrics = []
     for s in split_names:
-        m = _finalize_split(s, frames[s], ols[s], out_root / s)
+        m = _finalize_split(
+            s, frames[s], ols[s], out_root / s,
+            bead_id=bead_id, manifest_ref=manifest_ref, panel_id=panel_id, panel_file=panel_file,
+        )
         all_metrics.append(m)
         logger.info("[%s] metrics:\n%s", s, m.to_string(index=False))
     combined = pd.concat(all_metrics, ignore_index=True)
@@ -219,8 +332,11 @@ def run_backtest(
     return combined
 
 
-def _finalize_split(split_name: str, frames: List[pd.DataFrame],
-                    ols: Dict[int, _OLSAccum], out_dir: Path) -> pd.DataFrame:
+def _finalize_split(
+    split_name: str, frames: List[pd.DataFrame],
+    ols: Dict[int, _OLSAccum], out_dir: Path,
+    *, bead_id: str, manifest_ref: str, panel_id: str, panel_file: Optional[str],
+) -> pd.DataFrame:
     """Concatenate a split's per-bucket frames, add global zone-OLS, score, write outputs."""
     train_end_year, holdout_years = SPLITS[split_name]
     if not frames:
@@ -239,14 +355,30 @@ def _finalize_split(split_name: str, frames: List[pd.DataFrame],
     all_df = all_df.dropna(subset=["TD_obs"]).reset_index(drop=True)
 
     out_dir.mkdir(parents=True, exist_ok=True)
-    all_df.to_parquet(out_dir / "predictions.parquet", engine="pyarrow", index=False)
+    predictions_path = out_dir / "predictions.parquet"
+    zone_ols_path = out_dir / "zone_ols.csv"
+    metrics_path = out_dir / "metrics.csv"
+    all_df.to_parquet(predictions_path, engine="pyarrow", index=False)
     pd.DataFrame(
         [{"zone_id": z, "intercept": v[0], "slope": v[1]} for z, v in sorted(coefs.items())]
-    ).to_csv(out_dir / "zone_ols.csv", index=False)
+    ).to_csv(zone_ols_path, index=False)
 
     metrics = _score_all(all_df, split_name, train_end_year, holdout_years)
-    metrics.to_csv(out_dir / "metrics.csv", index=False)
+    metrics.to_csv(metrics_path, index=False)
     logger.info("[%s] wrote %s (%d rows)", split_name, out_dir, len(all_df))
+
+    cells = int(all_df["ID"].nunique())
+    for method in RIVAL_PROVENANCE:
+        outputs = (str(predictions_path), str(metrics_path))
+        if method == "zone_ols":
+            outputs += (str(zone_ols_path),)
+        prov.record_metric_provenance(
+            build_rival_provenance(
+                method, split=split_name, cells=cells, bead_id=bead_id,
+                manifest_ref=manifest_ref, panel_id=panel_id, panel_file=panel_file,
+                output_files=outputs,
+            )
+        )
     return metrics
 
 
@@ -323,6 +455,12 @@ def _parse_args(argv=None) -> argparse.Namespace:
     p.add_argument("--candidates", type=str, default=",".join(DEFAULT_CANDIDATE_POOL))
     p.add_argument("--h-grid", type=str, default="7,11,15,21", help="must cover the manifest's h values")
     p.add_argument("--min-samples", type=int, default=15)
+    p.add_argument("--ids-csv", type=Path, nargs="+", default=None,
+                   help="CSV(s) with an ID column; restrict the backtest to those cells")
+    p.add_argument("--bead-id", default="tdew-214",
+                   help="bead governing this run, for tdew_estimation.provenance")
+    p.add_argument("--manifest-ref", default="PAPER_PLAN.md#5,9",
+                   help="governing protocol doc for tdew_estimation.provenance")
     return p.parse_args(argv)
 
 
@@ -339,6 +477,28 @@ def main(argv=None) -> int:
     id_to_zone = {int(i): int(z) for i, z in zip(zt["ID"], zt["zone_id"]) if int(z) != zones.UNASSIGNED}
     logger.info("zone table: %d assigned IDs, %d zones", len(id_to_zone), len(set(id_to_zone.values())))
 
+    # Optional ID whitelist (added for the TimesFM benchmark, bead tdew-214). The whole
+    # run is already gated on id_to_zone — every shard is intersected with it at
+    # _bucket_split and run_backtest — so shrinking the map here is enough to restrict
+    # the backtest to an explicit cell list. Note this saves no I/O: department cells are
+    # spread over all 8192 buckets, so every shard is still read. It also refits zone_ols
+    # on the restricted cells only, which makes that one baseline incomparable with a
+    # nationwide run; climatology and tuned are per-cell and unaffected.
+    if args.ids_csv:
+        keep = set()
+        for path in args.ids_csv:
+            frame = pd.read_csv(as_path(path))
+            column = "ID" if "ID" in frame.columns else frame.columns[0]
+            keep.update(int(v) for v in frame[column])
+        before = len(id_to_zone)
+        id_to_zone = {i: z for i, z in id_to_zone.items() if i in keep}
+        logger.info(
+            "ID whitelist: %d requested, %d kept of %d assigned, %d zones",
+            len(keep), len(id_to_zone), before, len(set(id_to_zone.values())),
+        )
+        if not id_to_zone:
+            raise SystemExit("the ID whitelist left no assigned cells")
+
     manifest = ZoneManifest(read_manifest(manifest_path))
     candidates = [c.strip() for c in args.candidates.split(",") if c.strip()]
     h_grid = [int(h) for h in args.h_grid.split(",")]
@@ -350,9 +510,16 @@ def main(argv=None) -> int:
         s: _tuning_config(base, SPLITS[s][0], candidates, h_grid, args.min_samples)
         for s in split_names
     }
+    if args.ids_csv:
+        panel_id = ",".join(sorted(p.stem for p in args.ids_csv))
+        panel_file = ",".join(str(p) for p in args.ids_csv)
+    else:
+        panel_id = f"buckets_n{args.n_buckets}_seed{args.seed}"
+        panel_file = None
     combined = run_backtest(
         prepared_root=prepared_root, manifest=manifest, id_to_zone=id_to_zone,
         tunings=tunings, split_names=split_names, bucket_ids=buckets, out_root=out_root,
+        bead_id=args.bead_id, manifest_ref=args.manifest_ref, panel_id=panel_id, panel_file=panel_file,
     )
     logger.info("ALL METRICS:\n%s", combined.to_string(index=False))
     logger.info("wrote %s", out_root / "metrics_all.csv")

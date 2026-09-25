@@ -61,6 +61,7 @@ import pandas as pd
 
 from pipeline.qc import SITES, load_site_ids
 from tdew_estimation import experiment_tracking as et
+from tdew_estimation import provenance as prov
 from tdew_estimation.bucket_layout import discover_bucket_ids
 from tdew_estimation.metrics import MetricsAccum, NormalEquationsAccum, OLSAccum
 
@@ -69,6 +70,12 @@ DEFAULT_GOLD_DIR = REPO_ROOT / "Data" / "gold"
 DEFAULT_SILVER_DIR = REPO_ROOT / "Data" / "silver"
 DEFAULT_OUT = REPO_ROOT / "reports" / "week1_baselines" / "leaderboard.csv"
 BASELINE_DATASET_VERSION = "Data/gold/baseline_dataset"
+
+# docs/protocol/week1_manifest.yaml, frozen_on 2026-09-15: period.splits + target.
+MANIFEST_REF = "docs/protocol/week1_manifest.yaml@2026-09-15"
+TRAIN_PERIOD = ("2002-01-01", "2012-12-31")
+VALIDATION_PERIOD = ("2013-01-01", "2014-12-31")
+TEST_PERIOD = ("2015-01-01", "2016-12-31")
 
 # docs/protocol/week1_manifest.yaml sites.departments[].region_natural
 REGION_NATURAL: Dict[str, str] = {
@@ -96,6 +103,69 @@ GENERALIST_FEATURES = (
     + [f"{c}_x_Selva" for c in LAG_FEATURES]
 )
 REQUIRED_COLS = LAG_FEATURES + STATIC_FEATURES + ["TD_anom_target", "TD_target", "TD_clim_target"]
+
+# Every method here predicts TD_anom_target and adds TD_clim_target back
+# (see predict_all_methods), except climatology, which IS TD_clim_target.
+METHOD_PROVENANCE: Dict[str, Dict[str, object]] = {
+    "climatology": dict(
+        trained=True, autoregressive=False, target_type="td_raw",
+        climatology_used=True, climatology_role="is_the_method", inputs=("ID", "doy"),
+    ),
+    "persistence": dict(
+        trained=False, autoregressive=False, target_type="td_anomaly",
+        climatology_used=True, climatology_role="target_anomaly_base",
+        inputs=("TD_anom_lag1",),
+    ),
+    "dept_ols": dict(
+        trained=True, autoregressive=False, target_type="td_anomaly",
+        climatology_used=True, climatology_role="target_anomaly_base",
+        inputs=("const", "TMIN_anom_lag0"),
+    ),
+    "dept_mlr": dict(
+        trained=True, autoregressive=False, target_type="td_anomaly",
+        climatology_used=True, climatology_role="target_anomaly_base",
+        inputs=tuple(DEPT_FEATURES),
+    ),
+    "generalist_mlr": dict(
+        trained=True, autoregressive=False, target_type="td_anomaly",
+        climatology_used=True, climatology_role="target_anomaly_base",
+        inputs=tuple(GENERALIST_FEATURES),
+    ),
+}
+
+
+def build_method_provenance(
+    site: str, method: str, *, cells: int, bead_id: str, output_files: Tuple[str, ...],
+) -> prov.MetricProvenance:
+    """One record per (site, method): both validation and test rows for that
+    pair share the same fitted coefficients, so they share one provenance
+    record rather than duplicating it per split."""
+    meta = METHOD_PROVENANCE[method]
+    panel_file = None if site == "ALL" else f"Data/silver/department_grid_ids/{site}.csv"
+    return prov.MetricProvenance(
+        run_id=prov.new_run_id(),
+        generated_at=prov.now_iso(),
+        git_commit=prov.git_commit(),
+        bead_id=bead_id,
+        manifest_ref=MANIFEST_REF,
+        model_family="week1_baseline",
+        model_id=method,
+        variant_label=f"{method}@{site}",
+        trained=meta["trained"],
+        training_period=TRAIN_PERIOD if meta["trained"] else None,
+        validation_period=VALIDATION_PERIOD,
+        test_period=TEST_PERIOD,
+        split_id="validation+test",
+        autoregressive=meta["autoregressive"],
+        target_type=meta["target_type"],
+        climatology_used=meta["climatology_used"],
+        climatology_role=meta["climatology_role"],
+        inputs=meta["inputs"],
+        panel_id=site,
+        panel_cell_count=cells,
+        panel_file=panel_file,
+        output_files=output_files,
+    )
 
 
 def _bucket_path(root: Path, bucket_id: int) -> Path:
@@ -276,7 +346,10 @@ def log_mlflow_run(site: str, method: str, metrics_df: pd.DataFrame) -> None:
                     mlflow.log_metric(f"{prefix}_{k}", float(row[k]))
 
 
-def run(*, gold_dir: Path, silver_dir: Path, out_path: Path, max_buckets: Optional[int]) -> pd.DataFrame:
+def run(
+    *, gold_dir: Path, silver_dir: Path, out_path: Path, max_buckets: Optional[int],
+    bead_id: str = "tdew-x46",
+) -> pd.DataFrame:
     baseline_dir = gold_dir / "baseline_dataset"
     if not baseline_dir.exists():
         raise FileNotFoundError(f"{baseline_dir} not found — run pipeline.baseline_features first")
@@ -337,6 +410,20 @@ def run(*, gold_dir: Path, silver_dir: Path, out_path: Path, max_buckets: Option
     with et.start_run("week1-baseline-leaderboard", seed=0, dataset_version=BASELINE_DATASET_VERSION):
         mlflow.log_artifact(str(out_path))
 
+    print("[train_baselines] recording metric provenance...")
+    cells_by_site = {site: len(ids) for site, ids in site_ids_by_site.items()}
+    cells_by_site["ALL"] = sum(cells_by_site.values())
+    for site in list(SITES) + ["ALL"]:
+        for method in METHOD_PROVENANCE:
+            if not ((leaderboard["site"] == site) & (leaderboard["method"] == method)).any():
+                continue
+            prov.record_metric_provenance(
+                build_method_provenance(
+                    site, method, cells=cells_by_site[site], bead_id=bead_id,
+                    output_files=(str(out_path),),
+                )
+            )
+
     return leaderboard
 
 
@@ -351,12 +438,17 @@ def build_parser() -> argparse.ArgumentParser:
         default=None,
         help="Limit to the first N id_buckets (smoke-testing only; omit for a real run).",
     )
+    p.add_argument("--bead-id", default="tdew-x46",
+                    help="bead governing this run, for tdew_estimation.provenance")
     return p
 
 
 def main(argv: List[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
-    run(gold_dir=args.gold_dir, silver_dir=args.silver_dir, out_path=args.out, max_buckets=args.max_buckets)
+    run(
+        gold_dir=args.gold_dir, silver_dir=args.silver_dir, out_path=args.out,
+        max_buckets=args.max_buckets, bead_id=args.bead_id,
+    )
     return 0
 
 

@@ -55,11 +55,14 @@ from experiments.tcn.dataset import (
     DEFAULT_GOLD_DIR,
     DEFAULT_SILVER_DIR,
     DYNAMIC_COLS,
+    PROVENANCE_COMMON,
     TdewWindowDataset,
     load_site_weights,
 )
+from experiments.tcn.train import TOTAL_CELLS, TRAIN_PERIOD, VALIDATION_PERIOD
 from pipeline.qc import SITES
 from tdew_estimation import experiment_tracking as et
+from tdew_estimation import provenance as prov
 from tdew_estimation.models import TCNAttentionConfig, TCNAttentionModel, invert_to_physical
 from tdew_estimation.models.losses import weighted_huber_loss
 
@@ -77,6 +80,42 @@ VARIANTS: Dict[str, Dict[str, bool]] = {
     "residual+film": {"residual": True, "film_identity": True, "uniform_weights": False},
     "residual+film+uniform": {"residual": True, "film_identity": True, "uniform_weights": True},
 }
+
+# PROVENANCE_COMMON vive en experiments/tcn/dataset.py (junto a DYNAMIC_COLS/
+# LABEL_COL, los hechos de los que depende) para que train.py y esta auditoria
+# no mantengan cada una su propia copia que pueda desviarse.
+
+
+def build_provenance(
+    *, variant: str, context_length: int, seed: int, bead_id: str,
+    mlflow_run_id: Optional[str], output_files: tuple[str, ...],
+) -> prov.MetricProvenance:
+    return prov.MetricProvenance(
+        run_id=prov.new_run_id(),
+        generated_at=prov.now_iso(),
+        git_commit=prov.git_commit(),
+        bead_id=bead_id,
+        manifest_ref=PROVENANCE_COMMON["manifest_ref"],
+        model_family="tcn_attention",
+        model_id="week1-tcn-attention-ablation-x46.1",
+        variant_label=f"{variant}_L{context_length}_seed{seed}",
+        trained=True,
+        training_period=TRAIN_PERIOD,
+        validation_period=VALIDATION_PERIOD,
+        test_period=None,
+        split_id="validation",
+        autoregressive=PROVENANCE_COMMON["autoregressive"],
+        target_type=PROVENANCE_COMMON["target_type"],
+        climatology_used=PROVENANCE_COMMON["climatology_used"],
+        climatology_role=PROVENANCE_COMMON["climatology_role"],
+        inputs=PROVENANCE_COMMON["inputs"],
+        panel_id="ALL",
+        panel_cell_count=TOTAL_CELLS,
+        panel_file=None,
+        seeds=(seed,),
+        mlflow_run_id=mlflow_run_id,
+        output_files=output_files,
+    )
 
 
 def load_td_anom_stats(path: Path) -> tuple[float, float]:
@@ -330,6 +369,7 @@ def run(
     out_dir: Path = DEFAULT_OUT,
     variants: Optional[List[str]] = None,
     device: Optional[str] = None,
+    bead_id: str = "tdew-x46.1",
 ) -> pd.DataFrame:
     resolved_device = torch.device(device or ("cuda" if torch.cuda.is_available() else "cpu"))
     if resolved_device.type == "cuda":
@@ -374,6 +414,7 @@ def run(
               + "  ".join(f"{s[:4]}={per_site[s]['rmse']:.4f}" for s in per_site), flush=True)
 
     selected = variants or list(VARIANTS)
+    mlflow_run_ids: Dict[str, str] = {}
     for name in selected:
         flags = VARIANTS[name]
         params = {
@@ -395,7 +436,8 @@ def run(
             site="ALL",
             context_length=context_length,
             params=params,
-        ):
+        ) as active_run:
+            mlflow_run_ids[name] = active_run.info.run_id
             rows.extend(
                 train_variant(
                     name,
@@ -437,6 +479,15 @@ def run(
     summary.to_csv(out_dir / "ablation_summary.csv", index=False)
     print("\n" + summary.to_string(index=False, float_format=lambda v: f"{v:.4f}"), flush=True)
     print(f"\n[ablation] escrito {out_dir / 'ablation_summary.csv'}", flush=True)
+
+    output_files = (str(out_dir / "ablation_summary.csv"), str(out_dir / "ablation_history.csv"))
+    for name in selected:
+        prov.record_metric_provenance(
+            build_provenance(
+                variant=name, context_length=context_length, seed=seed, bead_id=bead_id,
+                mlflow_run_id=mlflow_run_ids.get(name), output_files=output_files,
+            )
+        )
     return summary
 
 
@@ -458,6 +509,8 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("--out-dir", type=Path, default=DEFAULT_OUT)
     p.add_argument("--variants", nargs="*", default=None, choices=list(VARIANTS))
     p.add_argument("--device", type=str, default=None)
+    p.add_argument("--bead-id", default="tdew-x46.1",
+                    help="bead que gobierna esta corrida, para tdew_estimation.provenance")
     return p
 
 
@@ -480,6 +533,7 @@ def main(argv: Optional[List[str]] = None) -> int:
         out_dir=args.out_dir,
         variants=args.variants,
         device=args.device,
+        bead_id=args.bead_id,
     )
     return 0
 

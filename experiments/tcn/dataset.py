@@ -94,6 +94,40 @@ STATIC_COLS: Tuple[str, ...] = ("DEM_norm", "TDI_norm", "X_norm", "Y_norm")
 TARGET_COND_COLS: Tuple[str, ...] = ("sin_doy", "cos_doy", "LST_DAY_norm", "LST_NIGHT_norm")
 LABEL_COL = "TD_anom_norm"
 TD_CLIM_COL = "TD_clim"
+
+# Metadata de proveniencia compartida por todo lo entrenado sobre esta ventana
+# (experiments/tcn/train.py, ablation_x46_1.py y su auditoria): el protocolo,
+# los splits y las features vienen de docs/protocol/week1_manifest.yaml y no
+# cambian con la arquitectura. Ver tdew_estimation.provenance.MetricProvenance.
+#
+# target_type/climatology_used describen lo que el modelo REALMENTE ajusta, no
+# el contrato del manifiesto (`Td(t+1)` en grados): DYNAMIC_COLS/LABEL_COL de
+# arriba son anomalias climatologicas normalizadas (TMIN_anom_norm,
+# TMAX_anom_norm, TD_anom_norm; ver pipeline/gold.py::add_climatology), y
+# tdew_estimation/models/tcn_attention.py::invert_to_physical solo al final
+# suma la climatologia de vuelta para reportar en grados. Mismo patron que las
+# variantes `*_anom` de TimesFM en experiments/timesfm/variants.py, que si se
+# marcan climatology_used=True.
+PROVENANCE_COMMON = {
+    "manifest_ref": "docs/protocol/week1_manifest.yaml@2026-09-15",
+    "autoregressive": False,  # X_{<=t} -> Td(t+1), un paso, sin realimentacion
+    "target_type": "td_anomaly",
+    "climatology_used": True,
+    "climatology_role": "target_anomaly_base_and_input_covariates",
+    "inputs": (
+        "Tmin",
+        "Tmax",
+        "Td_historico",
+        "DEM",
+        "TDI",
+        "LST_DAY",
+        "LST_NIGHT",
+        "X",
+        "Y",
+        "sin(DOY)",
+        "cos(DOY)",
+    ),
+}
 REQUIRED_COLS: Tuple[str, ...] = tuple(
     dict.fromkeys(("ID", "date") + DYNAMIC_COLS + STATIC_COLS + TARGET_COND_COLS + (LABEL_COL, TD_CLIM_COL))
 )
