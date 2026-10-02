@@ -8,9 +8,9 @@ Fecha: 2026-10-02. Bead: `tdew-0bt` (hijo lógico de `tdew-214`). Branch: `tdew-
 |---|---|
 | Implementación y primera ejecución (`66cc5e5`, `5b0c3a2`) | Revisión independiente 1 (Opus, esfuerzo alto): `RECHAZADO` por 2 bloqueantes y 6 menores |
 | Correcciones, MLflow y re-ejecución completa (`a70645e` y el commit de artefactos) | Todos los hallazgos atendidos; suite completa 441 passed |
-| Revisión independiente 2 | Pendiente (ver «Revisión 2» al final) |
+| Revisión independiente 2 (Opus, contexto limpio, con mutaciones y contraste desde parquet) | `RECHAZADO` por 1 bloqueante de tests (ninguna cifra errónea) y 8 menores; ver «Revisión 2» |
 
-Si la revisión 2 da `APROBADO`: `git switch tdew-u8m-paper-timesfm-narrative && git merge --no-ff tdew-214-tier-mes`, `bd close tdew-0bt` y actualizar la fila de Notion con `Bead ID = tdew-0bt` (`Completed`, `Progress = 1`). Si no, la branch queda con las observaciones.
+Si una revisión posterior da `APROBADO`: `git switch tdew-u8m-paper-timesfm-narrative && git merge --no-ff tdew-214-tier-mes`, `bd close tdew-0bt` y actualizar la fila de Notion con `Bead ID = tdew-0bt` (`Completed`, `Progress = 1`). Si no, la branch queda con las observaciones.
 
 ## Hallazgos de la revisión 1 y cómo se atendieron
 
@@ -25,7 +25,7 @@ Si la revisión 2 da `APROBADO`: `git switch tdew-u8m-paper-timesfm-narrative &&
 | 7 | `.md` en formato numérico inglés | Se mantiene (es el formato de `tbl-tiers`) y se documenta en el README | — |
 | 8 | figura opcional sin mencionar | README indica que no se generó y remite a `ll4_bias_by_month.png` | — |
 
-Mutaciones adicionales comprobadas: mes tomado de otra columna y `ddof=1` en la dispersión hacen fallar tests existentes.
+Mutaciones adicionales comprobadas por el autor: mes tomado de otra columna y `ddof=1` en la dispersión hacen fallar tests existentes. La revisión 2 precisó que un desfase de un día en el mes (`FECHA − 1 día`) sobrevive a los tests (menor 1 de la revisión 2).
 
 ## Cambio añadido a petición del usuario: MLflow
 
@@ -71,7 +71,7 @@ Script independiente (no importa `by_tier_month`; agrega con `np.bincount` desde
 
 ## Pendientes y advertencias
 
-1. Revisión 2 (ver abajo) y, si es `APROBADO`, merge, cierre del bead y fila de Notion.
+1. Corregir el bloqueante y los menores de la revisión 2, volver a revisar y, si es `APROBADO`, merge, cierre del bead y fila de Notion.
 2. La figura mensual opcional del paso 5 sigue sin generarse.
 3. `PAPER_PLAN.md` y `paper.qmd` no se tocaron (el archivo es de Palacios). Texto propuesto si Palacios quiere anotarlo, en inglés: «2026-10-02 — TimesFM vs `tuned` by observational-support tier and by month (bead `tdew-0bt`, `PLAN_2.md`). ll4: TimesFM RMSE below `tuned` in all five tiers (0.867 vs 0.946 within; 1.652 vs 1.724 unsupported); `tuned` reproduces `tbl-tiers` exactly. Monthly bias: December `tuned` +0.017, max |bias| 0.402 (January); TimesFM max |bias| 0.325 (January), warm +0.11 to +0.26 °C in March–September. Outputs under `reports/timesfm_benchmark/nacional_limpio/`.»
 4. Los sidecars `.provenance.json` guardan solo el último registro (limitación de `record_metric_provenance`); el registro completo está en el jsonl.
@@ -79,7 +79,30 @@ Script independiente (no importa `by_tier_month`; agrega con `np.bincount` desde
 
 ## Revisión 2
 
-Pendiente.
+Veredicto: `RECHAZADO`. Todas las cifras publicadas se reproducen desde los parquet; el bloqueante es de cobertura de tests.
+
+Verificado sin hallazgo por el revisor: recálculo independiente de las tablas nacionales (75, 180 y 900 filas) y del cribado (25, 60 y 300) con diferencia máxima 1·10⁻¹⁴; copia de `validation_by_support.py` idéntica byte a byte al CSV del paper; RMSE y sesgo globales iguales a `metrics_all.csv` y al leaderboard del cribado (≤ 4,4·10⁻¹⁶); CLI hacia directorios temporales idéntico byte a byte; métricas de MLflow iguales a los CSV (≤ 8,9·10⁻¹⁶); proveniencia vigente coherente; criterios de aceptación §8 cumplidos; 146 passed en los cuatro archivos de test y 441 en la suite completa.
+
+### Bloqueante
+
+1. **Ningún test comprueba que `main()` llame a `panel_check`** (`by_tier_month.py:556-561`, `tests/test_timesfm_by_tier_month.py:474-493`). Sobreviven: quitar la llamada (M7), aplicar al cribado el reparto nacional (M12) y no comprobar el total de celdas (M13). `test_main_returns_1_and_writes_nothing_when_control_fails` devuelve 1 porque `reproduction_check` también falla con datos sintéticos, y `main` no tiene tests en modo cribado (`--preds-dir`). Sin la llamada, el cribado queda sin comprobación de panel y los totales de `ll1` y `ll2` también. Corrección sugerida: un test de `main` en modo cribado sin anular `panel_check`, o un espía que confirme que se llama con `EXPECTED_CRIBADO_CELLS`.
+
+### Menores
+
+1. El mes tomado de `FECHA − 1 día` sobrevive a los tests (los datos sintéticos caen siempre el día 15). Con datos reales el control de `main` sí lo detecta (diciembre de `tuned` pasaría a −0,0056).
+2. Sin test: «sesgo cálido de 0,11 a 0,26», los subrangos «TimesFM de 0,15 a 0,34 y `tuned` de 0,14 a 0,51» y «baja a 0,072» (hoy correctos).
+3. README del benchmark: «los promedios en float32 difieren en el último decimal»; la diferencia medida en el sesgo mensual de TimesFM es de 1,7·10⁻⁸ a 2,6·10⁻⁸. La justificación es vaga.
+4. TRACEABILITY: el comando del cribado no lleva `--mlflow`, pero los registros vigentes del cribado tienen `mlflow_run_id` (`7669ac26…`).
+5. `by_tier_month.py:603-608`: en modo nacional `notes` registra `backtest_root=...`, que no se lee (las columnas de referencia salen del merge, idénticas al run limpio comprobado).
+6. `timesfm_alerts` (`by_tier_month.py:392`, `397`) usa `abs(diff) > tol`: un NaN no genera alerta.
+7. Las 20 filas de la primera corrida conservan `output_files` imprecisos; inevitable en un archivo de solo adición y documentado.
+8. Estilo: el README raíz está en inglés (coherente con ese archivo); este HANDOFF usa negrita en varios sitios y conviene reducirla según `ESTILO_REDACCION.md`.
+
+### Mutaciones que sobreviven
+
+M3a (mes de `FECHA − 1 día`), M7, M12, M13 y M11b/c/d (afirmaciones del README). El resto de las 20 mutaciones probadas (float64 en `_error_frame` y en `score`, mes de otra columna, `ddof=1`, `loc[12]`, NaN, control después de escribir, `mlflow_run_id`, orden de `provenance_targets`, ponderación por `n`, filtro de panel, filtro de no finitos) hace fallar al menos un test.
+
+Desviaciones de §10 aceptadas por el revisor: `PAPER_PLAN.md` sin tocar (archivo de Palacios), figura mensual omitida y `--mlflow` apagado por defecto.
 
 ## Uso de IA
 
