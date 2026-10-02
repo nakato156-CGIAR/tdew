@@ -1,18 +1,18 @@
 {
   "autoregressive": false,
   "bead_id": "tdew-0bt",
-  "climatology_role": null,
-  "climatology_used": false,
+  "climatology_role": "target_anomaly_base",
+  "climatology_used": true,
   "dataset_hash": null,
-  "generated_at": "2026-10-02T16:07:44+00:00",
-  "git_commit": "66cc5e5480d7641c811699f40bfea01b6ec2ee76",
+  "generated_at": "2026-10-02T16:34:31+00:00",
+  "git_commit": "a70645e346db1cf06d148c76c1ed506078521221",
   "inputs": [
-    "TMIN"
+    "TMIN_anom"
   ],
   "manifest_ref": "docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml",
-  "mlflow_run_id": null,
-  "model_family": "statistical_baseline",
-  "model_id": "zone_ols",
+  "mlflow_run_id": "477aa9738526459f9065f3b637744d05",
+  "model_family": "timesfm-3.0",
+  "model_id": "google/timesfm-3.0-pytorch",
   "notes": "backtest_root=/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean; selecci\u00f3n solo con a\u00f1os de entrenamiento; cells=17027; predicciones float32 agregadas en float64; mes por FECHA, sesgo pooled; E5/E8 solo c\u00f3mputo sobre predicciones existentes",
   "output_files": [
     "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/nacional_limpio/tiers_limpio.csv",
@@ -23,19 +23,16 @@
   "panel_cell_count": 17027,
   "panel_file": "reports/timesfm_benchmark/panels/nacional_17027.csv",
   "panel_id": "nacional_17027_limpio",
-  "run_id": "7957278d733f4954b552e48d19697b9f",
+  "run_id": "070730031b0f4b43a95121542555bf4b",
   "seeds": [],
   "split_id": "ll4",
-  "target_type": "td_raw",
+  "target_type": "td_anomaly",
   "test_period": [
     "2013-01-01",
     "2016-12-31"
   ],
-  "trained": true,
-  "training_period": [
-    "1981-01-01",
-    "2012-12-31"
-  ],
+  "trained": false,
+  "training_period": null,
   "validation_period": null,
-  "variant_label": "zone_ols"
+  "variant_label": "tmin_anom_full"
 }
