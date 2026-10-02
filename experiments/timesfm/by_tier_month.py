@@ -15,14 +15,17 @@ float32; todo agregado se calcula en float64.
 from __future__ import annotations
 
 import argparse
+import dataclasses
 import logging
 from pathlib import Path
 from typing import Mapping, Sequence
 
+import mlflow
 import numpy as np
 import pandas as pd
 import pyarrow.parquet as pq
 
+from tdew_estimation import experiment_tracking as et
 from tdew_estimation import provenance as prov
 
 from .evaluate import CLEAN_BACKTEST_ROOT, MANIFEST_REF_LIMPIO, build_row_provenance
@@ -68,6 +71,12 @@ EXPECTED_TIMESFM_BIAS = {
     1: -0.325, 2: 0.061, 3: 0.248, 4: 0.263, 5: 0.112, 6: 0.151,
     7: 0.210, 8: 0.255, 9: 0.193, 10: -0.098, 11: 0.100, 12: 0.089,
 }
+EXPECTED_NATIONAL_CELLS = 17027
+# Reparto del panel de cribado limpio (1.092 celdas comunes con el run limpio).
+EXPECTED_CRIBADO_CELLS = {
+    "within": 842, "near": 79, "marginal": 59, "extrapolated": 65, "unsupported": 47,
+}
+EXPECTED_PEAK_MONTH = 1  # el maximo |sesgo| de tuned cae en enero
 RMSE_TOL = 1e-6
 BIAS_TOL = 5e-4
 ALERT_TOL = 5e-4
@@ -297,6 +306,11 @@ def reduced_markdown(reduced: pd.DataFrame) -> str:
 
 # --------------------------------------------------- control de reproduccion
 
+def _off(value: float, expected: float, tol: float) -> bool:
+    """True si ``value`` no esta a ``tol`` de ``expected``; un NaN siempre falla."""
+    return not (abs(value - expected) <= tol)
+
+
 def reproduction_check(
     tiers: pd.DataFrame,
     *,
@@ -305,11 +319,13 @@ def reproduction_check(
     monthly: pd.DataFrame | None = None,
     expected_dec_bias: float = EXPECTED_DEC_BIAS,
     expected_max_abs_bias: float = EXPECTED_MAX_ABS_BIAS,
+    expected_peak_month: int = EXPECTED_PEAK_MONTH,
 ) -> None:
     """Compara el ``tuned`` ll4 con las cifras del paper. Lanza
     ``ReproductionError`` si no coincide: celdas por tier (exacto), RMSE por
     tier contra ``validation_by_support.csv`` (1e-6) y, si se da ``monthly``,
-    el sesgo de diciembre y el maximo |sesgo| (5e-4)."""
+    el sesgo de diciembre, el maximo |sesgo| y el mes en que ocurre (5e-4).
+    Un valor NaN nunca pasa el control."""
     problems: list[str] = []
     tuned = tiers[(tiers["split"] == "ll4") & (tiers["method"] == "tuned")].set_index("tier")
     for tier, expected in expected_cells.items():
@@ -319,17 +335,50 @@ def reproduction_check(
     paper = pd.read_csv(paper_csv)
     paper = paper[paper["split"] == "ll4"].set_index("tier")
     for tier in tuned.index:
-        diff = abs(float(tuned.loc[tier, "rmse"]) - float(paper.loc[tier, "tuned_rmse"]))
-        if diff > RMSE_TOL:
-            problems.append(f"RMSE tuned {tier}: diferencia {diff:.2e} > {RMSE_TOL:.0e}")
+        ours = float(tuned.loc[tier, "rmse"])
+        theirs = float(paper.loc[tier, "tuned_rmse"])
+        if _off(ours, theirs, RMSE_TOL):
+            problems.append(f"RMSE tuned {tier}: {ours:.8f} vs {theirs:.8f} (tol {RMSE_TOL:.0e})")
     if monthly is not None:
         m = monthly[(monthly["split"] == "ll4") & (monthly["method"] == "tuned")].set_index("month")
         dec = float(m.loc[12, "bias_pooled"])
-        if abs(dec - expected_dec_bias) > BIAS_TOL:
+        if _off(dec, expected_dec_bias, BIAS_TOL):
             problems.append(f"sesgo diciembre tuned: {dec:+.4f} != {expected_dec_bias:+.3f}")
-        peak = float(m["bias_pooled"].abs().max())
-        if abs(peak - expected_max_abs_bias) > BIAS_TOL:
-            problems.append(f"sesgo maximo |tuned|: {peak:.4f} != {expected_max_abs_bias:.3f}")
+        absolute = m["bias_pooled"].abs()
+        if absolute.isna().any():
+            problems.append("sesgo mensual tuned con NaN")
+        else:
+            peak_month = int(absolute.idxmax())
+            if peak_month != expected_peak_month:
+                problems.append(
+                    f"el maximo |sesgo| de tuned cae en el mes {peak_month}, no en enero "
+                    f"(mes {expected_peak_month})")
+            peak = float(absolute.max())
+            if _off(peak, expected_max_abs_bias, BIAS_TOL):
+                problems.append(f"sesgo maximo |tuned|: {peak:.4f} != {expected_max_abs_bias:.3f}")
+    if problems:
+        raise ReproductionError("; ".join(problems))
+
+
+def panel_check(
+    tiers: pd.DataFrame,
+    *,
+    expected_total: int,
+    expected_by_tier: Mapping[str, int],
+) -> None:
+    """Cada split puntua exactamente el panel esperado: total de celdas y
+    reparto por tier. Lanza ``ReproductionError`` si no coincide."""
+    problems: list[str] = []
+    tuned = tiers[tiers["method"] == "tuned"]
+    for split, group in tuned.groupby("split"):
+        by_tier = group.set_index("tier")["cells"]
+        total = int(by_tier.sum())
+        if total != expected_total:
+            problems.append(f"{split}: {total} celdas != {expected_total}")
+        for tier, expected in expected_by_tier.items():
+            got = int(by_tier.get(tier, 0))
+            if got != expected:
+                problems.append(f"{split} {tier}: {got} celdas != {expected}")
     if problems:
         raise ReproductionError("; ".join(problems))
 
@@ -376,6 +425,86 @@ def build_provenance(
     )
 
 
+def provenance_targets(
+    splits: Sequence[str], files: Mapping[str, str],
+) -> list[tuple[str, str, tuple[str, ...]]]:
+    """(split, metodo, output_files) de cada registro. Cada registro lista solo
+    los CSV que contienen ese split y metodo: ``files["texto"]`` (tabla reducida)
+    solo para ll4 y TimesFM, tuned y climatologia. TimesFM/ll4 va al final: los
+    sidecars guardan el ultimo registro y asi describen el metodo principal."""
+    core = tuple(files[k] for k in ("tiers", "mensual", "mes_tier"))
+    targets = []
+    for split in splits:
+        for method in METHOD_COLS:
+            extra = ()
+            if "texto" in files and split == "ll4" and method in REDUCED_METHODS:
+                extra = (files["texto"],)
+            targets.append((split, method, core + extra))
+    targets.sort(key=lambda t: (t[0], t[1]) == ("ll4", "timesfm"))
+    return targets
+
+
+# ------------------------------------------------------------------ MLflow
+
+MLFLOW_EXPERIMENT = "tdew-timesfm-benchmark"
+_TIER_METRICS = ("rmse", "mae", "bias", "r", "skill")
+
+
+def _overall(tiers: pd.DataFrame, method: str) -> dict[str, float]:
+    """RMSE, sesgo y skill sobre todos los tiers, ponderando por ``n``."""
+    sub = tiers[tiers["method"] == method]
+    n = sub["n"].to_numpy(dtype="float64")
+    rmse = float(np.sqrt((n * sub["rmse"].to_numpy() ** 2).sum() / n.sum()))
+    bias = float((n * sub["bias"].to_numpy()).sum() / n.sum())
+    clim = tiers[tiers["method"] == SKILL_REFERENCE]
+    nc = clim["n"].to_numpy(dtype="float64")
+    clim_rmse = float(np.sqrt((nc * clim["rmse"].to_numpy() ** 2).sum() / nc.sum()))
+    return {"rmse_all": rmse, "bias_all": bias, "skill_all": 1 - rmse / clim_rmse}
+
+
+def log_mlflow(
+    tiers: pd.DataFrame,
+    monthly: pd.DataFrame,
+    *,
+    splits: Sequence[str],
+    panel_id: str,
+    bead_id: str,
+    tracking_uri: str = et.DEFAULT_TRACKING_URI,
+    experiment_name: str = MLFLOW_EXPERIMENT,
+) -> dict[str, str]:
+    """Una corrida de evaluacion de MLflow por split, con las metricas de E5 y
+    E8 de todos los metodos. Devuelve ``{split: run_id}``. TimesFM no se entrena:
+    la corrida registra una evaluacion, no un entrenamiento."""
+    run_ids: dict[str, str] = {}
+    for split in splits:
+        metrics: dict[str, float] = {}
+        t = tiers[tiers["split"] == split]
+        for method in METHOD_COLS:
+            for _, row in t[t["method"] == method].iterrows():
+                for metric in _TIER_METRICS:
+                    metrics[f"{method}_{row['tier']}_{metric}"] = float(row[metric])
+            metrics.update({f"{method}_{k}": v for k, v in _overall(t, method).items()})
+        m = monthly[monthly["split"] == split]
+        for _, row in m.iterrows():
+            metrics[f"{row['method']}_bias_m{int(row['month']):02d}"] = float(row["bias_pooled"])
+            if pd.notna(row["cell_bias_std"]):
+                metrics[f"{row['method']}_cell_bias_std_m{int(row['month']):02d}"] = float(row["cell_bias_std"])
+        with et.start_run(
+            f"timesfm-tier-month-{split}",
+            dataset_version=panel_id,
+            params={
+                "split": split, "panel_id": panel_id, "bead_id": bead_id,
+                "variant": DEFAULT_VARIANT, "methods": ",".join(METHOD_COLS),
+                "trained": False, "aggregation": "pooled, float64, mes por FECHA",
+            },
+            tracking_uri=tracking_uri,
+            experiment_name=experiment_name,
+        ) as run:
+            mlflow.log_metrics(metrics)
+            run_ids[split] = run.info.run_id
+    return run_ids
+
+
 # ---------------------------------------------------------------------- CLI
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -394,6 +523,11 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--panel-id", required=True)
     parser.add_argument("--bead-id", default="tdew-0bt")
     parser.add_argument("--suffix", default="_limpio")
+    parser.add_argument("--registry-path", type=Path, default=prov.DEFAULT_REGISTRY_PATH)
+    parser.add_argument("--mlflow", action="store_true",
+                        help="registra una corrida de evaluacion de MLflow por split")
+    parser.add_argument("--mlflow-uri", default=et.DEFAULT_TRACKING_URI)
+    parser.add_argument("--mlflow-experiment", default=MLFLOW_EXPERIMENT)
     args = parser.parse_args(argv)
     if (args.merged_root is None) == (args.preds_dir is None):
         parser.error("indicar exactamente uno de --merged-root o --preds-dir")
@@ -419,13 +553,24 @@ def main(argv: Sequence[str] | None = None) -> int:
     monthly_df = pd.concat(monthly, ignore_index=True)
     by_tier_df = pd.concat(by_tier, ignore_index=True)
 
+    try:
+        panel_check(
+            tiers_df,
+            expected_total=EXPECTED_NATIONAL_CELLS if nacional else sum(EXPECTED_CRIBADO_CELLS.values()),
+            expected_by_tier=EXPECTED_CELLS if nacional else EXPECTED_CRIBADO_CELLS,
+        )
+        if nacional and "ll4" in splits:
+            reproduction_check(
+                tiers_df, paper_csv=args.paper_csv, expected_cells=EXPECTED_CELLS,
+                monthly=monthly_df, expected_dec_bias=EXPECTED_DEC_BIAS,
+                expected_max_abs_bias=EXPECTED_MAX_ABS_BIAS,
+                expected_peak_month=EXPECTED_PEAK_MONTH,
+            )
+    except ReproductionError as exc:
+        logger.error("ERROR control de reproduccion: %s", exc)
+        return 1
+    logger.info("control de reproduccion: OK")
     if nacional and "ll4" in splits:
-        try:
-            reproduction_check(tiers_df, paper_csv=args.paper_csv, monthly=monthly_df)
-        except ReproductionError as exc:
-            logger.error("ERROR control de reproduccion: %s", exc)
-            return 1
-        logger.info("control de reproduccion: OK")
         for alert in timesfm_alerts(tiers_df, monthly_df):
             logger.warning("ALERTA %s", alert)
 
@@ -446,20 +591,29 @@ def main(argv: Sequence[str] | None = None) -> int:
         print(reduced_markdown(reduced))
 
     panel_file = str(args.panel_file) if args.panel_file else str(args.merged_root or args.preds_dir)
-    output_files = tuple(str(p) for p in outputs.values())
-    for split in splits:
-        for method in METHOD_COLS:
-            notes = (
-                f"backtest_root={Path(args.backtest_root).resolve()}; selección solo con años de "
-                f"entrenamiento; cells={cells_by_split[split]}; predicciones float32 "
-                "agregadas en float64; mes por FECHA, sesgo pooled; E5/E8 solo cómputo "
-                "sobre predicciones existentes"
-            )
-            prov.record_metric_provenance(build_provenance(
-                method, split=split, cells=cells_by_split[split], bead_id=args.bead_id,
-                panel_id=args.panel_id, panel_file=panel_file, output_files=output_files,
-                notes=notes,
-            ))
+    files = {k: str(v) for k, v in outputs.items()}
+    run_ids: dict[str, str] = {}
+    if args.mlflow:
+        run_ids = log_mlflow(
+            tiers_df, monthly_df, splits=splits, panel_id=args.panel_id, bead_id=args.bead_id,
+            tracking_uri=args.mlflow_uri, experiment_name=args.mlflow_experiment,
+        )
+        logger.info("MLflow: %s", run_ids)
+    for split, method, output_files in provenance_targets(splits, files):
+        notes = (
+            f"backtest_root={Path(args.backtest_root).resolve()}; selección solo con años de "
+            f"entrenamiento; cells={cells_by_split[split]}; predicciones float32 "
+            "agregadas en float64; mes por FECHA, sesgo pooled; E5/E8 solo cómputo "
+            "sobre predicciones existentes"
+        )
+        record = build_provenance(
+            method, split=split, cells=cells_by_split[split], bead_id=args.bead_id,
+            panel_id=args.panel_id, panel_file=panel_file, output_files=output_files,
+            notes=notes,
+        )
+        if split in run_ids:
+            record = dataclasses.replace(record, mlflow_run_id=run_ids[split])
+        prov.record_metric_provenance(record, registry_path=args.registry_path)
     return 0
 
 

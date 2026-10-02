@@ -161,20 +161,42 @@ def test_monthly_bias_by_tier_shape_and_values():
     assert one["bias"] == pytest.approx((sub["pred_timesfm"] - sub["TD_obs"]).mean())
 
 
-def test_float32_inputs_are_aggregated_in_float64():
-    n = 2_000_000
-    obs = np.zeros(n, dtype="float32")
-    pred = np.full(n, 0.1, dtype="float32")
+def _float32_trap(n=1000, seed=3):
+    """Datos donde restar y promediar en float32 pierde el valor de ``obs``:
+    pred ~ 2**25 (separacion 2 entre float32) y obs < 1, de modo que
+    ``pred - obs`` en float32 redondea de vuelta a ``pred``."""
+    rng = np.random.default_rng(seed)
+    obs = rng.uniform(0.1, 0.9, n).astype("float32")
+    pred = (2**25 + 2 * rng.integers(0, 50, n)).astype("float32")
+    return obs, pred
+
+
+def test_float32_trap_premise_float32_arithmetic_is_wrong():
+    # Precondicion: sin casteo, el resultado difiere de float64 por > 0,1.
+    obs, pred = _float32_trap()
+    err32 = float((pred - obs).mean())
+    err64 = float((pred.astype("float64") - obs.astype("float64")).mean())
+    assert abs(err32 - err64) > 0.1
+
+
+def test_aggregates_use_float64_even_when_inputs_are_float32():
+    obs, pred = _float32_trap()
+    n = len(obs)
     df = pd.DataFrame({
-        "ID": np.zeros(n, dtype="int64"),
+        "ID": np.arange(n) % 4,
         "FECHA": pd.Timestamp("2016-03-01"),
         "TD_obs": obs, "tier": "within",
         **{c: pred for c in PRED_COLS},
     })
-    exact = float(np.float32(0.1))  # el valor real almacenado, en float64
-    got = monthly_bias(df, "ll4", dispersion=False).query("method == 'tuned'")["bias_pooled"].iloc[0]
-    assert got == pytest.approx(exact, abs=1e-15)
-    assert monthly_bias(df, "ll4", dispersion=False)["bias_pooled"].dtype == np.float64
+    expected = float((pred.astype("float64") - obs.astype("float64")).mean())
+    got_month = monthly_bias(df, "ll4", dispersion=False).query("method == 'tuned'")
+    assert got_month["bias_pooled"].iloc[0] == pytest.approx(expected, abs=1e-6)
+    got_tier = tier_table(df, "ll4").query("method == 'tuned'")
+    assert got_tier["bias"].iloc[0] == pytest.approx(expected, abs=1e-6)
+    got_tier_month = monthly_bias_by_tier(df, "ll4").query("method == 'tuned'")
+    assert got_tier_month["bias"].iloc[0] == pytest.approx(expected, abs=1e-6)
+    direct = score(pred, obs)  # score recibe float32 y debe castear
+    assert direct["bias"] == pytest.approx(expected, abs=1e-6)
 
 
 # ------------------------------------------------------------- reducida
@@ -248,6 +270,98 @@ def test_reproduction_check_raises_on_monthly_bias_mismatch(tmp_path):
         )
 
 
+def _monthly_tuned(overrides=None) -> pd.DataFrame:
+    """Sesgo mensual de tuned ll4 con enero -0,402 y diciembre +0,017."""
+    bias = {m: 0.05 for m in range(1, 13)}
+    bias.update({1: -0.402, 12: 0.017, 6: -0.137})
+    bias.update(overrides or {})
+    return pd.DataFrame({
+        "split": "ll4", "method": "tuned", "month": list(bias),
+        "bias_pooled": list(bias.values()),
+    })
+
+
+def _ok_inputs(tmp_path):
+    df = _panel(n_cells=10)
+    t = tier_table(df, "ll4")
+    cells = t[t["method"] == "tuned"].set_index("tier")["cells"].to_dict()
+    return t, cells, _paper_csv(tmp_path, df)
+
+
+def test_reproduction_check_positive_case_with_monthly(tmp_path):
+    t, cells, csv = _ok_inputs(tmp_path)
+    reproduction_check(t, paper_csv=csv, expected_cells=cells, monthly=_monthly_tuned())
+
+
+def test_reproduction_check_uses_december_not_another_month(tmp_path):
+    t, cells, csv = _ok_inputs(tmp_path)
+    with pytest.raises(ReproductionError, match="diciembre"):
+        reproduction_check(t, paper_csv=csv, expected_cells=cells,
+                           monthly=_monthly_tuned({12: 0.2}))
+
+
+def test_reproduction_check_peak_must_be_in_january(tmp_path):
+    t, cells, csv = _ok_inputs(tmp_path)
+    moved = _monthly_tuned({1: -0.1, 3: -0.402})
+    with pytest.raises(ReproductionError, match="enero"):
+        reproduction_check(t, paper_csv=csv, expected_cells=cells, monthly=moved)
+
+
+def test_reproduction_check_peak_magnitude(tmp_path):
+    t, cells, csv = _ok_inputs(tmp_path)
+    with pytest.raises(ReproductionError, match="maximo"):
+        reproduction_check(t, paper_csv=csv, expected_cells=cells,
+                           monthly=_monthly_tuned({1: -0.5}))
+
+
+@pytest.mark.parametrize("what", ["rmse", "december", "peak_month"])
+def test_reproduction_check_nan_is_never_ok(tmp_path, what):
+    t, cells, csv = _ok_inputs(tmp_path)
+    monthly = _monthly_tuned()
+    if what == "rmse":
+        t = t.copy()
+        t.loc[(t["method"] == "tuned") & (t["tier"] == "within"), "rmse"] = np.nan
+    elif what == "december":
+        monthly.loc[monthly["month"] == 12, "bias_pooled"] = np.nan
+    else:
+        monthly.loc[monthly["month"] == 1, "bias_pooled"] = np.nan
+    with pytest.raises(ReproductionError):
+        reproduction_check(t, paper_csv=csv, expected_cells=cells, monthly=monthly)
+
+
+def _tiers_with_cells(by_tier: dict, splits=("ll4",)) -> pd.DataFrame:
+    rows = [{"split": s, "tier": t, "method": "tuned", "cells": c}
+            for s in splits for t, c in by_tier.items()]
+    return pd.DataFrame(rows)
+
+
+def test_panel_check_passes_for_expected_panel():
+    by_tier = {"within": 3, "near": 2}
+    btm.panel_check(_tiers_with_cells(by_tier, ("ll1", "ll2", "ll4")),
+                    expected_total=5, expected_by_tier=by_tier)
+
+
+def test_panel_check_fails_on_wrong_total_in_any_split():
+    by_tier = {"within": 3, "near": 2}
+    t = pd.concat([_tiers_with_cells(by_tier, ("ll1",)),
+                   _tiers_with_cells({"within": 3, "near": 1}, ("ll2",))])
+    with pytest.raises(ReproductionError, match="ll2"):
+        btm.panel_check(t, expected_total=5, expected_by_tier=by_tier)
+
+
+def test_panel_check_fails_on_wrong_tier_split_even_if_total_matches():
+    t = _tiers_with_cells({"within": 2, "near": 3})
+    with pytest.raises(ReproductionError, match="within"):
+        btm.panel_check(t, expected_total=5, expected_by_tier={"within": 3, "near": 2})
+
+
+def test_expected_panel_constants_match_the_paper():
+    assert btm.EXPECTED_NATIONAL_CELLS == 17027 == sum(btm.EXPECTED_CELLS.values())
+    assert btm.EXPECTED_CRIBADO_CELLS == {
+        "within": 842, "near": 79, "marginal": 59, "extrapolated": 65, "unsupported": 47}
+    assert sum(btm.EXPECTED_CRIBADO_CELLS.values()) == 1092
+
+
 # ------------------------------------------------------------ load_panel
 
 def test_load_panel_national_reads_merge_and_casts_float64(tmp_path):
@@ -316,3 +430,139 @@ def test_real_data_tuned_ll4_reproduces_paper_by_tier():
     for tier in TIERS:
         assert got.loc[tier, "cells"] == paper.loc[tier, "cells"]
         assert got.loc[tier, "rmse"] == pytest.approx(paper.loc[tier, "tuned_rmse"], abs=1e-6)
+
+
+# ------------------------------------------------------------------- main
+
+def _write_inputs(tmp_path, n_cells=10):
+    merged = tmp_path / "merged" / "ll4"
+    merged.mkdir(parents=True)
+    df = _panel(n_cells=n_cells)
+    df.drop(columns="tier").to_parquet(merged / "predictions.parquet", index=False)
+    support = pd.DataFrame({"ID": range(n_cells), "tier": df.groupby("ID")["tier"].first().to_numpy()})
+    support_path = tmp_path / "support.parquet"
+    support.to_parquet(support_path)
+    paper = _paper_csv(tmp_path, df)
+    return df, support_path, paper
+
+
+def _argv(tmp_path, support, paper, out="out"):
+    return [
+        "--merged-root", str(tmp_path / "merged"), "--splits", "ll4",
+        "--support-distance", str(support), "--paper-csv", str(paper),
+        "--out-dir", str(tmp_path / out), "--panel-id", "sintetico",
+        "--registry-path", str(tmp_path / "registry.jsonl"),
+    ]
+
+
+def test_main_happy_path_writes_outputs_and_provenance(tmp_path, monkeypatch):
+    import json
+    _, support, paper = _write_inputs(tmp_path)
+    monkeypatch.setattr(btm, "panel_check", lambda *a, **k: None)
+    monkeypatch.setattr(btm, "reproduction_check", lambda *a, **k: None)
+    assert btm.main(_argv(tmp_path, support, paper)) == 0
+    out = tmp_path / "out"
+    for name in ("tiers_limpio.csv", "sesgo_mensual_limpio.csv", "sesgo_mes_tier_limpio.csv",
+                 "tiers_texto_limpio.csv", "tiers_texto_limpio.md"):
+        assert (out / name).exists(), name
+    lines = (tmp_path / "registry.jsonl").read_text().strip().splitlines()
+    assert len(lines) == len(METHOD_COLS)  # 1 split x 5 metodos
+    sidecar = json.loads((out / "tiers_limpio.csv.provenance.json").read_text())
+    assert sidecar["variant_label"] == "tmin_anom_full"  # el ultimo escritor es TimesFM
+
+
+def test_main_returns_1_and_writes_nothing_when_control_fails(tmp_path):
+    # Con datos sinteticos el panel real (17.027 celdas) no coincide: el control debe abortar.
+    _, support, paper = _write_inputs(tmp_path)
+    assert btm.main(_argv(tmp_path, support, paper)) == 1
+    out = tmp_path / "out"
+    assert not list(out.glob("*.csv")) if out.exists() else True
+    assert not (tmp_path / "registry.jsonl").exists()
+
+
+def test_main_calls_reproduction_check_before_writing(tmp_path, monkeypatch):
+    _, support, paper = _write_inputs(tmp_path)
+    monkeypatch.setattr(btm, "panel_check", lambda *a, **k: None)
+
+    def boom(*a, **k):
+        raise ReproductionError("fallo simulado")
+
+    monkeypatch.setattr(btm, "reproduction_check", boom)
+    assert btm.main(_argv(tmp_path, support, paper)) == 1
+    out = tmp_path / "out"
+    assert not list(out.glob("*.csv")) if out.exists() else True
+
+
+# ----------------------------------------------------------------- MLflow
+
+def _mlflow_inputs(n_cells=10):
+    df = _panel(n_cells=n_cells)
+    tiers = tier_table(df, "ll4")
+    monthly = monthly_bias(df, "ll4", dispersion=True)
+    return df, tiers, monthly
+
+
+def test_log_mlflow_one_run_per_split_with_tier_and_month_metrics(tmp_path):
+    from mlflow.tracking import MlflowClient
+
+    _, tiers, monthly = _mlflow_inputs()
+    uri = f"sqlite:///{tmp_path / 'mlflow.db'}"
+    run_ids = btm.log_mlflow(
+        tiers, monthly, splits=["ll4"], panel_id="nacional_17027_limpio", bead_id="tdew-0bt",
+        tracking_uri=uri, experiment_name="test-timesfm",
+    )
+    assert set(run_ids) == {"ll4"}
+    run = MlflowClient(tracking_uri=uri).get_run(run_ids["ll4"])
+    row = tiers[(tiers["tier"] == "within") & (tiers["method"] == "timesfm")].iloc[0]
+    assert run.data.metrics["timesfm_within_rmse"] == pytest.approx(row["rmse"])
+    assert run.data.metrics["timesfm_within_skill"] == pytest.approx(row["skill"])
+    assert "tuned_unsupported_rmse" in run.data.metrics or "tuned_extrapolated_rmse" in run.data.metrics
+    dec = monthly[(monthly["method"] == "tuned") & (monthly["month"] == 12)].iloc[0]
+    assert run.data.metrics["tuned_bias_m12"] == pytest.approx(dec["bias_pooled"])
+    assert run.data.metrics["tuned_cell_bias_std_m12"] == pytest.approx(dec["cell_bias_std"])
+    assert run.data.tags["dataset_version"] == "nacional_17027_limpio"
+    assert run.data.params["split"] == "ll4"
+    assert run.data.params["bead_id"] == "tdew-0bt"
+
+
+def test_log_mlflow_overall_rmse_is_n_weighted_over_tiers(tmp_path):
+    from mlflow.tracking import MlflowClient
+
+    df, tiers, monthly = _mlflow_inputs()
+    uri = f"sqlite:///{tmp_path / 'mlflow.db'}"
+    run_ids = btm.log_mlflow(tiers, monthly, splits=["ll4"], panel_id="p", bead_id="b",
+                             tracking_uri=uri, experiment_name="test-timesfm")
+    run = MlflowClient(tracking_uri=uri).get_run(run_ids["ll4"])
+    for method, col in METHOD_COLS.items():
+        pooled = score(df[col].to_numpy(), df["TD_obs"].to_numpy())
+        assert run.data.metrics[f"{method}_rmse_all"] == pytest.approx(pooled["rmse"])
+        assert run.data.metrics[f"{method}_bias_all"] == pytest.approx(pooled["bias"])
+
+
+def test_main_mlflow_flag_records_run_id_in_provenance(tmp_path, monkeypatch):
+    import json
+    from mlflow.tracking import MlflowClient
+
+    _, support, paper = _write_inputs(tmp_path)
+    monkeypatch.setattr(btm, "panel_check", lambda *a, **k: None)
+    monkeypatch.setattr(btm, "reproduction_check", lambda *a, **k: None)
+    uri = f"sqlite:///{tmp_path / 'mlflow.db'}"
+    argv = _argv(tmp_path, support, paper) + ["--mlflow", "--mlflow-uri", uri,
+                                              "--mlflow-experiment", "test-timesfm"]
+    assert btm.main(argv) == 0
+    records = [json.loads(l) for l in (tmp_path / "registry.jsonl").read_text().splitlines()]
+    run_ids = {r["mlflow_run_id"] for r in records}
+    assert len(run_ids) == 1 and None not in run_ids  # 1 split -> 1 run
+    run = MlflowClient(tracking_uri=uri).get_run(run_ids.pop())
+    assert run.data.metrics["timesfm_rmse_all"] > 0
+
+
+def test_main_without_mlflow_flag_leaves_run_id_empty(tmp_path, monkeypatch):
+    import json
+
+    _, support, paper = _write_inputs(tmp_path)
+    monkeypatch.setattr(btm, "panel_check", lambda *a, **k: None)
+    monkeypatch.setattr(btm, "reproduction_check", lambda *a, **k: None)
+    assert btm.main(_argv(tmp_path, support, paper)) == 0
+    records = [json.loads(l) for l in (tmp_path / "registry.jsonl").read_text().splitlines()]
+    assert all(r["mlflow_run_id"] is None for r in records)

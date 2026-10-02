@@ -68,7 +68,7 @@ Verificadas con lecturas reales en memoria, sin escribir archivos ni bajo `$RES`
 | El sesgo mensual de `tuned` ll4 limpio reproduce la cita del paper. | Diciembre +0,017; máximo \|sesgo\| 0,402 (enero, −0,402). |
 | Sesgo mensual de TimesFM ll4 (valores esperados). | Enero −0,325, febrero +0,061, marzo +0,248, abril +0,263, mayo +0,112, junio +0,151, julio +0,210, agosto +0,255, septiembre +0,193, octubre −0,098, noviembre +0,100, diciembre +0,089. |
 | Convención de mes del código existente. | `effect_sizes._plots` usa `pd.to_datetime(FECHA).dt.month` y `mean(pred − obs)` pooled sobre todas las celdas-día del focal, por split. No existe CSV. |
-| La dispersión entre celdas del sesgo mensual es relevante. | Desviación del sesgo por celda×mes de 0,15 a 0,51 °C (enero `tuned` 0,51; TimesFM 0,33). El pooled oculta variación espacial. |
+| La dispersión entre celdas del sesgo mensual es relevante. | Desviación del sesgo por celda×mes de 0,14 a 0,51 °C (enero `tuned` 0,51; TimesFM 0,33). El pooled oculta variación espacial. |
 | El panel de cribado limpio es una muestra estratificada. | De las 1.092 celdas: within 842, near 79, marginal 59, extrapolated 65, unsupported 47. |
 | Las predicciones de TimesFM son float32. | Los promedios en float32 difieren del float64 en el último decimal. |
 | `validation_by_support.py` no es reutilizable tal cual. | Está fijo a `tuned`, `clima`, `Td=Tmin`, `zone_ols`, lee `$BACKTEST_ROOT` y escribe su CSV junto al script. La lógica de `score()` y de unión con `tier` sí es reutilizable. |
@@ -215,7 +215,7 @@ Detalle en la sección 10.
 - **Orden de ejecución.** El merge de PLAN_1 aún no existe. Si PLAN_1 cambia el nombre de la columna o la ruta, el script falla de forma explícita (comprobación de columnas al inicio).
 - **Predicciones float32.** Sin casteo, los promedios difieren en el último decimal. Mitigado con la conversión a float64 y un test.
 - **Cribado no representativo.** Una lectura apresurada de los números por tier del cribado puede llevar a conclusiones erróneas. Mitigado con la nota en README y exclusión de la tabla del texto.
-- **Sesgo mensual sensible a la agregación.** Pooled y por celda dan lecturas distintas (dispersión de 0,15 a 0,51 °C). Se publican ambas en `ll4` y se documenta cuál reproduce el paper.
+- **Sesgo mensual sensible a la agregación.** Pooled y por celda dan lecturas distintas (dispersión de 0,14 a 0,51 °C). Se publican ambas en `ll4` y se documenta cuál reproduce el paper.
 - **Atribución del +0,02 de diciembre.** El paper lo atribuye a la selección por zona×doy del run limpio. El control confirma +0,017 en `backtest_clean`. No se extrapola a otros runs.
 - **Comparación entre tiers distintos.** TimesFM y `tuned` se puntúan sobre las mismas 17.027 celdas, por lo que la diferencia es pareada. No se interpretan los CSV del cribado frente a los nacionales.
 - **Convención de tier.** Los tiers se heredan de `support_distance.parquet` (distancia al dominio SENAMHI) sin recalcular. Si el archivo cambia, el control de celdas por tier falla.

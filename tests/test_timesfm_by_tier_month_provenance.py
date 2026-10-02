@@ -9,6 +9,7 @@ import pytest
 
 from experiments.timesfm.by_tier_month import (
     METHOD_COLS,
+    provenance_targets,
     build_provenance,
     method_provenance_name,
 )
@@ -55,3 +56,32 @@ def test_tuned_is_trained_on_clean_period():
     r = _build("tuned")
     assert r.trained is True
     assert r.training_period == ("1981-01-01", "2012-12-31")
+
+
+_FILES = {
+    "tiers": "d/tiers_limpio.csv",
+    "mensual": "d/sesgo_mensual_limpio.csv",
+    "mes_tier": "d/sesgo_mes_tier_limpio.csv",
+    "texto": "d/tiers_texto_limpio.csv",
+}
+
+
+def test_texto_csv_only_in_ll4_and_reduced_methods():
+    targets = provenance_targets(["ll1", "ll2", "ll4"], _FILES)
+    assert len(targets) == 3 * len(METHOD_COLS)
+    for split, method, files in targets:
+        in_texto = _FILES["texto"] in files
+        assert in_texto == (split == "ll4" and method in {"timesfm", "tuned", "climatology"})
+        assert {_FILES["tiers"], _FILES["mensual"], _FILES["mes_tier"]} <= set(files)
+
+
+def test_timesfm_ll4_is_written_last_so_sidecars_describe_it():
+    targets = provenance_targets(["ll1", "ll2", "ll4"], _FILES)
+    assert (targets[-1][0], targets[-1][1]) == ("ll4", "timesfm")
+    assert len({(s, m) for s, m, _ in targets}) == len(targets)
+
+
+def test_cribado_has_no_texto_file():
+    files = {k: v for k, v in _FILES.items() if k != "texto"}
+    targets = provenance_targets(["ll4"], files)
+    assert all(_FILES["texto"] not in f for _, _, f in targets)
