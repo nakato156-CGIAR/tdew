@@ -226,6 +226,60 @@ artifact_data.build(Path("reports/timesfm_benchmark/artifact/datos.js"), silver=
 PY
 ```
 
+### Soporte observacional y sesgo mensual (E5, E8)
+
+```bash
+# Nacional: lee el merge intermedio de $WORK; no escribe bajo $RES
+uv run python -m experiments.timesfm.by_tier_month \
+  --merged-root $WORK/backtest_clean_timesfm --splits ll1,ll2,ll4 \
+  --backtest-root $RES/tuning/backtest_clean --out-dir $OUT/nacional_limpio \
+  --panel-id nacional_17027_limpio --panel-file $OUT/panels/nacional_17027.csv \
+  --mlflow
+
+# Cribado (verificación, no entra en la tabla del texto)
+uv run python -m experiments.timesfm.by_tier_month \
+  --preds-dir $WORK/preds_cribado --splits ll4 \
+  --backtest-root $RES/tuning/backtest_clean --out-dir $OUT/cribado_limpio \
+  --panel-id cribado_1092_limpio --panel-file $OUT/panels/cribado_estratificado.csv \
+  --mlflow
+```
+
+| archivo | fuentes de entrada |
+|---|---|
+| `nacional_limpio/tiers_limpio.csv`, `tiers_texto_limpio.{csv,md}` | merge intermedio `$WORK/backtest_clean_timesfm`, `$RES/tuning/support_distance.parquet`, `panels/nacional_17027.csv` |
+| `nacional_limpio/sesgo_mensual_limpio.csv`, `sesgo_mes_tier_limpio.csv` | las mismas |
+| `cribado_limpio/tiers_cribado_limpio.csv`, `sesgo_mensual_cribado_limpio.csv`, `sesgo_mes_tier_cribado_limpio.csv` | `$WORK/preds_cribado` (variante `tmin_anom_full`), `backtest_clean/ll4`, `panels/cribado_estratificado.csv`, `support_distance.parquet` |
+
+Convenciones: el mes es el de `FECHA` y el sesgo mensual es el promedio pooled de
+`pred − obs` sobre todas las celdas-día del mes (la convención de
+`effect_sizes._plots`). La dispersión entre celdas (desviación con `ddof=0`,
+percentiles 5 y 95 del sesgo medio por celda y mes) solo se calcula en `ll4`.
+Las predicciones de TimesFM son float32 y se convierten a float64 al leerlas.
+
+`--mlflow` registra una corrida de evaluación por split en el experimento
+`tdew-timesfm-benchmark` de `mlflow.db` (TimesFM no entrena: es una evaluación, no un
+entrenamiento). Las métricas se llaman `<método>_<tier>_<métrica>`,
+`<método>_{rmse,bias,skill}_all` (ponderadas por `n`), `<método>_bias_mNN` y, en
+`ll4`, `<método>_cell_bias_std_mNN`. El `run_id` queda en `mlflow_run_id` de los
+registros de proveniencia de ese split. La base `mlflow.db` está en `.gitignore`.
+
+Cada registro de proveniencia lista solo los CSV que contienen su split y su método
+(`tiers_texto_limpio.csv` solo para `ll4` con TimesFM, `tuned` y climatología). El
+sidecar `.provenance.json` guarda el último registro escrito (comportamiento de
+`record_metric_provenance`); el script escribe TimesFM/`ll4` al final, de modo que
+cada sidecar describe ese método. Los registros completos están en
+`reports/metric_provenance.jsonl`, que es de solo adición: la corrida del 2 de octubre
+de 2026 previa a la revisión (commit `66cc5e5`) quedó reemplazada por la posterior y
+sus filas se conservan.
+
+Antes de escribir los CSV, el script verifica que cada split puntúa el panel esperado (17.027 celdas con el reparto del paper en el nacional; 1.092 con 842/79/59/65/47 en el cribado) y compara `tuned` en `ll4` con el paper y termina
+con error si no coincide: celdas por tier (8.306, 1.779, 1.433, 2.563, 2.946, exacto),
+RMSE por tier contra `reports/paper/scripts/validation_by_support.csv` (1e-6), sesgo
+de diciembre +0,017 y máximo |sesgo| 0,402 (5e-4). Los valores de TimesFM esperados
+solo generan una alerta en el log. En la ejecución del 2 de octubre de 2026 el control
+pasó y no hubo alertas. El manifiesto de referencia es el addendum
+`docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml`.
+
 El recuento de celdas dentro y fuera del Perú (8.272 y 8.755 sobre las 17.027) sale de
 `artifact_data.build_layers` (`shapely.contains_xy` contra los contornos
 departamentales) y queda en `meta.muestreoDentro`/`muestreoFuera` de `datos.js`.

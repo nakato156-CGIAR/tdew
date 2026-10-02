@@ -265,6 +265,78 @@ medición se conservan sin cambios en `nacional/`, `cribado/`,
 `curva_error_nacional.csv`, `curva_error_cribado.csv` y `figs/` sin sufijo. Esas
 rutas no deben citarse como resultado vigente.
 
+### Soporte observacional
+
+Las 17.027 celdas se reparten en cinco tiers según su distancia al dominio SENAMHI
+(`support_distance.parquet`, los mismos del paper): dentro, 0–50, 50–100, 100–200 y más
+de 200 km. TimesFM y `tuned` se puntúan sobre las mismas celdas y días en `ll4`
+([CSV completo](nacional_limpio/tiers_limpio.csv), con `ll1`, `ll2`, climatología,
+Td = Tmin y OLS por zona):
+
+| tier | celdas | RMSE TimesFM | RMSE `tuned` | RMSE climatología | sesgo TimesFM | sesgo `tuned` | skill TimesFM | skill `tuned` |
+|---|---|---|---|---|---|---|---|---|
+| within | 8.306 | 0,867 | 0,946 | 1,264 | +0,050 | +0,010 | 0,314 | 0,251 |
+| near | 1.779 | 1,061 | 1,139 | 1,464 | +0,068 | −0,079 | 0,275 | 0,222 |
+| marginal | 1.433 | 1,198 | 1,276 | 1,582 | +0,143 | −0,044 | 0,242 | 0,193 |
+| extrapolated | 2.563 | 1,298 | 1,374 | 1,682 | +0,149 | −0,070 | 0,228 | 0,183 |
+| unsupported | 2.946 | 1,652 | 1,724 | 2,036 | +0,223 | −0,089 | 0,188 | 0,153 |
+
+El RMSE de `tuned` coincide con `tbl-tiers` del paper a tres decimales. TimesFM
+tiene menor RMSE que `tuned` en los cinco tiers, con una diferencia de 0,079 en
+`within` que baja a 0,072 en `unsupported`. Ambos métodos empeoran hacia afuera del
+dominio y el orden de los tiers es el mismo para los dos. El sesgo de TimesFM crece
+con la distancia (de +0,050 a +0,223 °C) y el de `tuned` se mantiene entre −0,09 y
++0,01 °C. La tabla reducida para el texto está en
+[`tiers_texto_limpio.md`](nacional_limpio/tiers_texto_limpio.md).
+
+El cribado limpio repite el cálculo sobre 1.092 celdas
+([CSV](cribado_limpio/tiers_cribado_limpio.csv)). Esa muestra es estratificada por
+zona y 842 de las 1.092 celdas son `within` (79 `near`, 59 `marginal`, 65
+`extrapolated`, 47 `unsupported`), de modo que sus cifras por tier no estiman el
+campo completo. Se usan solo como verificación: TimesFM queda por debajo de `tuned`
+en RMSE en los cinco tiers, el mismo orden del panel nacional.
+
+### Sesgo mensual
+
+Sesgo medio (`pred − obs`, °C) por mes calendario de `FECHA`, agregado sobre todas
+las celdas-día del mes en `ll4`. La columna de dispersión es la desviación estándar
+entre celdas del sesgo medio por celda y mes
+([CSV](nacional_limpio/sesgo_mensual_limpio.csv), con `ll1` y `ll2` en valor pooled):
+
+| mes | TimesFM | `tuned` | desv. entre celdas TimesFM | desv. entre celdas `tuned` |
+|---|---|---|---|---|
+| enero | −0,325 | −0,402 | 0,335 | 0,505 |
+| febrero | +0,061 | +0,005 | 0,175 | 0,153 |
+| marzo | +0,248 | +0,146 | 0,267 | 0,157 |
+| abril | +0,263 | +0,146 | 0,218 | 0,136 |
+| mayo | +0,112 | −0,034 | 0,186 | 0,210 |
+| junio | +0,151 | −0,137 | 0,233 | 0,223 |
+| julio | +0,210 | −0,051 | 0,255 | 0,218 |
+| agosto | +0,255 | +0,030 | 0,277 | 0,191 |
+| septiembre | +0,193 | −0,029 | 0,291 | 0,237 |
+| octubre | −0,098 | −0,145 | 0,198 | 0,208 |
+| noviembre | +0,100 | +0,070 | 0,150 | 0,234 |
+| diciembre | +0,089 | +0,017 | 0,153 | 0,206 |
+
+El diciembre de `tuned` (+0,017) reproduce el +0,02 que cita el paper para la
+selección por zona × día del año, y su máximo |sesgo| es 0,402 en enero. TimesFM
+tiene un sesgo cálido de 0,11 a 0,26 °C entre marzo y septiembre (+0,06 en
+febrero) y un máximo |sesgo| de 0,325 en enero. Solo en enero y octubre su sesgo
+absoluto es menor que el de `tuned`. La dispersión entre celdas (0,14 a 0,51 °C; TimesFM de 0,15 a 0,33 y `tuned`
+de 0,14 a 0,51) es del mismo orden que el sesgo pooled, así que el promedio nacional oculta
+variación espacial. El sesgo por mes × tier de los cinco métodos está en
+[`sesgo_mes_tier_limpio.csv`](nacional_limpio/sesgo_mes_tier_limpio.csv).
+
+`tiers_texto_limpio.md` usa el formato numérico en inglés de `tbl-tiers` del paper
+(punto decimal, coma de miles), porque está pensado para pegarse en ese texto. La
+figura mensual opcional del plan (barras de sesgo con banda p05–p95) no se generó;
+el pooled de TimesFM sigue disponible en `nacional_limpio/ll4_bias_by_month.png`.
+
+Las predicciones de TimesFM están almacenadas en float32; todos los agregados de
+estas dos secciones se calculan en float64. Promediar en float32 cambiaría el sesgo
+mensual de TimesFM en hasta 1,7·10⁻⁸ °C (8·10⁻⁹ °C en `tuned`), sin efecto en las
+cifras publicadas, y el cálculo en float64 evita depender de ello.
+
 ### Cribado de las nueve variantes
 
 Sobre las 1.092 celdas que el panel de cribado (1.106 celdas estratificadas por zona)
@@ -512,6 +584,8 @@ este proyecto:
 | `coste_throughput.csv` | el barrido de costo, 45 combinaciones |
 | `nacional_limpio/` | métricas, tamaños de efecto y desglose por zona sobre las 17.027 celdas del run limpio |
 | `cribado_limpio/` | las nueve variantes y los rivales sobre las 1.092 celdas comunes del cribado y el run limpio |
+| `nacional_limpio/tiers_*.csv`, `sesgo_mensual_limpio.csv`, `sesgo_mes_tier_limpio.csv` | desempeño por tier de soporte y sesgo mensual (`by_tier_month.py`) |
+| `cribado_limpio/*_cribado_limpio.csv` | los mismos cálculos sobre las 1.092 celdas del cribado, solo como verificación |
 | `nacional/`, `cribado/` | la medición con fuga (17.041 y 1.106 celdas), conservada como referencia |
 | `departamental/` | la mesa con la TCN: cinco niveles de agregación y tests pareados |
 | `escala/leaderboard.csv` | los cuatro departamentos completos, por sitio y reponderado |

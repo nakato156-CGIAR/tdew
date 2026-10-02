@@ -54,10 +54,13 @@ TimesFM are the ones with `model=tcn`, protocol `ll4`, `feature_set=exogenous_fu
 and seed 0: they're the source of the "direct TCN" row in the departmental
 panel described below.
 
-### TimesFM: zero-shot, no MLflow
+### TimesFM: zero-shot, MLflow only for evaluations
 
 The nine TimesFM variants don't train — there are no weights to fit — so they
-don't produce MLflow runs. Their metrics live entirely in
+don't produce training runs. The only MLflow runs are the opt-in evaluations of
+`experiments/timesfm/by_tier_month.py --mlflow` (experiment
+`tdew-timesfm-benchmark`: per-tier and per-month metrics of TimesFM against
+Palacios' `tuned`). Their metrics otherwise live in
 [`reports/timesfm_benchmark/`](reports/timesfm_benchmark/):
 
 - [`reports/timesfm_benchmark/README.md`](reports/timesfm_benchmark/README.md):
