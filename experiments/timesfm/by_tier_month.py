@@ -389,12 +389,12 @@ def timesfm_alerts(tiers: pd.DataFrame, monthly: pd.DataFrame | None = None) -> 
     alerts = []
     t = tiers[(tiers["split"] == "ll4") & (tiers["method"] == "timesfm")].set_index("tier")
     for tier, expected in EXPECTED_TIMESFM_RMSE.items():
-        if tier in t.index and abs(float(t.loc[tier, "rmse"]) - expected) > ALERT_TOL:
+        if tier in t.index and _off(float(t.loc[tier, "rmse"]), expected, ALERT_TOL):
             alerts.append(f"RMSE timesfm {tier}: {float(t.loc[tier, 'rmse']):.4f} vs {expected:.3f}")
     if monthly is not None:
         m = monthly[(monthly["split"] == "ll4") & (monthly["method"] == "timesfm")].set_index("month")
         for month, expected in EXPECTED_TIMESFM_BIAS.items():
-            if month in m.index and abs(float(m.loc[month, "bias_pooled"]) - expected) > ALERT_TOL:
+            if month in m.index and _off(float(m.loc[month, "bias_pooled"]), expected, ALERT_TOL):
                 alerts.append(f"sesgo timesfm mes {month}: {float(m.loc[month, 'bias_pooled']):+.4f} vs {expected:+.3f}")
     return alerts
 
@@ -592,6 +592,11 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     panel_file = str(args.panel_file) if args.panel_file else str(args.merged_root or args.preds_dir)
     files = {k: str(v) for k, v in outputs.items()}
+    if nacional:
+        source = (f"merged_root={Path(args.merged_root).resolve()} (columnas de referencia "
+                  "del run limpio incluidas en el merge)")
+    else:
+        source = f"backtest_root={Path(args.backtest_root).resolve()}"
     run_ids: dict[str, str] = {}
     if args.mlflow:
         run_ids = log_mlflow(
@@ -601,7 +606,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         logger.info("MLflow: %s", run_ids)
     for split, method, output_files in provenance_targets(splits, files):
         notes = (
-            f"backtest_root={Path(args.backtest_root).resolve()}; selección solo con años de "
+            f"{source}; selección solo con años de "
             f"entrenamiento; cells={cells_by_split[split]}; predicciones float32 "
             "agregadas en float64; mes por FECHA, sesgo pooled; E5/E8 solo cómputo "
             "sobre predicciones existentes"

@@ -566,3 +566,128 @@ def test_main_without_mlflow_flag_leaves_run_id_empty(tmp_path, monkeypatch):
     assert btm.main(_argv(tmp_path, support, paper)) == 0
     records = [json.loads(l) for l in (tmp_path / "registry.jsonl").read_text().splitlines()]
     assert all(r["mlflow_run_id"] is None for r in records)
+
+
+# ------------------------------------- revision 2: panel_check dentro de main
+
+def _expected(monkeypatch, *, cribado=None, cells=None, national=None):
+    if cribado is not None:
+        monkeypatch.setattr(btm, "EXPECTED_CRIBADO_CELLS", cribado)
+    if cells is not None:
+        monkeypatch.setattr(btm, "EXPECTED_CELLS", cells)
+    if national is not None:
+        monkeypatch.setattr(btm, "EXPECTED_NATIONAL_CELLS", national)
+
+
+def _boom(*a, **k):
+    raise AssertionError("no debe llamarse en este modo")
+
+
+def _cribado_inputs(tmp_path, n_cells=10):
+    df = _panel(n_cells=n_cells)
+    backtest = tmp_path / "backtest" / "ll4"
+    backtest.mkdir(parents=True)
+    df.drop(columns=["tier", "pred_timesfm"]).to_parquet(backtest / "predictions.parquet", index=False)
+    preds = tmp_path / "preds"
+    preds.mkdir()
+    tf = df[["ID", "FECHA"]].copy()
+    tf["pred"] = df["pred_timesfm"].astype("float32")
+    tf.to_parquet(preds / "ll4__tmin_anom_full.parquet", index=False)
+    panel = tmp_path / "panel.csv"
+    pd.DataFrame({"ID": range(n_cells)}).to_csv(panel, index=False)
+    support = tmp_path / "support.parquet"
+    pd.DataFrame({"ID": range(n_cells), "tier": df.groupby("ID")["tier"].first().to_numpy()}).to_parquet(support)
+    return [
+        "--preds-dir", str(preds), "--backtest-root", str(tmp_path / "backtest"),
+        "--panel-file", str(panel), "--splits", "ll4", "--support-distance", str(support),
+        "--out-dir", str(tmp_path / "out"), "--panel-id", "cribado_sintetico",
+        "--registry-path", str(tmp_path / "registry.jsonl"),
+    ]
+
+
+def test_main_cribado_uses_cribado_panel_and_never_the_national_control(tmp_path, monkeypatch):
+    _expected(monkeypatch, cribado={t: 2 for t in TIERS}, cells={t: 99 for t in TIERS}, national=999)
+    monkeypatch.setattr(btm, "reproduction_check", _boom)
+    assert btm.main(_cribado_inputs(tmp_path)) == 0
+    assert (tmp_path / "out" / "tiers_cribado_limpio.csv").exists()
+    assert not (tmp_path / "out" / "tiers_texto_limpio.csv").exists()
+
+
+def test_main_cribado_fails_and_writes_nothing_when_panel_differs(tmp_path, monkeypatch):
+    _expected(monkeypatch, cribado={**{t: 2 for t in TIERS}, "within": 3})
+    monkeypatch.setattr(btm, "reproduction_check", _boom)
+    assert btm.main(_cribado_inputs(tmp_path)) == 1
+    out = tmp_path / "out"
+    assert not list(out.glob("*.csv")) if out.exists() else True
+    assert not (tmp_path / "registry.jsonl").exists()
+
+
+def test_main_national_passes_with_expected_panel(tmp_path, monkeypatch):
+    _, support, paper = _write_inputs(tmp_path)
+    _expected(monkeypatch, cells={t: 2 for t in TIERS}, national=10)
+    monkeypatch.setattr(btm, "reproduction_check", lambda *a, **k: None)
+    assert btm.main(_argv(tmp_path, support, paper)) == 0
+
+
+def test_main_national_fails_when_only_the_total_differs(tmp_path, monkeypatch):
+    _, support, paper = _write_inputs(tmp_path)
+    _expected(monkeypatch, cells={t: 2 for t in TIERS}, national=11)
+    monkeypatch.setattr(btm, "reproduction_check", lambda *a, **k: None)
+    assert btm.main(_argv(tmp_path, support, paper)) == 1
+    assert not (tmp_path / "registry.jsonl").exists()
+
+
+def test_panel_check_total_is_checked_independently_of_the_listed_tiers():
+    # los tiers listados coinciden; un tier extra no listado cambia solo el total
+    t = _tiers_with_cells({"within": 3, "near": 2, "marginal": 1})
+    with pytest.raises(ReproductionError, match="6 celdas != 5"):
+        btm.panel_check(t, expected_total=5, expected_by_tier={"within": 3, "near": 2})
+
+
+# ----------------------------------------- revision 2: mes con fechas de borde
+
+@pytest.mark.parametrize("edge", ["start", "end"])
+def test_month_is_the_calendar_month_of_fecha_on_month_edges(edge):
+    df = _panel(n_cells=6)
+    period = df["FECHA"].dt.to_period("M")
+    df["FECHA"] = (period.dt.to_timestamp() if edge == "start"
+                   else period.dt.to_timestamp(how="end").dt.normalize())
+    m = monthly_bias(df, "ll4", dispersion=False).query("method == 'tuned'").set_index("month")["bias_pooled"]
+    ref = (df["pred_tuned"] - df["TD_obs"]).groupby(df["FECHA"].dt.month).mean()
+    np.testing.assert_allclose(m.sort_index().to_numpy(), ref.sort_index().to_numpy())
+    mt = monthly_bias_by_tier(df, "ll4").query("method == 'tuned' and tier == 'within'").set_index("month")["bias"]
+    sub = df[df["tier"] == "within"]
+    ref_t = (sub["pred_tuned"] - sub["TD_obs"]).groupby(sub["FECHA"].dt.month).mean()
+    np.testing.assert_allclose(mt.sort_index().to_numpy(), ref_t.sort_index().to_numpy())
+
+
+# ------------------------------------ revision 2: alertas y notas de proveniencia
+
+def test_timesfm_alerts_flag_nan_instead_of_ignoring_it():
+    t = pd.DataFrame([{"split": "ll4", "tier": "within", "method": "timesfm", "rmse": np.nan}])
+    assert any("within" in a for a in btm.timesfm_alerts(t))
+    ok = pd.DataFrame([{"split": "ll4", "tier": "within", "method": "timesfm",
+                        "rmse": btm.EXPECTED_TIMESFM_RMSE["within"]}])
+    assert btm.timesfm_alerts(ok) == []
+    m = pd.DataFrame([{"split": "ll4", "method": "timesfm", "month": 1, "bias_pooled": np.nan}])
+    assert any("mes 1" in a for a in btm.timesfm_alerts(ok, m))
+
+
+def _notes(tmp_path):
+    import json
+    return {json.loads(l)["notes"] for l in (tmp_path / "registry.jsonl").read_text().splitlines()}
+
+
+def test_national_notes_name_the_merge_not_an_unread_backtest_root(tmp_path, monkeypatch):
+    _, support, paper = _write_inputs(tmp_path)
+    monkeypatch.setattr(btm, "panel_check", lambda *a, **k: None)
+    monkeypatch.setattr(btm, "reproduction_check", lambda *a, **k: None)
+    assert btm.main(_argv(tmp_path, support, paper)) == 0
+    (note,) = {n.split("cells=")[0] for n in _notes(tmp_path)}
+    assert "merged_root=" in note and "backtest_root=" not in note
+
+
+def test_cribado_notes_name_the_backtest_root(tmp_path, monkeypatch):
+    _expected(monkeypatch, cribado={t: 2 for t in TIERS})
+    assert btm.main(_cribado_inputs(tmp_path)) == 0
+    assert all("backtest_root=" in n for n in _notes(tmp_path))

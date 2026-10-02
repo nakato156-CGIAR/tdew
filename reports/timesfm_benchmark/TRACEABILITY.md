@@ -240,7 +240,8 @@ uv run python -m experiments.timesfm.by_tier_month \
 uv run python -m experiments.timesfm.by_tier_month \
   --preds-dir $WORK/preds_cribado --splits ll4 \
   --backtest-root $RES/tuning/backtest_clean --out-dir $OUT/cribado_limpio \
-  --panel-id cribado_1092_limpio --panel-file $OUT/panels/cribado_estratificado.csv
+  --panel-id cribado_1092_limpio --panel-file $OUT/panels/cribado_estratificado.csv \
+  --mlflow
 ```
 
 | archivo | fuentes de entrada |

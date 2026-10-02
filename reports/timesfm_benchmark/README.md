@@ -322,7 +322,7 @@ El diciembre de `tuned` (+0,017) reproduce el +0,02 que cita el paper para la
 selección por zona × día del año, y su máximo |sesgo| es 0,402 en enero. TimesFM
 tiene un sesgo cálido de 0,11 a 0,26 °C entre marzo y septiembre (+0,06 en
 febrero) y un máximo |sesgo| de 0,325 en enero. Solo en enero y octubre su sesgo
-absoluto es menor que el de `tuned`. La dispersión entre celdas (0,14 a 0,51 °C; TimesFM de 0,15 a 0,34 y `tuned`
+absoluto es menor que el de `tuned`. La dispersión entre celdas (0,14 a 0,51 °C; TimesFM de 0,15 a 0,33 y `tuned`
 de 0,14 a 0,51) es del mismo orden que el sesgo pooled, así que el promedio nacional oculta
 variación espacial. El sesgo por mes × tier de los cinco métodos está en
 [`sesgo_mes_tier_limpio.csv`](nacional_limpio/sesgo_mes_tier_limpio.csv).
@@ -333,8 +333,9 @@ figura mensual opcional del plan (barras de sesgo con banda p05–p95) no se gen
 el pooled de TimesFM sigue disponible en `nacional_limpio/ll4_bias_by_month.png`.
 
 Las predicciones de TimesFM están almacenadas en float32; todos los agregados de
-estas dos secciones se calculan en float64, porque los promedios en float32 difieren
-en el último decimal.
+estas dos secciones se calculan en float64. Promediar en float32 cambiaría el sesgo
+mensual de TimesFM en hasta 1,7·10⁻⁸ °C (8·10⁻⁹ °C en `tuned`), sin efecto en las
+cifras publicadas, y el cálculo en float64 evita depender de ello.
 
 ### Cribado de las nueve variantes
 

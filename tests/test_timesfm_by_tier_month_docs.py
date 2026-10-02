@@ -99,3 +99,48 @@ def test_readme_monthly_claims_hold(monthly):
     assert round(b.loc[12, "tuned"], 3) == 0.017
     assert b["tuned"].abs().idxmax() == 1 and round(b["tuned"].abs().max(), 3) == 0.402
     assert round(b["timesfm"].abs().max(), 3) == 0.325
+
+
+def _tol(cited: float, actual: float) -> bool:
+    """El texto redondea a dos decimales: la cifra citada debe ser ese redondeo."""
+    return abs(cited - actual) <= 0.005 + 1e-12
+
+
+def test_per_method_dispersion_ranges_cited_in_readme(monthly):
+    text = " ".join(_section("Sesgo mensual").split())
+    cited = re.search(r"TimesFM de ([\d,]+) a ([\d,]+) y `tuned` de ([\d,]+) a ([\d,]+)\)", text)
+    assert cited, "el README debe citar la dispersion por metodo"
+    for method, (lo, hi) in (("timesfm", cited.groups()[:2]), ("tuned", cited.groups()[2:])):
+        std = monthly[monthly["method"] == method]["cell_bias_std"]
+        assert _tol(_num(lo), std.min()), (method, lo, std.min())
+        assert _tol(_num(hi), std.max()), (method, hi, std.max())
+
+
+def test_warm_bias_range_cited_in_readme(monthly):
+    text = " ".join(_section("Sesgo mensual").split())
+    cited = re.search(r"sesgo cálido de ([\d,]+) a ([\d,]+) °C entre marzo y septiembre", text)
+    assert cited
+    b = monthly[(monthly["method"] == "timesfm") & monthly["month"].between(3, 9)]["bias_pooled"]
+    assert _tol(_num(cited.group(1)), b.min()) and _tol(_num(cited.group(2)), b.max())
+
+
+def test_tier_gap_endpoints_cited_in_readme(tiers):
+    text = " ".join(_section("Soporte observacional").split())
+    cited = re.search(r"diferencia de ([\d,]+) en\s+`within` que baja a ([\d,]+) en `unsupported`", text)
+    assert cited
+    w = tiers.pivot(index="tier", columns="method", values="rmse")
+    gap = w["tuned"] - w["timesfm"]
+    assert abs(_num(cited.group(1)) - gap["within"]) <= 0.0005 + 1e-12
+    assert abs(_num(cited.group(2)) - gap["unsupported"]) <= 0.0005 + 1e-12
+
+
+def test_float32_note_states_the_measured_magnitude():
+    text = " ".join(_section("Sesgo mensual").split())
+    assert "último decimal" not in text
+    assert "10⁻⁸" in text
+
+
+def test_traceability_cribado_command_includes_mlflow():
+    trace = (BENCH / "TRACEABILITY.md").read_text(encoding="utf-8")
+    cribado = trace[trace.index("# Cribado (verificación"):]
+    assert "--mlflow" in cribado.split("```")[0]
