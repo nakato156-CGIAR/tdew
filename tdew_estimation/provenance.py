@@ -130,6 +130,32 @@ class MetricProvenance:
         return asdict(self)
 
 
+def resolve_recorded_path(recorded: str, *, repo_root: Path = REPO_ROOT) -> Path:
+    """Ruta de un ``output_file`` del registro, resuelta bajo el repo actual.
+
+    Las rutas relativas se anclan en ``repo_root``. Una ruta absoluta que apunta a otro
+    checkout o worktree (``.../reports/...``) se reancla bajo ``repo_root`` desde alguno
+    de sus componentes ``reports``, pero solo si el archivo reanclado existe: asi una
+    ruta externa al repo (p. ej. ``$WORK``) o un directorio de usuario llamado
+    ``reports`` nunca se redirigen a un archivo equivocado.
+    """
+    path = Path(recorded)
+    root = Path(repo_root).resolve()
+    if not path.is_absolute():
+        return (root / path).resolve()
+    resolved = path.resolve()
+    try:
+        parts = resolved.relative_to(root).parts
+    except ValueError:
+        parts = resolved.parts
+    for index, part in enumerate(parts):
+        if part == "reports":
+            candidate = (root / Path(*parts[index:])).resolve()
+            if candidate == resolved or candidate.exists():
+                return candidate
+    return resolved
+
+
 def record_metric_provenance(
     record: MetricProvenance,
     *,

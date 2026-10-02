@@ -200,6 +200,26 @@ def pinball_by_decile(leaderboard: pd.DataFrame, out_path: Path, *, split: str =
     return out_path
 
 
+def cost_frame(
+    leaderboard: pd.DataFrame,
+    runtime: pd.DataFrame,
+    *,
+    split: str = "ll4",
+    national_cells: int = 2_818_404,
+) -> pd.DataFrame:
+    """Una fila por variante del leaderboard con su costo. ``runtime`` puede traer
+    corridas repetidas de una variante; se usa la ultima. Las variantes que ya no
+    estan en el leaderboard (retiradas) no aparecen."""
+    board = leaderboard[
+        (leaderboard["split"] == split) & leaderboard["method"].str.startswith("timesfm:")
+    ].copy()
+    board["variant"] = board["method"].str.split(":", n=1).str[1]
+    latest = runtime[["variant", "cells_per_second"]].drop_duplicates("variant", keep="last")
+    merged = board.merge(latest, on="variant", how="inner")
+    merged["horas_nacional"] = national_cells / merged["cells_per_second"] / 3600.0
+    return merged
+
+
 def accuracy_vs_cost(
     leaderboard: pd.DataFrame,
     runtime: pd.DataFrame,
@@ -214,12 +234,7 @@ def accuracy_vs_cost(
     gana 0,01 °C a cambio de cuadruplicar el tiempo de computo no sirve para
     rellenar 2,8 millones de celdas.
     """
-    board = leaderboard[
-        (leaderboard["split"] == split) & leaderboard["method"].str.startswith("timesfm:")
-    ].copy()
-    board["variant"] = board["method"].str.split(":", n=1).str[1]
-    merged = board.merge(runtime[["variant", "cells_per_second"]], on="variant", how="inner")
-    merged["horas_nacional"] = national_cells / merged["cells_per_second"] / 3600.0
+    merged = cost_frame(leaderboard, runtime, split=split, national_cells=national_cells)
 
     fig, ax = plt.subplots(figsize=(8, 4.8))
     ax.set_xscale("log")

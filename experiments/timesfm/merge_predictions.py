@@ -1,8 +1,8 @@
 """Copia el predictions.parquet del backtest anadiendo la columna de TimesFM.
 
-Los archivos originales bajo ``$RES/tuning/backtest/`` no se tocan: son la fuente
-de las cifras publicadas y deben seguir reproduciendolas. Aqui se escribe una
-copia bajo otra raiz con ``pred_timesfm`` anadida, que es lo que consume
+Los archivos originales bajo la raiz de referencia (por defecto
+``$RES/tuning/backtest_clean/``) no se tocan: son la fuente de las cifras
+publicadas y deben seguir reproduciendolas. Aqui se escribe una copia bajo otra raiz con ``pred_timesfm`` anadida, que es lo que consume
 ``HPC_code_tunning.effect_sizes`` una vez que ``timesfm`` figura en
 ``METHOD_COLS``.
 
@@ -24,13 +24,14 @@ import pandas as pd
 
 from tdew_estimation import provenance as prov
 
-from .evaluate import build_row_provenance
+from .evaluate import (
+    DEFAULT_BACKTEST_ROOT,
+    backtest_notes,
+    build_row_provenance,
+    manifest_ref_for,
+)
 
 logger = logging.getLogger("timesfm.merge")
-
-DEFAULT_BACKTEST_ROOT = Path(
-    "/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest"
-)
 
 
 def merge_split(
@@ -51,6 +52,8 @@ def merge_split(
 
     merged = reference.merge(timesfm, on=["ID", "FECHA"], how="inner", validate="one_to_one")
     cells_after = merged["ID"].nunique()
+    cells_timesfm = timesfm["ID"].nunique()
+    cells_timesfm_dropped = len(set(timesfm["ID"].unique()) - set(reference["ID"].unique()))
 
     target_dir = out_root / split
     target_dir.mkdir(parents=True, exist_ok=True)
@@ -62,12 +65,19 @@ def merge_split(
         "cells_reference": int(cells_before),
         "cells_merged": int(cells_after),
         "cells_lost": int(cells_before - cells_after),
+        "cells_timesfm": int(cells_timesfm),
+        "cells_timesfm_dropped": int(cells_timesfm_dropped),
     }
     logger.info("[%s] %s", split, stats)
     if stats["cells_lost"]:
         logger.warning(
             "[%s] se perdieron %d celdas; todas las comparaciones quedan sobre %d celdas",
             split, stats["cells_lost"], cells_after,
+        )
+    if stats["cells_timesfm_dropped"]:
+        logger.warning(
+            "[%s] %d celdas de TimesFM no estan en la referencia y se descartan",
+            split, stats["cells_timesfm_dropped"],
         )
     return stats
 
@@ -114,6 +124,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--splits", default="ll1,ll2,ll4")
     parser.add_argument("--backtest-root", type=Path, default=DEFAULT_BACKTEST_ROOT)
     parser.add_argument("--out-root", type=Path, required=True)
+    parser.add_argument("--manifest-ref", default=None,
+                        help="documento que gobierna la corrida; por defecto, el addendum si "
+                             "--backtest-root es la raiz limpia y el manifiesto original si no")
     parser.add_argument("--bead-id", default="tdew-214",
                         help="bead que gobierna esta corrida, para tdew_estimation.provenance")
     parser.add_argument("--panel-id", default=None,
@@ -128,13 +141,20 @@ def main(argv: Sequence[str] | None = None) -> int:
         if not variant_parquet.exists():
             logger.warning("falta %s, se omite el split", variant_parquet)
             continue
-        merge_split(split, variant_parquet, backtest_root=args.backtest_root, out_root=args.out_root)
+        stats = merge_split(
+            split, variant_parquet, backtest_root=args.backtest_root, out_root=args.out_root
+        )
+        merge_note = (
+            f"cells_lost={stats['cells_lost']}; "
+            f"cells_timesfm_dropped={stats['cells_timesfm_dropped']}"
+        )
         board = score_split(split, out_root=args.out_root)
         print(f"\n=== {split} ===")
         print(board.to_string(index=False, float_format=lambda v: f"{v:.4f}"))
         boards.append(board)
 
         metrics_path = str(args.out_root / split / "metrics.csv")
+        metrics_all_path = str(args.out_root / "metrics_all.csv")
         for _, row in board[["method", "cells"]].iterrows():
             method = _provenance_method_name(row["method"], args.variant)
             prov.record_metric_provenance(
@@ -145,7 +165,11 @@ def main(argv: Sequence[str] | None = None) -> int:
                     bead_id=args.bead_id,
                     panel_id=panel_id,
                     panel_file=str(args.predictions_dir),
-                    output_files=(metrics_path,),
+                    output_files=(metrics_path, metrics_all_path),
+                    notes=backtest_notes(
+                        args.backtest_root, cells=int(row["cells"]), extra=merge_note
+                    ),
+                    manifest_ref=args.manifest_ref or manifest_ref_for(args.backtest_root),
                 )
             )
     if boards:

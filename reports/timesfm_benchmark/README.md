@@ -9,6 +9,16 @@ mismas celdas, los mismos días y las mismas métricas.
 > Antes de citar cualquier número, leer [`TRACEABILITY.md`](TRACEABILITY.md), que
 > dice de dónde sale cada uno. Los resultados también están en una página
 > interactiva: [`artifact/index.html`](artifact/index.html).
+>
+> **Actualización del 2 de octubre de 2026.** Las cifras del nivel backtest y del
+> cribado se recalcularon contra el run limpio de Palacios (`backtest_clean`, 17.027
+> celdas), cuya selección de recetas usa solo los años de entrenamiento. Las cifras
+> anteriores, calculadas contra un run cuya selección vio los años 1981–2016, se
+> conservan en las rutas sin sufijo y se resumen en la subsección «Referencia: run
+> con fuga». Las tablas departamental y de escala no se recalcularon: su `tuned`
+> sigue usando selección con fuga y no es comparable con las cifras limpias. El
+> cambio queda registrado en
+> [`docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml`](../../docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml).
 
 ## Qué se compara
 
@@ -46,8 +56,8 @@ Los bloques de años no se inventaron aquí: son los mismos que define
 | `ll4` | 1981–2012 | 2013–2016 | 1.461 |
 
 `ll4` es el que imita el hueco real de cuatro años que hay que rellenar
-(2017–2020) y el que reporta el paper: RMSE 1,219 °C del método de Palacios contra
-1,535 °C de la climatología, sobre 17.041 celdas.
+(2017–2020) y el que reporta el paper: RMSE 1,228 °C del método de Palacios contra
+1,535 °C de la climatología, sobre 17.027 celdas.
 
 Ningún valor de Td del bloque oculto llega al modelo, ni directamente ni a través
 de la climatología. Tmin sí, porque es exógeno, existe en todo el rango y el método
@@ -100,8 +110,8 @@ Se reportan dos cifras distintas, porque miden cosas distintas:
 
 | nivel | celdas | para qué |
 |---|---|---|
-| cribado | 1.106, estratificadas por zona SENAMHI | comparar las nueve variantes entre sí |
-| backtest | 17.041, las mismas del backtest de Palacios | la comparación pareada contra la cifra publicada |
+| cribado | 1.092 puntuadas, de 1.106 estratificadas por zona SENAMHI | comparar las nueve variantes entre sí |
+| backtest | 17.027, las del run limpio de Palacios (TimesFM predijo 17.041; 14 quedan fuera de la referencia) | la comparación pareada contra la cifra publicada |
 | departamental | 8.192, el panel `ll4` del protocolo de reconstrucción | la única mesa donde la TCN es comparable |
 | escala | 436.519, los cuatro departamentos completos | costo y estabilidad a volumen real |
 
@@ -151,114 +161,141 @@ ni realimentar.
 
 ### Comparación contra la cifra publicada
 
-Sobre las 17.041 celdas del backtest de Palacios y los 24.896.901 pares
-observación–predicción del bloque 2013–2016, que es la muestra exacta de la que
-sale la cifra del paper ([`nacional/leaderboard.csv`](nacional/leaderboard.csv),
-[figura](figs/escalera_nacional.png)):
+Sobre las 17.027 celdas del run limpio de Palacios y los 24.876.447 pares
+observación–predicción del bloque 2013–2016, que es la muestra de la que sale la
+cifra del paper ([`nacional_limpio/leaderboard.csv`](nacional_limpio/leaderboard.csv),
+[figura](figs/escalera_nacional_limpio.png)):
 
 > **Este agregado no es un promedio del Perú.** El marco de muestreo del backtest
 > sortea buckets sobre la caja envolvente del producto PISCO, no sobre el territorio
-> peruano, de modo que **8.755 de esas 17.041 celdas —el 51,4 %— caen en Brasil,
+> peruano, de modo que **8.755 de esas 17.027 celdas —el 51,4 %— caen en Brasil,
 > Bolivia, Ecuador o Colombia**. Se verificó celda a celda con `shapely.contains_xy`
-> sobre los contornos departamentales. No es un artefacto introducido aquí ni
+> sobre los contornos departamentales (8.272 dentro del Perú). Las 14 celdas que el
+> run limpio no tiene estaban todas dentro del Perú, por lo que el porcentaje no
+> cambia respecto del panel de 17.041 celdas. No es un artefacto introducido aquí ni
 > invalida ninguna comparación, porque todos los métodos se puntúan sobre las mismas
-> celdas y los mismos días y las cifras publicadas del paper salen de esa misma
-> muestra, pero obliga a no llamar «nacional» a este nivel sin más. La zona
-> «Lago Titicaca» aporta 256 celdas muestreadas y ninguna dentro del Perú. Queda
-> anotado como bead `tdew-214.8`.
+> celdas y los mismos días y las cifras del paper salen de esa misma muestra, pero
+> obliga a no llamar «nacional» a este nivel sin más. La zona «Lago Titicaca» aporta
+> 256 celdas muestreadas y ninguna dentro del Perú. Queda anotado como bead
+> `tdew-214.8`. El panel limpio cubre 33 de las 41 zonas SENAMHI.
 
 | método | RMSE °C | MAE | sesgo | r | skill vs. clim |
 |---|---|---|---|---|---|
-| **TimesFM** (`tmin_anom_full`) | **1,1536** | 0,8299 | +0,1045 | 0,9914 | **0,2486** |
-| Palacios (`tuned`) | 1,2194 | 0,8743 | −0,0455 | 0,9904 | 0,2057 |
-| climatología | 1,5352 | 1,1364 | −0,3623 | 0,9856 | 0 |
-| `zone_ols` | 2,3290 | 1,7425 | +0,0855 | 0,9641 | −0,5171 |
-| Td = Tmin | 3,5512 | 2,7350 | −2,1255 | 0,9462 | −1,3131 |
+| **TimesFM** (`tmin_anom_full`) | **1,1536** | 0,8298 | +0,1044 | 0,9913 | **0,2485** |
+| Palacios (`tuned`) | 1,2279 | 0,8810 | −0,0327 | 0,9902 | 0,2001 |
+| climatología | 1,5352 | 1,1363 | −0,3627 | 0,9855 | 0 |
+| `zone_ols` | 2,3285 | 1,7422 | +0,0853 | 0,9640 | −0,5167 |
+| Td = Tmin | 3,5505 | 2,7347 | −2,1255 | 0,9461 | −1,3128 |
 
-Las filas de `tuned` y climatología reproducen 1,219 y 1,535, las cifras
-publicadas en `PAPER_PLAN.md:263-268`, lo que confirma que la comparación se hace
-sobre el mismo terreno. La fusión no perdió celdas: 17.041 de 17.041.
+Las filas de `tuned` y climatología reproducen 1,228 y 1,535 de
+`backtest_clean/metrics_all.csv` con diferencia absoluta cero (n = 24.876.447 en
+`ll4`), La
+fusión no perdió celdas de la referencia: 17.027 de 17.027. Se descartaron 14 celdas
+de TimesFM que la referencia no tiene.
 
 Inferencia pareada con bootstrap de ubicación (1.000 remuestreos de celdas) y test
-de permutación por cambio de signo (5.000)
-([`effect_sizes_all.csv`](nacional/effect_sizes_all.csv)):
+de permutación por cambio de signo (5.000, semilla 0)
+([`effect_sizes_all.csv`](nacional_limpio/effect_sizes_all.csv)):
 
 | comparación | ΔRMSE °C | IC 95 % | skill | celdas ganadas | d de Cohen | p |
 |---|---|---|---|---|---|---|
-| TimesFM vs. Palacios | +0,0658 | [0,065, 0,066] | 0,0540 | 99,22 % | 1,91 | 0,0002 |
-| TimesFM vs. climatología | +0,3816 | [0,380, 0,383] | 0,2486 | 100 % | 2,97 | 0,0002 |
-| TimesFM vs. `zone_ols` | +1,1754 | [1,157, 1,191] | 0,5047 | 100 % | 1,14 | 0,0002 |
-| TimesFM vs. Td = Tmin | +2,3975 | [2,374, 2,420] | 0,6751 | 100 % | 1,42 | 0,0002 |
+| TimesFM vs. Palacios | +0,0743 | [0,074, 0,075] | 0,0605 | 99,24 % | 2,07 | 0,0002 |
+| TimesFM vs. climatología | +0,3815 | [0,380, 0,383] | 0,2485 | 100 % | 2,97 | 0,0002 |
+| TimesFM vs. `zone_ols` | +1,1748 | [1,156, 1,192] | 0,5045 | 100 % | 1,14 | 0,0002 |
+| TimesFM vs. Td = Tmin | +2,3969 | [2,374, 2,419] | 0,6751 | 100 % | 1,42 | 0,0002 |
 
-TimesFM gana en 16.908 de las 17.041 celdas. El valor de `p` es el mínimo
-alcanzable con 5.000 permutaciones. Para referencia, la ventaja de `tuned` sobre
-climatología que reporta el paper es ΔRMSE +0,3158 con skill 0,2057; la de TimesFM
-sobre climatología es mayor.
+TimesFM gana en 16.897 de las 17.027 celdas. El valor de `p` es el mínimo
+alcanzable con 5.000 permutaciones. El ΔRMSE y su intervalo son diferencias de RMSE
+agregado; el `p`, la d de Cohen y el porcentaje de celdas ganadas se calculan sobre
+los ΔRMSE por celda. Los intervalos tratan las celdas como independientes y no
+descuentan la autocorrelación espacial, de modo que probablemente son optimistas.
+Para referencia, la ventaja de `tuned` sobre climatología es ΔRMSE +0,3072 con skill
+0,2001; la de TimesFM sobre climatología es mayor.
 
 #### Cómo se comporta cada método al alargar el horizonte
 
-Los tres bloques, sobre las mismas 17.041 celdas
-([figura](figs/nacional_curva_horizonte.png)):
+Los tres bloques, sobre las mismas 17.027 celdas
+([figura](figs/nacional_curva_horizonte_limpio.png)):
 
 | bloque | horizonte | TimesFM | Palacios | climatología | skill TimesFM | skill Palacios |
 |---|---|---|---|---|---|---|
-| `ll1` | 366 d | 1,1737 | 1,2619 | 1,6803 | 0,3015 | 0,2490 |
-| `ll2` | 731 d | 1,1533 | 1,2742 | 1,6666 | 0,3080 | 0,2355 |
-| `ll4` | 1.461 d | 1,1536 | 1,2194 | 1,5352 | 0,2486 | 0,2057 |
+| `ll1` | 366 d | 1,1736 | 1,2538 | 1,6803 | 0,3015 | 0,2538 |
+| `ll2` | 731 d | 1,1533 | 1,2765 | 1,6667 | 0,3080 | 0,2341 |
+| `ll4` | 1.461 d | 1,1536 | 1,2279 | 1,5352 | 0,2485 | 0,2001 |
 
-El skill del método de Palacios decae de forma ordenada al alargar el bloque
-—0,249, 0,235, 0,206— y el propio paper lo describe como crecimiento esperado del
-error. El de TimesFM no sigue esa pendiente: se sostiene entre 0,30 y 0,31 en uno y
-dos años y solo cae en el bloque de cuatro. Dicho en términos operativos, **TimesFM
-a cuatro años alcanza el mismo skill que el método de Palacios a uno** (0,249 en
-ambos casos).
+El skill del método de Palacios decae al alargar el bloque —0,254, 0,234, 0,200— y
+el propio paper lo describe como crecimiento esperado del error. El de TimesFM no
+sigue esa pendiente: se sostiene entre 0,30 y 0,31 en uno y dos años y solo cae en
+el bloque de cuatro. En términos operativos, TimesFM a cuatro años alcanza un skill
+cercano al del método de Palacios a uno (0,249 frente a 0,254).
 
-La ventaja no es igual de sólida en los tres bloques, y esto conviene decirlo
-porque la cifra agregada lo esconde:
+La ventaja no es igual de sólida en los tres bloques, y la cifra agregada lo esconde:
 
 | bloque | ΔRMSE vs. Palacios | IC 95 % | celdas ganadas | d de Cohen |
 |---|---|---|---|---|
-| `ll1` | +0,0883 | [0,087, 0,090] | 77,2 % | 0,74 |
-| `ll2` | +0,1209 | [0,120, 0,122] | 98,9 % | 1,95 |
-| `ll4` | +0,0658 | [0,065, 0,066] | 99,2 % | 1,91 |
+| `ll1` | +0,0802 | [0,079, 0,082] | 77,8 % | 0,74 |
+| `ll2` | +0,1231 | [0,122, 0,124] | 98,9 % | 1,91 |
+| `ll4` | +0,0743 | [0,074, 0,075] | 99,2 % | 2,07 |
 
 A un año de horizonte TimesFM gana en tres de cada cuatro celdas, no en 99 de cada
-100, y el tamaño del efecto cae a la mitad. Es consistente con el mecanismo: a un
-año la predicción autorregresiva de Palacios todavía no ha acumulado deriva.
+100, y la d de Cohen baja de 2,07 a 0,74, a un tercio. Es consistente con el mecanismo: a un
+año la predicción autorregresiva de Palacios todavía no ha acumulado deriva. Frente
+a la referencia con fuga, la ventaja en `ll1` baja de 0,0883 a 0,0802; en `ll2` y
+`ll4` sube. Entre ambos runs cambiaron a la vez los años de selección y la rejilla
+de `h` (el run limpio usa {7, 11, 15, 21, 31, 45}), y no se separó el efecto de cada
+uno.
 
-Dos matices que la cifra agregada esconde. El primero es el sesgo: TimesFM queda
-en +0,105 °C y `tuned` en −0,046 °C, de modo que gana en error cuadrático y pierde
-en centrado. El segundo es el mecanismo, visible en la curva de error acumulado
-([figura](figs/crecimiento_error_nacional.png)): en los primeros días del bloque
-oculto `tuned` va por delante, porque todavía tiene Td observado cerca, y TimesFM
-lo alcanza y lo pasa a medida que el pronóstico autorregresivo de `tuned` realimenta
-su propio error. Al cierre del bloque el acumulado es 1,154 contra 1,219.
+Dos matices más. El primero es el sesgo: TimesFM queda en +0,104 °C y `tuned` en
+−0,033 °C, de modo que gana en error cuadrático y pierde en centrado. El segundo es
+el mecanismo, visible en la curva de error acumulado
+([figura](figs/crecimiento_error_nacional_limpio.png)): TimesFM va por delante
+hasta el día 164; entre el día 165 y el día 717 `tuned` tiene la ventaja, con algunos cruces breves
+entre los días 698 y 717, y de hasta 0,11 °C de RMSE acumulado el día 219; desde el
+día 718 TimesFM vuelve a liderar. Al
+cierre del bloque el acumulado es 1,154 contra 1,228.
+
+#### Referencia: run con fuga
+
+Las cifras publicadas antes del 2 de octubre de 2026 se calcularon contra
+`$RES/tuning/backtest`, un run cuya selección de recetas vio los años 1981–2016,
+incluido el bloque que luego se evalúa. Sobre ese run con fuga, con 17.041 celdas y
+24.896.901 pares en `ll4`, el RMSE de `tuned` era 1,2194 (frente a 1,2279 limpio) y
+el ΔRMSE de TimesFM contra `tuned`, 0,0658 (frente a 0,0743). Los archivos de esa
+medición se conservan sin cambios en `nacional/`, `cribado/`,
+`curva_error_nacional.csv`, `curva_error_cribado.csv` y `figs/` sin sufijo. Esas
+rutas no deben citarse como resultado vigente.
 
 ### Cribado de las nueve variantes
 
-Sobre el panel de cribado de 1.106 celdas estratificadas por zona
-([`cribado/leaderboard.csv`](cribado/leaderboard.csv),
-[figura](figs/escalera_cribado.png)):
+Sobre las 1.092 celdas que el panel de cribado (1.106 celdas estratificadas por zona)
+comparte con el run limpio ([`cribado_limpio/leaderboard.csv`](cribado_limpio/leaderboard.csv),
+[figura](figs/escalera_cribado_limpio.png)). La variante `tmin_td_25` se retiró del
+protocolo el 25 de septiembre y no se puntúa. Las columnas de velocidad vienen de la
+medición de costo sobre las 1.106 celdas originales, que no depende de la referencia:
 
 | variante | RMSE | skill | celdas/s | pasada nacional |
 |---|---|---|---|---|
-| `tmin_anom_full` | **0,8432** | 0,3455 | 3,3 | 9,8 días |
-| `tmin_doy_td_full` | 0,8665 | 0,3275 | 1,9 | 17,2 días |
-| `tmin_td_symavg` | 0,8681 | 0,3262 | 1,6 | 20,2 días |
-| `tmin_td_znorm` | 0,8760 | 0,3200 | 3,2 | 10,2 días |
-| `tmin_td_full` | 0,8760 | 0,3200 | 3,4 | 9,7 días |
-| `tmin_td_med` | 0,8834 | 0,3144 | 7,8 | 4,2 días |
-| *Palacios (`tuned`)* | *0,9292* | *0,2788* | — | — |
-| `tmin_td_short` | 0,9509 | 0,2620 | 18,5 | 1,8 días |
-| `uni_anom_full` | 1,2825 | 0,0045 | 5,1 | 6,5 días |
-| *climatología* | *1,2884* | *0* | — | — |
-| `uni_td_full` | 1,3171 | −0,0223 | 5,1 | 6,5 días |
+| `tmin_anom_full` | **0,8389** | 0,3467 | 3,3 | 9,8 días |
+| `tmin_doy_td_full` | 0,8621 | 0,3286 | 1,9 | 17,2 días |
+| `tmin_td_symavg` | 0,8640 | 0,3271 | 1,6 | 20,2 días |
+| `tmin_td_znorm` | 0,8718 | 0,3210 | 3,2 | 10,2 días |
+| `tmin_td_full` | 0,8718 | 0,3210 | 3,4 | 9,7 días |
+| `tmin_td_med` | 0,8794 | 0,3151 | 7,8 | 4,2 días |
+| *Palacios (`tuned`)* | *0,9326* | *0,2736* | — | — |
+| `tmin_td_short` | 0,9476 | 0,2620 | 18,5 | 1,8 días |
+| `uni_anom_full` | 1,2780 | 0,0047 | 5,1 | 6,5 días |
+| *climatología* | *1,2840* | *0* | — | — |
+| `uni_td_full` | 1,3124 | −0,0221 | 5,1 | 6,5 días |
+
+El orden de las dos primeras variantes no cambia respecto del cribado con fuga
+(`tmin_anom_full` seguida de `tmin_doy_td_full`), de modo que la elección de la
+variante ganadora se mantiene. El cribado limpio cubre 33 zonas.
 
 Cuatro cosas quedan medidas.
 
 **La covariable Tmin no es un refinamiento, es la condición de entrada.** Sin ella
-ninguna cantidad de contexto alcanza a la climatología: 1,3171 sobre Td crudo y
-1,2825 sobre anomalías, contra 1,2884 de la media histórica. Un modelo de 330
+ninguna cantidad de contexto alcanza a la climatología: 1,3124 sobre Td crudo y
+1,2780 sobre anomalías, contra 1,2840 de la media histórica. Un modelo de 330
 millones de parámetros entrenado con más de un billón de puntos llega, a 1.461 días
 de horizonte, a la misma conclusión que la media por día del año.
 
@@ -269,41 +306,49 @@ costo. Ambas atacan lo mismo, que el modelo no tiene noción de calendario, y la
 primera lo hace mejor y sin cómputo adicional.
 
 **El contexto tiene un umbral, no una pendiente suave.** Con 2 años de historia
-TimesFM queda por debajo del método de Palacios (0,9509 contra 0,9292); con 11 años
-lo supera (0,8834); con 32 años gana 0,007 °C más. El cruce está entre 2 y 11 años,
+TimesFM queda por debajo del método de Palacios (0,9476 contra 0,9326); con 11 años
+lo supera (0,8794); con 32 años gana 0,008 °C más. El cruce está entre 2 y 11 años,
 y a partir de 11 los rendimientos se agotan.
 
 **El promediado simétrico y el z-score externo no compensan.** El primero gana
-0,0079 °C duplicando el cómputo. El segundo no cambia nada: comparando las
-1.615.866 predicciones de `tmin_td_znorm` contra `tmin_td_full`, la diferencia
-máxima es 4·10⁻⁵ °C, ruido de punto flotante. Es coherente con la equivarianza afín
+0,0078 °C duplicando el cómputo. El segundo no cambia nada: ambas variantes dan el
+mismo RMSE (0,8718) y, en la comparación hecha sobre las 1.615.866 predicciones del
+cribado original de 1.106 celdas, la diferencia máxima es 4·10⁻⁵ °C, ruido de punto
+flotante. Es coherente con la equivarianza afín
 que declara el paquete, pero la documentación no advierte que la bandera sea inocua.
 
 Sobre el sesgo de haber elegido la mejor de nueve sobre el mismo bloque: la
-dispersión entre variantes es de 0,036 °C y la brecha con la segunda, de 0,023 °C
-([`cribado/sesgo_seleccion_ll4.csv`](cribado/sesgo_seleccion_ll4.csv)). Esa brecha
-es seis veces el semiancho del intervalo bootstrap sobre ΔRMSE, así que la ganadora
-no es intercambiable con la segunda.
+dispersión entre variantes es de 0,033 °C y la brecha con la segunda, de 0,023 °C
+([`cribado_limpio/sesgo_seleccion_ll4.csv`](cribado_limpio/sesgo_seleccion_ll4.csv)).
+El cribado no tiene intervalo bootstrap, por lo que esa brecha no se compara con la
+incertidumbre del RMSE; la elección entre las dos primeras debe leerse con esa
+reserva.
 
 ### Calibración probabilística
 
-Solo aplica a TimesFM: climatología, `tuned` y la TCN son deterministas. Sobre el
-panel de cribado, con los nueve deciles ([figura](figs/calibracion_cribado.png)):
+Solo aplica a TimesFM: climatología, `tuned` y la TCN son deterministas. Sobre las
+1.092 celdas del cribado limpio, con los nueve deciles
+([figura](figs/calibracion_cribado_limpio.png)):
 
 | variante | CRPS aprox. | cobertura del 80 % | anchura °C |
 |---|---|---|---|
-| `tmin_anom_full` | 0,4811 | 0,817 | 2,03 |
-| `tmin_doy_td_full` | 0,4942 | 0,821 | 2,11 |
-| `tmin_td_full` | 0,5007 | 0,832 | 2,19 |
-| `uni_td_full` | 0,7700 | 0,777 | 3,03 |
+| `tmin_anom_full` | 0,4788 | 0,818 | 2,02 |
+| `tmin_doy_td_full` | 0,4919 | 0,821 | 2,10 |
+| `tmin_td_full` | 0,4984 | 0,832 | 2,18 |
+| `uni_td_full` | 0,7675 | 0,777 | 3,02 |
 
-La variante ganadora cubre el 81,7 % de las observaciones en un intervalo nominal
+La variante ganadora cubre el 81,8 % de las observaciones en un intervalo nominal
 del 80 %, con cero cruces de cuantiles. Las variantes sin covariable tienen
 intervalos un 50 % más anchos, lo que es consistente con que el modelo reconoce su
 propia incertidumbre cuando no tiene información que explotar. El intervalo del
 80 % es el más ancho que se puede formar, porque no hay q05 ni q95.
 
 ### Panel departamental, con la TCN
+
+> El `tuned` de este panel usa la selección de recetas con fuga (manifiesto de recetas
+> con los años 1981–2016), no la del run limpio. Estas cifras no son comparables con
+> las del nivel backtest limpio. La re-corrida con selección limpia queda para un
+> punto posterior.
 
 Sobre 2.048 celdas de los cuatro departamentos y los 1.461 días del bloque oculto
 2013–2016, con semilla 0 de la TCN. Falta añadir el método de Palacios sobre estas
@@ -363,6 +408,11 @@ de desarrollo no detectaron el problema: se corrieron con `--model tcn`. Queda
 registrado en el bead `tdew-x46.3.6`.
 
 ### Prueba de escala
+
+> El `tuned` de esta prueba usa la selección de recetas con fuga (manifiesto de recetas
+> con los años 1981–2016), no la del run limpio. Estas cifras no son comparables con
+> las del nivel backtest limpio. La re-corrida con selección limpia queda para un
+> punto posterior.
 
 TimesFM predijo los 1.461 días de las **436.519 celdas** de Lima, Cusco, Loreto y
 San Martín, sin hueco, entre el 22 y el 23 de septiembre de 2026. La pasada tardó
@@ -434,7 +484,7 @@ de costo entre ambos enfoques es de dos a tres órdenes de magnitud.
 
 ## Limitaciones de TimesFM
 
-Once limitaciones, cada una anclada a una línea del paquete instalado o a una
+Doce limitaciones, cada una anclada a una línea del paquete instalado o a una
 medición hecha aquí: [`limitaciones.md`](limitaciones.md). Las que más pesan para
 este proyecto:
 
@@ -458,10 +508,11 @@ este proyecto:
 | archivo | qué contiene |
 |---|---|
 | `TRACEABILITY.md` | de dónde sale cada número y cómo reproducirlo |
-| `limitaciones.md` | las once limitaciones con su evidencia en el código |
+| `limitaciones.md` | las doce limitaciones con su evidencia en el código |
 | `coste_throughput.csv` | el barrido de costo, 45 combinaciones |
-| `cribado/leaderboard.csv` | las nueve variantes y los rivales sobre el panel de cribado |
-| `nacional/` | métricas, tamaños de efecto y desglose por zona sobre las 17.041 celdas del backtest |
+| `nacional_limpio/` | métricas, tamaños de efecto y desglose por zona sobre las 17.027 celdas del run limpio |
+| `cribado_limpio/` | las nueve variantes y los rivales sobre las 1.092 celdas comunes del cribado y el run limpio |
+| `nacional/`, `cribado/` | la medición con fuga (17.041 y 1.106 celdas), conservada como referencia |
 | `departamental/` | la mesa con la TCN: cinco niveles de agregación y tests pareados |
 | `escala/leaderboard.csv` | los cuatro departamentos completos, por sitio y reponderado |
 | `panels/` | las listas de celdas de cada nivel |

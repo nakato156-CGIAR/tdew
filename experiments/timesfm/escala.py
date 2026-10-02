@@ -217,6 +217,9 @@ def main(argv: Sequence[str] | None = None) -> int:
             build_row_provenance(
                 method, split=args.split, cells=int(row["cells"]), bead_id=args.bead_id,
                 panel_id=str(row["site"]), panel_file=None, output_files=(str(args.out),),
+                notes=(f"backtest_predictions={Path(args.backtest_predictions).resolve()}; "
+                       "tuned con selección con fuga (manifiesto de recetas con 1981-2016), "
+                       "no comparable con backtest_clean"),
             )
         )
     return 0

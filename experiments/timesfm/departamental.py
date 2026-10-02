@@ -23,7 +23,6 @@ import pandas as pd
 
 from tdew_estimation import provenance as prov
 
-from .evaluate import DEFAULT_BACKTEST_ROOT
 
 logger = logging.getLogger("timesfm.departamental")
 
@@ -166,8 +165,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--reconstruction", type=Path, nargs="+", required=True,
                         help="parquets del pipeline de reconstruccion (TCN, ridge, histgb)")
     parser.add_argument("--timesfm", type=Path, default=None)
-    parser.add_argument("--backtest-predictions", type=Path,
-                        default=DEFAULT_BACKTEST_ROOT / "ll4" / "predictions.parquet")
+    parser.add_argument("--backtest-predictions", type=Path, required=True,
+                        help="predictions.parquet de ll4 del panel departamental. OJO: el "
+                             "tuned departamental sale de backtest_panel_dept con seleccion "
+                             "con fuga; no es comparable con backtest_clean")
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--bead-id", default="tdew-214",
                         help="bead que gobierna esta corrida, para tdew_estimation.provenance")

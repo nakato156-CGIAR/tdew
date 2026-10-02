@@ -8,6 +8,16 @@ reproduce. Leer esto antes de citar cualquier cifra de `leaderboard.csv`.
 Fuente única: [`docs/protocol/timesfm_manifest.yaml`](../../docs/protocol/timesfm_manifest.yaml),
 congelado el 2026-09-22, bead `tdew-214`.
 
+Addendum del 2026-10-02 (bead `tdew-214.12`):
+[`docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml`](../../docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml).
+El manifiesto original no se modificó. La adenda fija como referencia del rival
+`tuned` el run limpio `$RES/tuning/backtest_clean` (selección de recetas solo con
+años de entrenamiento, `h` en {7, 11, 15, 21, 31, 45}), con 17.027 celdas, y declara
+que las tablas departamental y de escala conservan un `tuned` con selección con
+fuga. Los registros de proveniencia calculados contra la referencia limpia citan la
+adenda en `manifest_ref`; los anteriores conservan
+`docs/protocol/timesfm_manifest.yaml@2026-09-22`.
+
 Los splits no se inventaron para este trabajo: son los mismos que define
 `HPC_code_tunning/backtest.py:61-66` y bajo los que Palacios reporta sus cifras.
 
@@ -32,12 +42,13 @@ Reglas que gobiernan la comparación:
 
 ### Decisión de diseño que el lector debe conocer
 
-Las diez variantes se evaluaron directamente sobre el mismo bloque que después se
-reporta, por decisión explícita del usuario. No se usó un fold de desarrollo
-previo. En consecuencia, la cifra de la variante ganadora incluye la ventaja de
-haber probado diez configuraciones contra el mismo examen. Esa ventaja se mide y
-se publica junto al resultado (columna `sesgo_seleccion_*` en
-`cribado/leaderboard.csv` y sección correspondiente del `README.md`), en lugar de
+Las variantes (diez al inicio, nueve tras la enmienda del 2026-09-25) se evaluaron
+directamente sobre el mismo bloque que después se reporta, por decisión explícita
+del usuario. No se usó un fold de desarrollo previo. En consecuencia, la cifra de la
+variante ganadora incluye la ventaja de haber probado varias configuraciones contra
+el mismo examen. Esa ventaja se mide y se publica junto al resultado
+(`cribado_limpio/sesgo_seleccion_ll4.csv`, vigente, y `cribado/sesgo_seleccion_ll4.csv`,
+con fuga, más la sección correspondiente del `README.md`), en lugar de
 quedar como advertencia sin cuantificar. Palacios hizo la comprobación análoga
 sobre su propia reselección de recetas y obtuvo 0,0088 de skill
 (`PAPER_PLAN.md:275`).
@@ -53,36 +64,50 @@ sobre su propia reselección de recetas y obtuvo 0,0088 de skill
 │           └── TMIN contexto+horizonte             → covariable futura
 │                 └── experiments/timesfm/run.py    → <split>__<variante>.parquet
 │                       (ID, FECHA, pred, q10..q90)
-├── tuning/backtest/<split>/predictions.parquet
+├── tuning/backtest_clean/<split>/predictions.parquet        (referencia vigente, 17.027 celdas)
 │     (ID, zone_id, FECHA, TD_obs, pred_tuned, pred_clim, pred_tmin, pred_ols)
-│     └── experiments/timesfm/evaluate.py           → cribado/leaderboard.csv
-│     └── experiments/timesfm/merge_predictions.py  → backtest_timesfm/<split>/predictions.parquet
+│     └── experiments/timesfm/evaluate.py           → nacional_limpio/, cribado_limpio/
+│     └── experiments/timesfm/merge_predictions.py  → $WORK/backtest_clean_timesfm/<split>/predictions.parquet
 │           └── HPC_code_tunning/effect_sizes.py    → effect_sizes_all.csv, figuras
+│                 └── experiments/timesfm/publish.py → nacional_limpio/ (copia con proveniencia propia)
+├── tuning/backtest/<split>/predictions.parquet              (run con fuga, 17.041 celdas, solo referencia)
+│     └── nacional/, cribado/, curva_error_*.csv sin sufijo
 └── zone_table.parquet  (2.818.404 IDs → zone_id SENAMHI)
       └── panels/*.csv
 ```
 
-Los archivos originales bajo `tuning/backtest/` no se modifican. La columna
-`pred_timesfm` se añade en una copia bajo otra raíz.
+Los archivos originales bajo `tuning/backtest/` y `tuning/backtest_clean/` no se
+modifican. La columna `pred_timesfm` se añade en una copia bajo otra raíz
+(`$WORK/backtest_clean_timesfm`).
 
 ## 3. Los paneles de celdas
 
 | panel | celdas | archivo | cómo se eligió |
 |---|---|---|---|
 | cribado | 1.106 | `panels/cribado_estratificado.csv` | hasta 40 celdas por zona SENAMHI sobre las del backtest de Palacios, `numpy.random.default_rng(20260922)` |
-| backtest | 17.041 | `panels/nacional_17041.csv` | las mismas celdas del backtest de Palacios, sin filtrar |
+| backtest (limpio) | 17.027 | `panels/nacional_17027.csv` | las celdas del run limpio de Palacios (`ID`, `zone_id` de `backtest_clean/ll4`); subconjunto del panel de 17.041 |
+| cribado (limpio) | 1.092 | `panels/cribado_estratificado.csv` (1.106 IDs) | intersección del cribado con el run limpio; las 14 celdas restantes se descartan en la unión interna |
+| backtest (con fuga) | 17.041 | `panels/nacional_17041.csv` | las celdas del backtest con fuga, sin filtrar; solo referencia |
 | departamental | 2.048 | `$WORK/panels/ll4_seed0.csv` | panel `ll4` del protocolo de reconstrucción, 512 por departamento (no los 2.048/departamento del manifiesto: verificado contra `predicciones_largo.parquet` y contra el artefacto, sección "Panel departamental") |
 | escala | 436.519 | `Data/silver/department_grid_ids/*.csv` | las cuatro listas completas |
 | escala, submuestra puntuada | 61.113 | `$TFM/panel_escala_submuestra.csv` | 14 % de cada departamento, proporcional, que es lo que el método de Palacios alcanzó a cubrir |
 
-El muestreo de 64 buckets de Palacios toca 38 de las 41 zonas SENAMHI, no las 41.
-El panel de cribado hereda esas 38.
+El muestreo de 64 buckets de Palacios toca 38 de las 41 zonas SENAMHI en el run con
+fuga y 33 en el run limpio. El panel de cribado limpio cubre las 33.
+
+El `tuned` de las tablas departamental y de escala viene de
+`HPC_code_tunning.backtest` ejecutado sin `--manifest` (`run_cola_final.sh` y
+`run_tuned_escala.sh`), es decir, con `$RES/tuning/manifest.parquet`, cuya selección
+de recetas vio los años 1981–2016. **Esas dos tablas no son comparables con las
+cifras limpias.** La re-corrida con selección limpia queda
+para un punto posterior.
 
 El panel llamado aquí `backtest` no es una muestra del Perú: el marco de muestreo
 sortea buckets sobre la caja envolvente del producto PISCO, de modo que 8.755 de
-sus 17.041 celdas —el 51,4 %— caen en Brasil, Bolivia, Ecuador o Colombia.
-Verificado con `shapely.contains_xy` sobre los contornos departamentales. Bead
-`tdew-214.8`.
+sus 17.027 celdas —el 51,4 %— caen en Brasil, Bolivia, Ecuador o Colombia
+(8.272 dentro del Perú). Verificado con `shapely.contains_xy` sobre los contornos
+departamentales; las 14 celdas ajenas al run limpio estaban todas dentro del Perú.
+Bead `tdew-214.8`.
 
 ## 4. Los rivales y qué mide cada uno
 
@@ -104,7 +129,9 @@ climatología y `tuned` son por celda y no se ven afectados.
 
 | control | qué verifica | resultado |
 |---|---|---|
-| reproducción de la cifra publicada | RMSE de `tuned` y `climatology` en `ll4` desde `predictions.parquet` | 1,219433 y 1,535218, contra 1,219 y 1,535 de `PAPER_PLAN.md:263-268` |
+| reproducción de la cifra publicada (limpia) | RMSE de `tuned` y `climatology` en `ll4` de `nacional_limpio/metrics_all.csv` contra `backtest_clean/metrics_all.csv` | 1,2279 y 1,5352, n = 24.876.447, diferencia absoluta 0 en los tres splits |
+| cobertura de la fusión (limpia) | celdas de la referencia y de TimesFM en la unión interna | 17.027 de 17.027; 14 celdas de TimesFM fuera de la referencia |
+| reproducción de la cifra con fuga | RMSE de `tuned` y `climatology` en `ll4` desde `tuning/backtest` | 1,219433 y 1,535218, contra 1,219 y 1,535 de `PAPER_PLAN.md:263-268` |
 | paridad de climatología | `TD_clim` del panel contra `pred_clim` de Palacios, mismas `(ID, FECHA)` | `max\|diff\| = 0,0` |
 | paridad de Tmin y Td observado | `tmin_hold` y `td_hold` contra `Tmin_hold` y `TD_obs` | `max\|diff\| = 0,0` en ambos |
 | no-fuga | último día del contexto y primero del bloque oculto; NaN | 2012-12-31 / 2013-01-01; cero NaN |
@@ -132,6 +159,92 @@ ganadora.
 
 ## 6. Cómo reproducirlo
 
+### Referencia limpia (vigente)
+
+```bash
+RES=/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning
+WORK=/home/cvelasquez/tdew_timesfm
+ADD=docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml
+OUT=reports/timesfm_benchmark
+
+# Todos los comandos se ejecutan desde la raíz del repositorio.
+# Panel: IDs y zonas de backtest_clean/ll4 (17.027 celdas)
+RES=$RES OUT=$OUT uv run python - <<'PY'
+import os
+import pandas as pd
+d = pd.read_parquet(os.environ["RES"] + "/tuning/backtest_clean/ll4/predictions.parquet",
+                    columns=["ID", "zone_id"])
+d.drop_duplicates().sort_values("ID").to_csv(
+    os.environ["OUT"] + "/panels/nacional_17027.csv", index=False)
+PY
+
+# Fusión con TimesFM (intermedio en $WORK; no se escribe bajo $RES)
+uv run python -m experiments.timesfm.merge_predictions \
+  --predictions-dir $WORK/preds_nacional --variant tmin_anom_full --splits ll1,ll2,ll4 \
+  --backtest-root $RES/tuning/backtest_clean --out-root $WORK/backtest_clean_timesfm \
+  --panel-id nacional_17027_limpio --bead-id tdew-214.12
+
+# Escalera por bloque, desglose por zona y curva de error acumulado
+uv run python -m experiments.timesfm.evaluate \
+  --predictions-dir $WORK/preds_nacional --splits ll1,ll2,ll4 --by-zone \
+  --backtest-root $RES/tuning/backtest_clean --out-dir $OUT/nacional_limpio \
+  --panel-id nacional_17027_limpio --panel-file $OUT/panels/nacional_17027.csv \
+  --bead-id tdew-214.12 --growth-curve ll4 --growth-variant tmin_anom_full \
+  --growth-curve-out $OUT/curva_error_nacional_limpio.csv
+
+# Tamaños de efecto y curva de horizonte
+uv run python -m HPC_code_tunning.effect_sizes \
+  --backtest-root $WORK/backtest_clean_timesfm --splits ll1,ll2,ll4 \
+  --focal timesfm --lead-time-methods timesfm,tuned --timesfm-variant tmin_anom_full \
+  --n-boot 1000 --n-perm 5000 --seed 0 --panel-id nacional_17027_limpio \
+  --panel-file $OUT/panels/nacional_17027.csv --manifest-ref $ADD --bead-id tdew-214.12 \
+  --notes "backtest_root deriva de tuning/backtest_clean (merge con TimesFM tmin_anom_full)"
+
+# Publicación con proveniencia propia (copia los CSV y clona sus filas del registro)
+uv run python -m experiments.timesfm.publish \
+  --src $WORK/backtest_clean_timesfm/metrics_all.csv $WORK/backtest_clean_timesfm/effect_sizes_all.csv \
+  --dst-dir $OUT/nacional_limpio
+cp -f $WORK/backtest_clean_timesfm/lead_time_curve.png $OUT/nacional_limpio/
+for s in ll1 ll2 ll4; do for f in $WORK/backtest_clean_timesfm/$s/*.png; do
+  cp -f "$f" "$OUT/nacional_limpio/${s}_$(basename "$f")"; done; done
+
+# Cribado limpio (1.092 celdas comunes) y figuras con sufijo
+uv run python -m experiments.timesfm.evaluate \
+  --predictions-dir $WORK/preds_cribado --splits ll4 --by-zone \
+  --backtest-root $RES/tuning/backtest_clean --out-dir $OUT/cribado_limpio \
+  --panel-id cribado_1092_limpio --panel-file $OUT/panels/cribado_estratificado.csv \
+  --bead-id tdew-214.12 --growth-curve ll4 --growth-variant tmin_anom_full \
+  --growth-curve-out $OUT/curva_error_cribado_limpio.csv \
+  --notes "panel_file son las 1106 celdas del cribado; se puntuan las 1092 comunes con backtest_clean (14 descartadas)"
+uv run python -m experiments.timesfm.make_figures --suffix _limpio
+
+# Página interactiva (el worktree puede no tener Data/; --silver del checkout que sí la tenga)
+uv run python - <<'PY'
+from pathlib import Path
+from experiments.timesfm import artifact_data
+artifact_data.build(Path("reports/timesfm_benchmark/artifact/datos.js"), silver=Path("Data/silver"))
+PY
+```
+
+El recuento de celdas dentro y fuera del Perú (8.272 y 8.755 sobre las 17.027) sale de
+`artifact_data.build_layers` (`shapely.contains_xy` contra los contornos
+departamentales) y queda en `meta.muestreoDentro`/`muestreoFuera` de `datos.js`.
+
+`sesgo_seleccion_*.csv` no se genera para el panel nacional: con una sola variante no
+hubo selección y la dispersión sería cero por construcción. El cribado limpio sí lo
+genera (nueve variantes). La variante retirada `tmin_td_25` se omite en la
+puntuación aunque su parquet siga en `$WORK/preds_cribado`.
+
+Las filas de `reports/metric_provenance.jsonl` de estas corridas guardan la ruta
+de los CSV publicados relativa al repositorio y la de los intermedios (`$WORK`)
+absoluta. `git_commit` registra el `HEAD` en el momento de la corrida: si el código
+tenía cambios sin confirmar, ese commit no reproduce la fila por sí solo.
+
+### Referencia con fuga (histórica)
+
+Estos comandos reproducen las cifras con fuga y por eso fijan `--backtest-root` al
+run anterior:
+
 ```bash
 # Entorno (TimesFM entra por el extra 'timesfm' del proyecto)
 uv sync --extra timesfm --extra deep
@@ -147,6 +260,7 @@ uv run python -m experiments.timesfm.run --variants all --split ll4 \
   --out-dir "$WORK/preds_cribado" --batch-size 16 --cells-per-batch 256
 uv run python -m experiments.timesfm.evaluate \
   --predictions-dir "$WORK/preds_cribado" --splits ll4 \
+  --backtest-root "$RES/tuning/backtest" \
   --out-dir reports/timesfm_benchmark/cribado --by-zone
 
 # Fase 2 — la ganadora sobre las 17.041 celdas, tres splits
@@ -155,7 +269,8 @@ uv run python -m experiments.timesfm.run --variants "$BEST" --split ll4 \
   --out-dir "$WORK/preds_nacional" --batch-size 16 --cells-per-batch 512
 uv run python -m experiments.timesfm.merge_predictions \
   --predictions-dir "$WORK/preds_nacional" --variant "$BEST" \
-  --splits ll1,ll2,ll4 --out-root "$RES/tuning/backtest_timesfm"
+  --splits ll1,ll2,ll4 --backtest-root "$RES/tuning/backtest" \
+  --out-root "$RES/tuning/backtest_timesfm"
 uv run python -m HPC_code_tunning.effect_sizes \
   --backtest-root "$RES/tuning/backtest_timesfm" --splits ll1,ll2,ll4 \
   --focal timesfm --lead-time-methods timesfm,tuned
@@ -171,7 +286,8 @@ uv run python -m HPC_code_tunning.backtest --base "$RES" --splits ll4 \
 
 ## 7. Dónde queda registrada cada corrida
 
-- Beads: `tdew-214` y sus subtareas por fase, mas `tdew-214.8` sobre el marco de muestreo.
+- Beads: `tdew-214` y sus subtareas por fase, `tdew-214.8` sobre el marco de muestreo y
+  `tdew-214.12` sobre la re-puntuación contra el run limpio (`PLAN_1.md`).
 - Notion: fila `Benchmark TimesFM vs. metodo Palacios y TCN` en el Gantt Chart del
   Timeline Planner, con `Bead ID = tdew-214`.
 - MLflow: experimento `tdew-timesfm`.

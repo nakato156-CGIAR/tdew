@@ -319,7 +319,12 @@ def main(argv=None) -> int:
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--backtest-root", required=True, type=Path,
-                   help="dir holding <split>/predictions.parquet (e.g. $RES/tuning/backtest)")
+                   help="dir holding <split>/predictions.parquet (e.g. $RES/tuning/backtest_clean)")
+    p.add_argument("--manifest-ref", default=None,
+                   help="governing document recorded in provenance (default: the original manifest)")
+    p.add_argument("--notes", default=None,
+                   help="free text appended to the provenance notes, e.g. which reference run "
+                        "--backtest-root derives from")
     p.add_argument("--splits", type=str, default="ll1,ll2,ll4")
     p.add_argument("--n-boot", type=int, default=1000)
     p.add_argument("--n-perm", type=int, default=5000)
@@ -376,7 +381,13 @@ def main(argv=None) -> int:
                 build_row_provenance(
                     method, split=s, cells=int(len(per_id)), bead_id=args.bead_id,
                     panel_id=panel_id, panel_file=args.panel_file,
-                    output_files=(str(effect_sizes_path),),
+                    output_files=(str(effect_sizes_path), str(root / "effect_sizes_all.csv")),
+                    notes="; ".join(filter(None, [
+                        f"backtest_root={Path(args.backtest_root).resolve()}",
+                        f"cells={int(len(per_id))}",
+                        f"n_boot={args.n_boot}; n_perm={args.n_perm}; seed={args.seed}",
+                        args.notes])),
+                    **({"manifest_ref": args.manifest_ref} if args.manifest_ref else {}),
                 )
             )
 

@@ -24,3 +24,27 @@ def test_mapped_name_is_reachable_through_build_row_provenance():
         panel_id="nacional_17041", panel_file="x.csv", output_files=("x.csv",),
     )
     assert record.variant_label == "tmin_anom_full"
+
+
+def test_default_backtest_root_is_the_clean_run_and_is_shared():
+    from experiments.timesfm import evaluate, merge_predictions
+
+    assert evaluate.DEFAULT_BACKTEST_ROOT == evaluate.CLEAN_BACKTEST_ROOT
+    assert evaluate.CLEAN_BACKTEST_ROOT.name == "backtest_clean"
+    assert evaluate.LEAKY_BACKTEST_ROOT.name == "backtest"
+    assert merge_predictions.DEFAULT_BACKTEST_ROOT is evaluate.DEFAULT_BACKTEST_ROOT
+
+
+def test_build_row_provenance_forwards_notes_for_both_method_kinds():
+    for method in ("timesfm:tmin_anom_full", "tuned"):
+        record = build_row_provenance(
+            method,
+            split="ll4",
+            cells=1,
+            bead_id="tdew-214",
+            panel_id="p",
+            panel_file="f",
+            output_files=("o",),
+            notes="backtest_root=x",
+        )
+        assert record.notes == "backtest_root=x"

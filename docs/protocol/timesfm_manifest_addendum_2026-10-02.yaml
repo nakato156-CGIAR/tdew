@@ -1,0 +1,47 @@
+# Addendum — referencia limpia para el benchmark de TimesFM
+#
+# No modifica docs/protocol/timesfm_manifest.yaml (congelado el 2026-09-22). Los
+# registros de proveniencia anteriores conservan la referencia al manifiesto
+# original; los registros calculados contra la referencia limpia citan este archivo.
+
+addendum_de: "docs/protocol/timesfm_manifest.yaml@2026-09-22"
+fecha: "2026-10-02"
+bead_id: tdew-214.12
+plan: PLAN_1.md
+
+motivo: >
+  La referencia del manifiesto original ($RES/tuning/backtest) usa selección de
+  recetas con los años 1981-2016, es decir, la selección vio el periodo evaluado.
+  El paper reporta el run limpio ($RES/tuning/backtest_clean: selección solo con
+  años de entrenamiento, h en {7, 11, 15, 21, 31, 45}), asi que la comparacion
+  debe hacerse contra ese.
+
+rival_tuned:
+  fuente: "$RES/tuning/backtest_clean/{ll1,ll2,ll4}/predictions.parquet"
+  sin_cambio: [climatologia, td_observado, splits]
+
+panel_nacional:
+  celdas: 17027
+  relación: subconjunto del panel original de 17041 celdas (las 14 restantes no están en el run limpio)
+  zonas_senamhi: 33
+  zonas_senamhi_total: 41
+  nota_zonas: >
+    La sección nacional del manifiesto original dice 38 zonas. Fuente de la cifra
+    de 33: PAPER_PLAN.md, entrada del 2026-09-14.
+  panel_id: nacional_17027_limpio
+panel_cribado:
+  celdas: 1092
+  salida: reports/timesfm_benchmark/cribado_limpio/
+  panel_id: cribado_1092_limpio
+
+sin_cambio:
+  - variantes de TimesFM
+  - contexto
+  - covariable Tmin
+  - make_positive=False
+  - predicciones de TimesFM (no se re-corre inferencia)
+
+no_comparable:
+  - >
+    Las tablas departamental y de escala conservan el tuned con selección con
+    fuga y no deben compararse con las cifras limpias.

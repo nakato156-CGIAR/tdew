@@ -83,9 +83,9 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
       <p class="lead">Se compararon los métodos sobre <strong>las mismas celdas, los mismos días y el mismo bloque oculto</strong>. TimesFM 3 obtuvo el menor RMSE del backtest, pero esa mejora viene con restricciones de licencia, mucho más cómputo y un sesgo menos estable.</p>
     </div>
     <div class="metrics" aria-label="Resultados principales">
-      <div class="metric primary"><span class="label">RMSE · TimesFM</span><strong id="kpi-rmse-timesfm">1.154 °C</strong><span>vs. <span class="num" id="kpi-rmse-palacios">1.219 °C</span> de Palacios</span></div>
-      <div class="metric"><span class="label">Ventaja frente a Palacios</span><strong id="kpi-delta-palacios">0.066 °C</strong><span>menos RMSE en el mismo backtest</span></div>
-      <div class="metric"><span class="label">Consistencia de la ventaja</span><strong id="kpi-frac-celdas">99.2 %</strong><span>de celdas favorables y <span class="num" id="kpi-zonas">38/41</span> zonas climáticas medidas</span></div>
+      <div class="metric primary"><span class="label">RMSE · TimesFM</span><strong id="kpi-rmse-timesfm">1.154 °C</strong><span>vs. <span class="num" id="kpi-rmse-palacios">1.228 °C</span> de Palacios</span></div>
+      <div class="metric"><span class="label">Ventaja frente a Palacios</span><strong id="kpi-delta-palacios">0.074 °C</strong><span>menos RMSE en el mismo backtest</span></div>
+      <div class="metric"><span class="label">Consistencia de la ventaja</span><strong id="kpi-frac-celdas">99.2 %</strong><span>de celdas favorables y <span class="num" id="kpi-zonas">33/41</span> zonas climáticas medidas</span></div>
     </div>
   </div>
   <div class="wrap protocol-strip" aria-label="Esquema del backtest">
@@ -113,16 +113,16 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
     </div>
     <div class="chart-shell">
       <figure class="fig">
-        <figcaption><span class="fig-titulo">RMSE global</span><span class="fig-sub">Menor es mejor. 17 041 celdas y 24 896 901 pares observación–predicción.</span></figcaption>
+        <figcaption><span class="fig-titulo">RMSE global</span><span class="fig-sub">Menor es mejor. 17 027 celdas y 24 876 447 pares observación–predicción.</span></figcaption>
         <svg id="fig-ranking" viewBox="0 0 760 210"></svg>
       </figure>
       <figure class="fig">
         <figcaption><span class="fig-titulo">Diferencia frente a cada alternativa</span><span class="fig-sub">ΔRMSE = RMSE de la alternativa − RMSE de TimesFM. Valores positivos favorecen a TimesFM.</span></figcaption>
         <svg id="fig-efectos" viewBox="0 0 950 192"></svg>
-        <p class="fig-nota">Frente a Palacios, el IC bootstrap del 95 % va de 0.065 a 0.066 °C. El remuestreo es por celdas, con 1 000 remuestreos. La prueba por permutación usa 5 000 permutaciones y reporta p = 0.0002 en las cuatro comparaciones.</p>
+        <p class="fig-nota">Frente a Palacios, el IC bootstrap del 95 % va de 0.074 a 0.075 °C. El remuestreo es por celdas, con 1 000 remuestreos. La prueba por permutación usa 5 000 permutaciones y reporta p = 0.0002 en las cuatro comparaciones.</p>
       </figure>
     </div>
-    <div class="finding"><strong>La brecha principal es pequeña en magnitud absoluta:</strong> 0.066 °C de RMSE frente a Palacios. La pregunta útil no es solo si existe, sino si se mantiene al aumentar el horizonte y al cambiar de región.</div>
+    <div class="finding"><strong>La brecha principal es pequeña en magnitud absoluta:</strong> 0.074 °C de RMSE frente a Palacios. La pregunta útil no es solo si existe, sino si se mantiene al aumentar el horizonte y al cambiar de región.</div>
 
     <div class="model-grid" aria-label="Estrategias de predicción">
       <article class="model-card"><span class="tag">Sin memoria</span><h3>Cada día se resuelve por separado</h3><p>Climatología, <code>Td = Tmin</code> y <code>zone_ols</code> no mantienen estado dentro del bloque.</p></article>
@@ -136,14 +136,14 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
   <div class="wrap">
     <div class="section-head">
       <p class="eyebrow section-index">02 · Horizonte</p>
-      <div class="section-copy"><h2>La diferencia aparece al alargar el bloque</h2><p>En los primeros días Palacios tiene la ventaja. Después, su RMSE acumulado crece mientras TimesFM no sigue la misma pendiente.</p></div>
+      <div class="section-copy"><h2>La diferencia aparece al alargar el bloque</h2><p>TimesFM va por delante hasta el día 164. Entre ese día y el día 717 Palacios tiene la ventaja, con algunos cruces breves cerca del final del tramo y de hasta 0.11 °C de RMSE acumulado el día 219. Desde el día 718 TimesFM vuelve a liderar y termina 0.074 °C por debajo.</p></div>
     </div>
     <div class="horizon-layout">
       <div>
         <div class="capa-row"><button type="button" id="curva-pocas" aria-pressed="true">Competidores principales</button><button type="button" id="curva-todas" aria-pressed="false">Añadir líneas base</button></div>
         <div class="grafico"><svg id="curva" viewBox="0 0 760 340" role="img" aria-label="RMSE acumulado por día del bloque oculto"></svg><div class="leyenda-linea" id="leyenda-curva"></div></div>
       </div>
-      <aside class="side-note"><h3>Skill vs. climatología por horizonte</h3><p>TimesFM a cuatro años alcanza prácticamente el mismo skill que Palacios a un año.</p><div class="tabla-caja" style="margin-top:14px"><table id="t-horizonte"></table></div></aside>
+      <aside class="side-note"><h3>Skill vs. climatología por horizonte</h3><p>TimesFM a cuatro años alcanza un skill cercano al de Palacios a un año: 0.249 frente a 0.254.</p><div class="tabla-caja" style="margin-top:14px"><table id="t-horizonte"></table></div></aside>
     </div>
   </div>
 </section>
@@ -152,7 +152,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
   <div class="wrap">
     <div class="section-head">
       <p class="eyebrow section-index">03 · Alcance</p>
-      <div class="section-copy"><h2>El resultado global no equivale a un promedio del Perú</h2><p>El backtest usa la caja envolvente del producto PISCO. De sus 17 041 celdas, 8 755 están fuera del territorio peruano.</p></div>
+      <div class="section-copy"><h2>El resultado global no equivale a un promedio del Perú</h2><p>El backtest usa la caja envolvente del producto PISCO. De sus 17 027 celdas, 8 755 están fuera del territorio peruano.</p></div>
     </div>
     <div class="scope-warning"><h3>51.4 % del muestreo cae fuera del Perú</h3><p>Esto no cambia la comparación interna porque todos los métodos se puntúan sobre las mismas celdas y días. Sí cambia cómo debe interpretarse el agregado: es el backtest de Palacios sobre la rejilla, no un promedio nacional del territorio peruano.</p></div>
     <div class="mapa-caja">
@@ -169,7 +169,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
     </div>
     <figure class="fig"><figcaption><span class="fig-titulo">RMSE por departamento y método</span><span class="fig-sub">Menor es mejor. El contorno marca el mejor método de cada fila.</span></figcaption><svg id="fig-heatmap" viewBox="0 0 760 230"></svg></figure>
     <figure class="fig"><figcaption><span class="fig-titulo">La lectura cambia según la métrica</span><span class="fig-sub">RMSE y MAE premian error bajo; sesgo premia cercanía a cero; r y skill premian valores altos; fuera de QC premia valores bajos.</span></figcaption><div class="pestanas" role="tablist" id="pestanas-metrica"></div><svg id="fig-metrica" viewBox="0 0 760 250"></svg><p class="fig-nota" id="nota-metrica"></p></figure>
-    <p class="nota" style="margin-top:14px">La TCN supera a Palacios en tres departamentos y pierde en Lima por 0.003 °C. TimesFM obtiene el menor RMSE en los cuatro.</p>
+    <p class="nota" style="margin-top:14px">La TCN supera a Palacios en tres departamentos y pierde en Lima por 0.003 °C. TimesFM obtiene el menor RMSE en los cuatro. El <em>tuned</em> de este panel usa la selección de recetas con fuga (manifiesto con los años 1981–2016) y no es comparable con las cifras limpias del resultado nacional.</p>
   </div>
 </section>
 
@@ -182,7 +182,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
     <div class="readout"><div><strong>436 519</strong><span>celdas predichas por TimesFM</span></div><div><strong>61 113</strong><span>celdas comunes usadas para puntuar</span></div><div><strong>89 286 093</strong><span>pares predicción–observación</span></div></div>
     <figure class="fig"><figcaption><span class="fig-titulo">RMSE agregado de los cuatro departamentos</span><span class="fig-sub">Reponderado por el número real de celdas de cada departamento.</span></figcaption><svg id="fig-escala" viewBox="0 0 760 130"></svg></figure>
     <figure class="fig"><figcaption><span class="fig-titulo">RMSE por departamento</span><span class="fig-sub">89.3 millones de pares puntuados. El contorno marca el mejor de cada fila.</span></figcaption><svg id="fig-escala-mapa" viewBox="0 0 760 200"></svg></figure>
-    <p class="nota" style="margin-top:14px">La submuestra de puntuación es estratificada y proporcional. No es cobertura completa de Palacios: su corrida sobre toda la rejilla fue eliminada por memoria.</p>
+    <p class="nota" style="margin-top:14px">La submuestra de puntuación es estratificada y proporcional. No es cobertura completa de Palacios: su corrida sobre toda la rejilla fue eliminada por memoria. El <em>tuned</em> de esta prueba usa la selección de recetas con fuga (manifiesto con los años 1981–2016) y no es comparable con las cifras limpias del resultado nacional.</p>
   </div>
 </section>
 
@@ -193,10 +193,10 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
       <div class="section-copy"><h2>El menor RMSE no resuelve la decisión de uso</h2><p>La mejora de precisión convive con cuatro restricciones que importan para producción y para interpretar el benchmark.</p></div>
     </div>
     <div class="limit-grid">
-      <article class="limit"><span class="label">Licencia</span><h3>TimesFM 3 no permite uso comercial o productivo</h3><p>Sus pesos usan <code>timesfm-non-commercial-license-v1.0</code>. TimesFM 2.5 es Apache-2.0, pero en esa prueba de compatibilidad obtuvo <strong>1.5257</strong> de RMSE frente a <strong>1.2884</strong> de climatología.</p></article>
+      <article class="limit"><span class="label">Licencia</span><h3>TimesFM 3 no permite uso comercial o productivo</h3><p>Sus pesos usan <code>timesfm-non-commercial-license-v1.0</code>. TimesFM 2.5 es Apache-2.0, pero en esa prueba de compatibilidad, sobre las 1 106 celdas del cribado original, obtuvo <strong>1.5257</strong> de RMSE frente a <strong>1.2884</strong> de climatología.</p></article>
       <article class="limit"><span class="label">Cómputo</span><h3>La pasada es mucho más lenta</h3><p>En una RTX A2000 de 12 GB, TimesFM procesa <strong>5.09 celdas/s</strong>: <strong>23 h 48 min</strong> para los cuatro departamentos y <strong>6.4 días</strong> extrapolados al grid de 2 818 404 celdas. Palacios cubre el grid completo en <strong>20 min</strong>.</p></article>
-      <article class="limit"><span class="label">Sesgo y QC</span><h3>El error cuadrático mejora, el centrado no siempre</h3><p>El sesgo de TimesFM es <strong>+0.180</strong>, <strong>−0.126</strong> y <strong>+0.105 °C</strong> según el bloque. Además, <strong>0.12 %</strong> de sus predicciones queda fuera del rango de QC de PISCO, frente a <strong>0.08 %</strong> de la TCN.</p></article>
-      <article class="limit"><span class="label">Selección</span><h3>La variante se eligió sobre el mismo bloque reportado</h3><p>Se evaluaron nueve variantes de TimesFM en ese bloque. La ganadora supera a la segunda por <strong>0.023 °C</strong>, seis veces el semiancho del intervalo bootstrap. El mismo bloque, por diseño, participa en la selección de variante y en el resultado final.</p></article>
+      <article class="limit"><span class="label">Sesgo y QC</span><h3>El error cuadrático mejora, el centrado no siempre</h3><p>El sesgo de TimesFM es <strong>+0.180</strong>, <strong>−0.126</strong> y <strong>+0.104 °C</strong> según el bloque. Además, <strong>0.12 %</strong> de sus predicciones queda fuera del rango de QC de PISCO, frente a <strong>0.08 %</strong> de la TCN.</p></article>
+      <article class="limit"><span class="label">Selección</span><h3>La variante se eligió sobre el mismo bloque reportado</h3><p>Se evaluaron nueve variantes de TimesFM en ese bloque. La ganadora supera a la segunda por <strong>0.023 °C</strong> de RMSE (0.839 frente a 0.862 en las 1 092 celdas del cribado). El mismo bloque, por diseño, participa en la selección de variante y en el resultado final.</p></article>
     </div>
   </div>
 </section>
@@ -393,7 +393,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
       leyenda.innerHTML = `<div>Skill vs. climatología</div><div class="rampa"></div>
         <div class="fila" style="justify-content:space-between">
           <span class="num">${skillMin.toFixed(2)}</span><span class="num">${skillMax.toFixed(2)}</span></div>
-        <p class="nota">Rampa secuencial de un solo tono: el skill es positivo en las 38
+        <p class="nota">Rampa secuencial de un solo tono: el skill es positivo en las ${Object.values(D.zonas).filter(m => m && m.timesfm).length}
         zonas medidas, así que no corresponde una escala divergente. Las zonas sin celdas en
         el muestreo quedan en gris.</p>`;
     }

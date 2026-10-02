@@ -110,7 +110,7 @@ def build_layers(res: Path = RES, silver: Path = SILVER,
     # Las celdas del muestreo del backtest, separadas segun caigan dentro o fuera
     # del Peru. Esa separacion es contenido, no adorno: la mitad del muestreo esta
     # fuera del pais y conviene que se vea.
-    sample_ids = pd.read_parquet(res / "tuning/backtest/ll4/predictions.parquet",
+    sample_ids = pd.read_parquet(res / "tuning/backtest_clean/ll4/predictions.parquet",
                                  columns=["ID"])["ID"].unique()
     sample = np.zeros(N_LAT * N_LON, dtype=np.uint8)
 
@@ -175,7 +175,7 @@ def build_layers(res: Path = RES, silver: Path = SILVER,
 
 def zone_metrics(report: Path = REPORT) -> dict:
     """Skill y RMSE por zona climatica, para colorear el mapa."""
-    frame = pd.read_csv(report / "nacional" / "metrics_by_zone.csv")
+    frame = pd.read_csv(report / "nacional_limpio" / "metrics_by_zone.csv")
     frame = frame[frame["split"] == "ll4"]
     out: dict[str, dict] = {}
     for zone, group in frame.groupby("zone_id"):
@@ -199,7 +199,7 @@ def zone_labels(res: Path = RES) -> dict:
 
 def error_curve(report: Path = REPORT, every: int = 7) -> dict:
     """RMSE acumulado dia a dia del bloque oculto, submuestreado."""
-    frame = pd.read_csv(report / "curva_error_nacional.csv")
+    frame = pd.read_csv(report / "curva_error_nacional_limpio.csv")
     frame = frame[(frame["dia"] % every == 0) | (frame["dia"] == frame["dia"].max())]
     out = {}
     for method, group in frame.groupby("method"):
@@ -220,9 +220,9 @@ def tables(report: Path = REPORT) -> dict:
             for _, r in frame.iterrows()
         ]
 
-    nacional = pd.read_csv(report / "nacional" / "metrics_all.csv")
-    efectos = pd.read_csv(report / "nacional" / "effect_sizes_all.csv")
-    cribado = pd.read_csv(report / "cribado" / "leaderboard.csv")
+    nacional = pd.read_csv(report / "nacional_limpio" / "metrics_all.csv")
+    efectos = pd.read_csv(report / "nacional_limpio" / "effect_sizes_all.csv")
+    cribado = pd.read_csv(report / "cribado_limpio" / "leaderboard.csv")
     dept = pd.read_csv(report / "departamental" / "metrics.csv")
     coste = pd.read_csv(report / "coste_throughput.csv")
     escala_csv = report / "escala" / "leaderboard.csv"
@@ -256,10 +256,12 @@ def check_parity(payload: dict, report: Path = REPORT) -> None:
     principales coincidieron sin desviacion. Aqui protege contra que la pagina y
     el informe cuenten cosas distintas.
     """
-    nacional = pd.read_csv(report / "nacional" / "metrics_all.csv")
+    nacional = pd.read_csv(report / "nacional_limpio" / "metrics_all.csv")
+    # Valores del run limpio (backtest_clean, 17.027 celdas), PLAN_1 §3.
     esperado = {
-        ("ll4", "timesfm"): 1.1536, ("ll4", "tuned"): 1.2194, ("ll4", "climatology"): 1.5352,
-        ("ll2", "timesfm"): 1.1533, ("ll1", "timesfm"): 1.1737,
+        ("ll4", "timesfm"): 1.1536, ("ll4", "tuned"): 1.2279, ("ll4", "climatology"): 1.5352,
+        ("ll2", "timesfm"): 1.1533, ("ll2", "tuned"): 1.2765,
+        ("ll1", "timesfm"): 1.1736, ("ll1", "tuned"): 1.2538,
     }
     for (split, method), value in esperado.items():
         fuente = float(nacional[(nacional["split"] == split) & (nacional["method"] == method)]["rmse"].iloc[0])

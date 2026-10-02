@@ -1,0 +1,35 @@
+{
+  "autoregressive": false,
+  "bead_id": "tdew-214.12",
+  "climatology_role": "target_anomaly_base",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-10-02T15:21:36+00:00",
+  "git_commit": "82d4798a57e2bcea63a5023a06990ee4fbe704c0",
+  "inputs": [
+    "TMIN_anom"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml",
+  "mlflow_run_id": null,
+  "model_family": "timesfm-3.0",
+  "model_id": "google/timesfm-3.0-pytorch",
+  "notes": "backtest_root=/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean; selecci\u00f3n solo con a\u00f1os de entrenamiento, h {7,11,15,21,31,45}; cells=1092; curva de error acumulado; panel_file son las 1106 celdas del cribado; se puntuan las 1092 comunes con backtest_clean (14 descartadas)",
+  "output_files": [
+    "/home/cvelasquez/Code/tdew/.claude/worktrees/tdew-214-timesfm-limpio/reports/timesfm_benchmark/curva_error_cribado_limpio.csv"
+  ],
+  "panel_cell_count": 1092,
+  "panel_file": "reports/timesfm_benchmark/panels/cribado_estratificado.csv",
+  "panel_id": "cribado_1092_limpio",
+  "run_id": "135af1cd15144aa2b7f6f2313262a7e5",
+  "seeds": [],
+  "split_id": "ll4",
+  "target_type": "td_anomaly",
+  "test_period": [
+    "2013-01-01",
+    "2016-12-31"
+  ],
+  "trained": false,
+  "training_period": null,
+  "validation_period": null,
+  "variant_label": "tmin_anom_full"
+}

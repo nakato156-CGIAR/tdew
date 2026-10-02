@@ -1,0 +1,35 @@
+{
+  "autoregressive": false,
+  "bead_id": "tdew-214.12",
+  "climatology_role": "target_anomaly_base",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-10-02T15:20:46+00:00",
+  "git_commit": "82d4798a57e2bcea63a5023a06990ee4fbe704c0",
+  "inputs": [
+    "TMIN_anom"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml",
+  "mlflow_run_id": null,
+  "model_family": "timesfm-3.0",
+  "model_id": "google/timesfm-3.0-pytorch",
+  "notes": "backtest_root=/home/cvelasquez/tdew_timesfm/backtest_clean_timesfm; cells=17027; n_boot=1000; n_perm=5000; seed=0; backtest_root deriva de tuning/backtest_clean (merge con TimesFM tmin_anom_full); published_from=/home/cvelasquez/tdew_timesfm/backtest_clean_timesfm/effect_sizes_all.csv; source_run_id=0ef4a164f7b64100844ea0e443774f8c",
+  "output_files": [
+    "reports/timesfm_benchmark/nacional_limpio/effect_sizes_all.csv"
+  ],
+  "panel_cell_count": 17027,
+  "panel_file": "reports/timesfm_benchmark/panels/nacional_17027.csv",
+  "panel_id": "nacional_17027_limpio",
+  "run_id": "6277031def0a4d39a90774f80986deb0",
+  "seeds": [],
+  "split_id": "ll4",
+  "target_type": "td_anomaly",
+  "test_period": [
+    "2013-01-01",
+    "2016-12-31"
+  ],
+  "trained": false,
+  "training_period": null,
+  "validation_period": null,
+  "variant_label": "tmin_anom_full"
+}

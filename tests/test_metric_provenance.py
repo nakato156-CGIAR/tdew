@@ -14,7 +14,7 @@ from pathlib import Path
 
 import pytest
 
-from tdew_estimation.provenance import load_registry
+from tdew_estimation.provenance import load_registry, resolve_recorded_path
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 REPORTS_ROOT = REPO_ROOT / "reports"
@@ -41,6 +41,15 @@ TRACKED_METRIC_FILES = (
     REPORTS_ROOT / "timesfm_benchmark/nacional/sesgo_seleccion_ll4.csv",
     REPORTS_ROOT / "timesfm_benchmark/nacional/metrics_all.csv",
     REPORTS_ROOT / "timesfm_benchmark/nacional/effect_sizes_all.csv",
+    REPORTS_ROOT / "timesfm_benchmark/nacional_limpio/leaderboard.csv",
+    REPORTS_ROOT / "timesfm_benchmark/nacional_limpio/metrics_by_zone.csv",
+    REPORTS_ROOT / "timesfm_benchmark/nacional_limpio/metrics_all.csv",
+    REPORTS_ROOT / "timesfm_benchmark/nacional_limpio/effect_sizes_all.csv",
+    REPORTS_ROOT / "timesfm_benchmark/curva_error_nacional_limpio.csv",
+    REPORTS_ROOT / "timesfm_benchmark/cribado_limpio/leaderboard.csv",
+    REPORTS_ROOT / "timesfm_benchmark/cribado_limpio/metrics_by_zone.csv",
+    REPORTS_ROOT / "timesfm_benchmark/cribado_limpio/sesgo_seleccion_ll4.csv",
+    REPORTS_ROOT / "timesfm_benchmark/curva_error_cribado_limpio.csv",
     REPORTS_ROOT / "timesfm_benchmark/departamental/metrics.csv",
     REPORTS_ROOT / "timesfm_benchmark/departamental/metrics_macro.csv",
     REPORTS_ROOT / "timesfm_benchmark/departamental/curva_acumulada.csv",
@@ -67,14 +76,16 @@ EXCLUDED_FILES = {
         "experiments.timesfm.throughput mide celdas/s y VRAM, no precision -- "
         "autoregressive/target_type/climatology_used no aplican a un benchmark de hardware",
     REPORTS_ROOT / "timesfm_benchmark/curva_error_cribado.csv":
-        "error_growth_curves() existe en evaluate.py pero ningun main() la invoca; "
-        "se genera fuera de cualquier CLI instrumentado",
+        "version con fuga, generada antes de que existiera `evaluate --growth-curve`; "
+        "se conserva sin cambios (PLAN_1 §4). La version limpia si esta instrumentada",
     REPORTS_ROOT / "timesfm_benchmark/curva_error_nacional.csv":
-        "error_growth_curves() existe en evaluate.py pero ningun main() la invoca; "
-        "se genera fuera de cualquier CLI instrumentado",
+        "version con fuga, generada antes de que existiera `evaluate --growth-curve`; "
+        "se conserva sin cambios (PLAN_1 §4). La version limpia si esta instrumentada",
     REPORTS_ROOT / "timesfm_benchmark/panels/cribado_estratificado.csv":
         "panel de celdas (lista de IDs), no una metrica -- se referencia como panel_file en otros registros",
     REPORTS_ROOT / "timesfm_benchmark/panels/nacional_17041.csv":
+        "panel de celdas (lista de IDs), no una metrica -- se referencia como panel_file en otros registros",
+    REPORTS_ROOT / "timesfm_benchmark/panels/nacional_17027.csv":
         "panel de celdas (lista de IDs), no una metrica -- se referencia como panel_file en otros registros",
     REPORTS_ROOT / "paper/scripts/validation_by_support.csv":
         "reports/paper/scripts/validation_by_support.py lee desde una ruta externa "
@@ -110,7 +121,8 @@ def _rows_documenting(path: Path) -> list[dict]:
     target = path.resolve()
     return [
         row for row in _registry_rows()
-        if any(Path(f).resolve() == target for f in row.get("output_files", []))
+        if any(resolve_recorded_path(f, repo_root=REPO_ROOT) == target
+               for f in row.get("output_files", []))
     ]
 
 
@@ -185,3 +197,93 @@ def test_departamental_panel_cell_counts_match_the_actual_predictions_parquet():
             f"{key}: panel_cell_count={row['panel_cell_count']} pero el parquet tiene "
             f"{int(actual_cells[key])} celdas reales"
         )
+
+
+def test_clean_panel_cell_counts_match_the_panel_file():
+    """Los registros del panel limpio declaran tantas celdas como IDs tiene
+    panels/nacional_17027.csv (17.027), no un numero copiado del plan."""
+    import pandas as pd
+
+    panel = pd.read_csv(REPORTS_ROOT / "timesfm_benchmark/panels/nacional_17027.csv")
+    assert panel["ID"].is_unique and len(panel) == 17027
+    rows = [r for r in _registry_rows() if r.get("panel_id") == "nacional_17027_limpio"]
+    assert rows, "no hay registros con panel_id nacional_17027_limpio"
+    for row in rows:
+        assert row["panel_cell_count"] == len(panel), row["run_id"]
+        assert row["manifest_ref"] == "docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml"
+
+
+def test_clean_effect_sizes_cover_the_whole_clean_panel():
+    """PLAN_1 criterio 5: 12 filas (3 splits x 4 baselines) sobre las 17.027 celdas,
+    y el p minimo alcanzable con 5.000 permutaciones es 1/5001."""
+    import pandas as pd
+
+    es = pd.read_csv(REPORTS_ROOT / "timesfm_benchmark/nacional_limpio/effect_sizes_all.csv")
+    assert len(es) == 12
+    assert set(es["n_cells"]) == {17027}
+    assert set(es["split"]) == {"ll1", "ll2", "ll4"}
+    assert es["perm_p_value"].min() == pytest.approx(1 / 5001, rel=1e-3)
+
+
+def test_clean_effect_sizes_reconstruct_from_metrics_all():
+    """PLAN_1 criterio 6: delta_rmse_C(timesfm_vs_climatology) = RMSE(clima) - RMSE(TimesFM)
+    con las cifras de metrics_all.csv, y timesfm_vs_tuned en ll4 es ~ +0,074."""
+    import pandas as pd
+
+    base = REPORTS_ROOT / "timesfm_benchmark/nacional_limpio"
+    es, ma = pd.read_csv(base / "effect_sizes_all.csv"), pd.read_csv(base / "metrics_all.csv")
+    for split in ("ll1", "ll2", "ll4"):
+        rmse = ma[ma["split"] == split].set_index("method")["rmse"]
+        row = es[(es["split"] == split) & (es["comparison"] == "timesfm_vs_climatology")].iloc[0]
+        assert row["delta_rmse_C"] == pytest.approx(
+            rmse["climatology"] - rmse["timesfm"], abs=1e-6)
+    tuned = es[(es["split"] == "ll4") & (es["comparison"] == "timesfm_vs_tuned")].iloc[0]
+    assert tuned["delta_rmse_C"] == pytest.approx(0.074, abs=5e-4)
+
+
+def test_every_row_documenting_the_clean_outputs_carries_the_clean_panel_id():
+    """PLAN_1 criterio 12: ninguna fila que documente un archivo *_limpio puede llevar
+    otro panel_id ni el manifiesto original."""
+    base = REPORTS_ROOT / "timesfm_benchmark"
+    clean_files = [p for p in TRACKED_METRIC_FILES if "limpio" in str(p.relative_to(REPORTS_ROOT))]
+    assert clean_files
+    for path in clean_files:
+        rows = _rows_documenting(path)
+        assert rows, path
+        for row in rows:
+            expected = ("cribado_1092_limpio" if "cribado" in path.name or "cribado_limpio" in str(path)
+                        else "nacional_17027_limpio")
+            assert row["panel_id"] == expected, (path.name, row["panel_id"])
+            assert row["manifest_ref"] == "docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml"
+
+
+def test_clean_screening_covers_the_1092_common_cells():
+    """PLAN_1 criterio 7: el cribado limpio puntua las 1.092 celdas comunes al
+    panel de cribado (1.106) y al run limpio; las 14 restantes se descartan."""
+    import pandas as pd
+
+    base = REPORTS_ROOT / "timesfm_benchmark"
+    board = pd.read_csv(base / "cribado_limpio/leaderboard.csv")
+    assert set(board["cells"]) == {1092}
+    assert set(board["split"]) == {"ll4"}
+    screening = set(pd.read_csv(base / "panels/cribado_estratificado.csv")["ID"])
+    clean = set(pd.read_csv(base / "panels/nacional_17027.csv")["ID"])
+    assert len(screening & clean) == 1092
+    variants = board[board["method"].str.startswith("timesfm:")]
+    assert len(variants) == 9, "nueve variantes tras la enmienda del 2026-09-25"
+    by_zone = pd.read_csv(base / "cribado_limpio/metrics_by_zone.csv")
+    assert by_zone["zone_id"].nunique() == 33
+    for method in ("tuned", "climatology", "timesfm:tmin_anom_full"):
+        assert by_zone[by_zone["method"] == method]["cells"].sum() == 1092, method
+    assert not by_zone.duplicated(["split", "zone_id", "method"]).any()
+
+
+def test_clean_screening_provenance_counts_match_the_leaderboard():
+    import pandas as pd
+
+    path = REPORTS_ROOT / "timesfm_benchmark/cribado_limpio/leaderboard.csv"
+    rows = _rows_documenting(path)
+    assert rows
+    assert {r["panel_cell_count"] for r in rows} == {1092}
+    assert {r["panel_id"] for r in rows} == {"cribado_1092_limpio"}
+    assert len(rows) == len(pd.read_csv(path))

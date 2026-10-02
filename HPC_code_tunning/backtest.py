@@ -131,6 +131,7 @@ def build_rival_provenance(
     panel_id: str,
     panel_file: Optional[str],
     output_files: Tuple[str, ...],
+    notes: Optional[str] = None,
 ) -> prov.MetricProvenance:
     """The provenance record for one of the four ladder methods on one split.
 
@@ -169,6 +170,7 @@ def build_rival_provenance(
         panel_cell_count=cells,
         panel_file=panel_file,
         output_files=output_files,
+        notes=notes,
     )
 
 

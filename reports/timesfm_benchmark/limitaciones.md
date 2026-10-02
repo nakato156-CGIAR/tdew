@@ -217,3 +217,16 @@ redondea al múltiplo de 64 superior
 (`timesfm3_forecaster.py:480-483`) y se recorta al final (`:757-764`); la única
 excepción es `horizon <= 0`, que sí lanza error (`model.py:397-398`). Los 1.461 días
 del bloque 2013-2016 salen en una sola pasada, sin partir ni realimentar.
+
+## 12. El panel de comparación cubre 33 de las 41 zonas SENAMHI
+
+La referencia vigente de Palacios (`$RES/tuning/backtest_clean`) tiene 17.027 celdas
+y cubre 33 de las 41 zonas SENAMHI; el panel con fuga tocaba 38. Las cifras por zona
+(`nacional_limpio/metrics_by_zone.csv`, el mapa de la página interactiva) no dicen
+nada sobre las ocho zonas ausentes. Además, el 51,4 % de las celdas (8.755 de
+17.027) cae fuera del Perú, porque el marco de muestreo del backtest usa la caja
+envolvente del producto PISCO. El agregado nacional describe esa muestra y no un
+promedio del territorio peruano (bead `tdew-214.8`).
+
+Las tablas departamental y de escala usan un `tuned` con selección de recetas con
+fuga y no son comparables con las cifras del nivel backtest limpio.

@@ -10,8 +10,8 @@ resultados (CSV, figuras y la página HTML interactiva) se publican en
 `docs/protocol/timesfm_manifest.yaml`.
 
 El benchmark opera en cuatro niveles de medición: cribado (1106 celdas,
-compara las 9 variantes entre sí), backtest nacional (17 041 celdas,
-comparación pareada contra la cifra publicada en el paper de TimesFM),
+compara las 9 variantes entre sí), backtest nacional (17 027 celdas del
+run limpio de Palacios, comparación pareada contra la cifra publicada en el paper),
 departamental (2048 celdas, el único nivel en el que se compara también
 contra la TCN) y escala (436 519 celdas, para medir coste y estabilidad al
 volumen real de datos).
@@ -38,8 +38,15 @@ volumen real de datos).
   Palacios (climatología, `td_eq_tmin`, `zone_ols`, `tuned`), leyendo
   `predictions.parquet` del backtest y restringiendo la comparación a las
   celdas donde TimesFM también produjo predicción. Genera los
-  `leaderboard.csv`.
-- `merge_predictions.py`: copia `predictions.parquet` del backtest agregando
+  `leaderboard.csv`. La raíz de referencia por defecto es el run limpio
+  (`CLEAN_BACKTEST_ROOT`, `$RES/tuning/backtest_clean`); el run con fuga
+  (`LEAKY_BACKTEST_ROOT`) solo se usa pasando `--backtest-root`. Con
+  `--growth-curve` escribe además la curva de RMSE acumulado. Omite las variantes
+  retiradas del protocolo (`RETIRED_VARIANTS`).
+- `publish.py`: copia un CSV intermedio al repositorio y clona sus filas de
+  `reports/metric_provenance.jsonl` apuntando al destino (idempotente).
+- `merge_predictions.py`: copia `predictions.parquet` del backtest (por defecto
+  el run limpio, la misma constante que `evaluate.py`) agregando
   la columna `pred_timesfm`, sin modificar el original, para que
   `HPC_code_tunning/effect_sizes.py` la use a través de `METHOD_COLS`.
 - `departamental.py`: convierte las predicciones de TimesFM y de Palacios al
