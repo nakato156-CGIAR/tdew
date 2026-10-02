@@ -211,6 +211,34 @@ def error_curve(report: Path = REPORT, every: int = 7) -> dict:
     return out
 
 
+SOPORTE_COLUMNS = ("split", "tier", "method", "cells", "n", "rmse", "mae", "bias", "r", "skill")
+MENSUAL_COLUMNS = ("split", "method", "month", "bias_pooled", "n", "cells",
+                   "cell_bias_std", "cell_bias_p05", "cell_bias_p95")
+_INT_COLUMNS = {"cells", "n", "month"}
+
+
+def _records(frame: pd.DataFrame, columns: Sequence[str]) -> list[dict]:
+    """Filas listas para JSON estricto: enteros como int, NaN como null (``None``),
+    flotantes a seis decimales. ``json.dumps`` con NaN no es JSON valido. Seis y no
+    cuatro porque la pagina resta RMSE ya volcados (ΔRMSE por tier): con cuatro
+    decimales 0.9464 − 0.8669 da 0.0795 y se mostraria 0.080 en vez de 0.079."""
+    out = []
+    for raw in frame.to_dict("records"):
+        row = {}
+        for c in columns:
+            v = raw[c]
+            if isinstance(v, str):
+                row[c] = v
+            elif pd.isna(v):
+                row[c] = None
+            elif c in _INT_COLUMNS:
+                row[c] = int(v)
+            else:
+                row[c] = round(float(v), 6)
+        out.append(row)
+    return out
+
+
 def tables(report: Path = REPORT) -> dict:
     """Las tablas de metricas, copiadas de los CSV publicados sin recalcular."""
     def rows(frame: pd.DataFrame, columns: Sequence[str]) -> list[dict]:
@@ -228,11 +256,16 @@ def tables(report: Path = REPORT) -> dict:
     escala_csv = report / "escala" / "leaderboard.csv"
     escala = pd.read_csv(escala_csv) if escala_csv.exists() else pd.DataFrame()
 
+    soporte = pd.read_csv(report / "nacional_limpio" / "tiers_limpio.csv")
+    mensual = pd.read_csv(report / "nacional_limpio" / "sesgo_mensual_limpio.csv")
+
     dept_pooled = dept[dept["level"] == "pooled"]
     dept_por = dept[dept["level"] == "department"]
 
     return {
         "nacional": rows(nacional, ["split", "method", "n", "rmse", "mae", "bias", "r", "skill_vs_clim"]),
+        "soporte": _records(soporte, SOPORTE_COLUMNS),
+        "sesgoMensual": _records(mensual, MENSUAL_COLUMNS),
         "efectos": rows(efectos, ["split", "comparison", "rmse_focal", "rmse_baseline",
                                   "delta_rmse_C", "delta_ci95", "skill", "frac_cells_focal_wins",
                                   "cohens_d", "perm_p_value", "n_cells"]),
@@ -247,6 +280,62 @@ def tables(report: Path = REPORT) -> dict:
         "escala": rows(escala, ["site", "method", "cells", "n", "rmse", "mae", "bias", "r",
                                 "skill_vs_clim"]) if len(escala) else [],
     }
+
+
+# Cifras de PLAN_2 (run limpio, ll4): las de tbl-tiers del paper para ``tuned`` y las
+# de TimesFM de reports/timesfm_benchmark/README.md.
+TIER_CELLS = {"within": 8306, "near": 1779, "marginal": 1433, "extrapolated": 2563,
+              "unsupported": 2946}
+TIER_RMSE_EXPECTED = {
+    "tuned": {"within": 0.946, "near": 1.139, "marginal": 1.276, "extrapolated": 1.374,
+              "unsupported": 1.724},
+    "timesfm": {"within": 0.867, "near": 1.061, "marginal": 1.198, "extrapolated": 1.298,
+                "unsupported": 1.652},
+}
+MONTH_BIAS_EXPECTED = {("tuned", 12): 0.017, ("tuned", 1): -0.402, ("timesfm", 1): -0.325,
+                       ("timesfm", 12): 0.089}
+
+
+def _check_parity_tier_month(payload: dict, report: Path) -> None:
+    """Soporte observacional y sesgo mensual: lo volcado es el CSV, fila por fila, y
+    las cifras clave coinciden con las del informe y las del paper."""
+    for key, csv, columns, keys in (
+        ("soporte", "tiers_limpio.csv", SOPORTE_COLUMNS, ("split", "tier", "method")),
+        ("sesgoMensual", "sesgo_mensual_limpio.csv", MENSUAL_COLUMNS, ("split", "method", "month")),
+    ):
+        fuente = pd.read_csv(report / "nacional_limpio" / csv)
+        volcado = payload["tablas"][key]
+        if len(volcado) != len(fuente):
+            raise ValueError(f"{key}: se volcaron {len(volcado)} filas y el CSV trae {len(fuente)}")
+        index = {tuple(r[k] for k in keys): r for r in volcado}
+        for raw in fuente.to_dict("records"):
+            row = index.get(tuple(raw[k] if k != "month" else int(raw[k]) for k in keys))
+            if row is None:
+                raise ValueError(f"{key}: falta la fila {[raw[k] for k in keys]}")
+            for c in columns:
+                if c in keys:
+                    continue
+                esperado = None if pd.isna(raw[c]) else float(raw[c])
+                if (esperado is None) != (row[c] is None) or (
+                        esperado is not None and abs(row[c] - esperado) > 1e-5):
+                    raise ValueError(f"{key} {[raw[k] for k in keys]} {c}: {row[c]} != {esperado}")
+
+    ll4 = {(r["tier"], r["method"]): r for r in payload["tablas"]["soporte"] if r["split"] == "ll4"}
+    for tier, cells in TIER_CELLS.items():
+        if ll4[(tier, "tuned")]["cells"] != cells:
+            raise ValueError(f"{tier}: {ll4[(tier, 'tuned')]['cells']} celdas, se esperaban {cells}")
+    for method, by_tier in TIER_RMSE_EXPECTED.items():
+        for tier, value in by_tier.items():
+            if abs(ll4[(tier, method)]["rmse"] - value) > 5e-4:
+                raise ValueError(f"RMSE {method} {tier}: {ll4[(tier, method)]['rmse']} != {value}")
+    mensual = {(r["method"], r["month"]): r for r in payload["tablas"]["sesgoMensual"]
+               if r["split"] == "ll4"}
+    for (method, month), value in MONTH_BIAS_EXPECTED.items():
+        # 1e-3: el valor se cita a tres decimales (diciembre de tuned es 0.01748,
+        # que se cita como +0.017).
+        if abs(mensual[(method, month)]["bias_pooled"] - value) > 1e-3:
+            raise ValueError(f"sesgo {method} mes {month}: "
+                             f"{mensual[(method, month)]['bias_pooled']} != {value}")
 
 
 def check_parity(payload: dict, report: Path = REPORT) -> None:
@@ -271,6 +360,7 @@ def check_parity(payload: dict, report: Path = REPORT) -> None:
                    if r["split"] == split and r["method"] == method]
         if not volcado or abs(volcado[0]["rmse"] - fuente) > 5e-4:
             raise ValueError(f"{method} {split}: lo volcado no coincide con el CSV")
+    _check_parity_tier_month(payload, report)
     logger.info("paridad con los CSV del informe: sin discrepancias")
 
 

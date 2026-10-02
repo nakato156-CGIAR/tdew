@@ -287,7 +287,9 @@ tiene menor RMSE que `tuned` en los cinco tiers, con una diferencia de 0,079 en
 dominio y el orden de los tiers es el mismo para los dos. El sesgo de TimesFM crece
 con la distancia (de +0,050 a +0,223 °C) y el de `tuned` se mantiene entre −0,09 y
 +0,01 °C. La tabla reducida para el texto está en
-[`tiers_texto_limpio.md`](nacional_limpio/tiers_texto_limpio.md).
+[`tiers_texto_limpio.md`](nacional_limpio/tiers_texto_limpio.md). La página interactiva
+([`artifact/index.html`](artifact/index.html), sección «Soporte observacional») muestra la
+misma tabla y una figura de RMSE por tier.
 
 El cribado limpio repite el cálculo sobre 1.092 celdas
 ([CSV](cribado_limpio/tiers_cribado_limpio.csv)). Esa muestra es estratificada por
@@ -326,6 +328,8 @@ absoluto es menor que el de `tuned`. La dispersión entre celdas (0,14 a 0,51 °
 de 0,14 a 0,51) es del mismo orden que el sesgo pooled, así que el promedio nacional oculta
 variación espacial. El sesgo por mes × tier de los cinco métodos está en
 [`sesgo_mes_tier_limpio.csv`](nacional_limpio/sesgo_mes_tier_limpio.csv).
+La página interactiva muestra el sesgo mensual y su dispersión en la sección «Sesgo
+estacional».
 
 `tiers_texto_limpio.md` usa el formato numérico en inglés de `tbl-tiers` del paper
 (punto decimal, coma de miles), porque está pensado para pegarse en ese texto. La

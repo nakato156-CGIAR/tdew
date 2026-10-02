@@ -20,7 +20,8 @@ def _report(tmp_path):
     for rel in ("nacional_limpio/metrics_by_zone.csv", "nacional_limpio/metrics_all.csv",
                 "nacional_limpio/effect_sizes_all.csv", "cribado_limpio/leaderboard.csv",
                 "departamental/metrics.csv", "coste_throughput.csv", "escala/leaderboard.csv",
-                "curva_error_nacional_limpio.csv"):
+                "curva_error_nacional_limpio.csv",
+                "nacional_limpio/tiers_limpio.csv", "nacional_limpio/sesgo_mensual_limpio.csv"):
         shutil.copy(REAL / rel, report / rel)
     # versiones con fuga: deben ignorarse (contenido sentinela inconfundible)
     (report / "nacional/metrics_by_zone.csv").write_text(

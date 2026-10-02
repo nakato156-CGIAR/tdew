@@ -71,7 +71,8 @@ Palacios' `tuned`). Their metrics otherwise live in
 - [`reports/timesfm_benchmark/artifact/index.html`](reports/timesfm_benchmark/artifact/index.html):
   the equivalent interactive page, with the same figures embedded in
   `datos.js` — screening, national, departmental, and scale leaderboards,
-  effect sizes, probabilistic calibration, and a choropleth map of Peru.
+  effect sizes, probabilistic calibration, error by observational-support tier,
+  monthly bias, and a choropleth map of Peru.
 
 The nine variants evaluated: `uni_td_full`, `uni_anom_full`, `tmin_td_full`,
 `tmin_anom_full` (the winner in screening and national), `tmin_doy_td_full`,

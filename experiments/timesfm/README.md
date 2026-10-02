@@ -34,6 +34,11 @@ volumen real de datos).
 - `probabilistic.py`: funciones para calcular métricas probabilísticas sobre
   los 9 deciles predichos (pinball loss, aproximación de CRPS, cobertura de
   intervalo). No tiene interfaz de línea de comandos.
+- `by_tier_month.py`: desempeño por tier de soporte observacional (E5) y sesgo
+  mensual (E8) de TimesFM y los rivales de Palacios, solo cómputo sobre las
+  predicciones existentes. Escribe los CSV `*_limpio` de `nacional_limpio/` y
+  `cribado_limpio/`, con control de reproducción contra el paper y `--mlflow`
+  opcional; `artifact_data.py` los incorpora a la página interactiva.
 - `evaluate.py`: puntúa las variantes de TimesFM junto con los métodos de
   Palacios (climatología, `td_eq_tmin`, `zone_ols`, `tuned`), leyendo
   `predictions.parquet` del backtest y restringiendo la comparación a las
