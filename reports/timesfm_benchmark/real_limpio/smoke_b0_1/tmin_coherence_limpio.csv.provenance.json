@@ -1,0 +1,47 @@
+{
+  "autoregressive": true,
+  "bead_id": "tdew-214.13",
+  "climatology_role": "target_anomaly_base",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-10-02T19:44:38+00:00",
+  "git_commit": "df86d62c423425ba5a385beff9543923b68efe42",
+  "inputs": [
+    "TMIN_anom"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest_addendum_real_2017_2020.yaml",
+  "mlflow_run_id": "8d2ef220235341158c3b5bbe752b8086",
+  "model_family": "timesfm-3.0",
+  "model_id": "google/timesfm-3.0-pytorch",
+  "notes": "Acuerdo TimesFM - Palacios (diferencia = TimesFM - Palacios), sin verdad observada: sesgo, RMSE, MAE y r entre productos, no error. TimesFM leido de /home/cvelasquez/tdew_timesfm/preds_real_smoke, Palacios de /media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/predictions_2017_2020. Pesos de TimesFM de uso no comercial.",
+  "output_files": [
+    "reports/timesfm_benchmark/real_limpio/smoke_b0_1/product_figures_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/smoke_b0_1/reproduction_palacios_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/smoke_b0_1/agreement_overall_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/smoke_b0_1/agreement_by_year_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/smoke_b0_1/agreement_by_month_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/smoke_b0_1/agreement_by_zone_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/smoke_b0_1/agreement_by_tier_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/smoke_b0_1/agreement_by_site_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/smoke_b0_1/agreement_by_horizon_day_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/smoke_b0_1/anomaly_series_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/smoke_b0_1/drift_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/smoke_b0_1/tmin_coherence_limpio.csv",
+    "/home/cvelasquez/tdew_timesfm/agg_real_smoke/agreement_by_cell_limpio.csv"
+  ],
+  "panel_cell_count": 528,
+  "panel_file": null,
+  "panel_id": "real_528_td",
+  "run_id": "34a7a1d53d1a494895f2379dc20e36db",
+  "seeds": [],
+  "split_id": "real_2017_2020",
+  "target_type": "td_anomaly",
+  "test_period": [
+    "2017-01-01",
+    "2020-12-31"
+  ],
+  "trained": false,
+  "training_period": null,
+  "validation_period": null,
+  "variant_label": "tmin_anom_full"
+}

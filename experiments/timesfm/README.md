@@ -86,3 +86,36 @@ predicciones a cada nivel de comparación. `evaluate.py` calcula las métricas
 y los leaderboards. `make_figures.py` y `plots.py` generan las figuras, y
 `artifact_data.py` arma la página interactiva final a partir de los CSV ya
 publicados.
+
+## Producto 2017-2020 (split `real`, E9)
+
+`panel.py` define el split `real`: contexto 1981-2016 (13.149 días) y horizonte
+2017-01-01 a 2020-12-31 (1.461 días). La Tmin futura sale de
+`future_tmin_by_bucket` (argumento `future_root`), `td_hold` queda en NaN porque
+no hay Td observada, y una celda se omite si le falta contexto o Tmin futura.
+Los splits `ll1/ll2/ll4` no cambian.
+
+- `real.py`: corrida por buckets (`ID % 8192`) de la variante `tmin_anom_full`
+  sobre las 2.178.827 celdas del producto de Palacios. Cada bucket se escribe de
+  forma atómica (`pred.parquet.tmp` → `pred.parquet`) y termina con `.done`
+  (JSON con filas, bytes, sha256, celdas omitidas, `ids_hash`, `code_version`).
+  Reanudar es relanzar el mismo comando; un `.done` con otro `ids_hash` o
+  `code_version` aborta con `ResumeMismatch`. `--plan-only` lista celdas,
+  `--verify-only` revisa el producto y regenera `MANIFEST.csv`. Con `--mlflow`
+  registra una corrida en `tdew-timesfm-benchmark`. Cada corrida deja un registro
+  en `reports/metric_provenance.jsonl`. Un lote por bucket (≤ 271 celdas), sin
+  `--cells-per-batch`.
+- `real_compare.py`: acuerdo TimesFM − Palacios, en flujo por bucket. Sin verdad
+  observada: sesgo, RMSE, MAE y r **entre productos**, nunca «error». Salidas
+  `*_limpio.csv` con su `.provenance.json`.
+
+Formato de salida (`preds_real/id_bucket=XXXX/pred.parquet`): `ID` int32, `day`
+int16 (días desde 2017-01-01, 0 a 1460), `pred` y `q10`…`q90` float32, zstd,
+ordenado por `(ID, day)`. `FECHA = 2017-01-01 + day`. Leer con
+`pq.ParquetFile(ruta).read()`: `pq.read_table(ruta)` infiere la partición hive
+del directorio y agrega una columna `id_bucket` que no está en el archivo.
+
+Medido en el smoke test (buckets 0 y 1, RTX A2000): 4,3 celdas/s con
+`--batch-size 32` (3,4 con 4 y 4,1 con 16; la salida es idéntica bit a bit), pico
+de 7,4 GB de VRAM y 49,6 B por fila con zstd (los float32 casi no comprimen).
+Extrapolado: ≈ 5,9 días y ≈ 158 GB para el producto completo.

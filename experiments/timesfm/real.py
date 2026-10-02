@@ -595,7 +595,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--historical-root", type=Path, default=DEFAULT_HISTORICAL_ROOT)
     parser.add_argument("--future-root", type=Path, default=DEFAULT_FUTURE_ROOT)
     parser.add_argument("--buckets", default=None, help="'0,1' o '0-3'; por defecto, todos (smoke test: pocos)")
-    parser.add_argument("--batch-size", type=int, default=4)
+    parser.add_argument("--batch-size", type=int, default=32,
+                        help="medido: 4 -> 3,4; 16 -> 4,1; 32 -> 4,4 celdas/s, salida identica bit a bit")
     parser.add_argument("--min-free-gb", type=float, default=60.0)
     parser.add_argument("--prefetch-workers", type=int, default=2)
     parser.add_argument("--no-tf32", action="store_true")

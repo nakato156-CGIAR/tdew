@@ -74,6 +74,18 @@ TRACKED_METRIC_FILES = (
     REPORTS_ROOT / "week1_tcn_audit/train_val_gap.csv",
 )
 
+# E9 (tdew-214.13): salidas de real_compare.py sobre el smoke test de los buckets 0 y 1.
+_REAL_SMOKE = REPORTS_ROOT / "timesfm_benchmark/real_limpio/smoke_b0_1"
+_REAL_SMOKE_FILES = tuple(
+    _REAL_SMOKE / f"{name}_limpio.csv"
+    for name in (
+        "product_figures", "reproduction_palacios", "agreement_overall", "agreement_by_year",
+        "agreement_by_month", "agreement_by_zone", "agreement_by_tier", "agreement_by_site",
+        "agreement_by_horizon_day", "drift", "anomaly_series", "tmin_coherence",
+    )
+)
+TRACKED_METRIC_FILES = TRACKED_METRIC_FILES + _REAL_SMOKE_FILES
+
 # CSV/parquet bajo reports/ que existen hoy pero cuyo script de origen no
 # está instrumentado todavía (bead de seguimiento tdew-z39.7), o que no son
 # una métrica de precisión en sí (paneles, listas de IDs, benchmarks de
@@ -252,7 +264,10 @@ def test_every_row_documenting_the_clean_outputs_carries_the_clean_panel_id():
     """PLAN_1 criterio 12: ninguna fila que documente un archivo *_limpio puede llevar
     otro panel_id ni el manifiesto original."""
     base = REPORTS_ROOT / "timesfm_benchmark"
-    clean_files = [p for p in TRACKED_METRIC_FILES if "limpio" in str(p.relative_to(REPORTS_ROOT))]
+    # real_limpio (E9) tiene su propio panel (real_N_td) y su propio addendum; este
+    # criterio de PLAN_1 es solo de los paneles nacional y cribado.
+    clean_files = [p for p in TRACKED_METRIC_FILES
+                   if "limpio" in str(p.relative_to(REPORTS_ROOT)) and "real_limpio" not in str(p)]
     assert clean_files
     for path in clean_files:
         rows = _rows_documenting(path)
