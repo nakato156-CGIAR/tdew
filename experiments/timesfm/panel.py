@@ -30,7 +30,11 @@ SPLITS: dict[str, tuple[int, tuple[int, int]]] = {
     "ll1": (2015, (2016, 2016)),
     "ll2": (2014, (2015, 2016)),
     "ll4": (2012, (2013, 2016)),
+    # Hueco real de Palacios: no hay Td observada en el horizonte. La Tmin futura
+    # sale de `future_tmin_by_bucket`, no de `bucketed_training_data`.
+    "real": (2016, (2017, 2020)),
 }
+FUTURE_SPLITS = frozenset({"real"})
 TRAIN_START = 1981
 NUM_BUCKETS = 8192
 REQUIRED_COLUMNS = ("ID", "FECHA", "TD", "TMIN", "doy")
@@ -162,6 +166,19 @@ def _read_bucket(root: Path, bucket: int, years: range) -> pd.DataFrame:
     return pd.concat(frames, ignore_index=True)
 
 
+def _read_future_bucket(root: Path, bucket: int, years: range) -> pd.DataFrame:
+    """Lee la Tmin futura regridada de un bucket (``future_tmin_{year}.parquet``)."""
+    directory = bucket_dir(root, bucket)
+    frames = []
+    for year in years:
+        path = directory / f"future_tmin_{year}.parquet"
+        if path.exists():
+            frames.append(pd.read_parquet(path, columns=["ID", "FECHA", "TMIN"]))
+    if not frames:
+        raise FileNotFoundError(f"sin future_tmin para el bucket {bucket} en {directory}")
+    return pd.concat(frames, ignore_index=True)
+
+
 def _pivot(frame: pd.DataFrame, column: str, ids: np.ndarray, dates: pd.DatetimeIndex) -> np.ndarray:
     wide = (
         frame.pivot(index="ID", columns="FECHA", values=column)
@@ -177,11 +194,19 @@ def build_panel(
     *,
     historical_root: Path | str = DEFAULT_HISTORICAL_ROOT,
     bucket: int | None = None,
+    future_root: Path | str | None = None,
 ) -> PanelBatch | None:
     """Arma el panel de un conjunto de IDs que comparten bucket.
 
     Devuelve ``None`` si ninguna celda sobrevive el filtro de completitud.
+
+    En los splits de ``FUTURE_SPLITS`` (``real``) el hold-out no existe en
+    ``historical_root``: ``TMIN`` se lee de ``future_root``, ``td_hold`` queda en NaN
+    (no hay verdad) y el filtro exige contexto completo y Tmin futura completa.
     """
+    future = spec.name in FUTURE_SPLITS
+    if future and future_root is None:
+        raise ValueError(f"el split {spec.name!r} necesita future_root (Tmin 2017-2020)")
     root = Path(historical_root)
     wanted = np.asarray(sorted(set(int(i) for i in ids)), dtype=np.int64)
     if bucket is None:
@@ -190,26 +215,37 @@ def build_panel(
             raise ValueError("build_panel espera IDs de un solo bucket; usa iter_panel_batches")
         bucket = int(buckets[0])
 
-    years = range(spec.context_start_year, spec.holdout_years[1] + 1)
+    years = range(spec.context_start_year, (spec.train_end_year if future else spec.holdout_years[1]) + 1)
     frame = _read_bucket(root, bucket, years)
     frame = frame[frame["ID"].isin(wanted)]
     if frame.empty:
         return None
 
     frame["FECHA"] = pd.to_datetime(frame["FECHA"])
+    if future:
+        fut = _read_future_bucket(Path(future_root), bucket, range(spec.holdout_years[0], spec.holdout_years[1] + 1))
+        fut = fut[fut["ID"].isin(wanted)].copy()
+        fut["FECHA"] = pd.to_datetime(fut["FECHA"])
+        fut["TD"] = np.float32(np.nan)
+        fut["doy"] = fut["FECHA"].dt.dayofyear.astype("int16")
 
     ctx_dates = pd.date_range(spec.context_start, spec.context_end, freq="D")
     hold_dates = pd.date_range(spec.holdout_start, spec.holdout_end, freq="D")
 
     ctx = frame[frame["FECHA"] <= spec.context_end]
-    hold = frame[(frame["FECHA"] >= spec.holdout_start) & (frame["FECHA"] <= spec.holdout_end)]
+    if future:
+        hold = fut[(fut["FECHA"] >= spec.holdout_start) & (fut["FECHA"] <= spec.holdout_end)]
+    else:
+        hold = frame[(frame["FECHA"] >= spec.holdout_start) & (frame["FECHA"] <= spec.holdout_end)]
 
     # Celdas utiles: sin un solo NaN ni en contexto ni en el bloque oculto. En este
     # dataset la ausencia es por celda entera (mar y borde), nunca huecos parciales,
     # pero el filtro no lo asume.
     usable = set(wanted.tolist())
-    for part in (ctx, hold):
-        bad = part.loc[part[["TD", "TMIN"]].isna().any(axis=1), "ID"].unique()
+    # En `real` no hay Td futura: del hold-out solo se exige Tmin.
+    checks = ((ctx, ["TD", "TMIN"]), (hold, ["TMIN"] if future else ["TD", "TMIN"]))
+    for part, cols in checks:
+        bad = part.loc[part[cols].isna().any(axis=1), "ID"].unique()
         usable -= set(int(v) for v in bad)
     counts = ctx.groupby("ID").size()
     usable &= {int(i) for i in counts.index[counts == len(ctx_dates)]}
@@ -241,7 +277,11 @@ def build_panel(
         ids=kept,
         td_ctx=_pivot(ctx, "TD", kept, ctx_dates),
         tmin_ctx=_pivot(ctx, "TMIN", kept, ctx_dates),
-        td_hold=_pivot(hold, "TD", kept, hold_dates),
+        td_hold=(
+            np.full((kept.size, len(hold_dates)), np.nan, dtype=np.float32)
+            if future
+            else _pivot(hold, "TD", kept, hold_dates)
+        ),
         tmin_hold=_pivot(hold, "TMIN", kept, hold_dates),
         td_clim=td_clim,
         tmin_clim=tmin_clim,
@@ -291,6 +331,7 @@ def iter_panel_batches(
     historical_root: Path | str = DEFAULT_HISTORICAL_ROOT,
     max_cells_per_batch: int = 256,
     read_workers: int = 8,
+    future_root: Path | str | None = None,
 ) -> Iterator[PanelBatch]:
     """Emite lotes de hasta ``max_cells_per_batch`` celdas, cruzando buckets.
 
@@ -317,7 +358,8 @@ def iter_panel_batches(
         out = []
         for start in range(0, members.size, max_cells_per_batch):
             chunk = members[start : start + max_cells_per_batch]
-            panel = build_panel(chunk, spec, historical_root=root, bucket=bucket)
+            extra = {} if future_root is None else {"future_root": future_root}
+            panel = build_panel(chunk, spec, historical_root=root, bucket=bucket, **extra)
             if panel is not None:
                 out.append(panel)
         return out

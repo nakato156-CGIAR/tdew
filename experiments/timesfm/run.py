@@ -290,6 +290,7 @@ def run_variant(
     tf32: bool = True,
     shard: tuple[int, int] | None = None,
     bead_id: str = "tdew-214",
+    future_root: Path | None = None,
 ) -> pd.DataFrame:
     """Corre una o varias variantes sobre el mismo conjunto de celdas.
 
@@ -337,6 +338,7 @@ def run_variant(
                 panel_spec,
                 historical_root=historical_root,
                 max_cells_per_batch=cells_per_batch,
+                future_root=future_root,
             ):
                 point, quantiles, effective = predict_panel(
                     model, panel, spec, batch_size=effective
@@ -397,10 +399,12 @@ def read_ids(path: Path) -> list[int]:
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--variants", default="all", help="'all' o lista separada por comas")
-    parser.add_argument("--split", default="ll4", choices=("ll1", "ll2", "ll4"))
+    parser.add_argument("--split", default="ll4", choices=("ll1", "ll2", "ll4", "real"))
     parser.add_argument("--ids-file", type=Path, required=True, help="CSV con columna ID")
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--historical-root", type=Path, default=DEFAULT_HISTORICAL_ROOT)
+    parser.add_argument("--future-root", type=Path, default=None,
+                        help="future_tmin_by_bucket; obligatorio con --split real")
     parser.add_argument("--batch-size", type=int, default=4)
     parser.add_argument("--cells-per-batch", type=int, default=256)
     parser.add_argument("--device", default="cuda")
@@ -413,6 +417,8 @@ def main(argv: Sequence[str] | None = None) -> int:
                         help="bead que gobierna esta corrida, para tdew_estimation.provenance")
     args = parser.parse_args(argv)
 
+    if args.split == "real" and args.future_root is None:
+        parser.error("--split real requiere --future-root")
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     ids = read_ids(args.ids_file)
     if args.limit:
@@ -440,6 +446,7 @@ def main(argv: Sequence[str] | None = None) -> int:
         tf32=not args.no_tf32,
         shard=shard,
         bead_id=args.bead_id,
+        future_root=args.future_root,
     )
     path = args.out_dir / f"runtime_{args.split}{suffix}.csv"
     if path.exists():
