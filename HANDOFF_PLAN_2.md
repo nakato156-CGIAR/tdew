@@ -61,7 +61,7 @@ Tabla comparativa contra Palacios (`ll4`, 17.027 celdas, run limpio):
 | tier | celdas | RMSE TimesFM | RMSE `tuned` | ΔRMSE | sesgo TimesFM | sesgo `tuned` | skill TimesFM | skill `tuned` |
 |---|---|---|---|---|---|---|---|---|
 | within | 8.306 | 0,867 | 0,946 | 0,079 | +0,050 | +0,010 | 0,314 | 0,251 |
-| near | 1.779 | 1,061 | 1,139 | 0,078 | +0,068 | −0,079 | 0,275 | 0,222 |
+| near | 1.779 | 1,061 | 1,139 | 0,077 | +0,068 | −0,079 | 0,275 | 0,222 |
 | marginal | 1.433 | 1,198 | 1,276 | 0,078 | +0,143 | −0,044 | 0,242 | 0,193 |
 | extrapolated | 2.563 | 1,298 | 1,374 | 0,077 | +0,149 | −0,070 | 0,228 | 0,183 |
 | unsupported | 2.946 | 1,652 | 1,724 | 0,072 | +0,223 | −0,089 | 0,188 | 0,153 |
@@ -79,6 +79,18 @@ Script independiente (no importa `by_tier_month`; agrega con `np.bincount` desde
 - Determinismo: el CLI hacia directorios y registro temporales reproduce los CSV byte a byte (comprobado por la revisión 2 y por el autor).
 - MLflow: `rmse_all` de las corridas nacionales vigentes iguala `metrics_all.csv` (9 comparaciones) y el de la corrida del cribado iguala el leaderboard (0,8389 TimesFM, 0,9326 `tuned`).
 - El jsonl anterior es prefijo exacto del nuevo.
+
+## Artifact interactivo
+
+La página `reports/timesfm_benchmark/artifact/index.html` no incluía E5 ni E8 (PLAN_2 no la contemplaba); se añadieron con TDD en la branch `tdew-0bt-artifact-tier-mes`:
+
+- `artifact_data.tables()` agrega `soporte` (75 filas de `tiers_limpio.csv`) y `sesgoMensual` (180 filas de `sesgo_mensual_limpio.csv`), con enteros como enteros, NaN como `null` y seis decimales (con cuatro, la página restaba 0.9464 − 0.8669 = 0.0795 y mostraba 0.080 en lugar de 0.079).
+- `check_parity` compara fila por fila con los CSV y con las cifras del informe y del paper (celdas y RMSE por tier de TimesFM y `tuned`; sesgo de diciembre y enero).
+- Dos secciones nuevas: 03 Soporte observacional (figura de RMSE por tier y tabla) y 04 Sesgo estacional (barras por mes y tabla con dispersión). Las secciones siguientes pasaron a 05–08.
+- `tests/test_artifact_tier_month.py` renderiza la página en Chrome headless y compara cada celda de ambas tablas con los CSV.
+- Verificación visual en escritorio y en pantalla angosta (en móvil las figuras se desplazan dentro de su recuadro, como el resto de la página).
+
+El error de la tabla de arriba (`near` con ΔRMSE 0,078; el valor exacto es 0,0775, que se escribe 0,077) se detectó al comparar la tabla de la página con la del HANDOFF; ahora lo fija `test_handoff_comparison_table_matches_the_csv`.
 
 ## Pendientes y advertencias
 

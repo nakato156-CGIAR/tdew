@@ -98,7 +98,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
 </header>
 <nav class="story-nav" aria-label="Secciones">
   <div class="wrap">
-    <a href="#resultado">Resultado</a><a href="#horizonte">Horizonte</a><a href="#alcance">Alcance</a><a href="#escala">Escala</a><a href="#limites">Límites</a><a href="#protocolo">Protocolo</a>
+    <a href="#resultado">Resultado</a><a href="#horizonte">Horizonte</a><a href="#soporte">Soporte</a><a href="#sesgo-mensual">Sesgo mensual</a><a href="#alcance">Alcance</a><a href="#escala">Escala</a><a href="#limites">Límites</a><a href="#protocolo">Protocolo</a>
   </div>
 </nav>
 
@@ -148,10 +148,58 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
   </div>
 </section>
 
+<section id="soporte">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow section-index">03 · Soporte observacional</p>
+      <div class="section-copy">
+        <h2>La ventaja de TimesFM se mantiene en los cinco tiers de soporte</h2>
+        <p>Las 17 027 celdas se agrupan por su distancia al dominio SENAMHI: dentro, 0–50, 50–100, 100–200 y más de 200 km, la misma partición de la tabla de tiers del paper. TimesFM y Palacios se puntúan sobre las mismas celdas y días del bloque oculto de cuatro años.</p>
+      </div>
+    </div>
+    <div class="chart-shell">
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">RMSE por tier de soporte</span><span class="fig-sub">Menor es mejor. El eje no arranca en cero. Bloque de cuatro años, 17 027 celdas.</span></figcaption>
+        <svg id="fig-soporte" viewBox="0 0 760 300" role="img" aria-label="RMSE de TimesFM, Palacios y climatología por tier de soporte observacional"></svg>
+        <div class="leyenda-linea" id="leyenda-soporte"></div>
+      </figure>
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">Métricas por tier</span><span class="fig-sub">En negrita, el menor RMSE de cada fila. El sesgo es predicción − observación.</span></figcaption>
+        <div class="tabla-caja"><table id="t-soporte"></table></div>
+      </figure>
+    </div>
+    <div class="finding"><strong>La ventaja de TimesFM sobre Palacios va de 0.079 °C en <code>within</code> a 0.072 °C en <code>unsupported</code>.</strong> Ambos métodos empeoran hacia afuera del dominio y en el mismo orden. El sesgo de TimesFM crece con la distancia, de +0.050 a +0.223 °C, mientras que el de Palacios se mantiene entre −0.089 y +0.010 °C. Los valores de Palacios coinciden con la tabla de tiers del paper.</div>
+  </div>
+</section>
+
+<section id="sesgo-mensual">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow section-index">04 · Sesgo estacional</p>
+      <div class="section-copy">
+        <h2>El sesgo de TimesFM es cálido entre marzo y septiembre</h2>
+        <p>Sesgo medio (predicción − observación) por mes calendario de la fecha predicha, agregado sobre todas las celdas y días del bloque de cuatro años. La dispersión es la desviación estándar entre celdas del sesgo medio de cada celda en ese mes.</p>
+      </div>
+    </div>
+    <div class="chart-shell">
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">Sesgo medio por mes</span><span class="fig-sub">Positivo: el método predice un Td más alto que el observado. °C.</span></figcaption>
+        <svg id="fig-sesgo-mensual" viewBox="0 0 760 300" role="img" aria-label="Sesgo medio mensual de TimesFM y de Palacios"></svg>
+        <div class="leyenda-linea" id="leyenda-sesgo"></div>
+      </figure>
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">Sesgo y dispersión por mes</span><span class="fig-sub">La dispersión entre celdas es del mismo orden que el sesgo pooled: el promedio nacional oculta variación espacial.</span></figcaption>
+        <div class="tabla-caja"><table id="t-sesgo-mensual"></table></div>
+      </figure>
+    </div>
+    <div class="finding"><strong>En diciembre Palacios queda en +0.017 °C y su mayor sesgo absoluto es 0.402 °C, en enero.</strong> TimesFM llega a 0.325 °C en enero y tiene un sesgo cálido de 0.11 a 0.26 °C entre marzo y septiembre. Solo en enero y octubre su sesgo absoluto es menor que el de Palacios. La dispersión entre celdas va de 0.14 a 0.51 °C.</div>
+  </div>
+</section>
+
 <section id="alcance">
   <div class="wrap">
     <div class="section-head">
-      <p class="eyebrow section-index">03 · Alcance</p>
+      <p class="eyebrow section-index">05 · Alcance</p>
       <div class="section-copy"><h2>El resultado global no equivale a un promedio del Perú</h2><p>El backtest usa la caja envolvente del producto PISCO. De sus 17 027 celdas, 8 755 están fuera del territorio peruano.</p></div>
     </div>
     <div class="scope-warning"><h3>51.4 % del muestreo cae fuera del Perú</h3><p>Esto no cambia la comparación interna porque todos los métodos se puntúan sobre las mismas celdas y días. Sí cambia cómo debe interpretarse el agregado: es el backtest de Palacios sobre la rejilla, no un promedio nacional del territorio peruano.</p></div>
@@ -176,7 +224,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
 <section id="escala">
   <div class="wrap">
     <div class="section-head">
-      <p class="eyebrow section-index">04 · Prueba de escala</p>
+      <p class="eyebrow section-index">06 · Prueba de escala</p>
       <div class="section-copy"><h2>TimesFM cubrió las 436 519 celdas de los cuatro departamentos</h2><p>La inferencia completa tomó 23 h 48 min. Para comparar contra Palacios, la puntuación usa las 61 113 celdas que su implementación alcanzó, con exactamente los mismos días para los tres métodos.</p></div>
     </div>
     <div class="readout"><div><strong>436 519</strong><span>celdas predichas por TimesFM</span></div><div><strong>61 113</strong><span>celdas comunes usadas para puntuar</span></div><div><strong>89 286 093</strong><span>pares predicción–observación</span></div></div>
@@ -189,13 +237,13 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
 <section id="limites">
   <div class="wrap">
     <div class="section-head">
-      <p class="eyebrow section-index">05 · Límites</p>
+      <p class="eyebrow section-index">07 · Límites</p>
       <div class="section-copy"><h2>El menor RMSE no resuelve la decisión de uso</h2><p>La mejora de precisión convive con cuatro restricciones que importan para producción y para interpretar el benchmark.</p></div>
     </div>
     <div class="limit-grid">
       <article class="limit"><span class="label">Licencia</span><h3>TimesFM 3 no permite uso comercial o productivo</h3><p>Sus pesos usan <code>timesfm-non-commercial-license-v1.0</code>. TimesFM 2.5 es Apache-2.0, pero en esa prueba de compatibilidad, sobre las 1 106 celdas del cribado original, obtuvo <strong>1.5257</strong> de RMSE frente a <strong>1.2884</strong> de climatología.</p></article>
       <article class="limit"><span class="label">Cómputo</span><h3>La pasada es mucho más lenta</h3><p>En una RTX A2000 de 12 GB, TimesFM procesa <strong>5.09 celdas/s</strong>: <strong>23 h 48 min</strong> para los cuatro departamentos y <strong>6.4 días</strong> extrapolados al grid de 2 818 404 celdas. Palacios cubre el grid completo en <strong>20 min</strong>.</p></article>
-      <article class="limit"><span class="label">Sesgo y QC</span><h3>El error cuadrático mejora, el centrado no siempre</h3><p>El sesgo de TimesFM es <strong>+0.180</strong>, <strong>−0.126</strong> y <strong>+0.104 °C</strong> según el bloque. Además, <strong>0.12 %</strong> de sus predicciones queda fuera del rango de QC de PISCO, frente a <strong>0.08 %</strong> de la TCN.</p></article>
+      <article class="limit"><span class="label">Sesgo y QC</span><h3>El error cuadrático mejora, el centrado no siempre</h3><p>El sesgo de TimesFM es <strong>+0.180</strong>, <strong>−0.126</strong> y <strong>+0.104 °C</strong> según el bloque. Además, <strong>0.12 %</strong> de sus predicciones queda fuera del rango de QC de PISCO, frente a <strong>0.08 %</strong> de la TCN. El detalle por tier y por mes está en las secciones 03 y 04.</p></article>
       <article class="limit"><span class="label">Selección</span><h3>La variante se eligió sobre el mismo bloque reportado</h3><p>Se evaluaron nueve variantes de TimesFM en ese bloque. La ganadora supera a la segunda por <strong>0.023 °C</strong> de RMSE (0.839 frente a 0.862 en las 1 092 celdas del cribado). El mismo bloque, por diseño, participa en la selección de variante y en el resultado final.</p></article>
     </div>
   </div>
@@ -204,7 +252,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
 <section id="protocolo" style="border-bottom:none">
   <div class="wrap">
     <div class="section-head">
-      <p class="eyebrow section-index">06 · Protocolo</p>
+      <p class="eyebrow section-index">08 · Protocolo</p>
       <div class="section-copy"><h2>Qué entra al modelo y qué se mantiene oculto</h2><p>El contexto termina el 31 de diciembre del último año de entrenamiento. Ningún Td del bloque oculto entra al modelo. Tmin sí entra porque es exógeno y Palacios también lo utiliza.</p></div>
     </div>
     <div class="details">
@@ -783,6 +831,91 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
     o += `<text x="${M.l}" y="${alto - 10}" font-size="12" font-family="${SANS}" fill="var(--fig-muted)">El contorno marca el mejor de cada fila. TimesFM gana en ${ganados === 4 ? "los cuatro departamentos" : `${ganados} de los cuatro`}.</text>`;
     svg2.setAttribute("viewBox", `0 0 ${ancho} ${alto}`);
     svg2.innerHTML = o;
+  })();
+
+  /* ---- soporte observacional y sesgo mensual (E5, E8) ----------------- */
+  (function(){
+    const TIERS = ["within","near","marginal","extrapolated","unsupported"];
+    const TIER_NOMBRE = {within:"within", near:"near", marginal:"marginal",
+      extrapolated:"extrapolated", unsupported:"unsupported"};
+    const miles = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    const con = v => (v >= 0 ? "+" : "-") + Math.abs(v).toFixed(3);
+    const fila = (tier, m) => D.tablas.soporte.find(r => r.split === "ll4" && r.tier === tier && r.method === m);
+
+    /* figura: RMSE por tier, tres puntos por fila unidos por una linea */
+    const svg = document.getElementById("fig-soporte");
+    if(svg){
+      const metodos = ["climatology","tuned","timesfm"];
+      const todos = TIERS.flatMap(t => metodos.map(m => fila(t, m).rmse));
+      const lo = Math.floor(Math.min(...todos) * 10) / 10 - 0.05, hi = Math.ceil(Math.max(...todos) * 10) / 10 + 0.05;
+      const W = 760, M = {t:14, r:30, b:44, l:172}, filaH = 44;
+      const H = M.t + TIERS.length * filaH + M.b;
+      const X = v => M.l + (v - lo) / (hi - lo) * (W - M.l - M.r);
+      let o = "";
+      ticks(lo, hi, 6).forEach(v => {
+        o += `<line x1="${X(v)}" y1="${M.t}" x2="${X(v)}" y2="${H - M.b}" stroke="var(--fig-grid)"/>`;
+        o += `<text x="${X(v)}" y="${H - M.b + 16}" text-anchor="middle" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${v.toFixed(1)}</text>`;
+      });
+      TIERS.forEach((t, i) => {
+        const y = M.t + i * filaH + filaH / 2;
+        const vals = metodos.map(m => fila(t, m).rmse);
+        o += `<text x="${M.l - 12}" y="${y + 4}" text-anchor="end" font-size="12.5" font-family="${SANS}" fill="var(--fig-secondary)">${TIER_NOMBRE[t]} · ${miles(fila(t, "timesfm").cells)}</text>`;
+        o += `<line x1="${X(Math.min(...vals))}" y1="${y}" x2="${X(Math.max(...vals))}" y2="${y}" stroke="var(--fig-axis)" stroke-width="2"/>`;
+        metodos.forEach((m, k) => {
+          o += `<circle cx="${X(vals[k])}" cy="${y}" r="6" fill="${css(COLOR_METODO[m])}"><title>${etiquetaPlana(m)}: ${vals[k].toFixed(3)} °C</title></circle>`;
+        });
+      });
+      o += `<text x="${(M.l + W - M.r) / 2}" y="${H - 6}" text-anchor="middle" font-size="11.5" font-family="${SANS}" fill="var(--fig-muted)">RMSE, °C · fila: tier y número de celdas</text>`;
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      svg.innerHTML = o;
+      document.getElementById("leyenda-soporte").innerHTML = ["timesfm","tuned","climatology"].map(k =>
+        `<span><i style="background:${css(COLOR_METODO[k])}"></i>${NOMBRE_METODO[k]}</span>`).join("");
+    }
+
+    /* tabla por tier */
+    tabla("t-soporte",
+      ["Tier","Celdas","RMSE TimesFM","RMSE Palacios","ΔRMSE","Sesgo TimesFM","Sesgo Palacios","Skill TimesFM","Skill Palacios"],
+      TIERS.map(t => {
+        const a = fila(t, "timesfm"), b = fila(t, "tuned");
+        return {c:[t, miles(a.cells), f(a.rmse, 3), f(b.rmse, 3), f(b.rmse - a.rmse, 3),
+                   con(a.bias), con(b.bias), f(a.skill, 3), f(b.skill, 3)]};
+      }), null, [2, 3]);
+
+    /* figura y tabla mensuales */
+    const MES = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+    const MES_LARGO = ["enero","febrero","marzo","abril","mayo","junio","julio","agosto","septiembre","octubre","noviembre","diciembre"];
+    const mes = (m, k) => D.tablas.sesgoMensual.find(r => r.split === "ll4" && r.method === m && r.month === k);
+    const barras = document.getElementById("fig-sesgo-mensual");
+    if(barras){
+      const W = 760, H = 300, M = {t:18, r:20, b:40, l:46};
+      const vals = [1,2,3,4,5,6,7,8,9,10,11,12].flatMap(k => [mes("timesfm", k).bias_pooled, mes("tuned", k).bias_pooled]);
+      const lim = Math.max(0.5, Math.ceil(Math.max(...vals.map(Math.abs)) * 10) / 10);
+      const Y = v => M.t + (lim - v) / (2 * lim) * (H - M.t - M.b);
+      const gW = (W - M.l - M.r) / 12, bW = gW * 0.34;
+      let o = "";
+      ticks(-lim, lim, 5).forEach(v => {
+        o += `<line x1="${M.l}" y1="${Y(v)}" x2="${W - M.r}" y2="${Y(v)}" stroke="${Math.abs(v) < 1e-9 ? "var(--fig-axis)" : "var(--fig-grid)"}" stroke-width="${Math.abs(v) < 1e-9 ? 1.4 : 1}"/>`;
+        o += `<text x="${M.l - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${v.toFixed(1)}</text>`;
+      });
+      for(let k = 1; k <= 12; k++){
+        const x0 = M.l + (k - 1) * gW + gW / 2;
+        [["timesfm", -bW - 1], ["tuned", 1]].forEach(([m, dx]) => {
+          const v = mes(m, k).bias_pooled, y1 = Y(Math.max(v, 0)), y2 = Y(Math.min(v, 0));
+          o += `<rect x="${x0 + dx}" y="${y1}" width="${bW}" height="${Math.max(y2 - y1, 0.5)}" fill="${css(COLOR_METODO[m])}"><title>${etiquetaPlana(m)}, ${MES_LARGO[k - 1]}: ${con(v)} °C</title></rect>`;
+        });
+        o += `<text x="${x0}" y="${H - M.b + 16}" text-anchor="middle" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${MES[k - 1]}</text>`;
+      }
+      o += `<text x="${(M.l + W - M.r) / 2}" y="${H - 6}" text-anchor="middle" font-size="11.5" font-family="${SANS}" fill="var(--fig-muted)">mes calendario de la fecha predicha</text>`;
+      barras.innerHTML = o;
+      document.getElementById("leyenda-sesgo").innerHTML = ["timesfm","tuned"].map(k =>
+        `<span><i style="background:${css(COLOR_METODO[k])}"></i>${NOMBRE_METODO[k]}</span>`).join("");
+    }
+    tabla("t-sesgo-mensual",
+      ["Mes","Sesgo TimesFM","Sesgo Palacios","Dispersión TimesFM","Dispersión Palacios"],
+      MES_LARGO.map((n, i) => {
+        const a = mes("timesfm", i + 1), b = mes("tuned", i + 1);
+        return {c:[n, con(a.bias_pooled), con(b.bias_pooled), f(a.cell_bias_std, 3), f(b.cell_bias_std, 3)]};
+      }));
   })();
 
   /* ---- curva de error ------------------------------------------------ */
