@@ -63,6 +63,8 @@ DEFAULT_FUTURE_ROOT = Path(
 )
 DEFAULT_OUT_DIR = Path("/home/cvelasquez/tdew_timesfm/preds_real")
 
+RES_ROOT = Path("/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning")
+
 DONE_NAME = ".done"
 PRED_NAME = "pred.parquet"
 TMP_SUFFIX = ".tmp"
@@ -71,6 +73,13 @@ _SCHEMA = pa.schema(
     [("ID", pa.int32()), ("day", pa.int16()), ("pred", pa.float32())]
     + [(name, pa.float32()) for name in QUANTILE_COLUMNS]
 )
+
+
+def refuse_under_res(path: Path | str) -> None:
+    """PLAN_3 sec. 5: nada se escribe bajo ``$RES``."""
+    resolved = Path(path).expanduser().resolve()
+    if resolved == RES_ROOT or RES_ROOT in resolved.parents:
+        raise ValueError(f"{resolved} esta bajo $RES ({RES_ROOT}); no se escribe ahi")
 
 
 class ResumeMismatch(RuntimeError):
@@ -264,6 +273,10 @@ def run_bucket(
     done_path = directory / DONE_NAME
     done_tmp = directory / (DONE_NAME + TMP_SUFFIX)
 
+    if panel is not None:
+        stray = [int(i) for i in panel.ids if int(i) % NUM_BUCKETS != bucket or int(i) not in set(ids.tolist())]
+        if stray:
+            raise ValueError(f"bucket {bucket}: el panel trae celdas ajenas al bucket (p. ej. {stray[0]})")
     if panel is None:
         table = _SCHEMA.empty_table()
         kept = np.array([], dtype=np.int64)
@@ -356,7 +369,8 @@ def run_real(
 
         def fill(upto: int) -> None:
             for b in pending[upto : upto + ahead]:
-                futures.setdefault(b, pool.submit(load, b))
+                if b not in futures:
+                    futures[b] = pool.submit(load, b)
 
         try:
             for index, bucket in enumerate(pending):
@@ -470,6 +484,9 @@ def _verify_bucket(out_dir: Path, bucket: int, ids: np.ndarray) -> dict:
     if path.stat().st_size != done["bytes"]:
         row["problem"] = "tamano distinto del .done"
         return row
+    if _sha256(path) != done["sha256"]:
+        row["problem"] = "sha256 distinto del .done"
+        return row
     sorted_ok = frame[["ID", "day"]].equals(frame[["ID", "day"]].sort_values(["ID", "day"]).reset_index(drop=True))
     row.update(
         ok=bool(sorted_ok), problem="" if sorted_ok else "filas sin ordenar por (ID, day)",
@@ -481,9 +498,17 @@ def _verify_bucket(out_dir: Path, bucket: int, ids: np.ndarray) -> dict:
 
 
 def verify_outputs(out_dir: Path, cells: Mapping[int, np.ndarray]) -> pd.DataFrame:
-    """Revisa cada bucket contra las celdas de Palacios. ``ok`` es por bucket."""
+    """Revisa cada bucket contra las celdas de Palacios. ``ok`` es por bucket.
+
+    Un archivo ilegible no aborta la revision: queda como ``ok=False`` con el motivo.
+    """
     out_dir = Path(out_dir)
-    rows = [_verify_bucket(out_dir, b, cells[b]) for b in sorted(cells)]
+    rows = []
+    for b in sorted(cells):
+        try:
+            rows.append(_verify_bucket(out_dir, b, cells[b]))
+        except Exception as exc:  # noqa: BLE001 - se informa, no se oculta
+            rows.append({"bucket": b, "ok": False, "problem": f"{type(exc).__name__}: {exc}"})
     return pd.DataFrame(rows)
 
 
@@ -497,6 +522,7 @@ def build_real_provenance(
     future_root: Path,
     bead_id: str = "tdew-214.13",
     seeds: Sequence[int] = (),
+    tf32: bool = True,
 ) -> prov.MetricProvenance:
     """Un registro por corrida (no por bucket)."""
     spec = variant(VARIANT_KEY)
@@ -527,7 +553,7 @@ def build_real_provenance(
         notes=(
             "Producto 2017-2020 sin verdad observada: las metricas posteriores son de acuerdo "
             "entre productos, no de error. Pesos de TimesFM 3.0 de uso no comercial: entregable "
-            "de investigacion, no operativo. TF32 activado, make_positive=False, "
+            f"de investigacion, no operativo. TF32 {'activado' if tf32 else 'desactivado'}, make_positive=False, "
             f"timesfm {_timesfm_version()}, Tmin futura leida de {future_root} (future_tmin_by_bucket), "
             f"contexto 1981-2016, un bucket por unidad de trabajo, code_version={CODE_VERSION}."
         ),
@@ -613,6 +639,8 @@ def main(argv: Sequence[str] | None = None) -> int:
 
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     out_dir: Path = args.out_dir
+    refuse_under_res(out_dir)
+    refuse_under_res(args.registry_path)
     out_dir.mkdir(parents=True, exist_ok=True)
     subset = parse_buckets(args.buckets) if args.buckets else None
 
@@ -621,12 +649,16 @@ def main(argv: Sequence[str] | None = None) -> int:
     if subset is None:
         check_total(cells)
     logger.info("%d celdas en %d buckets", total, len(cells))
-    ids_path, _ = _write_plan(out_dir, cells)
+    # El plan describe el producto completo: ni un subconjunto ni --verify-only lo reescriben.
+    ids_path = out_dir / f"ids_real_{total}.csv"
+    if args.plan_only or (subset is None and not args.verify_only):
+        ids_path, _ = _write_plan(out_dir, cells)
     if args.plan_only:
         print(json.dumps({"cells": total, "buckets": len(cells), "ids_file": str(ids_path)}))
         return 0
 
     if args.verify_only:
+        (out_dir / "verify_real.csv").unlink(missing_ok=True)
         report = verify_outputs(out_dir, cells)
         report.to_csv(out_dir / "verify_real.csv", index=False)
         manifest = write_manifest(out_dir)
@@ -653,7 +685,8 @@ def main(argv: Sequence[str] | None = None) -> int:
     totals = run_totals(out_dir)
     logger.info("manifiesto: %d buckets; totales %s", len(manifest), totals)
     record = build_real_provenance(
-        n_cells=total, ids_file=ids_path, out_dir=out_dir, future_root=args.future_root, bead_id=args.bead_id,
+        n_cells=total, ids_file=ids_path, out_dir=out_dir, future_root=args.future_root,
+        bead_id=args.bead_id, tf32=tf32,
     )
     if args.mlflow:
         run_id = log_mlflow(

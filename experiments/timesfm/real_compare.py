@@ -457,7 +457,10 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
 
-    from .real import parse_buckets
+    from .real import parse_buckets, refuse_under_res
+
+    for target in (args.out_dir, args.agg_dir, args.registry_path):
+        refuse_under_res(target)
 
     if args.buckets:
         buckets = parse_buckets(args.buckets)

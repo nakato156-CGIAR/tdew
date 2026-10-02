@@ -8,7 +8,8 @@ Fecha: 2026-10-02. Bead: `tdew-214.13` (hijo de `tdew-214`). Rama: `tdew-214-rea
 |---|---|
 | Implementación (split `real`, `real.py`, `real_compare.py`, MLflow, proveniencia) | hecha con tests primero |
 | Smoke test de los buckets 0 y 1 | pasado (ver abajo) |
-| Revisión independiente (Opus, esfuerzo alto) | pendiente |
+| Revisión independiente (Opus, contexto limpio, mutaciones y contraste con datos reales) | `APROBADO`, 0 bloqueantes, 10 menores y 4 dudas; ver abajo |
+| Correcciones de la revisión (TDD) | M-1 a M-6, M-8 y M-10 hechas; suite completa 561 en verde; bucket 0 reproduce el sha256 del smoke |
 | Corrida completa (8.192 buckets) | **no lanzada**; requiere aviso previo y visto bueno del usuario |
 
 ## Desviaciones respecto de PLAN_3
@@ -34,6 +35,28 @@ Fecha: 2026-10-02. Bead: `tdew-214.13` (hijo de `tdew-214`). Rama: `tdew-214-rea
 Reanudación probada (relanzar salta los buckets con `.done`). Interrupción con `SIGINT` en la predicción del bucket 2: sin `pred.parquet`, `.tmp` ni `.done`; la misma orden lo completó. La interrupción durante la escritura se cubre con un test unitario.
 
 Corridas MLflow (`tdew-timesfm-benchmark`): `fba171b1…` (smoke con batch 4, exploratorio), `bceb411e…` (smoke con batch 32) y `8d2ef220…` (comparación). Los registros de proveniencia de las tres están en `reports/metric_provenance.jsonl` (solo adición). Los CSV de la comparación están en `reports/timesfm_benchmark/real_limpio/smoke_b0_1/`.
+
+## Revisión independiente
+
+Antes de corregir, el revisor recalculó desde los parquet reales el panel, la conversión a °C (con GPU, diferencia 0,0) y las cifras de acuerdo, y todo coincidió. Hallazgos y estado:
+
+| # | hallazgo | estado |
+|---|---|---|
+| M-1 | el prefetch cargaba cada bucket 4 veces (`setdefault` evalúa `submit`) | corregido; `test_prefetch_loads_each_bucket_exactly_once` |
+| M-2 | sin defensa contra un panel de otro bucket | corregido en `run_bucket`; tests con 2 y 4 buckets |
+| M-3 | `--verify-only` caía ante un parquet corrupto y dejaba un `verify_real.csv` viejo; sin sha256 | corregido: se informa por bucket, se compara sha256 y se borra el CSV previo |
+| M-4 | la nota decía «TF32 activado» con `--no-tf32` | corregido |
+| M-5 | `run.py --split real` registraba una proveniencia incorrecta | ese camino ahora se rechaza; el producto se corre con `real.py` |
+| M-6 | un subconjunto o `--verify-only` reescribía `bucket_plan.csv` | corregido: el plan solo se escribe con `--plan-only` o en la corrida completa |
+| M-8 | nada impedía escribir bajo `$RES` | `refuse_under_res` en `real.py` y `real_compare.py` (`$RES` es escribible por este usuario) |
+| M-10 | mutaciones sobrevivientes (deciles sin climatología, orden, bytes, `bucket_done` sin parquet) | tests nuevos; quedan sin cubrir M8 (HAC), M17 (tolerancia 0,05) y RMSE por celda |
+| M-7 | un bucket con fallo de datos detiene la corrida y no hay `--exclude-buckets` | pendiente, no bloquea |
+| M-9 | falta `run_summary_limpio.csv`, figuras y mapa; corte por departamento solo cubre los 4 sitios; `real_compare` toma buckets por `pred.parquet` y no por `.done` | pendiente (pasos 8 a 10 de PLAN_3) |
+| D-1 | el retardo HAC (30 días) cambia el error estándar de la pendiente entre 0,014 y 0,025 °C/año; la diferencia tiene ciclo estacional | pendiente: informar sensibilidad al retardo en el análisis final |
+| D-2 | `CODE_VERSION` es manual y el `.done` no compara `tf32`, raíces ni `git_commit` | pendiente |
+| D-3 | `pred` es idéntico a `q50` (≈ 12,7 GB redundantes) | sin cambio: el formato está fijado en PLAN_3 |
+
+Incidente del revisor: creó y borró de inmediato un archivo vacío bajo `$RES` (queda solo el cambio de mtime del directorio).
 
 ## Pendiente
 

@@ -70,3 +70,11 @@ def test_mlflow_run_logs_throughput_and_size_metrics(tmp_path):
     assert run.data.metrics["bytes_per_row"] == pytest.approx(45.1)
     assert run.data.params["split"] == "real"
     assert run.info.status == "FINISHED"
+
+
+def test_notes_follow_the_tf32_setting(tmp_path):
+    on = real.build_real_provenance(n_cells=5, ids_file=tmp_path / "i.csv", out_dir=tmp_path / "o",
+                                    future_root=tmp_path / "f", tf32=True).notes
+    off = real.build_real_provenance(n_cells=5, ids_file=tmp_path / "i.csv", out_dir=tmp_path / "o",
+                                     future_root=tmp_path / "f", tf32=False).notes
+    assert "TF32 activado" in on and "TF32 desactivado" in off and "TF32 activado" not in off

@@ -417,8 +417,10 @@ def main(argv: Sequence[str] | None = None) -> int:
                         help="bead que gobierna esta corrida, para tdew_estimation.provenance")
     args = parser.parse_args(argv)
 
-    if args.split == "real" and args.future_root is None:
-        parser.error("--split real requiere --future-root")
+    if args.split == "real":
+        # Este camino registraria una proveniencia incorrecta (split_id, manifest_ref,
+        # autoregressive); el producto 2017-2020 se corre con experiments.timesfm.real.
+        parser.error("--split real se corre con `python -m experiments.timesfm.real`")
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     ids = read_ids(args.ids_file)
     if args.limit:

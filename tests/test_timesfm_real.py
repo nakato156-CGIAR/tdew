@@ -312,3 +312,155 @@ def test_total_cell_check_rejects_wrong_total():
         real.check_total({0: np.arange(10)})
     assert NUM_BUCKETS == 8192
     assert variant("tmin_anom_full").target == "TD_anom"
+
+
+# ------------------------------------------------------------------ revision independiente (M-1..M-10)
+
+def _two_bucket_world(tmp_path, buckets=(7, 9)):
+    """Dos buckets sinteticos con IDs distintos; reutiliza los escritores del test de panel."""
+    import test_timesfm_real_panel as tp
+
+    historical, future = tmp_path / "bucketed", tmp_path / "future"
+    cells = {}
+    for b in buckets:
+        ids = [b, 8192 + b]
+        tp.BUCKET = b
+        _write_historical_b(tp, historical, ids)
+        _write_future_b(tp, future, ids)
+        cells[b] = np.array(sorted(ids), dtype=np.int64)
+    tp.BUCKET = BUCKET
+    return historical, future, cells
+
+
+def _write_historical_b(tp, root, ids):
+    tp._write_historical(root, ids)
+
+
+def _write_future_b(tp, root, ids):
+    tp._write_future(root, ids)
+
+
+def test_prefetch_loads_each_bucket_exactly_once(tmp_path, monkeypatch):
+    historical, future, cells = _two_bucket_world(tmp_path, buckets=(7, 9, 11, 13))
+    calls = []
+    original = real.build_panel
+
+    def counting(ids, spec, **kw):
+        calls.append(kw["bucket"])
+        return original(ids, spec, **kw)
+
+    monkeypatch.setattr(real, "build_panel", counting)
+    real.run_real(cells, out_dir=tmp_path / "o", historical_root=historical, future_root=future,
+                  model=None, predict=fake_predict, min_free_gb=0, prefetch_workers=1)
+    assert sorted(calls) == [7, 9, 11, 13]
+
+
+def test_run_real_over_several_buckets_writes_each_bucket_its_own_cells(tmp_path):
+    historical, future, cells = _two_bucket_world(tmp_path)
+    out = tmp_path / "o"
+    real.run_real(cells, out_dir=out, historical_root=historical, future_root=future,
+                  model=None, predict=fake_predict, min_free_gb=0)
+    for b, ids in cells.items():
+        frame = pq.ParquetFile(out / f"id_bucket={b:04d}" / "pred.parquet").read().to_pandas()
+        assert sorted(frame["ID"].unique()) == sorted(ids.tolist())
+
+
+def test_run_bucket_rejects_a_panel_from_another_bucket(tmp_path):
+    historical, future, cells = _two_bucket_world(tmp_path)
+    from experiments.timesfm.panel import build_panel, split_spec
+
+    spec = variant(real.VARIANT_KEY)
+    foreign = build_panel(cells[9], split_spec("real"), historical_root=historical, bucket=9, future_root=future)
+    with pytest.raises(ValueError, match="bucket"):
+        real.run_bucket(None, spec, 7, cells[7], historical_root=historical, future_root=future,
+                        out_dir=tmp_path / "o", predict=fake_predict, panel=foreign)
+    assert not (tmp_path / "o" / "id_bucket=0007" / ".done").exists()
+
+
+def test_deciles_are_converted_to_degrees_like_the_point(world):
+    historical, future, out = world
+    _run(world)
+    frame = pq.ParquetFile(out / f"id_bucket={BUCKET:04d}" / "pred.parquet").read().to_pandas()
+    first = frame[frame["ID"] == min(IDS)].sort_values("day")
+    doy = pd.date_range("2017-01-01", periods=1461).dayofyear.to_numpy()
+    clim = np.sin(doy / 58.0)
+    # fake_predict: q10 = base - 1, q90 = base + 1 con base 0 para la primera celda.
+    np.testing.assert_allclose(first["q10"].to_numpy(), clim - 1.0, atol=1e-5)
+    np.testing.assert_allclose(first["q90"].to_numpy(), clim + 1.0, atol=1e-5)
+
+
+def test_bucket_done_requires_the_parquet(world):
+    _run(world)
+    (world[2] / f"id_bucket={BUCKET:04d}" / "pred.parquet").unlink()
+    ids = np.array(sorted(IDS), dtype=np.int64)
+    assert real.bucket_done(world[2], BUCKET, ids_hash_value=real.ids_hash(ids)) is False
+
+
+def test_verify_detects_unsorted_rows_and_size_mismatch(world):
+    _run(world)
+    cells = {BUCKET: np.array(sorted(IDS), dtype=np.int64)}
+    path = world[2] / f"id_bucket={BUCKET:04d}" / "pred.parquet"
+    frame = pq.ParquetFile(path).read().to_pandas()
+    shuffled = frame.iloc[::-1].reset_index(drop=True)
+    shuffled.to_parquet(path, index=False, compression="zstd")
+    done = json.loads((path.parent / ".done").read_text())
+    done["bytes"] = path.stat().st_size  # aisla el defecto: solo el orden esta mal
+    done["sha256"] = real._sha256(path)
+    (path.parent / ".done").write_text(json.dumps(done))
+    report = real.verify_outputs(world[2], cells)
+    assert not report["ok"].all()
+
+
+def test_verify_reports_truncated_parquet_instead_of_crashing(world):
+    _run(world)
+    path = world[2] / f"id_bucket={BUCKET:04d}" / "pred.parquet"
+    path.write_bytes(path.read_bytes()[:500])
+    report = real.verify_outputs(world[2], {BUCKET: np.array(sorted(IDS), dtype=np.int64)})
+    assert not report["ok"].all() and report.loc[0, "problem"]
+
+
+def test_verify_detects_sha256_mismatch(world):
+    _run(world)
+    path = world[2] / f"id_bucket={BUCKET:04d}" / "pred.parquet"
+    raw = bytearray(path.read_bytes())
+    raw[len(raw) // 2] ^= 0xFF  # mismo tamano, contenido distinto
+    path.write_bytes(bytes(raw))
+    report = real.verify_outputs(world[2], {BUCKET: np.array(sorted(IDS), dtype=np.int64)})
+    assert not report["ok"].all()
+
+
+def test_verify_only_removes_stale_report(world, tmp_path):
+    _run(world)
+    out = world[2]
+    (out / "verify_real.csv").write_text("bucket,ok\n7,True\n")
+    path = out / f"id_bucket={BUCKET:04d}" / "pred.parquet"
+    path.write_bytes(path.read_bytes()[:500])
+    palacios = tmp_path / "palacios"
+    d = palacios / f"id_bucket={BUCKET:04d}"
+    d.mkdir(parents=True)
+    pd.DataFrame({"ID": np.repeat(IDS, 2).astype("int64"), "FECHA": pd.Timestamp("2017-01-01"),
+                  "TD_predicted": 1.0}).to_parquet(d / "pred.parquet")
+    code = real.main(["--palacios-root", str(palacios), "--out-dir", str(out), "--buckets", str(BUCKET),
+                      "--verify-only"])
+    assert code != 0
+    assert "False" in (out / "verify_real.csv").read_text()
+
+
+def test_plan_files_are_not_rewritten_by_subset_or_verify_runs(world, tmp_path, monkeypatch):
+    out = world[2]
+    out.mkdir(parents=True)
+    (out / "bucket_plan.csv").write_text("bucket,cells\n7,3\n")
+    palacios = tmp_path / "palacios"
+    d = palacios / f"id_bucket={BUCKET:04d}"
+    d.mkdir(parents=True)
+    pd.DataFrame({"ID": np.repeat(IDS, 2).astype("int64"), "FECHA": pd.Timestamp("2017-01-01"),
+                  "TD_predicted": 1.0}).to_parquet(d / "pred.parquet")
+    real.main(["--palacios-root", str(palacios), "--out-dir", str(out), "--buckets", str(BUCKET), "--verify-only"])
+    assert (out / "bucket_plan.csv").read_text() == "bucket,cells\n7,3\n"
+    assert not list(out.glob("ids_real_*.csv"))
+
+
+def test_output_under_res_is_refused(tmp_path):
+    with pytest.raises(ValueError, match="RES"):
+        real.refuse_under_res(real.RES_ROOT / "tuning" / "algo")
+    real.refuse_under_res(tmp_path / "fuera")  # no lanza
