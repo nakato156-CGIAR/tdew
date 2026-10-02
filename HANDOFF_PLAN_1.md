@@ -1,10 +1,10 @@
 # HANDOFF_PLAN_1: re-puntuación de TimesFM contra `backtest_clean`
 
-Fecha: 2026-10-02. Bead: `tdew-214.12` (hijo de `tdew-214`). Branch: `tdew-214-timesfm-limpio`, creada desde `tdew-u8m-paper-timesfm-narrative` (`82d4798`). Worktree: `.claude/worktrees/tdew-214-timesfm-limpio`. Plan de origen: `PLAN_1.md`. No se hicieron commits ni push.
+Fecha: 2026-10-02. Bead: `tdew-214.12` (hijo de `tdew-214`). Branch: `tdew-214-timesfm-limpio`, creada desde `tdew-u8m-paper-timesfm-narrative` (`82d4798`). Worktree: `.claude/worktrees/tdew-214-timesfm-limpio`. Plan de origen: `PLAN_1.md`. Commits: `31f6ed8` (trabajo) y `6247e83` (proveniencia regenerada desde ese commit), ya en `tdew-u8m-paper-timesfm-narrative` por fast-forward. Sin push. Bead cerrado el 2026-10-02.
 
 ## Estado
 
-Pasos 1 a 9 de `PLAN_1.md` ejecutados. Cada hito tuvo revisión independiente de un subagente Opus y sus hallazgos se corrigieron. El Paso 10 se cumplió en lo que corresponde (bead creado y notas en `tdew-214.8`); el ítem «agregar entrada a `PAPER_PLAN.md`» se omitió por decisión del usuario, porque ese archivo es de Palacios.
+Pasos 1 a 9 de `PLAN_1.md` ejecutados y confirmados. Cada hito tuvo revisión independiente de un subagente Opus y sus hallazgos se corrigieron. El Paso 10 se cumplió en lo que corresponde (bead creado y notas en `tdew-214.8`); el ítem «agregar entrada a `PAPER_PLAN.md`» se omitió por decisión del usuario, porque ese archivo es de Palacios.
 
 ## Cifras vigentes (run limpio, 17.027 celdas)
 
@@ -25,9 +25,9 @@ Las filas de `tuned` y climatología coinciden con `backtest_clean/metrics_all.c
 
 ## Pendientes y advertencias
 
-1. **Commit sin hacer.** Las filas nuevas de `reports/metric_provenance.jsonl` registran `git_commit=82d4798` (el `HEAD` de partida), pero el código que las generó no estaba confirmado. Tras confirmar los cambios conviene regenerar el panel nacional y el cribado con los comandos de `TRACEABILITY.md` §6, partiendo del registro de `HEAD` (`git checkout reports/metric_provenance.jsonl`) para no duplicar filas.
-2. **Rutas del registro.** Las filas de `evaluate`/`merge`/`effect_sizes` guardan rutas absolutas del worktree y las de `publish` guardan rutas relativas al repo. `resolve_recorded_path` las reancla bajo `reports/` al fusionar, de modo que `tests/test_metric_provenance.py` debería pasar en el checkout principal.
-3. **Dos tests fallan en este worktree** (`predicciones_largo.parquet` departamental): ese parquet no está trackeado en git y solo existe en el checkout principal. No se relaciona con estos cambios.
+1. **Fila del Gantt en Notion sin actualizar.** El bead `tdew-214.12` se cerró sin tocar Notion por indicación del usuario; falta marcar `Completed` y `Progress = 1` en la fila con `Bead ID = tdew-214.12` (si existe).
+2. **Rutas del registro.** Las filas se regeneraron en el checkout principal, de modo que sus rutas absolutas apuntan a `/home/cvelasquez/Code/tdew`; las de `publish` son relativas al repo. `resolve_recorded_path` reancla las rutas de otro checkout bajo `reports/`. La suite completa pasa (337 tests) en el checkout principal.
+3. **Worktree `tdew-214-timesfm-limpio`:** sigue existiendo. Allí dos tests fallan (`predicciones_largo.parquet` departamental no está trackeado en git y solo existe en el checkout principal). Se puede eliminar el worktree y la branch cuando se quiera.
 4. **`datos.js` se regeneró** con `artifact_data.build(..., silver=<Data/silver del checkout principal>)`, porque el worktree no tiene `Data/` (DVC).
 5. **Departamental y escala** conservan un `tuned` con selección con fuga (manifiesto de recetas con los años 1981–2016). Quedan marcadas como no comparables en el README, en `TRACEABILITY.md`, en `limitaciones.md` y en la página interactiva. La re-corrida de Palacios con selección limpia queda para un punto posterior.
 6. **Limitaciones estadísticas ya anotadas:** los intervalos bootstrap tratan las celdas como independientes; el ΔRMSE es diferencia de RMSE agregado mientras que `p`, d de Cohen y celdas ganadas usan los ΔRMSE por celda.
