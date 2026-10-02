@@ -4,8 +4,8 @@
   "climatology_role": "target_anomaly_base",
   "climatology_used": true,
   "dataset_hash": null,
-  "generated_at": "2026-10-02T15:21:36+00:00",
-  "git_commit": "82d4798a57e2bcea63a5023a06990ee4fbe704c0",
+  "generated_at": "2026-10-02T15:49:32+00:00",
+  "git_commit": "31f6ed8a40aa5648ef8a01c4fe0dd717a2f4f5b5",
   "inputs": [
     "TMIN_anom"
   ],
@@ -15,12 +15,12 @@
   "model_id": "google/timesfm-3.0-pytorch",
   "notes": "backtest_root=/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean; selecci\u00f3n solo con a\u00f1os de entrenamiento, h {7,11,15,21,31,45}; cells=1092; curva de error acumulado; panel_file son las 1106 celdas del cribado; se puntuan las 1092 comunes con backtest_clean (14 descartadas)",
   "output_files": [
-    "/home/cvelasquez/Code/tdew/.claude/worktrees/tdew-214-timesfm-limpio/reports/timesfm_benchmark/curva_error_cribado_limpio.csv"
+    "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/curva_error_cribado_limpio.csv"
   ],
   "panel_cell_count": 1092,
   "panel_file": "reports/timesfm_benchmark/panels/cribado_estratificado.csv",
   "panel_id": "cribado_1092_limpio",
-  "run_id": "135af1cd15144aa2b7f6f2313262a7e5",
+  "run_id": "f86f224ec5de437e84d05454b7810916",
   "seeds": [],
   "split_id": "ll4",
   "target_type": "td_anomaly",

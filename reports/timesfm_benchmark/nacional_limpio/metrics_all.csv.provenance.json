@@ -4,8 +4,8 @@
   "climatology_role": "target_anomaly_base",
   "climatology_used": true,
   "dataset_hash": null,
-  "generated_at": "2026-10-02T15:20:46+00:00",
-  "git_commit": "82d4798a57e2bcea63a5023a06990ee4fbe704c0",
+  "generated_at": "2026-10-02T15:48:44+00:00",
+  "git_commit": "31f6ed8a40aa5648ef8a01c4fe0dd717a2f4f5b5",
   "inputs": [
     "TMIN_anom"
   ],
@@ -13,14 +13,14 @@
   "mlflow_run_id": null,
   "model_family": "timesfm-3.0",
   "model_id": "google/timesfm-3.0-pytorch",
-  "notes": "backtest_root=/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean; selecci\u00f3n solo con a\u00f1os de entrenamiento, h {7,11,15,21,31,45}; cells=17027; cells_lost=0; cells_timesfm_dropped=14; published_from=/home/cvelasquez/tdew_timesfm/backtest_clean_timesfm/metrics_all.csv; source_run_id=854c1dacff99490e8902f267350c9423",
+  "notes": "backtest_root=/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean; selecci\u00f3n solo con a\u00f1os de entrenamiento, h {7,11,15,21,31,45}; cells=17027; cells_lost=0; cells_timesfm_dropped=14; published_from=/home/cvelasquez/tdew_timesfm/backtest_clean_timesfm/metrics_all.csv; source_run_id=52cb90c049964661abf1928e6f7e5e14",
   "output_files": [
     "reports/timesfm_benchmark/nacional_limpio/metrics_all.csv"
   ],
   "panel_cell_count": 17027,
   "panel_file": "/home/cvelasquez/tdew_timesfm/preds_nacional",
   "panel_id": "nacional_17027_limpio",
-  "run_id": "1c9612ee5be74fa2890f59574ca323c3",
+  "run_id": "12ee5e730b81432b896afa50fe4fa6ad",
   "seeds": [],
   "split_id": "ll4",
   "target_type": "td_anomaly",
