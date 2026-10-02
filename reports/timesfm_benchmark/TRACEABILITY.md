@@ -226,6 +226,42 @@ artifact_data.build(Path("reports/timesfm_benchmark/artifact/datos.js"), silver=
 PY
 ```
 
+### Soporte observacional y sesgo mensual (E5, E8)
+
+```bash
+# Nacional: lee el merge intermedio de $WORK; no escribe bajo $RES
+uv run python -m experiments.timesfm.by_tier_month \
+  --merged-root $WORK/backtest_clean_timesfm --splits ll1,ll2,ll4 \
+  --backtest-root $RES/tuning/backtest_clean --out-dir $OUT/nacional_limpio \
+  --panel-id nacional_17027_limpio --panel-file $OUT/panels/nacional_17027.csv
+
+# Cribado (verificación, no entra en la tabla del texto)
+uv run python -m experiments.timesfm.by_tier_month \
+  --preds-dir $WORK/preds_cribado --splits ll4 \
+  --backtest-root $RES/tuning/backtest_clean --out-dir $OUT/cribado_limpio \
+  --panel-id cribado_1092_limpio --panel-file $OUT/panels/cribado_estratificado.csv
+```
+
+| archivo | fuentes de entrada |
+|---|---|
+| `nacional_limpio/tiers_limpio.csv`, `tiers_texto_limpio.{csv,md}` | merge intermedio `$WORK/backtest_clean_timesfm`, `$RES/tuning/support_distance.parquet`, `panels/nacional_17027.csv` |
+| `nacional_limpio/sesgo_mensual_limpio.csv`, `sesgo_mes_tier_limpio.csv` | las mismas |
+| `cribado_limpio/tiers_cribado_limpio.csv`, `sesgo_mensual_cribado_limpio.csv`, `sesgo_mes_tier_cribado_limpio.csv` | `$WORK/preds_cribado` (variante `tmin_anom_full`), `backtest_clean/ll4`, `panels/cribado_estratificado.csv`, `support_distance.parquet` |
+
+Convenciones: el mes es el de `FECHA` y el sesgo mensual es el promedio pooled de
+`pred − obs` sobre todas las celdas-día del mes (la convención de
+`effect_sizes._plots`). La dispersión entre celdas (desviación con `ddof=0`,
+percentiles 5 y 95 del sesgo medio por celda y mes) solo se calcula en `ll4`.
+Las predicciones de TimesFM son float32 y se convierten a float64 al leerlas.
+
+Antes de escribir los CSV, el script compara `tuned` en `ll4` con el paper y termina
+con error si no coincide: celdas por tier (8.306, 1.779, 1.433, 2.563, 2.946, exacto),
+RMSE por tier contra `reports/paper/scripts/validation_by_support.csv` (1e-6), sesgo
+de diciembre +0,017 y máximo |sesgo| 0,402 (5e-4). Los valores de TimesFM esperados
+solo generan una alerta en el log. En la ejecución del 2 de octubre de 2026 el control
+pasó y no hubo alertas. El manifiesto de referencia es el addendum
+`docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml`.
+
 El recuento de celdas dentro y fuera del Perú (8.272 y 8.755 sobre las 17.027) sale de
 `artifact_data.build_layers` (`shapely.contains_xy` contra los contornos
 departamentales) y queda en `meta.muestreoDentro`/`muestreoFuera` de `datos.js`.

@@ -41,6 +41,12 @@ sin_cambio:
   - make_positive=False
   - predicciones de TimesFM (no se re-corre inferencia)
 
+analisis_adicionales:
+  - >
+    E5 (desempeño por tier de soporte) y E8 (sesgo mensual): solo cómputo sobre
+    predicciones existentes, sin inferencia nueva. Bead tdew-0bt, plan PLAN_2.md,
+    script experiments/timesfm/by_tier_month.py.
+
 no_comparable:
   - >
     Las tablas departamental y de escala conservan el tuned con selección con

@@ -1,0 +1,41 @@
+{
+  "autoregressive": false,
+  "bead_id": "tdew-0bt",
+  "climatology_role": null,
+  "climatology_used": false,
+  "dataset_hash": null,
+  "generated_at": "2026-10-02T16:07:44+00:00",
+  "git_commit": "66cc5e5480d7641c811699f40bfea01b6ec2ee76",
+  "inputs": [
+    "TMIN"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml",
+  "mlflow_run_id": null,
+  "model_family": "statistical_baseline",
+  "model_id": "zone_ols",
+  "notes": "backtest_root=/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean; selecci\u00f3n solo con a\u00f1os de entrenamiento; cells=17027; predicciones float32 agregadas en float64; mes por FECHA, sesgo pooled; E5/E8 solo c\u00f3mputo sobre predicciones existentes",
+  "output_files": [
+    "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/nacional_limpio/tiers_limpio.csv",
+    "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/nacional_limpio/sesgo_mensual_limpio.csv",
+    "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/nacional_limpio/sesgo_mes_tier_limpio.csv",
+    "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/nacional_limpio/tiers_texto_limpio.csv"
+  ],
+  "panel_cell_count": 17027,
+  "panel_file": "reports/timesfm_benchmark/panels/nacional_17027.csv",
+  "panel_id": "nacional_17027_limpio",
+  "run_id": "7957278d733f4954b552e48d19697b9f",
+  "seeds": [],
+  "split_id": "ll4",
+  "target_type": "td_raw",
+  "test_period": [
+    "2013-01-01",
+    "2016-12-31"
+  ],
+  "trained": true,
+  "training_period": [
+    "1981-01-01",
+    "2012-12-31"
+  ],
+  "validation_period": null,
+  "variant_label": "zone_ols"
+}
