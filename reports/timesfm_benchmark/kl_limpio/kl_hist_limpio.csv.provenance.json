@@ -1,0 +1,36 @@
+{
+  "autoregressive": false,
+  "bead_id": "tdew-214.13",
+  "climatology_role": "target_anomaly_base",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-10-09T14:59:52+00:00",
+  "git_commit": "7e63f323ced5503bb092384acf4f5f8197d5821f",
+  "inputs": [
+    "TMIN_anom"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml",
+  "mlflow_run_id": null,
+  "model_family": "timesfm-3.0",
+  "model_id": "google/timesfm-3.0-pytorch",
+  "notes": "KL(obs || metodo) entre la distribucion de Td observado y la de Palacios (tuned) y TimesFM, backtest limpio 2013-2016. Mide la forma de la distribucion, no el acierto dia a dia. Palacios leido de /media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean/ll4/predictions.parquet, TimesFM de /home/cvelasquez/tdew_timesfm/preds_nacional/ll4__tmin_anom_full.parquet. Suavizado de Jeffreys 0,5 por bin, bins de 0,1 y 0,5 C en [-20.0, 50.0). Pesos de TimesFM de uso no comercial.",
+  "output_files": [
+    "reports/timesfm_benchmark/kl_limpio/kl_by_group_limpio.csv",
+    "reports/timesfm_benchmark/kl_limpio/kl_hist_limpio.csv"
+  ],
+  "panel_cell_count": 17027,
+  "panel_file": "/home/cvelasquez/tdew_timesfm/preds_nacional/ll4__tmin_anom_full.parquet",
+  "panel_id": "nacional_17027_limpio",
+  "run_id": "2818f308d3b1445283c5e8e68cca68e6",
+  "seeds": [],
+  "split_id": "ll4",
+  "target_type": "td_anomaly",
+  "test_period": [
+    "2013-01-01",
+    "2016-12-31"
+  ],
+  "trained": false,
+  "training_period": null,
+  "validation_period": null,
+  "variant_label": "tmin_anom_full"
+}

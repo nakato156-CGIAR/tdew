@@ -98,7 +98,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
 </header>
 <nav class="story-nav" aria-label="Secciones">
   <div class="wrap">
-    <a href="#resultado">Resultado</a><a href="#horizonte">Horizonte</a><a href="#soporte">Soporte</a><a href="#sesgo-mensual">Sesgo mensual</a><a href="#alcance">Alcance</a><a href="#escala">Escala</a><a href="#campo">Campo 2017–2020</a><a href="#cola-larga">Cola larga</a><a href="#anomalias">Anomalías</a><a href="#limites">Límites</a><a href="#protocolo">Protocolo</a>
+    <a href="#resultado">Resultado</a><a href="#horizonte">Horizonte</a><a href="#soporte">Soporte</a><a href="#sesgo-mensual">Sesgo mensual</a><a href="#alcance">Alcance</a><a href="#escala">Escala</a><a href="#divergencia">Divergencia KL</a><a href="#campo">Campo 2017–2020</a><a href="#cola-larga">Cola larga</a><a href="#anomalias">Anomalías</a><a href="#limites">Límites</a><a href="#protocolo">Protocolo</a>
   </div>
 </nav>
 
@@ -234,10 +234,37 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
   </div>
 </section>
 
+<section id="divergencia">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow section-index">07 · Divergencia KL</p>
+      <div class="section-copy"><h2>¿Se parece la distribución de Td a la observada?</h2><p>La divergencia KL compara el histograma de Td observado con el de cada método, sobre los mismos pares de celda y día del backtest 2013–2016. Cuanto más cerca de cero, más parecida es la forma de la distribución. No mide el acierto día a día.</p></div>
+    </div>
+    <div class="readout" id="kl-readout"></div>
+    <div class="chart-shell">
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">Distribución de Td en el backtest</span><span class="fig-sub">Fracción de los pares en cada intervalo de 0.5 °C. La línea oscura es la observación.</span></figcaption>
+        <svg id="fig-kl-dens" viewBox="0 0 760 300" role="img" aria-label="Densidad de Td observado, de Palacios y de TimesFM"></svg>
+        <div class="leyenda-linea" id="leyenda-kl"></div>
+      </figure>
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">Dónde se acumula la divergencia</span><span class="fig-sub">Aporte de cada intervalo a KL(obs ‖ método). Un aporte positivo es un intervalo donde el método tiene menos masa que la observación.</span></figcaption>
+        <svg id="fig-kl-aporte" viewBox="0 0 760 270" role="img" aria-label="Aporte de cada intervalo de Td a la divergencia KL"></svg>
+      </figure>
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">KL según el soporte observacional y la zona</span><span class="fig-sub">En nats, con bins de 0.1 °C. El mejor de cada fila va marcado. El cociente es TimesFM ÷ Palacios.</span></figcaption>
+        <div class="tabla-caja"><table id="t-kl-grupo"></table></div>
+      </figure>
+    </div>
+    <div class="finding" id="hallazgo-kl"></div>
+    <details><summary>Cómo se calcula y qué no dice</summary><p id="nota-kl"></p></details>
+  </div>
+</section>
+
 <section id="campo">
   <div class="wrap">
     <div class="section-head">
-      <p class="eyebrow section-index">07 · Campo 2017–2020</p>
+      <p class="eyebrow section-index">08 · Campo 2017–2020</p>
       <div class="section-copy"><h2>TimesFM reconstruyó todo el campo de Palacios</h2><p>Cubrió las 2 178 827 celdas del producto de Palacios entre 2017 y 2020. Esos años no tienen Td observado. Todo lo que sigue mide cuánto coinciden los dos productos entre sí, no cuánto se equivoca cada uno.</p></div>
     </div>
     <div class="readout" id="campo-readout"></div>
@@ -317,7 +344,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
 <section id="limites">
   <div class="wrap">
     <div class="section-head">
-      <p class="eyebrow section-index">08 · Límites</p>
+      <p class="eyebrow section-index">09 · Límites</p>
       <div class="section-copy"><h2>El menor RMSE no resuelve la decisión de uso</h2><p>La mejora de precisión convive con cuatro restricciones que importan para producción y para interpretar el benchmark.</p></div>
     </div>
     <div class="limit-grid">
@@ -332,7 +359,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
 <section id="protocolo" style="border-bottom:none">
   <div class="wrap">
     <div class="section-head">
-      <p class="eyebrow section-index">09 · Protocolo</p>
+      <p class="eyebrow section-index">10 · Protocolo</p>
       <div class="section-copy"><h2>Qué entra al modelo y qué se mantiene oculto</h2><p>El contexto termina el 31 de diciembre del último año de entrenamiento. Ningún Td del bloque oculto entra al modelo. Tmin sí entra porque es exógeno y Palacios también lo utiliza.</p></div>
     </div>
     <div class="details">
@@ -997,6 +1024,92 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
         const a = mes("timesfm", i + 1), b = mes("tuned", i + 1);
         return {c:[n, con(a.bias_pooled), con(b.bias_pooled), f(a.cell_bias_std, 3), f(b.cell_bias_std, 3)]};
       }));
+  })();
+
+  /* ---- divergencia KL del backtest limpio ----------------------------------- */
+  (function(){
+    const K = D.kl;
+    if(!K){ const s = document.getElementById("divergencia"); if(s) s.hidden = true; return; }
+    const el = id => document.getElementById(id);
+    const miles = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    const fila = (kind, g, m, w) => K.grupos.find(r => r.group_kind === kind && r.group === g && r.method === m && Number(r.bin_width) === w);
+    const kl = (kind, g, m, w = 0.1) => fila(kind, g, m, w).kl_obs_method;
+    const NOM = {timesfm: "TimesFM", palacios: "Palacios"};
+    const col = k => css(k === "timesfm" ? "--tfm" : "--tuned");
+    const kp = kl("todo", "todo", "palacios"), kt = kl("todo", "todo", "timesfm");
+    const g4 = v => Number(v).toFixed(4);
+
+    el("kl-readout").innerHTML =
+      `<div><strong>${g4(kt)}</strong><span>nats de KL(obs ‖ TimesFM), sobre ${miles(K.n)} pares celda–día.</span></div>
+       <div><strong>${g4(kp)}</strong><span>nats de KL(obs ‖ Palacios), sobre los mismos pares.</span></div>
+       <div><strong>${(kt / kp).toFixed(2)}</strong><span>cociente TimesFM ÷ Palacios. Menor que 1 favorece a TimesFM.</span></div>`;
+
+    el("leyenda-kl").innerHTML = `<span><i style="background:var(--ink)"></i>Observado</span>` +
+      ["timesfm", "palacios"].map(k => `<span><i style="background:${col(k)}"></i>${NOM[k]}</span>`).join("");
+
+    function lineas(svgId, series, {H, M, yMin, yMax, yFmt, yTicks, etiquetaX}){
+      const svg = el(svgId), W = 760, B = K.bins;
+      const x0 = B.lo[0], x1 = B.hi[B.hi.length - 1];
+      const X = v => M.l + (v - x0) / (x1 - x0) * (W - M.l - M.r);
+      const Y = v => M.t + (yMax - v) / (yMax - yMin) * (H - M.t - M.b);
+      let o = "";
+      yTicks.forEach(t => {
+        o += `<line x1="${M.l}" y1="${Y(t)}" x2="${W - M.r}" y2="${Y(t)}" stroke="var(--fig-grid)"/>`;
+        o += `<text x="${M.l - 8}" y="${Y(t) + 4}" text-anchor="end" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${yFmt(t)}</text>`;
+      });
+      for(let x = Math.ceil(x0 / 10) * 10; x <= x1; x += 10){
+        o += `<text x="${X(x)}" y="${H - M.b + 17}" text-anchor="middle" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${x}</text>`;
+      }
+      series.forEach(s => {
+        const pts = B.lo.map((lo, i) => `${i ? "L" : "M"}${X((lo + B.hi[i]) / 2).toFixed(1)},${Y(s.v[i]).toFixed(1)}`).join("");
+        o += `<path d="${pts}" fill="none" stroke="${s.color}" stroke-width="${s.w || 2}" stroke-linejoin="round"/>`;
+      });
+      o += `<text x="${(M.l + W - M.r) / 2}" y="${H - 6}" text-anchor="middle" font-size="11.5" font-family="${SANS}" fill="var(--fig-muted)">${etiquetaX}</text>`;
+      svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+      svg.innerHTML = o;
+    }
+    const B = K.bins;
+    const dMax = Math.max(...B.obs, ...B.palacios, ...B.timesfm);
+    const paso = dMax > 0.06 ? 0.02 : 0.01;
+    const tD = []; for(let t = 0; t <= dMax + 1e-9; t += paso) tD.push(t);
+    lineas("fig-kl-dens", [{v: B.palacios, color: col("palacios")}, {v: B.timesfm, color: col("timesfm")},
+        {v: B.obs, color: css("--ink"), w: 2.4}],
+      {H: 300, M: {t: 14, r: 20, b: 40, l: 56}, yMin: 0, yMax: tD[tD.length - 1] + paso / 2,
+       yFmt: t => (t * 100).toFixed(0) + " %", yTicks: tD, etiquetaX: "Td, °C"});
+
+    const aMax = Math.max(...B.aporte_palacios, ...B.aporte_timesfm), aMin = Math.min(...B.aporte_palacios, ...B.aporte_timesfm);
+    const aPaso = (() => { const ancho = aMax - aMin, bruto = ancho / 6, e = Math.pow(10, Math.floor(Math.log10(bruto)));
+      return [1, 2, 5, 10].map(m => m * e).find(v => v >= bruto); })();
+    const tA = []; for(let t = Math.floor(aMin / aPaso) * aPaso; t <= aMax + aPaso / 2; t += aPaso) tA.push(Number(t.toFixed(8)));
+    lineas("fig-kl-aporte", [{v: B.aporte_palacios, color: col("palacios")}, {v: B.aporte_timesfm, color: col("timesfm")}],
+      {H: 270, M: {t: 14, r: 20, b: 40, l: 66}, yMin: tA[0] - aPaso / 2, yMax: tA[tA.length - 1] + aPaso / 2,
+       yFmt: t => (t * 1000).toFixed(1) + "e-3", yTicks: tA, etiquetaX: "Td, °C. Aporte de cada intervalo de 0.5 °C, en nats."});
+
+    const GR = [["todo", "todo", "Todo el backtest"], ["tier", "within", "within"], ["tier", "near", "near"],
+      ["tier", "marginal", "marginal"], ["tier", "extrapolated", "extrapolated"], ["tier", "unsupported", "unsupported"],
+      ["zona", "selva A (r) A'", "Selva A (r) A'"], ["zona", "resto", "Resto de zonas"]];
+    tabla("t-kl-grupo", ["Grupo", "Pares", "Palacios", "TimesFM", "Cociente"], GR.map(([k, g, n]) => {
+      const a = kl(k, g, "palacios"), b = kl(k, g, "timesfm");
+      return {c: [n, miles(fila(k, g, "palacios", 0.1).n), g4(a), g4(b), (b / a).toFixed(2)], foco: k === "todo"};
+    }), null, [2, 3]);
+
+    const peor = GR.slice(1).reduce((a, r) => {
+      const c = kl(r[0], r[1], "timesfm") / kl(r[0], r[1], "palacios");
+      return !a || c > a.c ? {n: r[2], c} : a;
+    }, null);
+    const mejorT = GR.slice(1).every(r => kl(r[0], r[1], "timesfm") < kl(r[0], r[1], "palacios"));
+    const top = m => GR.slice(1).reduce((a, r) => kl(r[0], r[1], m) > kl(a[0], a[1], m) ? r : a)[2];
+    const moda = m => { const a = B["aporte_" + m]; const i = a.indexOf(Math.min(...a)); return `${B.lo[i]} a ${B.hi[i]}`; };
+    const mx = (m) => { const a = B["aporte_" + m]; const i = a.indexOf(Math.max(...a)); return `${B.lo[i]} a ${B.hi[i]} °C`; };
+    el("hallazgo-kl").innerHTML = `<strong>La distribución de TimesFM se parece más a la observada: KL de ${g4(kt)} frente a ${g4(kp)} nats.</strong>
+      El cociente es ${(kt / kp).toFixed(2)}. ${mejorT ? "TimesFM tiene menor KL en los cinco niveles de soporte y en las dos clases de zona." : "No en todos los grupos: revisar la tabla."}
+      La ventaja relativa es menor en <code>${peor.n}</code> (cociente ${peor.c.toFixed(2)}).
+      ${top("palacios") === top("timesfm") ? `La KL más alta de los dos métodos está en <code>${top("palacios")}</code>.` : `La KL más alta está en <code>${top("palacios")}</code> para Palacios y en <code>${top("timesfm")}</code> para TimesFM.`}
+      En la forma de la curva, los dos ponen demasiada masa por encima de la moda observada: su peor intervalo está en ${moda("palacios")} °C en Palacios y en ${moda("timesfm")} °C en TimesFM. Les falta masa en ${mx("palacios")}. En su peor intervalo, el exceso de Palacios es ${(Math.min(...B.aporte_palacios) / Math.min(...B.aporte_timesfm)).toFixed(1)} veces el de TimesFM.`;
+
+    el("nota-kl").innerHTML = `Se cuentan los pares celda–día con observación y con predicción de los dos métodos (${miles(K.n)}) en un histograma de Td. A cada intervalo se le suma ${K.alpha} para evitar logaritmos de cero, igual en los tres histogramas. KL(obs ‖ método) es la suma sobre intervalos de p·ln(p/q), con p la fracción observada y q la del método, en nats.
+      <br><br>Lo que no dice: es una medida de la distribución marginal. Un método que reproduce la distribución pero coloca los valores en días equivocados tendría KL cercana a cero. Por eso se lee junto al RMSE de la sección 01, no en su lugar.
+      <br><br>KL no es simétrica. La tabla usa KL(obs ‖ método); los CSV incluyen además KL(método ‖ obs) y la divergencia de Jensen-Shannon, y dan el mismo orden de métodos. Con ${miles(K.n)} pares y unos 700 intervalos de 0.1 °C, el sesgo por muestra finita es del orden de 1e-5 nats, mucho menor que las diferencias reportadas. Palacios es la corrida limpia (selección de recetas solo con años de entrenamiento).`;
   })();
 
   /* ---- campo 2017-2020: acuerdo entre productos, cola calida y anomalias (E9) --- */

@@ -176,3 +176,27 @@ def test_check_parity_campo_works_without_a_manifest(tmp_path, paper_like):
     payload = {"campo": ad.campo(report, agg, tmp_path / "no_existe.csv")}
     assert payload["campo"]["manifiesto"] is None
     ad.check_parity_campo(payload, report)
+
+
+def test_kl_layer_parity(tmp_path):
+    from experiments.timesfm import artifact_data as ad
+
+    d = tmp_path / ad.KL_DIR
+    d.mkdir()
+    counts = {"obs": [10, 30, 60], "palacios": [20, 30, 50], "timesfm": [12, 31, 57]}
+    hist = pd.DataFrame({"bin_lo": [0.0, 0.5, 1.0], "bin_hi": [0.5, 1.0, 1.5], **counts})
+    hist.to_csv(d / "kl_hist_limpio.csv", index=False)
+    rows = []
+    for m in ("palacios", "timesfm"):
+        p = np.array(counts["obs"]) + 0.5
+        q = np.array(counts[m]) + 0.5
+        p, q = p / p.sum(), q / q.sum()
+        rows.append({"group_kind": "todo", "group": "todo", "method": m, "bin_width": 0.5, "n": 100,
+                     "n_out_of_range": 0, "kl_obs_method": float(np.sum(p * np.log(p / q))),
+                     "kl_method_obs": 0.0, "jsd": 0.0})
+    pd.DataFrame(rows).to_csv(d / "kl_by_group_limpio.csv", index=False)
+    payload = {"kl": ad.kl_layer(tmp_path)}
+    ad.check_parity_kl(payload, tmp_path)
+    payload["kl"]["bins"]["aporte_timesfm"][0] += 0.01
+    with pytest.raises(ValueError, match="paridad de KL"):
+        ad.check_parity_kl(payload, tmp_path)

@@ -564,6 +564,53 @@ def check_parity(payload: dict, report: Path = REPORT) -> None:
     logger.info("paridad con los CSV del informe: sin discrepancias")
 
 
+KL_DIR = "kl_limpio"
+
+
+def kl_layer(report: Path = REPORT) -> dict:
+    """Divergencia KL del backtest limpio: tabla por grupo y densidades de Td en bins de 0,5 C.
+
+    Las contribuciones por bin se recalculan aqui desde las cuentas con el mismo suavizado de
+    ``kl.divergences``; ``check_parity_kl`` comprueba que suman la KL del CSV.
+    """
+    from .kl import ALPHA, METHODS
+
+    grupos = pd.read_csv(report / KL_DIR / "kl_by_group_limpio.csv")
+    hist = pd.read_csv(report / KL_DIR / "kl_hist_limpio.csv")
+    p = hist["obs"].to_numpy(dtype=float) + ALPHA
+    p = p / p.sum()
+    bins = {"lo": [round(float(v), 6) for v in hist["bin_lo"]], "hi": [round(float(v), 6) for v in hist["bin_hi"]],
+            "obs": [round(float(v), 8) for v in p]}
+    for method in METHODS:
+        q = hist[method].to_numpy(dtype=float) + ALPHA
+        q = q / q.sum()
+        bins[method] = [round(float(v), 8) for v in q]
+        bins[f"aporte_{method}"] = [round(float(v), 8) for v in p * np.log(p / q)]
+    return {"grupos": _plain(grupos), "bins": bins, "alpha": ALPHA,
+            "n": int(grupos.loc[(grupos.group == "todo") & (grupos.bin_width == 0.5), "n"].iloc[0])}
+
+
+def check_parity_kl(payload: dict, report: Path = REPORT) -> None:
+    kl = payload["kl"]
+    csv = pd.read_csv(report / KL_DIR / "kl_by_group_limpio.csv")
+    problems = []
+    for method in ("palacios", "timesfm"):
+        row = csv[(csv.group_kind == "todo") & (csv.method == method) & (csv.bin_width == 0.5)]
+        suma = float(np.sum(kl["bins"][f"aporte_{method}"]))
+        esperado = float(row["kl_obs_method"].iloc[0])
+        if abs(suma - esperado) > 1e-6:
+            problems.append(f"{method}: la suma de aportes {suma:.8f} no coincide con la KL {esperado:.8f}")
+    if len(kl["grupos"]) != len(csv):
+        problems.append(f"filas de grupos {len(kl['grupos'])} frente a {len(csv)}")
+    for name in ("obs", "palacios", "timesfm"):
+        total = float(np.sum(kl["bins"][name]))
+        if abs(total - 1.0) > 1e-5:
+            problems.append(f"la densidad {name} suma {total}")
+    if problems:
+        raise ValueError("paridad de KL: " + "; ".join(problems))
+    logger.info("paridad de KL: sin discrepancias")
+
+
 def build(out_path: Path, *, report: Path = REPORT, res: Path = RES, silver: Path = SILVER,
           with_campo: bool = True, agg: Path = AGG_REAL) -> Path:
     layers, meta = build_layers(res=res, silver=silver, report=report)
@@ -580,7 +627,11 @@ def build(out_path: Path, *, report: Path = REPORT, res: Path = RES, silver: Pat
     }
     if with_campo:
         payload["campo"] = campo(report, agg)
+    if (report / KL_DIR / "kl_by_group_limpio.csv").exists():
+        payload["kl"] = kl_layer(report)
     check_parity(payload, report)
+    if "kl" in payload:
+        check_parity_kl(payload, report)
     if with_campo:
         check_parity_campo(payload, report)
 
