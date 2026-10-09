@@ -63,8 +63,8 @@ section{padding:74px 0;border-bottom:1px solid var(--line-soft);scroll-margin-to
 .capa-row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 14px}.capas{display:flex;flex-direction:column;gap:7px}.capas button,.capa-row button{font-family:inherit;font-size:13px;text-align:left;cursor:pointer;background:var(--surface);color:var(--ink-soft);border:1px solid var(--line);border-radius:4px;padding:8px 11px;line-height:1.35}.capas button[aria-pressed="true"],.capa-row button[aria-pressed="true"]{border-color:var(--tfm);color:var(--ink);box-shadow:inset 2px 0 0 var(--tfm)}
 .grafico{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 16px 10px}#curva{display:block;width:100%;height:auto}.leyenda-linea{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:10px;font-size:12.5px}.leyenda-linea span{display:flex;align-items:center;gap:7px;color:var(--ink-soft)}.leyenda-linea i{width:16px;height:3px;border-radius:2px;display:inline-block}
 .scope-warning{margin:34px 0 0;background:color-mix(in srgb,var(--warn) 7%,var(--surface));border:1px solid color-mix(in srgb,var(--warn) 30%,var(--line));border-radius:6px;padding:18px 20px}.scope-warning h3{font-family:"IBM Plex Sans",sans-serif;font-size:15px}.scope-warning p{font-size:13.5px;color:var(--ink-soft);margin-top:6px}
-.mapa-caja{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:24px;align-items:start;margin-top:26px}.lienzo-marco{position:relative;background:var(--sea);border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex;justify-content:center}#mapa{display:block;width:100%;height:auto;max-height:700px;object-fit:contain;image-rendering:pixelated;cursor:crosshair}.leyenda{margin-top:14px;font-size:12.5px;color:var(--ink-soft);display:flex;flex-direction:column;gap:6px}.leyenda .fila{display:flex;align-items:center;gap:8px}.muestra{width:13px;height:13px;border-radius:2px;flex:none;border:1px solid rgba(0,0,0,.14)}.rampa{height:9px;border-radius:2px;background:linear-gradient(90deg,var(--ramp0),var(--ramp1),var(--ramp2),var(--ramp3),var(--ramp4))}#lectura{min-height:82px;margin-top:14px;padding:11px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);font-size:13px;line-height:1.5}#lectura .titulo{font-weight:600}.bloque-zona{margin-top:10px;padding-top:9px;border-top:1px solid var(--line)}.cabecera-zona{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}.medido-en{font-size:12.5px;color:var(--ink-faint);margin:0 0 8px;line-height:1.5}.medido-en strong{color:var(--ink-soft);font-weight:500}#lectura dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:7px 0 0}#lectura dt{color:var(--ink-soft)}#lectura dd{margin:0;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
-.tabla-caja{max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--surface)}table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}#t-horizonte{min-width:0}#t-horizonte th,#t-horizonte td{padding-inline:10px}th,td{padding:8px 12px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line-soft)}th:first-child,td:first-child{text-align:left}thead th{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;background:var(--surface-2)}tbody td:not(:first-child){font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}tbody tr:last-child td{border-bottom:none}td.mejor{font-weight:600;color:var(--ok)}td.mejor::after{content:" ▪";font-size:8px;vertical-align:middle;opacity:.65}tr.foco td:first-child{box-shadow:inset 3px 0 0 var(--tfm)}.pill{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:7px;vertical-align:baseline}
+.mapa-caja{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:24px;align-items:start;margin-top:26px}.lienzo-marco{position:relative;background:var(--sea);border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex;justify-content:center}#mapa,#mapa-cola{display:block;width:100%;height:auto;max-height:700px;object-fit:contain;image-rendering:pixelated;cursor:crosshair}.leyenda{margin-top:14px;font-size:12.5px;color:var(--ink-soft);display:flex;flex-direction:column;gap:6px}.leyenda .fila{display:flex;align-items:center;gap:8px}.muestra{width:13px;height:13px;border-radius:2px;flex:none;border:1px solid rgba(0,0,0,.14)}.rampa{height:9px;border-radius:2px;background:linear-gradient(90deg,var(--ramp0),var(--ramp1),var(--ramp2),var(--ramp3),var(--ramp4))}#mapa-cola{cursor:default}#lectura{min-height:82px;margin-top:14px;padding:11px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);font-size:13px;line-height:1.5}#lectura .titulo{font-weight:600}.bloque-zona{margin-top:10px;padding-top:9px;border-top:1px solid var(--line)}.cabecera-zona{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}.medido-en{font-size:12.5px;color:var(--ink-faint);margin:0 0 8px;line-height:1.5}.medido-en strong{color:var(--ink-soft);font-weight:500}#lectura dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:7px 0 0}#lectura dt{color:var(--ink-soft)}#lectura dd{margin:0;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
+.tabla-caja{max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--surface)}table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}#t-horizonte{min-width:0}#t-horizonte th,#t-horizonte td{padding-inline:10px}th,td{padding:8px 12px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line-soft)}th:first-child,td:first-child{text-align:left}thead th{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;background:var(--surface-2)}tbody td:not(:first-child){font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}tbody tr:last-child td{border-bottom:none}td.mejor{font-weight:600;color:var(--ok)}td.mejor::after{content:" ▪";font-size:8px;vertical-align:middle;opacity:.65}tr.foco td:first-child{box-shadow:inset 3px 0 0 var(--tfm)}tr.alerta td:first-child{box-shadow:inset 3px 0 0 var(--warn)}.pill{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:7px;vertical-align:baseline}
 .pestanas{display:flex;flex-wrap:wrap;gap:0 4px;margin-bottom:16px;border-bottom:1px solid var(--fig-axis)}.pestanas button{font-family:inherit;font-size:13px;cursor:pointer;background:none;color:var(--fig-muted);border:none;border-bottom:2px solid transparent;padding:6px 10px;margin-bottom:-1px}.pestanas button[aria-selected="true"]{color:var(--ink);border-bottom-color:var(--fig-primary)}
 .limit-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:30px}.limit{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:22px}.limit .label{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-faint)}.limit h3{margin-top:8px}.limit p{font-size:13.5px;color:var(--ink-soft);margin-top:9px}.limit strong{color:var(--ink);font-weight:600}
 .details{margin-top:28px;border-top:1px solid var(--line)}details{border-bottom:1px solid var(--line);padding:16px 0}summary{cursor:pointer;font-weight:600}details p{color:var(--ink-soft);font-size:14px;max-width:var(--measure);margin-top:12px}code{font-family:"IBM Plex Mono",monospace;font-size:.92em;background:var(--surface-2);padding:1px 4px;border-radius:2px}
@@ -98,7 +98,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
 </header>
 <nav class="story-nav" aria-label="Secciones">
   <div class="wrap">
-    <a href="#resultado">Resultado</a><a href="#horizonte">Horizonte</a><a href="#soporte">Soporte</a><a href="#sesgo-mensual">Sesgo mensual</a><a href="#alcance">Alcance</a><a href="#escala">Escala</a><a href="#limites">Límites</a><a href="#protocolo">Protocolo</a>
+    <a href="#resultado">Resultado</a><a href="#horizonte">Horizonte</a><a href="#soporte">Soporte</a><a href="#sesgo-mensual">Sesgo mensual</a><a href="#alcance">Alcance</a><a href="#escala">Escala</a><a href="#campo">Campo 2017–2020</a><a href="#limites">Límites</a><a href="#protocolo">Protocolo</a>
   </div>
 </nav>
 
@@ -234,15 +234,95 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
   </div>
 </section>
 
+<section id="campo">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow section-index">07 · Campo 2017–2020</p>
+      <div class="section-copy"><h2>TimesFM reconstruyó todo el campo de Palacios</h2><p>Cubrió las 2 178 827 celdas del producto de Palacios entre 2017 y 2020. Esos años no tienen Td observado. Todo lo que sigue mide cuánto coinciden los dos productos entre sí, no cuánto se equivoca cada uno.</p></div>
+    </div>
+    <div class="readout" id="campo-readout"></div>
+
+    <div class="chart-shell">
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">Desacuerdo entre productos según el soporte observacional</span><span class="fig-sub">RMSE de TimesFM − Palacios sobre las mismas celdas y días. Los niveles de soporte son los de la sección 03. No es un error: no hay observación.</span></figcaption>
+        <svg id="fig-campo-tier" viewBox="0 0 760 240" role="img" aria-label="RMSE entre TimesFM y Palacios por nivel de soporte"></svg>
+      </figure>
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">Acuerdo por año y por sitio</span><span class="fig-sub">Diferencia = TimesFM − Palacios, en °C. El sesgo es la diferencia media. r es la correlación entre los dos productos.</span></figcaption>
+        <div class="tabla-caja"><table id="t-campo-anio"></table></div>
+        <div class="tabla-caja" style="margin-top:14px"><table id="t-campo-sitio"></table></div>
+      </figure>
+    </div>
+    <div class="finding" id="hallazgo-acuerdo"></div>
+
+    <div class="section-head" style="margin-top:64px">
+      <p class="eyebrow section-index">Cola cálida</p>
+      <div class="section-copy"><h2>¿TimesFM tiene la misma cola larga en la selva?</h2><p>El paper describe en Palacios valores de Td por encima de 35 °C, cerca del récord mundial. Están fuera del dominio con estaciones, en la clase climática <code>A (r) A'</code> del llano amazónico, y casi todos en noviembre. Aquí se mide lo mismo en los dos productos, sobre los mismos 3 183 millones de valores diarios por celda.</p></div>
+    </div>
+    <div class="readout" id="cola-readout"></div>
+    <div class="chart-shell">
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">Valores sobre 35 °C según el soporte observacional</span><span class="fig-sub">Celdas afectadas son las que tienen al menos un día sobre 35 °C. El porcentaje es sobre todos los valores diarios del nivel.</span></figcaption>
+        <div class="tabla-caja"><table id="t-cola-tier"></table></div>
+      </figure>
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">Cuánto pesa la cola en cada producto</span><span class="fig-sub">Fracción de valores diarios con Td ≥ x, en escala logarítmica. La línea vertical marca 35 °C.</span></figcaption>
+        <div class="capa-row" id="cola-grupos" role="group" aria-label="Grupo de celdas"></div>
+        <svg id="fig-cola-surv" viewBox="0 0 760 330" role="img" aria-label="Fracción de valores con Td mayor o igual que x en TimesFM y en Palacios"></svg>
+        <div class="leyenda-linea" id="leyenda-cola-surv"></div>
+        <p class="fig-nota" id="nota-cola-surv"></p>
+      </figure>
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">En qué mes ocurre</span><span class="fig-sub">Porcentaje de valores sobre 35 °C en la clase <code>A (r) A'</code>, por mes calendario, 2017–2020.</span></figcaption>
+        <svg id="fig-cola-mes" viewBox="0 0 760 270" role="img" aria-label="Porcentaje de valores sobre 35 grados por mes en la selva"></svg>
+        <div class="leyenda-linea" id="leyenda-cola-mes"></div>
+      </figure>
+    </div>
+
+    <div class="mapa-caja">
+      <div><div class="lienzo-marco"><canvas id="mapa-cola"></canvas></div><p class="nota" style="margin-top:10px">Cada píxel es una celda de 0.01°. Se pintan las celdas con al menos un día sobre 35 °C. La selva (clase <code>A (r) A'</code>) aparece con fondo verde claro.</p></div>
+      <div><div class="cabecera-zona">Dónde ocurre</div><div class="leyenda" id="leyenda-cola"></div></div>
+    </div>
+    <figure class="fig">
+      <figcaption><span class="fig-titulo">¿Coinciden los dos productos en los mismos días?</span><span class="fig-sub">Sobre las mismas celdas y días. Las probabilidades condicionales cuentan días con Td sobre 35 °C en un producto y miran el otro.</span></figcaption>
+      <div class="tabla-caja"><table id="t-cola-solape"></table></div>
+    </figure>
+    <div class="finding" id="hallazgo-cola"></div>
+
+    <div class="section-head" style="margin-top:64px">
+      <p class="eyebrow section-index">Temperaturas anormales</p>
+      <div class="section-copy"><h2>Anomalías de temperatura: días cálidos y fríos</h2><p>Anomalía es Td menos la climatología del día del año. La serie es el promedio diario sobre las 2 178 827 celdas. Se compara si TimesFM sigue los mismos días anormalmente cálidos o fríos que Palacios.</p></div>
+    </div>
+    <div class="chart-shell">
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">Anomalía media diaria de Td, 2017–2020</span><span class="fig-sub">Promedio sobre todas las celdas. °C sobre la climatología.</span></figcaption>
+        <svg id="fig-anom" viewBox="0 0 760 300" role="img" aria-label="Anomalía media diaria de Td de TimesFM y de Palacios"></svg>
+        <div class="leyenda-linea" id="leyenda-anom"></div>
+      </figure>
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">Qué tanto se parecen las dos series</span><span class="fig-sub">Los días extremos son el 5 % más cálido y el 5 % más frío según Palacios (74 días cada uno).</span></figcaption>
+        <div class="tabla-caja"><table id="t-anom"></table></div>
+      </figure>
+    </div>
+    <div class="finding" id="hallazgo-anom"></div>
+
+    <div class="scope-warning">
+      <h3>Qué no demuestra esta sección</h3>
+      <p>No hay Td observado en 2017–2020. Que TimesFM y Palacios coincidan indica que producen resultados parecidos, no que ambos acierten. El control de reproducción de las cifras publicadas de Palacios coincide en seis de ocho cantidades. Las medias de 2019 y 2020 difieren del paper en 0.012 y 0.007 °C, más que el redondeo a dos decimales.</p>
+      <div class="tabla-caja" style="margin-top:14px"><table id="t-campo-control"></table></div>
+    </div>
+  </div>
+</section>
+
 <section id="limites">
   <div class="wrap">
     <div class="section-head">
-      <p class="eyebrow section-index">07 · Límites</p>
+      <p class="eyebrow section-index">08 · Límites</p>
       <div class="section-copy"><h2>El menor RMSE no resuelve la decisión de uso</h2><p>La mejora de precisión convive con cuatro restricciones que importan para producción y para interpretar el benchmark.</p></div>
     </div>
     <div class="limit-grid">
       <article class="limit"><span class="label">Licencia</span><h3>TimesFM 3 no permite uso comercial o productivo</h3><p>Sus pesos usan <code>timesfm-non-commercial-license-v1.0</code>. TimesFM 2.5 es Apache-2.0, pero en esa prueba de compatibilidad, sobre las 1 106 celdas del cribado original, obtuvo <strong>1.5257</strong> de RMSE frente a <strong>1.2884</strong> de climatología.</p></article>
-      <article class="limit"><span class="label">Cómputo</span><h3>La pasada es mucho más lenta</h3><p>En una RTX A2000 de 12 GB, TimesFM procesa <strong>5.09 celdas/s</strong>: <strong>23 h 48 min</strong> para los cuatro departamentos y <strong>6.4 días</strong> extrapolados al grid de 2 818 404 celdas. Palacios cubre el grid completo en <strong>20 min</strong>.</p></article>
+      <article class="limit"><span class="label">Cómputo</span><h3>La pasada es mucho más lenta</h3><p>En una RTX A2000 de 12 GB, TimesFM procesa <strong>5.09 celdas/s</strong>: <strong>23 h 48 min</strong> para los cuatro departamentos y <strong>6.4 días</strong> extrapolados al grid de 2 818 404 celdas. Palacios cubre el grid completo en <strong>20 min</strong>.<span id="lim-campo"></span></p></article>
       <article class="limit"><span class="label">Sesgo y QC</span><h3>El error cuadrático mejora, el centrado no siempre</h3><p>El sesgo de TimesFM es <strong>+0.180</strong>, <strong>−0.126</strong> y <strong>+0.104 °C</strong> según el bloque. Además, <strong>0.12 %</strong> de sus predicciones queda fuera del rango de QC de PISCO, frente a <strong>0.08 %</strong> de la TCN. El detalle por tier y por mes está en las secciones 03 y 04.</p></article>
       <article class="limit"><span class="label">Selección</span><h3>La variante se eligió sobre el mismo bloque reportado</h3><p>Se evaluaron nueve variantes de TimesFM en ese bloque. La ganadora supera a la segunda por <strong>0.023 °C</strong> de RMSE (0.839 frente a 0.862 en las 1 092 celdas del cribado). El mismo bloque, por diseño, participa en la selección de variante y en el resultado final.</p></article>
     </div>
@@ -252,17 +332,18 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
 <section id="protocolo" style="border-bottom:none">
   <div class="wrap">
     <div class="section-head">
-      <p class="eyebrow section-index">08 · Protocolo</p>
+      <p class="eyebrow section-index">09 · Protocolo</p>
       <div class="section-copy"><h2>Qué entra al modelo y qué se mantiene oculto</h2><p>El contexto termina el 31 de diciembre del último año de entrenamiento. Ningún Td del bloque oculto entra al modelo. Tmin sí entra porque es exógeno y Palacios también lo utiliza.</p></div>
     </div>
     <div class="details">
       <details open><summary>Control de comparabilidad</summary><p>Antes de incorporar TimesFM se reprodujeron las cifras publicadas. La climatología, Tmin y Td observado del panel nuevo coincidieron con los archivos originales con diferencia exactamente cero.</p></details>
       <details><summary>Qué significa el agregado global</summary><p>El muestreo del backtest cubre la caja envolvente de PISCO y no el territorio peruano. Por eso 51.4 % de las celdas está fuera del país. Todos los métodos comparten ese mismo marco de evaluación.</p></details>
+      <details><summary>Qué recibe TimesFM en el campo 2017–2020</summary><p>La anomalía de Td de 1981 a 2016 y la anomalía de Tmin de 1981 a 2020, que sí existe en esos años. Predice la anomalía de Td de los 1 461 días de 2017 a 2020. Es la misma variante que ganó el backtest y no se entrenó con estos datos. Los pesos de TimesFM 3 tienen licencia no comercial.</p></details>
       <details><summary>Qué ocurrió en la corrida completa de Palacios</summary><p>La implementación agotó la memoria sobre la rejilla completa: la corrida terminó con <code>rc=137</code> tras 3 h 14 min y unos 100 GB, en el bucket 8 190 de 8 192. Por eso la comparación de escala se limita a las 61 113 celdas alcanzadas por ese método.</p></details>
     </div>
   </div>
 </section>
-<footer><div class="wrap">Bead <code>tdew-214</code>. Las cifras provienen de <code>reports/timesfm_benchmark/</code>; la página no recalcula resultados y aborta la construcción si algo se desvía de su CSV de origen. La implementación y el análisis se hicieron con asistencia de Claude Code y deben validarse con el equipo antes de considerarse definitivos, según la política de uso de IA del CIP.</div></footer>
+<footer><div class="wrap">Beads <code>tdew-214</code> y <code>tdew-214.13</code> (campo 2017–2020). Las cifras provienen de <code>reports/timesfm_benchmark/</code>; la página no recalcula resultados y aborta la construcción si algo se desvía de su CSV de origen. La implementación y el análisis se hicieron con asistencia de Claude Code y deben validarse con el equipo antes de considerarse definitivos, según la política de uso de IA del CIP.</div></footer>
 <script src="datos.js"></script>
 <script>
 (function(){
@@ -538,7 +619,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
       if(idx >= 0) marca.add(idx + ":" + k);
     }
     el.innerHTML = `<thead><tr>${cabeceras.map(c => `<th>${c}</th>`).join("")}</tr></thead>
-      <tbody>${filas.map((f, i) => `<tr${f.foco ? ' class="foco"' : ""}>${
+      <tbody>${filas.map((f, i) => `<tr${f.foco || f.alerta ? ` class="${[f.foco && "foco", f.alerta && "alerta"].filter(Boolean).join(" ")}"` : ""}>${
         f.c.map((v, k) => `<td${marca.has(i + ":" + k) ? ' class="mejor"' : ""}>${v}</td>`).join("")
       }</tr>`).join("")}</tbody>`;
   }
@@ -584,9 +665,9 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
   // devuelve esta funcion, una fila que no debe entrar en el orden por valor
   // (por ejemplo, una cifra medida sobre una poblacion de celdas distinta).
   function dotPlot(svg, {items, criterio, decimales, sufijo = "", ancho = 760, filaAlto = 30,
-                         etiquetaAncho = 148, cero = false, filasExtra = 0}){
-    const orden = items.slice().sort((a, b) => criterio === "max" ? b.v - a.v :
-      (criterio === "cero" ? Math.abs(a.v) - Math.abs(b.v) : a.v - b.v));
+                         etiquetaAncho = 148, cero = false, filasExtra = 0, ordenar = true, anillo = true}){
+    const orden = ordenar ? items.slice().sort((a, b) => criterio === "max" ? b.v - a.v :
+      (criterio === "cero" ? Math.abs(a.v) - Math.abs(b.v) : a.v - b.v)) : items.slice();
     const vals = orden.map(o => o.v);
     const iMejor = mejorIndice(vals, criterio);
     const [lo, hi] = escala(vals, criterio);
@@ -603,7 +684,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
     o += `<line x1="${M.l}" y1="${alto - M.b}" x2="${ancho - M.r}" y2="${alto - M.b}" stroke="var(--fig-axis)" stroke-width="1"/>`;
     orden.forEach((d, i) => {
       const y = Y(i), x = X(d.v), base = cero ? X(0) : M.l;
-      const esMejor = i === iMejor;
+      const esMejor = anillo && i === iMejor;
       o += `<text x="${M.l - 12}" y="${y + 4}" text-anchor="end" font-size="12.5" font-family="${SANS}"><tspan fill="${d.focal ? "var(--fig-highlight)" : "var(--fig-secondary)"}">${d.n}</tspan>${d.fam ? ` <tspan font-size="10" font-family="${MONO}" fill="var(--fig-muted)">${d.fam}</tspan>` : ""}</text>`;
       o += `<line x1="${base}" y1="${y}" x2="${x}" y2="${y}" stroke="var(--fig-grid)" stroke-width="1.5"/>`;
       o += d.focal
@@ -916,6 +997,284 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
         const a = mes("timesfm", i + 1), b = mes("tuned", i + 1);
         return {c:[n, con(a.bias_pooled), con(b.bias_pooled), f(a.cell_bias_std, 3), f(b.cell_bias_std, 3)]};
       }));
+  })();
+
+  /* ---- campo 2017-2020: acuerdo entre productos, cola calida y anomalias (E9) --- */
+  (function(){
+    const C = D.campo;
+    if(!C) return;
+    const el = id => document.getElementById(id);
+    const miles = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    const con = (v, d = 3) => (v >= 0 ? "+" : "-") + Math.abs(v).toFixed(d);
+    const pct = (v, d = 4) => `${Number(v).toFixed(d)} %`;
+    const COL = {timesfm: "--tfm", palacios: "--tuned"};
+    const NOM = {timesfm: "TimesFM", palacios: "Palacios"};
+    const col = k => css(COL[k]);
+    const leyenda2 = id => { el(id).innerHTML = ["timesfm", "palacios"].map(k =>
+      `<span><i style="background:${col(k)}"></i>${NOM[k]}</span>`).join(""); };
+    const TIERS = ["within", "near", "marginal", "extrapolated", "unsupported"];
+    const prod = k => C.producto.find(r => r.product === k);
+    const res = k => C.cola.resumen.find(r => r.product === k);
+
+    /* producto completo */
+    const man = C.manifiesto;
+    if(man){
+      el("campo-readout").innerHTML =
+        `<div><strong>${miles(man.celdas)}</strong><span>celdas, cada una con 1 461 días</span></div>
+         <div><strong>${miles(man.filas)}</strong><span>valores diarios de Td, con ${man.omitidas} celdas omitidas</span></div>
+         <div><strong>${(man.segundos / 86400).toFixed(1)} días</strong><span>de cómputo en una GPU, a ${man.celdas_por_s.toFixed(2)} celdas por segundo</span></div>`;
+    } else el("campo-readout").hidden = true;
+
+    /* desacuerdo por nivel de soporte */
+    (function(){
+      const filas = TIERS.map(t => C.acuerdo.tier.find(r => r.tier === t));
+      dotPlot(el("fig-campo-tier"), {
+        items: filas.map(r => ({n: `${r.tier} · ${miles(r.n / 1461)} celdas`, v: r.rmse, focal: true})),
+        criterio: "min", decimales: 3, filaAlto: 36, etiquetaAncho: 200, sufijo: " °C",
+        ordenar: false, anillo: false});
+      const fila = r => ({c: [String(r.year ?? r.site ?? r.tier), miles(r.n), f(r.rmse, 3), f(r.mae, 3), con(r.bias), f(r.r, 4)]});
+      const cab = n => [n, "Valores", "RMSE", "MAE", "Sesgo", "r"];
+      tabla("t-campo-anio", cab("Año"), C.acuerdo.anio.map(fila));
+      const SITIO = {cusco: "Cusco", lima: "Lima", iquitos_loreto: "Iquitos y Loreto",
+                     tarapoto_san_martin: "Tarapoto y San Martín", otro: "Resto de la rejilla"};
+      tabla("t-campo-sitio", cab("Sitio"), C.acuerdo.sitio.map(r => ({c: [SITIO[r.site] || r.site, miles(r.n),
+        f(r.rmse, 3), f(r.mae, 3), con(r.bias), f(r.r, 4)]})));
+    })();
+
+    /* cola: cifras principales y tabla por soporte */
+    (function(){
+      const p = res("palacios"), t = res("timesfm");
+      el("cola-readout").innerHTML =
+        `<div><strong>${pct(p.pct_above_35)}</strong><span>de los valores de Palacios superan 35 °C. En TimesFM, ${pct(t.pct_above_35)}.</span></div>
+         <div><strong>${miles(p.cells_with_exceedance)}</strong><span>celdas de Palacios con algún día sobre 35 °C. En TimesFM, ${miles(t.cells_with_exceedance)}.</span></div>
+         <div><strong>${F(p.max, 2)} °C</strong><span>máximo de Palacios. El de TimesFM es ${F(t.max, 2)} °C.</span></div>`;
+      const get = (k, tier) => C.cola.tier.find(r => r.product === k && r.tier === tier);
+      tabla("t-cola-tier",
+        ["Soporte","Celdas","Palacios · celdas","Palacios · sobre 35 °C","TimesFM · celdas","TimesFM · sobre 35 °C"],
+        TIERS.map(tier => { const a = get("palacios", tier), b = get("timesfm", tier);
+          return {c: [tier, miles(a.cells), miles(a.cells_affected), pct(a.pct_above_35), miles(b.cells_affected), pct(b.pct_above_35)]}; }));
+    })();
+
+    /* curva de supervivencia de la cola */
+    (function(){
+      const GRUPOS = [["selva_sin_apoyo", "Selva, a más de 200 km de estaciones"],
+        ["selva_con_apoyo", "Selva, dentro del dominio"], ["resto", "Otras zonas"], ["todo", "Todo el campo"]];
+      const cont = el("cola-grupos"), svg = el("fig-cola-surv"), nota = el("nota-cola-surv");
+      cont.innerHTML = GRUPOS.map(([k, n], i) => `<button type="button" data-k="${k}" aria-pressed="${i === 0}">${n}</button>`).join("");
+      leyenda2("leyenda-cola-surv");
+      function pinta(k){
+        const W = 760, H = 330, M = {t: 14, r: 76, b: 46, l: 64};
+        const filas = prod2 => C.cola.supervivencia.filter(r => r.product === prod2 && r.group === k);
+        const todas = filas("timesfm").concat(filas("palacios")).filter(r => r.frac_ge > 0);
+        const xs = filas("timesfm").map(r => r.x);
+        const x0 = Math.min(...xs), x1 = Math.max(...xs);
+        const pos = todas.map(r => r.frac_ge);
+        const lo = Math.floor(Math.log10(Math.min(...pos, 1e-3))), hi = 0;
+        const X = v => M.l + (v - x0) / (x1 - x0) * (W - M.l - M.r);
+        const Y = v => M.t + (hi - Math.log10(v)) / (hi - lo) * (H - M.t - M.b);
+        let o = "";
+        for(let e = hi; e >= lo; e--){
+          o += `<line x1="${M.l}" y1="${Y(10 ** e)}" x2="${W - M.r}" y2="${Y(10 ** e)}" stroke="var(--fig-grid)"/>`;
+          o += `<text x="${M.l - 8}" y="${Y(10 ** e) + 4}" text-anchor="end" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${e === 0 ? "1" : "1e" + e}</text>`;
+        }
+        for(let x = Math.ceil(x0 / 5) * 5; x <= x1; x += 5){
+          o += `<text x="${X(x)}" y="${H - M.b + 17}" text-anchor="middle" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${x}</text>`;
+        }
+        o += `<line x1="${X(35)}" y1="${M.t}" x2="${X(35)}" y2="${H - M.b}" stroke="var(--fig-highlight)" stroke-width="1.2" stroke-dasharray="4 3"/>`;
+        o += `<text x="${X(35) + 6}" y="${M.t + 12}" font-size="11.5" font-family="${SANS}" fill="var(--fig-highlight)">35 °C</text>`;
+        let hayDatos = false;
+        ["palacios", "timesfm"].forEach(prod2 => {
+          const r = filas(prod2).filter(q => q.frac_ge > 0);
+          if(!r.length) return;
+          hayDatos = true;
+          o += `<path d="${r.map((q, i) => `${i ? "L" : "M"}${X(q.x).toFixed(1)},${Y(q.frac_ge).toFixed(1)}`).join("")}" fill="none" stroke="${col(prod2)}" stroke-width="2.2" stroke-linejoin="round"/>`;
+          const ult = r[r.length - 1];
+          o += `<circle cx="${X(ult.x)}" cy="${Y(ult.frac_ge)}" r="3.5" fill="${col(prod2)}"/>`;
+        });
+        if(!hayDatos) o += `<text x="${(M.l + W - M.r) / 2}" y="${(M.t + H - M.b) / 2}" text-anchor="middle" font-size="13" font-family="${SANS}" fill="var(--fig-muted)">Ningún valor llega a ${x0 + 1} °C en este grupo.</text>`;
+        o += `<text x="${(M.l + W - M.r) / 2}" y="${H - 8}" text-anchor="middle" font-size="11.5" font-family="${SANS}" fill="var(--fig-muted)">Td, °C. Cada línea termina en el mayor valor del grupo.</text>`;
+        svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+        svg.innerHTML = o;
+        const fin = prod2 => { const r = filas(prod2).filter(q => q.frac_ge > 0); return r.length ? r[r.length - 1].x : null; };
+        const g = GRUPOS.find(q => q[0] === k)[1], n = (filas("timesfm")[0] || {}).n_group || 0;
+        nota.textContent = `${g}: ${miles(n)} valores por producto. El umbral más alto de la rejilla (cada 0.5 °C) que algún valor alcanza es ${fin("palacios") ?? "ninguno"} °C en Palacios y ${fin("timesfm") ?? "ninguno"} °C en TimesFM.`;
+        cont.querySelectorAll("button").forEach(b => b.setAttribute("aria-pressed", String(b.dataset.k === k)));
+      }
+      cont.addEventListener("click", e => { const b = e.target.closest("button"); if(b) pinta(b.dataset.k); });
+      pinta("selva_sin_apoyo");
+    })();
+
+    /* mes de ocurrencia en la selva */
+    (function(){
+      const MES = ["ene","feb","mar","abr","may","jun","jul","ago","sep","oct","nov","dic"];
+      const svg = el("fig-cola-mes"), W = 760, H = 270, M = {t: 24, r: 20, b: 36, l: 56};
+      const sel = k => C.cola.mes.filter(r => r.product === k && r.zone_class === "selva_A(r)A'").sort((a, b) => a.month - b.month);
+      const vals = ["timesfm", "palacios"].flatMap(k => sel(k).map(r => r.pct_above_35));
+      const hi = Math.max(...vals) * 1.12 || 1;
+      const Y = v => H - M.b - v / hi * (H - M.t - M.b);
+      const gW = (W - M.l - M.r) / 12, bW = gW * 0.34;
+      let o = "";
+      ticks(0, hi, 4).forEach(v => {
+        o += `<line x1="${M.l}" y1="${Y(v)}" x2="${W - M.r}" y2="${Y(v)}" stroke="var(--fig-grid)"/>`;
+        o += `<text x="${M.l - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${v.toFixed(1)} %</text>`;
+      });
+      const top = {};
+      ["timesfm", "palacios"].forEach(k => { top[k] = sel(k).reduce((a, r) => r.pct_above_35 > a.pct_above_35 ? r : a); });
+      for(let m = 1; m <= 12; m++){
+        const x0 = M.l + (m - 1) * gW + gW / 2;
+        [["palacios", -bW - 1], ["timesfm", 1]].forEach(([k, dx]) => {
+          const r = sel(k).find(q => q.month === m), y = Y(r.pct_above_35);
+          o += `<rect x="${x0 + dx}" y="${y}" width="${bW}" height="${Math.max(H - M.b - y, 0.5)}" fill="${col(k)}"><title>${NOM[k]}, mes ${m}: ${r.pct_above_35.toFixed(3)} %</title></rect>`;
+          if(top[k].month === m) o += `<text x="${x0 + dx + bW / 2}" y="${y - 5}" text-anchor="middle" font-size="11" font-family="${MONO}" fill="${col(k)}">${r.pct_above_35.toFixed(2)}</text>`;
+        });
+        o += `<text x="${x0}" y="${H - M.b + 16}" text-anchor="middle" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${MES[m - 1]}</text>`;
+      }
+      svg.innerHTML = o;
+      leyenda2("leyenda-cola-mes");
+    })();
+
+    /* mapa de las celdas con cola */
+    (async function(){
+      const lienzo = el("mapa-cola"), cx = lienzo.getContext("2d");
+      const {nLat, nLon} = D.meta;
+      lienzo.width = nLon; lienzo.height = nLat;
+      const [cat, zon, cola] = await Promise.all([inflar(D.capas.categoria), inflar(D.capas.zona), inflar(C.cola.capa)]);
+      const img = cx.createImageData(nLon, nLat);
+      function pintaCola(){
+        const c = n => hexARgb(css(n));
+        const mar = c("--sea"), tierra = c("--land"), ajena = c("--land-ext"), clim = c("--clim");
+        const selva = tierra.map((v, j) => Math.round(v * 0.62 + clim[j] * 0.38));
+        const solo = {1: c("--tfm"), 2: c("--tuned"), 3: c("--ink")};
+        const d = img.data;
+        for(let i = 0; i < nLat * nLon; i++){
+          const k = cat[i];
+          let rgb = k === 0 ? mar : (zon[i] === 1 ? selva : (k === 1 ? ajena : tierra));
+          if(cola[i]) rgb = solo[cola[i]];
+          const p = i * 4;
+          d[p] = rgb[0]; d[p + 1] = rgb[1]; d[p + 2] = rgb[2]; d[p + 3] = 255;
+        }
+        cx.putImageData(img, 0, 0);
+        const {latMax, lonMin, paso} = D.meta;
+        cx.save(); cx.strokeStyle = css("--ink-faint"); cx.globalAlpha = .5; cx.lineWidth = 1.1; cx.beginPath();
+        for(const ft of D.contornos.features){
+          const partes = ft.geometry.type === "Polygon" ? [ft.geometry.coordinates] : ft.geometry.coordinates;
+          for(const poly of partes) for(const anillo of poly){
+            anillo.forEach(([lon, lat], j) => { const x = (lon - lonMin) / paso, y = (latMax - lat) / paso; j === 0 ? cx.moveTo(x, y) : cx.lineTo(x, y); });
+            cx.closePath();
+          }
+        }
+        cx.stroke(); cx.restore();
+        const n = C.cola.celdas;
+        el("leyenda-cola").innerHTML = [["--ink", "ambos productos", n.ambos], ["--tfm", "solo TimesFM", n.solo_timesfm], ["--tuned", "solo Palacios", n.solo_palacios]].map(([v, t, q]) =>
+          `<div class="fila"><span class="muestra" style="background:${css(v)}"></span>${t} <span class="num" style="color:var(--ink-faint)">${miles(q)}</span></div>`).join("") +
+          `<div class="fila"><span class="muestra" style="background:rgb(${selva.join(',')})"></span>selva A (r) A' sin valores sobre 35 °C</div>
+           <div class="fila"><span class="muestra" style="background:${css("--land")}"></span>otras zonas</div>
+           <p class="nota">Celdas con al menos un día sobre 35 °C en 2017–2020.</p>`;
+      }
+      pintaCola();
+      const mq2 = window.matchMedia("(prefers-color-scheme: dark)");
+      mq2.addEventListener && mq2.addEventListener("change", pintaCola);
+    })().catch(e => { el("leyenda-cola").innerHTML = '<span class="sub">No se pudo construir el mapa en este navegador.</span>'; console.error(e); });
+
+    /* solape entre productos */
+    (function(){
+      const GRUPO = {todo: "Todo el campo", "selva_A(r)A'": "Selva A (r) A'", resto: "Otras zonas"};
+      tabla("t-cola-solape",
+        ["Zona","Ambos sobre 35 °C","Solo TimesFM","Solo Palacios","TimesFM sobre 35 °C dado Palacios","Palacios sobre 35 °C dado TimesFM"],
+        C.cola.solape.map(r => ({c: [GRUPO[r.zone_class] || r.zone_class, miles(r.both_above_35), miles(r.only_timesfm), miles(r.only_palacios),
+          r.timesfm_above_given_palacios_above === null ? "—" : `${(r.timesfm_above_given_palacios_above * 100).toFixed(1)} %`,
+          r.palacios_above_given_timesfm_above === null ? "—" : `${(r.palacios_above_given_timesfm_above * 100).toFixed(1)} %`]})));
+    })();
+
+    /* serie de anomalia */
+    (function(){
+      const A = C.anomalia, svg = el("fig-anom"), W = 760, H = 300, M = {t: 14, r: 20, b: 36, l: 46};
+      const n = A.timesfm.length, todo = A.timesfm.concat(A.palacios);
+      const lim = Math.ceil(Math.max(...todo.map(Math.abs)) * 5) / 5;
+      const X = d => M.l + d / (n - 1) * (W - M.l - M.r);
+      const Y = v => M.t + (lim - v) / (2 * lim) * (H - M.t - M.b);
+      let o = "";
+      ticks(-lim, lim, 5).forEach(v => {
+        const cero = Math.abs(v) < 1e-9;
+        o += `<line x1="${M.l}" y1="${Y(v)}" x2="${W - M.r}" y2="${Y(v)}" stroke="${cero ? "var(--fig-axis)" : "var(--fig-grid)"}" stroke-width="${cero ? 1.4 : 1}"/>`;
+        o += `<text x="${M.l - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${v.toFixed(1)}</text>`;
+      });
+      const ini = new Date(A.inicio + "T00:00:00Z");
+      for(let y = ini.getUTCFullYear(); y < ini.getUTCFullYear() + 4; y++){
+        const d = Math.round((Date.UTC(y, 0, 1) - ini.getTime()) / 86400000);
+        o += `<line x1="${X(d)}" y1="${M.t}" x2="${X(d)}" y2="${H - M.b}" stroke="var(--fig-grid)"/>`;
+        o += `<text x="${X(d) + 4}" y="${H - M.b + 16}" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${y}</text>`;
+      }
+      ["palacios", "timesfm"].forEach(k => {
+        o += `<path d="${A[k].map((v, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join("")}" fill="none" stroke="${col(k)}" stroke-width="1.1" stroke-linejoin="round" opacity=".92"/>`;
+      });
+      svg.innerHTML = o;
+      leyenda2("leyenda-anom");
+      const s = A.estadisticos;
+      tabla("t-anom", ["Medida", "Palacios", "TimesFM"], [
+        {c: ["Correlación diaria entre las dos series", f(s.r, 3), "—"]},
+        {c: ["Desviación típica de la anomalía diaria", f(s.desv_palacios, 3) + " °C", f(s.desv_timesfm, 3) + " °C"]},
+        {c: ["Anomalía media del 5 % de días más cálidos", con(s.extremos_calidos.palacios, 2) + " °C", con(s.extremos_calidos.timesfm, 2) + " °C"]},
+        {c: ["Anomalía media del 5 % de días más fríos", con(s.extremos_frios.palacios, 2) + " °C", con(s.extremos_frios.timesfm, 2) + " °C"]},
+        {c: ["Días con el mismo signo de anomalía", (s.acuerdo_signo * 100).toFixed(1) + " %", "—"]},
+        {c: ["Día más cálido", `${s.dia_mas_calido.palacios.fecha} (${con(s.dia_mas_calido.palacios.valor, 2)})`, `${s.dia_mas_calido.timesfm.fecha} (${con(s.dia_mas_calido.timesfm.valor, 2)})`]},
+        {c: ["Día más frío", `${s.dia_mas_frio.palacios.fecha} (${con(s.dia_mas_frio.palacios.valor, 2)})`, `${s.dia_mas_frio.timesfm.fecha} (${con(s.dia_mas_frio.timesfm.valor, 2)})`]}]);
+    })();
+
+    /* textos de lectura: todo sale de D.campo */
+    (function(){
+      const SITIO = {cusco: "Cusco", lima: "Lima", iquitos_loreto: "Iquitos y Loreto", tarapoto_san_martin: "Tarapoto y San Martín", otro: "el resto de la rejilla"};
+      const g = C.acuerdo.global, dv = C.deriva.find(r => r.series === "diferencia_timesfm_menos_palacios");
+      const t0 = C.acuerdo.tier.find(r => r.tier === "within"), t4 = C.acuerdo.tier.find(r => r.tier === "unsupported");
+      const rmin = C.acuerdo.sitio.reduce((a, r) => r.r < a.r ? r : a);
+      el("hallazgo-acuerdo").innerHTML = `<strong>Los dos productos difieren en ${F(g.rmse, 3)} °C de RMSE y su correlación es ${F(g.r, 4)}.</strong>
+        El desacuerdo crece con la distancia al dominio con estaciones, de ${F(t0.rmse, 3)} °C en <code>within</code> a ${F(t4.rmse, 3)} °C en <code>unsupported</code>.
+        TimesFM resulta ${F(g.bias, 3)} °C más cálido en promedio. La diferencia no muestra deriva en los cuatro años: la pendiente es ${con(dv.slope_per_year)} °C por año,
+        con un IC 95 % de ${F(dv.ci_low, 3)} a ${F(dv.ci_high, 3)}. La correlación más baja está en ${SITIO[rmin.site]} (${F(rmin.r, 3)}).`;
+
+      const R = C.cola.razones, p = res("palacios"), t = res("timesfm");
+      const tier = (k, n) => C.cola.tier.find(r => r.product === k && r.tier === n);
+      const anio = k => C.cola.anio.filter(r => r.product === k);
+      const minAnio = k => anio(k).reduce((a, r) => r.pct_above_35 < a.pct_above_35 ? r : a).year;
+      const mono = k => { const v = anio(k).map(r => r.pct_above_35);
+        return v.every((x, i) => i === 0 || x >= v[i - 1]) || v.every((x, i) => i === 0 || x <= v[i - 1]); };
+      const j = C.cola.solape.find(r => r.zone_class === "todo");
+      const mas = x => `${Math.round((x - 1) * 100)} %`;
+      const irregular = !mono("timesfm") && !mono("palacios") ? "La incidencia anual no es monótona en ninguno" +
+        (minAnio("timesfm") === minAnio("palacios") ? ` y ${minAnio("timesfm")} es el año más bajo en los dos.` : ".") : "";
+      el("hallazgo-cola").innerHTML = `<strong>Sí. TimesFM tiene la misma cola cálida en la selva y la hace más pesada.</strong>
+        En los dos productos todos los valores sobre 35 °C están en la clase <code>A (r) A'</code> y ninguno dentro del dominio con estaciones.
+        La tasa sube con la distancia hasta ${pct(tier("timesfm", "unsupported").pct_above_35, 3)} en TimesFM y ${pct(tier("palacios", "unsupported").pct_above_35, 3)} en Palacios. ${irregular}
+        <br><br>TimesFM tiene ${mas(R.tasa_35)} más valores sobre 35 °C (${pct(t.pct_above_35)} frente a ${pct(p.pct_above_35)}), ${mas(R.celdas)} más celdas afectadas y ${mas(R.sobre_38)} más valores sobre 38 °C.
+        Su cola llega más cerca del dominio: ${miles(tier("timesfm", "near").cells_affected)} celdas afectadas en <code>near</code> y ${miles(tier("timesfm", "marginal").cells_affected)} en <code>marginal</code>,
+        frente a ${miles(tier("palacios", "near").cells_affected)} y ${miles(tier("palacios", "marginal").cells_affected)} en Palacios.
+        En Palacios el ${(R.noviembre.palacios * 100).toFixed(1)} % de los valores sobre 35 °C cae en noviembre. En TimesFM es el ${(R.noviembre.timesfm * 100).toFixed(1)} %, porque también supera 35 °C entre agosto y octubre.
+        Su máximo es menor: ${F(t.max, 2)} °C frente a ${F(p.max, 2)} °C.
+        <br><br>Cuando Palacios supera 35 °C, TimesFM también lo hace el ${(j.timesfm_above_given_palacios_above * 100).toFixed(1)} % de las veces. Al revés, el ${(j.palacios_above_given_timesfm_above * 100).toFixed(1)} %.
+        Un punto de rocío sobre 35 °C no es físicamente plausible, así que TimesFM produce más valores imposibles que Palacios. El resultado de Palacios sobre el producto en disco reproduce la tabla del paper:
+        ${miles(p.cells_with_exceedance)} celdas afectadas, ${pct(p.pct_above_35)} de los valores y un máximo de ${F(p.max, 2)} °C.`;
+
+      const s = C.anomalia.estadisticos, fecha = x => x.fecha.split("-").reverse().join("-");
+      el("hallazgo-anom").innerHTML = `<strong>Los dos productos siguen los mismos días anormales, y TimesFM los amplifica.</strong>
+        La correlación diaria de la anomalía media es ${F(s.r, 3)} y el signo coincide en el ${(s.acuerdo_signo * 100).toFixed(1)} % de los días.
+        La anomalía de TimesFM varía ${Math.round((s.cociente_desv - 1) * 100)} % más (desviación típica de ${F(s.desv_timesfm, 3)} frente a ${F(s.desv_palacios, 3)} °C).
+        En el 5 % de días más cálidos según Palacios, la anomalía media es ${con(s.extremos_calidos.timesfm, 2)} °C en TimesFM y ${con(s.extremos_calidos.palacios, 2)} °C en Palacios.
+        Los días más extremos no son los mismos: el más cálido de TimesFM es el ${fecha(s.dia_mas_calido.timesfm)} (${con(s.dia_mas_calido.timesfm.valor, 2)} °C) y el de Palacios el ${fecha(s.dia_mas_calido.palacios)} (${con(s.dia_mas_calido.palacios.valor, 2)} °C).
+        Sin Td observado no se puede decir qué amplitud es la correcta.`;
+
+      const lim = el("lim-campo");
+      if(lim && man) lim.innerHTML = ` El campo completo de ${miles(man.celdas)} celdas tomó <strong>${(man.segundos / 86400).toFixed(1)} días</strong>, a ${man.celdas_por_s.toFixed(2)} celdas/s.`;
+    })();
+
+    /* control de reproduccion de Palacios */
+    (function(){
+      const ETQ = {n: "valores", mean: "media", mean_2017: "media 2017", mean_2018: "media 2018", mean_2019: "media 2019",
+                   mean_2020: "media 2020", min: "mínimo", max: "máximo"};
+      tabla("t-campo-control", ["Cantidad", "Paper", "Observado", "Diferencia", "Coincide"],
+        C.control.map(r => ({alerta: !r.ok, c: [ETQ[r.quantity] || r.quantity,
+          r.quantity === "n" ? miles(r.paper) : F(r.paper, 2), r.quantity === "n" ? miles(r.observed) : F(r.observed, 3),
+          r.quantity === "n" ? "0" : con(r.diff, 4), r.ok ? "sí" : "no"]})));
+    })();
   })();
 
   /* ---- curva de error ------------------------------------------------ */

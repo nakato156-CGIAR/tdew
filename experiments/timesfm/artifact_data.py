@@ -49,6 +49,22 @@ CELLS_EXPECTED = {"lima": 29079, "cusco": 60041, "iquitos_loreto": 305564,
                   "tarapoto_san_martin": 41835}
 MAX_BYTES = 2 * 1024 * 1024
 
+# Producto completo 2017-2020 (E9): salidas de real_compare y real_tail.
+CAMPO = "real_limpio"
+AGG_REAL = Path("/home/cvelasquez/tdew_timesfm/agg_real")
+MANIFIESTO_REAL = Path("/home/cvelasquez/tdew_timesfm/preds_real/MANIFEST.csv")
+CAMPO_CELDAS = 2_178_827
+CAMPO_VALORES = 3_183_266_247
+TASA_COLA = 35.0
+# Cantidades del control de reproduccion de Palacios que no coinciden con el paper (el texto de la
+# pagina lo dice; si cambian, la pagina deja de ser cierta y hay que reescribirla).
+CONTROL_FALLAN = frozenset({"mean_2019", "mean_2020"})
+# Cola calida de Palacios en el paper (sec-results-tail, tbl-support): celdas afectadas por nivel de
+# soporte, total de celdas, porcentaje de valores sobre 35 C y maximo.
+PAPER_COLA = {"celdas_por_tier": {"within": 0, "near": 10, "marginal": 391, "extrapolated": 18888,
+                                  "unsupported": 113631},
+              "celdas": 132920, "pct": 0.1326, "max": 41.16}
+
 
 def encode(array: np.ndarray) -> str:
     """Comprime un arreglo de bytes y lo devuelve en base64."""
@@ -338,6 +354,190 @@ def _check_parity_tier_month(payload: dict, report: Path) -> None:
                              f"{mensual[(method, month)]['bias_pooled']} != {value}")
 
 
+# ----------------------------------------------------------------- campo 2017-2020
+
+def _campo_csv(report: Path, name: str) -> pd.DataFrame:
+    return pd.read_csv(report / CAMPO / f"{name}_limpio.csv")
+
+
+def _plain(frame: pd.DataFrame) -> list[dict]:
+    """Todas las columnas tal como estan en el CSV: texto, booleanos y enteros intactos,
+    NaN como ``None`` y flotantes a seis decimales (ver ``_records``)."""
+    out = []
+    for raw in frame.to_dict("records"):
+        row = {}
+        for k, v in raw.items():
+            if isinstance(v, str):
+                row[k] = v
+            elif isinstance(v, (bool, np.bool_)):
+                row[k] = bool(v)
+            elif isinstance(v, (int, np.integer)):
+                row[k] = int(v)
+            elif pd.isna(v):
+                row[k] = None
+            else:
+                row[k] = round(float(v), 6)
+        out.append(row)
+    return out
+
+
+def _dia(series: pd.DataFrame, col: str, how: str) -> dict:
+    i = getattr(series[col], how)()
+    return {"fecha": str(series["date"].loc[i]), "valor": float(series[col].loc[i])}
+
+
+def cola_razones(cola: dict) -> dict:
+    """Cocientes TimesFM / Palacios de la cola, para el texto de la pagina (se calculan aqui, no en el navegador)."""
+    r = {x["product"]: x for x in cola["resumen"]}
+    out = {"tasa_35": (r["timesfm"]["above_35"] / r["timesfm"]["n"]) / (r["palacios"]["above_35"] / r["palacios"]["n"]),
+           "celdas": r["timesfm"]["cells_with_exceedance"] / r["palacios"]["cells_with_exceedance"],
+           "sobre_38": r["timesfm"]["above_38"] / r["palacios"]["above_38"], "noviembre": {}}
+    for k in ("timesfm", "palacios"):
+        mes = [x for x in cola["mes"] if x["product"] == k and x["zone_class"] == "selva_A(r)A'"]
+        total = sum(x["above_35"] for x in mes)
+        out["noviembre"][k] = sum(x["above_35"] for x in mes if x["month"] == 11) / total if total else None
+        tiers = [x for x in cola["tier"] if x["product"] == k and x["tier"] != "within"]
+        out.setdefault("fuera_dominio", {})[k] = (sum(x["above_35"] for x in tiers) / sum(x["values"] for x in tiers) * 100)
+    return out
+
+
+def anomalia_estadisticos(series: pd.DataFrame) -> dict:
+    """Cifras de la serie diaria de anomalia nacional de cada producto (promedio sobre las celdas).
+
+    Se calculan aqui, no en el navegador: la pagina no recalcula nada.
+    """
+    t, p = series["anom_timesfm"], series["anom_palacios"]
+    top, bot = p >= p.quantile(0.95), p <= p.quantile(0.05)
+    return {
+        "dias": int(len(series)),
+        "r": float(t.corr(p)),
+        "desv_timesfm": float(t.std()), "desv_palacios": float(p.std()),
+        "cociente_desv": float(t.std() / p.std()),
+        "media_timesfm": float(t.mean()), "media_palacios": float(p.mean()),
+        "acuerdo_signo": float(((t > 0) == (p > 0)).mean()),
+        "extremos_calidos": {"n": int(top.sum()), "palacios": float(p[top].mean()), "timesfm": float(t[top].mean())},
+        "extremos_frios": {"n": int(bot.sum()), "palacios": float(p[bot].mean()), "timesfm": float(t[bot].mean())},
+        "dif_media": float((t - p).mean()), "dif_desv": float((t - p).std()),
+        "dia_mas_calido": {k: _dia(series, col, "idxmax") for k, col in (("palacios", "anom_palacios"), ("timesfm", "anom_timesfm"))},
+        "dia_mas_frio": {k: _dia(series, col, "idxmin") for k, col in (("palacios", "anom_palacios"), ("timesfm", "anom_timesfm"))},
+    }
+
+
+def cola_layer(agg: Path = AGG_REAL) -> tuple[str, dict]:
+    """Capa del mapa de la cola calida: por celda, 1 solo TimesFM, 2 solo Palacios, 3 ambos.
+
+    El ``ID`` es denso y en orden row-major, igual que en el resto de las capas.
+    """
+    cells = pd.read_csv(agg / "tail_by_cell_limpio.csv")
+    t, p = cells["n_above_timesfm"].to_numpy() > 0, cells["n_above_palacios"].to_numpy() > 0
+    ids = cells["ID"].to_numpy(np.int64)
+    layer = np.zeros(N_LAT * N_LON, dtype=np.uint8)
+    layer[ids[t & ~p]], layer[ids[~t & p]], layer[ids[t & p]] = 1, 2, 3
+    counts = {"solo_timesfm": int((t & ~p).sum()), "solo_palacios": int((~t & p).sum()),
+              "ambos": int((t & p).sum())}
+    return encode(layer), counts
+
+
+def campo(report: Path = REPORT, agg: Path = AGG_REAL, manifest: Path = MANIFIESTO_REAL) -> dict:
+    """Producto completo 2017-2020: acuerdo entre productos, anomalia y cola calida."""
+    serie = _campo_csv(report, "anomaly_series")
+    man = pd.read_csv(manifest) if manifest.exists() else None
+    manifiesto = None
+    if man is not None:
+        seconds = float(man["seconds"].sum())
+        manifiesto = {"buckets": int(len(man)), "celdas": int(man["cells_written"].sum()),
+                      "omitidas": int(man["n_omitted"].sum()), "filas": int(man["rows"].sum()),
+                      "bytes": int(man["bytes"].sum()), "segundos": seconds,
+                      "celdas_por_s": float(man["cells_written"].sum() / seconds),
+                      "violaciones_cuantiles": int(man["quantile_violation_rows"].sum())}
+    capa, conteos = cola_layer(agg)
+    out = {
+        "manifiesto": manifiesto,
+        "producto": _plain(_campo_csv(report, "product_figures")),
+        "control": _plain(_campo_csv(report, "reproduction_palacios")),
+        "acuerdo": {
+            "global": _plain(_campo_csv(report, "agreement_overall"))[0],
+            "anio": _plain(_campo_csv(report, "agreement_by_year")),
+            "tier": _plain(_campo_csv(report, "agreement_by_tier")),
+            "sitio": _plain(_campo_csv(report, "agreement_by_site")),
+            "mes": _plain(_campo_csv(report, "agreement_by_month")),
+        },
+        "deriva": _plain(_campo_csv(report, "drift")),
+        "anomalia": {
+            "inicio": str(serie["date"].iloc[0]),
+            "timesfm": [round(float(v), 3) for v in serie["anom_timesfm"]],
+            "palacios": [round(float(v), 3) for v in serie["anom_palacios"]],
+            "estadisticos": anomalia_estadisticos(serie),
+        },
+        "cola": {
+            "resumen": _plain(_campo_csv(report, "tail_summary")),
+            "tier": _plain(_campo_csv(report, "tail_by_tier")),
+            "zona": _plain(_campo_csv(report, "tail_by_zone_class")),
+            "mes": _plain(_campo_csv(report, "tail_by_month")),
+            "anio": _plain(_campo_csv(report, "tail_by_year")),
+            "solape": _plain(_campo_csv(report, "tail_joint")),
+            "supervivencia": _plain(_campo_csv(report, "tail_survival")),
+            "celdas": conteos,
+            "capa": capa,
+        },
+    }
+    out["cola"]["razones"] = cola_razones(out["cola"])
+    return out
+
+
+def check_parity_campo(payload: dict, report: Path = REPORT) -> None:
+    """Aborta si el campo volcado no coincide con sus CSV o si las tablas no cuadran entre si."""
+    c = payload["campo"]
+    for fila in c["producto"]:
+        if fila["cells"] != CAMPO_CELDAS or fila["n"] != CAMPO_VALORES:
+            raise ValueError(f"{fila['product']}: {fila['cells']} celdas y {fila['n']} valores; "
+                             f"se esperaban {CAMPO_CELDAS} y {CAMPO_VALORES}")
+    resumen = {r["product"]: r for r in c["cola"]["resumen"]}
+    for name, r in resumen.items():
+        if r["n"] != CAMPO_VALORES or r["cells"] != CAMPO_CELDAS:
+            raise ValueError(f"cola {name}: {r['n']} valores y {r['cells']} celdas")
+        tier = [x for x in c["cola"]["tier"] if x["product"] == name]
+        if sum(x["cells"] for x in tier) != CAMPO_CELDAS or sum(x["values"] for x in tier) != CAMPO_VALORES:
+            raise ValueError(f"cola {name}: las celdas o valores por tier no suman el total")
+        if sum(x["above_35"] for x in tier) != r["above_35"]:
+            raise ValueError(f"cola {name}: lo que supera 35 C por tier no suma el total")
+        zona = [x for x in c["cola"]["zona"] if x["product"] == name]
+        if sum(x["above_35"] for x in zona) != r["above_35"]:
+            raise ValueError(f"cola {name}: lo que supera 35 C por clase no suma el total")
+        mes = [x for x in c["cola"]["mes"] if x["product"] == name and x["zone_class"] == "todo"]
+        anio = [x for x in c["cola"]["anio"] if x["product"] == name]
+        if sum(x["above_35"] for x in mes) != r["above_35"] or sum(x["above_35"] for x in anio) != r["above_35"]:
+            raise ValueError(f"cola {name}: lo que supera 35 C por mes o por anio no suma el total")
+    pal = resumen["palacios"]
+    for x in c["cola"]["tier"]:
+        if x["product"] == "palacios" and x["cells_affected"] != PAPER_COLA["celdas_por_tier"][x["tier"]]:
+            raise ValueError(f"Palacios {x['tier']}: {x['cells_affected']} celdas afectadas y el paper dice "
+                             f"{PAPER_COLA['celdas_por_tier'][x['tier']]}")
+    if (pal["cells_with_exceedance"] != PAPER_COLA["celdas"] or round(pal["pct_above_35"], 4) != PAPER_COLA["pct"]
+            or round(pal["max"], 2) != PAPER_COLA["max"]):
+        raise ValueError(f"la cola de Palacios no reproduce el paper: {pal['cells_with_exceedance']} celdas, "
+                         f"{pal['pct_above_35']:.4f} %, maximo {pal['max']:.2f}")
+    capa = c["cola"]["celdas"]
+    for name, key in (("timesfm", "solo_timesfm"), ("palacios", "solo_palacios")):
+        con = capa[key] + capa["ambos"]
+        if con != resumen[name]["cells_with_exceedance"]:
+            raise ValueError(f"cola {name}: el mapa tiene {con} celdas afectadas y el resumen "
+                             f"{resumen[name]['cells_with_exceedance']}")
+    if payload["campo"]["acuerdo"]["global"]["n"] != CAMPO_VALORES:
+        raise ValueError("el acuerdo global no cubre los 3 183 266 247 valores")
+    fallan = {r["quantity"] for r in c["control"] if not r["ok"]}
+    if fallan != CONTROL_FALLAN:
+        raise ValueError(f"control de reproduccion: fallan {sorted(fallan)} y el texto de la pagina dice "
+                         f"{sorted(CONTROL_FALLAN)}")
+    if len(c["anomalia"]["timesfm"]) != 1461 or len(c["anomalia"]["palacios"]) != 1461:
+        raise ValueError("la serie de anomalia no tiene 1 461 dias")
+    if c["manifiesto"] is not None:
+        m = c["manifiesto"]
+        if (m["buckets"], m["celdas"], m["omitidas"], m["filas"]) != (8192, CAMPO_CELDAS, 0, CAMPO_VALORES):
+            raise ValueError(f"el manifiesto no cuadra con el producto esperado: {m}")
+    logger.info("paridad del campo 2017-2020: sin discrepancias")
+
+
 def check_parity(payload: dict, report: Path = REPORT) -> None:
     """Aborta si alguna cifra volcada se desvia de su CSV de origen.
 
@@ -364,7 +564,8 @@ def check_parity(payload: dict, report: Path = REPORT) -> None:
     logger.info("paridad con los CSV del informe: sin discrepancias")
 
 
-def build(out_path: Path, *, report: Path = REPORT, res: Path = RES, silver: Path = SILVER) -> Path:
+def build(out_path: Path, *, report: Path = REPORT, res: Path = RES, silver: Path = SILVER,
+          with_campo: bool = True, agg: Path = AGG_REAL) -> Path:
     layers, meta = build_layers(res=res, silver=silver, report=report)
     geo = json.loads((report / "geo" / "peru_departamental_simple.geojson").read_text())
 
@@ -377,7 +578,11 @@ def build(out_path: Path, *, report: Path = REPORT, res: Path = RES, silver: Pat
         "tablas": tables(report),
         "contornos": geo,
     }
+    if with_campo:
+        payload["campo"] = campo(report, agg)
     check_parity(payload, report)
+    if with_campo:
+        check_parity_campo(payload, report)
 
     body = json.dumps(payload, separators=(",", ":"), ensure_ascii=False)
     out_path.parent.mkdir(parents=True, exist_ok=True)
@@ -386,6 +591,8 @@ def build(out_path: Path, *, report: Path = REPORT, res: Path = RES, silver: Pat
     size = out_path.stat().st_size
     for name, blob in layers.items():
         logger.info("  capa %-10s %6.1f KB", name, len(blob) / 1024)
+    if with_campo:
+        logger.info("  capa %-10s %6.1f KB", "cola", len(payload["campo"]["cola"]["capa"]) / 1024)
     logger.info("  contornos   %6.1f KB", len(json.dumps(geo, separators=(",", ":"))) / 1024)
     logger.info("total %.1f KB", size / 1024)
     if size > MAX_BYTES:
