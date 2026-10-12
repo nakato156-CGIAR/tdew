@@ -30,7 +30,8 @@ in the frozen training period (2002-2012, ``docs/protocol/week1_manifest.yaml``
 / ``period.splits``) — never from validation/test years — per the manifest's
 ``normalization_rule``. Rows outside 2002-2016 (e.g. TMIN/TMAX 1981-2001 and
 2017-2020) get a climatology value too (same train-year-only per-doy mean) but
-have no ``split`` label; downstream ``pipeline.features`` restricts to
+have no ``split`` label. TD only exists for 2002-2016, so ``TD``/``TD_clim``/
+``TD_anom`` are null on the TMIN/TMAX-only dates (left join onto TMIN); downstream ``pipeline.features`` restricts to
 2002-2016 and assigns train/validation/test.
 
 Output
