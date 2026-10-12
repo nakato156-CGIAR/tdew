@@ -33,7 +33,7 @@ Reglas que gobiernan la comparación:
   entrenamiento. Ningún valor de Td del bloque oculto entra al contexto ni a la
   climatología.
 - La climatología se recalcula con solo los años de entrenamiento de cada split,
-  replicando `backtest.train_only_climatology` (`backtest.py:72-79`).
+  replicando `backtest.train_only_climatology` (`backtest.py:180-187`).
 - Tmin del bloque oculto sí se entrega como covariable. Es exógeno, existe en todo
   el rango y es exactamente la información que consume el método de Palacios, que
   también lo usa. Igualar la entrada hace que la comparación mida el modelo.
@@ -82,15 +82,20 @@ modifican. La columna `pred_timesfm` se añade en una copia bajo otra raíz
 
 ## 3. Los paneles de celdas
 
+Los seis paneles se reconstruyen desde sus fuentes con
+`uv run python -m experiments.timesfm.scripts.make_panels --out-dir <dir> --check`, que
+comprueba que cada uno tiene exactamente las celdas del archivo usado en las corridas
+(verificado el 12 de octubre de 2026: los seis coinciden).
+
 | panel | celdas | archivo | cómo se eligió |
 |---|---|---|---|
 | cribado | 1.106 | `panels/cribado_estratificado.csv` | hasta 40 celdas por zona SENAMHI sobre las del backtest de Palacios, `numpy.random.default_rng(20260922)` |
 | backtest (limpio) | 17.027 | `panels/nacional_17027.csv` | las celdas del run limpio de Palacios (`ID`, `zone_id` de `backtest_clean/ll4`); subconjunto del panel de 17.041 |
 | cribado (limpio) | 1.092 | `panels/cribado_estratificado.csv` (1.106 IDs) | intersección del cribado con el run limpio; las 14 celdas restantes se descartan en la unión interna |
 | backtest (con fuga) | 17.041 | `panels/nacional_17041.csv` | las celdas del backtest con fuga, sin filtrar; solo referencia |
-| departamental | 2.048 | `$WORK/panels/ll4_seed0.csv` | panel `ll4` del protocolo de reconstrucción, 512 por departamento (no los 2.048/departamento del manifiesto: verificado contra `predicciones_largo.parquet` y contra el artefacto, sección "Panel departamental") |
-| escala | 436.519 | `Data/silver/department_grid_ids/*.csv` | las cuatro listas completas |
-| escala, submuestra puntuada | 61.113 | `$TFM/panel_escala_submuestra.csv` | 14 % de cada departamento, proporcional, que es lo que el método de Palacios alcanzó a cubrir |
+| departamental | 2.048 | `$TDEW_RECONSTRUCTION_WORK/panels/ll4_reducido_512.csv` | 512 por departamento: las celdas de los folds `dev_a`/`dev_b`, `select_panel(Data/silver, "dev_a", seed=0)`; subconjunto estricto del panel `ll4` de 2.048 por departamento (`ll4_seed0.csv`, 8.192 celdas), que no se usó. Verificado contra `predicciones_largo.parquet` |
+| escala | 436.519 | `$TDEW_TIMESFM_WORK/panel_436k.csv` | unión de las cuatro listas de `Data/silver/department_grid_ids/*.csv` |
+| escala, submuestra puntuada | 61.113 | `$TDEW_TIMESFM_WORK/panel_escala_submuestra.csv` | 14 % redondeado de cada departamento, `default_rng(20260922)` en el orden cusco, iquitos_loreto, lima, tarapoto_san_martin; es lo que el método de Palacios alcanzó a cubrir |
 
 El muestreo de 64 buckets de Palacios toca 38 de las 41 zonas SENAMHI en el run con
 fuga y 33 en el run limpio. El panel de cribado limpio cubre las 33.
@@ -139,7 +144,10 @@ climatología y `tuned` son por celda y no se ven afectados.
 | recorte de negativos desactivado | predicciones negativas en celdas de Cusco | 11.524 de 99.348 (11,6 %), mínimo −6,83 °C |
 | cruce de cuantiles | monotonía de los nueve deciles | 0 cruces |
 | regresión de `effect_sizes.py` | que la parametrización del método focal no cambie los números previos | idénticos a `effect_sizes_all.csv` original |
-| pruebas unitarias | panel sin fuga, armado de entradas y métricas probabilísticas | 26 pruebas, todas pasan |
+| pruebas unitarias | panel sin fuga, armado de entradas y métricas probabilísticas | 26 pruebas, todas pasan (al 12 de octubre de 2026, 220 pruebas en `tests/test_timesfm_*.py`) |
+| control de reproducción del producto 2017–2020 | n, media, mínimo, máximo y medias anuales de Palacios recalculadas contra el paper | 8 de 8 al redondeo de dos decimales, con la media anual como promedio de las 12 medias mensuales (definición de `qc_fill.py`) |
+| paneles | los seis paneles reconstruidos desde sus fuentes (`scripts/make_panels.py`) | idénticos a los usados |
+| reproducción de la inferencia | reinferencia con el commit `afa517f`: 32 celdas del cribado (`tmin_anom_full` y `uni_td_full`, `--no-tf32`), del nacional (`ll4`, `--no-tf32`), del departamental y de la escala (TF32), y el bucket 0 completo del producto 2017–2020 | idénticas bit a bit en la mediana y los nueve deciles (en el bucket 0 coincide el sha256 del archivo); lote 4 y lote 16 dan la misma salida. El nacional con TF32 difiere hasta 0,0068 °C por valor |
 
 ### Defecto encontrado y corregido durante la ejecución
 
@@ -158,6 +166,15 @@ anomalía se volvieron a correr con el código corregido antes de elegir ninguna
 ganadora.
 
 ## 6. Cómo reproducirlo
+
+Los comandos de esta sección están empaquetados por etapa en
+[`experiments/timesfm/scripts/`](../../experiments/timesfm/scripts/) (`00_panels.sh` a
+`07_reporte.sh`), con las rutas tomadas de `TDEW_RES`, `TDEW_TIMESFM_WORK` y
+`TDEW_RECONSTRUCTION_WORK` (`experiments/timesfm/paths.py`). Esos scripts son la
+referencia; los bloques de abajo documentan lo que se ejecutó en su momento, con las
+rutas de la estación de trabajo. `$WORK` es `TDEW_TIMESFM_WORK` y `$TFM` es el mismo
+directorio en los scripts antiguos. Las entradas que no están en el repositorio se
+verifican con [`INPUTS.sha256`](INPUTS.sha256).
 
 ### Referencia limpia (vigente)
 
@@ -337,6 +354,27 @@ uv run python -m HPC_code_tunning.backtest --base "$RES" --splits ll4 \
 
 `$RES` es `/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning` y
 `$WORK` es `/home/cvelasquez/tdew_timesfm`.
+
+### Departamental, escala, KL y producto 2017–2020
+
+No estaban en las versiones anteriores de este documento. Las órdenes son las de los
+scripts indicados; las corridas originales usaron los mismos argumentos.
+
+| salida | script | orden principal | entradas externas |
+|---|---|---|---|
+| `departamental/metrics*.csv`, `curva_acumulada.csv`, `predicciones_largo.parquet` | `04_departamental.sh` | `experiments.timesfm.departamental --reconstruction <3 semillas TCN> --timesfm <preds_departamental> --backtest-predictions $TDEW_RES/tuning/backtest_panel_dept/ll4/predictions.parquet` | predicciones de la TCN (`experiments/reconstruction/cli.py`, semillas 0–2) y `tuned` sobre el panel (`HPC_code_tunning.backtest --ids-csv`, recetas con fuga) |
+| `departamental/pareado.csv` | — | `experiments.timesfm.departamental_pareado` | `predicciones_largo.parquet` |
+| `escala/leaderboard.csv` | `05_escala.sh` | `experiments.timesfm.escala --ids-csv panel_escala_submuestra.csv` | `$TDEW_RES/tuning/backtest_escala_sub/ll4/predictions.parquet` (recetas con fuga) |
+| `kl_limpio/*.csv` | `03_nacional.sh` | `experiments.timesfm.kl` | `backtest_clean/ll4` y `preds_nacional/ll4__tmin_anom_full.parquet` |
+| `$WORK/preds_real/` | `06_real.sh` | `experiments.timesfm.real --ids-from-palacios --batch-size 32` | `bucketed_training_data` (contexto 1981–2016), `future_tmin_by_bucket`, lista de celdas de `tuning/predictions_2017_2020` |
+| `real_limpio/*.csv` | `06_real.sh` | `experiments.timesfm.real_compare --with-climatology` y `experiments.timesfm.real_tail` | `$WORK/preds_real`, `tuning/predictions_2017_2020`, `zone_table.parquet`, `support_distance.parquet` |
+
+El producto 2017–2020 lleva un `.done` por bucket con filas, bytes, sha256, `ids_hash` y
+`code_version`; `real.py --verify-only` revisa los 8.192 y regenera `MANIFEST.csv`. El
+campo `git_commit` de cada `.done` se lee al cerrar el bucket y no detecta árboles con
+cambios sin confirmar: los 8.192 buckets registran cuatro commits distintos (0c01a2a,
+d4d8511, e762f4e, 1ca26b8) sin diferencias en `panel.py`, `run.py`, `real.py` ni
+`variants.py` entre ellos, y todos con TF32, timesfm 3.0.2 y lote 32.
 
 ## 7. Dónde queda registrada cada corrida
 

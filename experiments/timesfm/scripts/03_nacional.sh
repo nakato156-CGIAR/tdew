@@ -2,8 +2,10 @@
 # Fase 2: la ganadora sobre el panel nacional en ll1, ll2 y ll4, contra el run limpio de Palacios.
 # Inferencia medida en la RTX A2000: 1 h 04 min (ll1), 1 h 30 min (ll2) y 1 h 26 min (ll4) sobre 17.041 celdas.
 source "$(dirname "$0")/env.sh"
+# Fp32 estricto, como el cribado: --no-tf32 reproduce bit a bit las predicciones publicadas
+# (verificado sobre 32 celdas el 2026-10-12; con TF32 cada valor cambia hasta 0,0068 C).
 for SPLIT in ll4 ll2 ll1; do
-  $PY -m experiments.timesfm.run --variants "$BEST" --split "$SPLIT" \
+  $PY -m experiments.timesfm.run --variants "$BEST" --split "$SPLIT" --no-tf32 \
     --ids-file "$PANELS/nacional_17041.csv" \
     --out-dir "$WORK/preds_nacional" --batch-size 16 --cells-per-batch 512
 done

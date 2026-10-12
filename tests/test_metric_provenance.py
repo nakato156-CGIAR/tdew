@@ -59,6 +59,7 @@ TRACKED_METRIC_FILES = (
     REPORTS_ROOT / "timesfm_benchmark/cribado_limpio/sesgo_mes_tier_cribado_limpio.csv",
     REPORTS_ROOT / "timesfm_benchmark/departamental/metrics.csv",
     REPORTS_ROOT / "timesfm_benchmark/departamental/metrics_macro.csv",
+    REPORTS_ROOT / "timesfm_benchmark/departamental/pareado.csv",
     REPORTS_ROOT / "timesfm_benchmark/departamental/curva_acumulada.csv",
     REPORTS_ROOT / "timesfm_benchmark/departamental/predicciones_largo.parquet",
     REPORTS_ROOT / "timesfm_benchmark/escala/leaderboard.csv",

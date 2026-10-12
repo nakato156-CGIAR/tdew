@@ -77,6 +77,19 @@ volumen real de datos).
   nacional comprimido con zlib. No recalcula métricas: las toma de los CSV ya
   publicados.
 
+- `departamental_pareado.py`: prueba pareada por celda de TimesFM contra cada rival
+  del panel departamental (las tres semillas de la TCN, `tuned` y la climatología),
+  con las funciones de `HPC_code_tunning/effect_sizes.py`. Escribe
+  `departamental/pareado.csv`.
+- `paths.py`: raíces de datos. `TDEW_RES`, `TDEW_TIMESFM_WORK` y
+  `TDEW_RECONSTRUCTION_WORK` las sobrescriben; los valores por defecto son las rutas de
+  la estación de trabajo donde se corrió el benchmark.
+- `scripts/`: un script por etapa (`00_panels.sh` a `07_reporte.sh`, con `env.sh`
+  común) con las órdenes que se ejecutaron, y `make_panels.py`, que reconstruye los
+  seis paneles de celdas desde sus fuentes y comprueba que son idénticos a los usados.
+  Los pasos completos de reproducción están en la sección «Reproducibility» del
+  `README.md` de la raíz.
+
 ## Orden de ejecución
 
 `variants.py` y `panel.py` fijan la configuración y los datos de entrada.

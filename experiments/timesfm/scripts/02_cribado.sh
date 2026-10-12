@@ -3,7 +3,9 @@
 # Inferencia medida en una RTX A2000 12 GB (lote 16): 49 min para las nueve variantes
 # (de 1,6 a 18,5 celdas/s segun contexto y covariables). La ganadora es la de menor RMSE.
 source "$(dirname "$0")/env.sh"
-$PY -m experiments.timesfm.run --variants all --split ll4 \
+# El cribado se corrio en fp32 estricto, antes de que run.py activara TF32: --no-tf32 lo
+# reproduce bit a bit (con TF32 cada valor cambia hasta 0,007 C).
+$PY -m experiments.timesfm.run --variants all --split ll4 --no-tf32 \
   --ids-file "$PANELS/cribado_estratificado.csv" \
   --out-dir "$WORK/preds_cribado" --batch-size 16 --cells-per-batch 256
 

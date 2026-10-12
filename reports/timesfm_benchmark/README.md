@@ -19,6 +19,15 @@ mismas celdas, los mismos días y las mismas métricas.
 > sigue usando selección con fuga y no es comparable con las cifras limpias. El
 > cambio queda registrado en
 > [`docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml`](../../docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml).
+>
+> **Revisión del 12 de octubre de 2026** (bead `tdew-214.14`, preparación de la
+> liberación del código). Se corrigieron cuatro etiquetas sin efecto en las métricas
+> (proveniencia `autoregressive` del producto 2017–2020, definición de media anual del
+> control de reproducción, `cells` del agregado de escala y `n` de `evaluate.py`), se
+> añadió la prueba pareada departamental contra las tres semillas de la TCN y se
+> documentaron el producto 2017–2020 y la divergencia KL. Los pasos para reproducir
+> todo desde cero están en el [`README.md`](../../README.md#reproducibility-timesfm-benchmark)
+> de la raíz.
 
 ## Qué se compara
 
@@ -112,8 +121,8 @@ Se reportan dos cifras distintas, porque miden cosas distintas:
 |---|---|---|
 | cribado | 1.092 puntuadas, de 1.106 estratificadas por zona SENAMHI | comparar las nueve variantes entre sí |
 | backtest | 17.027, las del run limpio de Palacios (TimesFM predijo 17.041; 14 quedan fuera de la referencia) | la comparación pareada contra la cifra publicada |
-| departamental | 8.192, el panel `ll4` del protocolo de reconstrucción | la única mesa donde la TCN es comparable |
-| escala | 436.519, los cuatro departamentos completos | costo y estabilidad a volumen real |
+| departamental | 2.048 (512 por departamento), las celdas de los folds de desarrollo de la reconstrucción | la única tabla donde la TCN es comparable |
+| escala | 436.519 predichas (los cuatro departamentos completos); 61.113 puntuadas, las que alcanzó el rival `tuned` | costo y estabilidad a volumen real |
 
 ## Costo medido
 
@@ -400,6 +409,15 @@ El cribado no tiene intervalo bootstrap, por lo que esa brecha no se compara con
 incertidumbre del RMSE; la elección entre las dos primeras debe leerse con esa
 reserva.
 
+El sesgo de selección no se queda en el cribado. Las 1.092 celdas del cribado son un
+subconjunto de las 17.027 del nivel backtest y se puntuaron sobre los mismos días de
+`ll4` (2013–2016), así que la variante que se lleva al nivel nacional se eligió mirando
+parte del mismo examen. La ventaja nacional de TimesFM sobre `tuned` en `ll4` (0,074 °C)
+es unas tres veces la brecha entre las dos primeras variantes del cribado (0,023 °C),
+lo que sugiere que la conclusión no cambia con esa elección, pero la cifra exacta de
+`tmin_anom_full` lleva incorporada una parte de optimismo de selección que no se midió
+a escala nacional (bead `tdew-214.11.8`).
+
 ### Calibración probabilística
 
 Solo aplica a TimesFM: climatología, `tuned` y la TCN son deterministas. Sobre las
@@ -426,34 +444,52 @@ propia incertidumbre cuando no tiene información que explotar. El intervalo del
 > las del nivel backtest limpio. La re-corrida con selección limpia queda para un
 > punto posterior.
 
-Sobre 2.048 celdas de los cuatro departamentos y los 1.461 días del bloque oculto
-2013–2016, con semilla 0 de la TCN. Falta añadir el método de Palacios sobre estas
-mismas celdas, que está en cola, y las semillas 1 y 2.
+Sobre 2.048 celdas de los cuatro departamentos (512 por departamento) y los 1.461 días
+del bloque oculto 2013–2016. La TCN se entrenó con tres semillas; TimesFM, `tuned` y la
+climatología son deterministas ([`departamental/metrics.csv`](departamental/metrics.csv),
+[`departamental/metrics_macro.csv`](departamental/metrics_macro.csv)). El macro da el mismo
+peso a los cuatro departamentos en lugar de dejar que Loreto domine.
 
-| método | RMSE °C | MAE | sesgo | r | skill vs. clim | fuera de rango QC |
-|---|---|---|---|---|---|---|
-| **TimesFM** | **0,7996** | 0,5919 | +0,0704 | 0,9953 | **0,3010** | 0,12 % |
-| TCN directa | 0,8484 | 0,6267 | +0,0474 | 0,9948 | 0,2584 | 0,08 % |
-| climatología | 1,1440 | 0,8638 | −0,2587 | 0,9910 | 0 | 0,03 % |
+| método | RMSE °C | MAE | sesgo | r | skill vs. clim | macro RMSE | fuera de rango QC |
+|---|---|---|---|---|---|---|---|
+| **TimesFM** | **0,7996** | 0,5919 | +0,0704 | 0,9953 | **0,3010** | **0,7785** | 0,12 % |
+| TCN directa, semilla 0 | 0,8484 | 0,6267 | +0,0474 | 0,9948 | 0,2584 | 0,8292 | 0,08 % |
+| TCN directa, semilla 1 | 0,8429 | 0,6315 | +0,1400 | 0,9949 | 0,2632 | 0,8245 | 0,12 % |
+| TCN directa, semilla 2 | 0,8325 | 0,6178 | +0,0366 | 0,9949 | 0,2723 | 0,8138 | 0,08 % |
+| Palacios (`tuned`, con fuga) | 0,8669 | 0,6406 | +0,0232 | 0,9945 | 0,2422 | 0,8470 | 0,10 % |
+| climatología | 1,1440 | 0,8638 | −0,2587 | 0,9910 | 0 | 1,1206 | 0,03 % |
 
 Por departamento, RMSE en °C:
 
-| departamento | TimesFM | TCN | climatología |
-|---|---|---|---|
-| Cusco | 0,6807 | 0,7369 | 0,9909 |
-| Lima | 0,7104 | 0,7743 | 1,0643 |
-| Loreto | 1,0909 | 1,1333 | 1,5089 |
-| San Martín | 0,6320 | 0,6724 | 0,9183 |
+| departamento | TimesFM | TCN s0 | TCN s1 | TCN s2 | `tuned` | climatología |
+|---|---|---|---|---|---|---|
+| Cusco | **0,6807** | 0,7369 | 0,7125 | 0,7188 | 0,7337 | 0,9909 |
+| Lima | **0,7104** | 0,7743 | 0,7863 | 0,7565 | 0,7696 | 1,0643 |
+| Loreto | **1,0909** | 1,1333 | 1,1204 | 1,1124 | 1,1656 | 1,5089 |
+| San Martín | **0,6320** | 0,6724 | 0,6787 | 0,6675 | 0,7189 | 0,9183 |
 
-El macro por departamento, que da el mismo peso a los cuatro en lugar de dejar que
-Loreto domine, mantiene el orden: 0,7785 para TimesFM contra 0,8292 de la TCN.
+Prueba pareada por celda de TimesFM contra cada rival
+([`departamental/pareado.csv`](departamental/pareado.csv), generado por
+`experiments/timesfm/departamental_pareado.py` con las funciones de
+`HPC_code_tunning/effect_sizes.py`): ΔRMSE agrupado con IC 95 % por bootstrap de celdas
+(1.000 remuestreos), fracción de celdas donde el RMSE propio de TimesFM es menor, d de
+Cohen pareado sobre el ΔRMSE por celda y p de permutación por cambio de signo (5.000
+permutaciones; p = 0,0002, el mínimo posible, en las cinco comparaciones). El RMSE
+mediano por celda de TimesFM es 0,714.
 
-Prueba pareada por celda (1.000 remuestreos, 5.000 permutaciones): ΔRMSE
-−0,0488 °C con intervalo [−0,0505, −0,0470] a favor de TimesFM, que gana en el
-**96,2 %** de las 2.048 celdas, con p de permutación 0,0002. El RMSE mediano por
-celda es 0,714 contra 0,763. La fracción de celdas ganadas se verificó por un
-segundo camino, calculando el error cuadrático medio por celda y contando
-directamente.
+| rival | RMSE rival | ΔRMSE TimesFM − rival | IC 95 % | celdas donde gana TimesFM | d pareado | RMSE mediano por celda, rival |
+|---|---|---|---|---|---|---|
+| TCN semilla 0 | 0,8484 | −0,0488 | [−0,0505, −0,0470] | 96,2 % | 1,26 | 0,763 |
+| TCN semilla 1 | 0,8429 | −0,0433 | [−0,0453, −0,0415] | 92,2 % | 0,97 | 0,754 |
+| TCN semilla 2 | 0,8325 | −0,0329 | [−0,0344, −0,0314] | 86,7 % | 0,97 | 0,749 |
+| `tuned` (con fuga) | 0,8669 | −0,0673 | [−0,0687, −0,0658] | 98,5 % | 2,01 | 0,786 |
+| climatología | 1,1440 | −0,3444 | [−0,3501, −0,3389] | 100,0 % | 2,68 | 1,014 |
+
+TimesFM tiene menor RMSE que las tres semillas de la TCN, con intervalos que no
+incluyen el cero, pero la ventaja depende de la semilla: frente a la mejor (semilla 2)
+es de 0,033 °C y TimesFM gana en el 86,7 % de las celdas, contra 0,049 °C y 96,2 %
+frente a la semilla 0. Una versión anterior de este informe citaba solo la semilla 0.
+En la página interactiva, el mapa de calor por departamento promedia el RMSE departamental de las tres semillas.
 
 Un contraste que conviene registrar: TimesFM produce algo más de predicciones fuera
 del rango de control de calidad de PISCO, −25 a 30 °C, que la TCN —0,12 % contra
@@ -463,12 +499,13 @@ esperable de un modelo que no conoce las restricciones físicas del problema.
 Dos precisiones sobre la composición de esta mesa, ambas por límites de memoria de
 la máquina y no por decisión de diseño.
 
-Dos precisiones sobre la composición de esta mesa, ambas por límites de memoria de
-la máquina y no por decisión de diseño.
-
-El panel es de **512 celdas por departamento**, no las 2.048 que fija el protocolo
-de reconstrucción. Es un subconjunto estricto del panel `ll4` y coincide con el
-conjunto de celdas que usaron los folds de desarrollo. La comparación sigue siendo
+El panel es de **512 celdas por departamento** (2.048 en total), no las 2.048 por
+departamento (8.192 en total) que fija el protocolo de reconstrucción para `ll4`. Es un
+subconjunto estricto de ese panel y coincide con las celdas de los folds de desarrollo
+`dev_a` y `dev_b`: `select_panel(Data/silver, "dev_a", seed=0)` lo reproduce idéntico
+(`experiments/timesfm/scripts/make_panels.py`). La TCN se ajustó en desarrollo sobre
+estas mismas celdas, pero con años ocultos 2005–2012; el bloque `ll4` (2013–2016) no se
+usó en ese ajuste. La comparación sigue siendo
 válida porque todos los competidores se puntúan sobre las mismas celdas, pero el
 panel del protocolo queda sin ejercitar a su tamaño nominal.
 
@@ -520,13 +557,14 @@ de cada uno:
 | Loreto | 42.779 | **1,1111** | 1,1823 | 1,5259 | 0,2718 |
 | San Martín | 5.857 | **0,6322** | 0,7203 | 0,9268 | 0,3179 |
 
-La ventaja se sostiene al pasar de las 2.048 celdas del panel departamental a la
-cobertura completa, y en los cuatro departamentos sin excepción. El sesgo sigue la
+La ventaja se sostiene al pasar de las 2.048 celdas del panel departamental a las
+61.113 de la submuestra de escala, y en los cuatro departamentos sin excepción. El sesgo sigue la
 misma dirección que en el resto del trabajo: TimesFM gana en error cuadrático
 (+0,104 °C de sesgo) y pierde en centrado frente al método de Palacios (−0,031 °C).
 
-Las dos líneas base débiles quedan, sobre esa misma submuestra, en `zone_ols`
-1,7805 y Td = Tmin 2,9526. `zone_ols` no es comparable con el de la corrida
+Las dos líneas base débiles quedan, sobre esa misma submuestra y sin reponderar, en
+`zone_ols` 1,7805 y Td = Tmin 2,9526 (`$TDEW_RES/tuning/backtest_escala_sub/metrics_all.csv`;
+`escala.py` solo puntúa climatología y `tuned`). `zone_ols` no es comparable con el de la corrida
 nacional: al restringir por celdas esa línea base se reajusta solo con las celdas
 restringidas, como advierte el propio parche `--ids-csv`. Climatología y `tuned` son
 por celda y no se ven afectados.
@@ -557,6 +595,69 @@ ritmo medido, el grid nacional de 2.818.404 celdas costaría **6,4 días**.
 El método de Palacios cubrió sus 61.113 celdas en 70 minutos y el grid nacional
 completo en 20 minutos según el registro de producción del proyecto. La diferencia
 de costo entre ambos enfoques es de dos a tres órdenes de magnitud.
+
+### Divergencia KL de la distribución de Td
+
+Mide si la forma de la distribución de Td de cada método se parece a la observada,
+sobre los mismos 24.876.447 pares celda-día del backtest limpio `ll4`, no el acierto
+día a día ([`kl_limpio/kl_by_group_limpio.csv`](kl_limpio/kl_by_group_limpio.csv),
+[`kl_limpio/kl_hist_limpio.csv`](kl_limpio/kl_hist_limpio.csv), generados por
+`experiments/timesfm/kl.py`). Histogramas fijos sobre [−20, 50) °C con intervalos de
+0,1 y 0,5 °C, suavizado de Jeffreys (+0,5 por intervalo) en ambos histogramas,
+resultado en nats. Se reportan KL(obs ‖ método), KL(método ‖ obs) y la divergencia de
+Jensen-Shannon; ningún valor cae fuera del rango.
+
+| grupo | KL(obs ‖ TimesFM) | KL(obs ‖ `tuned`) | cociente |
+|---|---|---|---|
+| todo, intervalos de 0,1 °C | 0,0073 | 0,0110 | 0,67 |
+| todo, intervalos de 0,5 °C | 0,0050 | 0,0088 | 0,57 |
+| `within` | 0,0090 | 0,0159 | 0,56 |
+| `unsupported` | 0,0215 | 0,0272 | 0,79 |
+| enero | 0,0983 | 0,2131 | 0,46 |
+
+TimesFM tiene menor divergencia en los cinco niveles de soporte, en los doce meses y en
+las dos clases de zona. Enero concentra la mayor divergencia de los dos métodos y es el
+mes de mayor sesgo de `tuned` (sección «Sesgo mensual»). Los histogramas son agrupados
+sobre todas las celdas-día, así que mezclan climas distintos en una sola distribución.
+
+### Producto 2017–2020
+
+TimesFM (`tmin_anom_full`, contexto 1981–2016, Tmin v1.2 de 2017–2020 como covariable)
+reconstruyó las 2.178.827 celdas del producto de Palacios en los 1.461 días de
+2017–2020: 3.183.266.247 valores, sin NaN ni infinitos, 158 GB (147 GiB) en 8.192 buckets
+(`experiments/timesfm/real.py`). **No hay Td observado en ese período**, así que todo lo
+que sigue mide cuánto coinciden los dos productos, no cuánto se equivoca cada uno
+([`real_limpio/`](real_limpio/), generados por `real_compare.py` y `real_tail.py`; la
+diferencia es TimesFM − Palacios).
+
+| corte | RMSE entre productos °C | sesgo | r |
+|---|---|---|---|
+| todo | 0,465 | +0,053 | 0,9986 |
+| 2017 / 2018 / 2019 / 2020 | 0,456 / 0,432 / 0,500 / 0,470 | +0,064 / +0,026 / +0,129 / −0,007 | ≥ 0,9985 |
+| `within` | 0,357 | −0,001 | 0,9992 |
+| `unsupported` | 0,649 | +0,160 | 0,9938 |
+
+La diferencia entre productos no tiene tendencia a lo largo del horizonte: pendiente
+−0,005 °C/año con IC 95 % HAC [−0,043, 0,033] ([`real_limpio/drift_limpio.csv`](real_limpio/drift_limpio.csv)).
+El desacuerdo crece con la distancia a las estaciones, igual que el error en el
+backtest.
+
+**Cola cálida.** El paper describe en Palacios valores de Td sobre 35 °C, todos en la
+clase climática A (r) A' de la selva y casi todos en noviembre. TimesFM tiene la
+misma cola, con más superaciones: 150.790 celdas con algún día sobre 35 °C contra 132.920 de
+Palacios, y 0,171 % de los valores contra 0,133 %. En los dos productos todas las
+superaciones están en la clase A (r) A' y ninguna dentro del nivel `within`; en
+TimesFM el 82,8 % ocurre en noviembre ([`real_limpio/tail_*_limpio.csv`](real_limpio/)).
+Cuando Palacios supera 35 °C, TimesFM también lo hace el mismo día en el 87,8 % de los
+casos. TimesFM reproduce esa cola y la hace más pesada; en este aspecto queda peor
+que Palacios.
+
+**Control de reproducción.** `real_compare.py` recalcula sobre el producto de Palacios
+las ocho cifras que publica el paper (n, media, mínimo, máximo y las cuatro medias
+anuales) y las ocho coinciden al redondeo de dos decimales
+([`real_limpio/reproduction_palacios_limpio.csv`](real_limpio/reproduction_palacios_limpio.csv)).
+Las medias anuales siguen la definición del paper, el promedio de las doce medias
+mensuales nacionales (`reports/paper/scripts/qc_fill.py:82-85`).
 
 ## Limitaciones de TimesFM
 
@@ -591,11 +692,14 @@ este proyecto:
 | `nacional_limpio/tiers_*.csv`, `sesgo_mensual_limpio.csv`, `sesgo_mes_tier_limpio.csv` | desempeño por tier de soporte y sesgo mensual (`by_tier_month.py`) |
 | `cribado_limpio/*_cribado_limpio.csv` | los mismos cálculos sobre las 1.092 celdas del cribado, solo como verificación |
 | `nacional/`, `cribado/` | la medición con fuga (17.041 y 1.106 celdas), conservada como referencia |
-| `departamental/` | la mesa con la TCN: cinco niveles de agregación y tests pareados |
-| `escala/leaderboard.csv` | los cuatro departamentos completos, por sitio y reponderado |
+| `departamental/` | la tabla con la TCN: cinco niveles de agregación (`metrics.csv`), macro por departamento y prueba pareada contra cada rival (`pareado.csv`) |
+| `escala/leaderboard.csv` | la submuestra de 61.113 celdas de los cuatro departamentos, por sitio y reponderada por las celdas reales de cada uno (`weight_cells`) |
 | `panels/` | las listas de celdas de cada nivel |
 | `geo/` | los contornos departamentales y su procedencia |
 | `artifact/` | la página interactiva y sus datos embebidos |
+| `kl_limpio/` | divergencia KL de la distribución de Td, total y por tier, mes y zona |
+| `real_limpio/` | producto 2017–2020: acuerdo con Palacios, cola cálida, anomalías y control de reproducción; `smoke_b0_1/` es la prueba previa sobre los buckets 0 y 1 |
+| `INPUTS.sha256` | sha256 de las entradas congeladas que no están en el repositorio |
 | `figs/` | las figuras |
 
 ## Nota sobre uso de IA

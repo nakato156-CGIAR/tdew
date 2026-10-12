@@ -2,7 +2,7 @@
 
 Este documento describe qué hace cada capa del medallón (bronze, silver, gold), qué recibe y qué produce, cómo se guardan los datos y qué significa cada columna. Los números de filas, archivos y tamaños se midieron sobre los datos en disco el 12 de octubre de 2026. Las reglas de partición temporal vienen de `docs/protocol/week1_manifest.yaml`.
 
-El medallón alimenta los experimentos de aprendizaje profundo y los baselines (`experiments/`). No es el almacén que usa el modelo de producción de `tdew_estimation/` ni los experimentos de TimesFM, que leen otro conjunto de buckets (ver la última sección).
+El medallón alimenta los experimentos de aprendizaje profundo y los baselines (`experiments/`). No es el almacén que usa el modelo de producción de `tdew_estimation/` ni el benchmark de TimesFM, que leen otro conjunto de buckets (sección "Almacén de producción"). TimesFM solo toma del medallón las listas de celdas de `Data/silver/department_grid_ids/` y, para el panel departamental, las covariables de `Data/silver`.
 
 ## Resumen
 
@@ -224,15 +224,59 @@ uv run python -m pipeline.zenml_pipeline   # todas las etapas con ZenML
 
 El filtro por departamentos de silver requiere que existan los CSV de `Data/silver/department_grid_ids/`, que a su vez salen de `grid_index.parquet`. En una máquina nueva se corre primero `pipeline.silver --skip-daily`, se generan los CSV con el fragmento de `docs/CITY_GRID_IDS.md` y luego se corre la etapa completa. Los datos de `Data/` no se editan a mano: si cambia una etapa, se vuelve a correr su etapa de DVC.
 
-## Diferencias con el almacén de producción
+## Almacén de producción (`results_tuning`), el que leen TimesFM y el método de Palacios
 
-El modelo de producción y los experimentos de TimesFM leen otro conjunto de datos, en `/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/`:
+El modelo de producción, el backtest de Palacios y todo el benchmark de TimesFM leen otro conjunto de datos, en `/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/` (en adelante `$TDEW_RES`, ver `experiments/timesfm/paths.py`). No sale del medallón: lo construye `HPC_code/prep_inputs.py` a partir de los parquet mensuales de PISCO. Los conteos de esta sección se midieron el 12 de octubre de 2026.
+
+### Entrada
+
+Parquet mensuales por punto de rejilla bajo `/media/ppalacios/Data1/henry_simcast_peru_full/`, cada uno con las 2 818 404 celdas de la rejilla nacional por los días del mes y las columnas `ID` (int64), `FECHA`, `Value` y `source_file`:
+
+| Variable | Ruta | Cobertura | Origen |
+|---|---|---|---|
+| Td | `td/Outputs/td_daily_{año}_{mes}.parquet` | 1981–2016, 432 archivos | PISCO v1.1 |
+| Tmin | `tmin_v12/Outputs/tmin_v12_daily_{año}_{mes}.parquet` | 1981–2020, 480 archivos | PISCOt v1.2 |
+
+`ID` es el mismo índice fila-mayor de 1 982 × 1 422 que usa el medallón.
+
+### Qué es un bucket y por qué se usa
+
+Un bucket es el conjunto de celdas con el mismo resto de `ID` al dividir por 8 192: `bucket = ID % 8192` (`tdew_estimation/bucket_layout.py:17-23`). Cada bucket vive en una carpeta estilo Hive `id_bucket=NNNN`, con cuatro dígitos (`id_bucket=0000` a `id_bucket=8191`).
+
+- **Tamaño.** 2 818 404 = 344 × 8 192 + 356, así que los buckets 0 a 355 tienen 345 celdas y los 7 836 restantes tienen 344. Unas 266 de esas celdas tienen datos; en el bucket 0 son 264.
+- **Celdas vacías.** De las 2 818 404 celdas, 2 178 827 tienen Td y Tmin (son las celdas del producto de Palacios y de `support_distance.parquet`). Las otras 639 577 no tienen valores; en el bucket 0 son 81 de 345 y tienen `TD` y `TMIN` nulos en todas las fechas. No se descartan al construir los buckets: cada archivo trae todas las celdas del bucket, y el panel de TimesFM omite una celda si le falta algún valor de contexto (`experiments/timesfm/panel.py:244-255`).
+- **Por qué existe.** La unión de Td con Tmin sobre 2 818 404 celdas y 36 años es la operación cara del pipeline. Se paga una vez y deja, por cada bucket, la serie completa de cada celda en archivos de unos 400 KB, de modo que todo lo que trabaja por celda (climatología, rezagos, ventanas de contexto de TimesFM) lee un bucket a la vez con memoria acotada.
+- **Cobertura espacial.** Como el `ID` es fila-mayor y 8 192 es más que el ancho de una fila (1 422), dos celdas consecutivas de un bucket están a unas 5,8 filas de latitud. Cada bucket es una retícula que cubre todo el dominio. Por eso sortear buckets, como hace el backtest de Palacios con `default_rng(0)` sobre 64 buckets, da una muestra repartida por todo el país y, por la misma razón, por toda la caja envolvente de PISCO: el 51,4 % de las celdas de esa muestra cae fuera del Perú (bead `tdew-214.8`).
+- **Valor por defecto.** `build_bucketed_training_dataset` y `prep_inputs.py` usan 1 024 buckets por defecto; el almacén en disco se construyó con 8 192 (`prep.log`), que es el valor fijo en `experiments/timesfm/panel.py` (`NUM_BUCKETS`).
+
+### Contenido
+
+| Árbol | Archivos | Tamaño | Esquema | Filas |
+|---|---|---|---|---|
+| `bucketed_training_data/id_bucket=NNNN/train_{año}.parquet` | 8 192 × 36 = 294 912 (1981–2016) | 119,5 GB | `ID` int64, `FECHA`, `TD` float32, `TMIN` float32, `doy` int16 | celdas del bucket × días del año: 125 925 o 126 270 en el bucket 0, 125 560 en el bucket 8191 |
+| `climatology_by_bucket/id_bucket=NNNN/climatology.parquet` | 8 192 | 12,1 GB | `ID`, `doy`, `TD_clim`, `TMIN_clim` (float64) | celdas × 366 |
+| `daily_climatology.parquet` | 1 | 10,2 GB | igual que la anterior | 1 031 535 864 (2 818 404 × 366) |
+| `future_tmin_by_bucket/id_bucket=NNNN/future_tmin_{año}.parquet` | 8 192 × 4 = 32 768 (2017–2020) | 6,7 GB | `ID`, `FECHA`, `TMIN` float32 | celdas × días |
+| `tuning/predictions_2017_2020/id_bucket=NNNN/pred.parquet` | 8 192 | 32,2 GB | `FECHA`, `ID`, `TD_predicted` float64 | celdas válidas × 1 461 (385 704 en el bucket 0) |
+| `tuning/backtest_clean/{ll1,ll2,ll4}/predictions.parquet` | 3 | 0,8 GB | `ID`, `zone_id`, `FECHA`, `doy`, `TD_obs`, `pred_tuned`, `pred_clim`, `Tmin_hold`, `pred_tmin`, `pred_ols` | 6 231 882 / 12 446 737 / 24 876 447 |
+| `tuning/support_distance.parquet` | 1 | | `ID`, `lon`, `lat`, `dist_km`, `tier` | 2 178 827 |
+| `zone_table.parquet` | 1 | | `ID`, `zone_id`, `zone_label`, `lon`, `lat` | 2 818 404 |
+
+### Transformaciones
+
+1. **Unión Td–Tmin** (`tdew_estimation/bucketed_data.py:76-160`). Por cada mes se leen `ID`, `FECHA` y `Value` de los dos archivos, se renombran a `TD` y `TMIN` y se unen por (`ID`, `FECHA`) con unión interna. Se agrega `doy = FECHA.dayofyear` (1 a 366, de modo que desde marzo el mismo `doy` cae un día calendario antes en los años bisiestos). Solo se descartan filas con `ID` nulo; los valores nulos de `TD` o `TMIN` se conservan. Las filas se reparten por `ID % 8192` y se escriben por año.
+2. **Climatología de producción** (`tdew_estimation/climatology.py:177-387`). Media simple de `TD` y de `TMIN` por (`ID`, `doy`) sobre 1981–2016, sin suavizado; el día 366 se promedia solo con los años bisiestos. Se verificó sobre el bucket 0 completo (345 celdas × 366 días): `climatology_by_bucket` coincide con la media 1981–2016 de `bucketed_training_data` con diferencia máxima de 3,4 × 10⁻⁶.
+3. **Tmin futura** (`$TDEW_RES/b2_extract.sh`). `HPC_code/nc_to_point_parquet.py --var tmin_v12` extrae 2017–2020 de los NetCDF y se reparte con el mismo `ID % 8192`.
+
+**Ningún resultado de validación usa la climatología de producción.** Incluye 2013–2016, que son los años ocultos del split `ll4`. El backtest de Palacios (`HPC_code_tunning/backtest.py:180-187`, `train_only_climatology`) y el panel de TimesFM (`experiments/timesfm/panel.py:261-273`) recalculan la climatología con los años de entrenamiento de cada split. En el split `real` (2017–2020) el contexto de TimesFM es 1981–2016 y su climatología cubre esos mismos años, porque no hay años ocultos; aun así se calcula desde el panel y no se lee de `climatology_by_bucket`.
+
+### Comparación con el medallón
 
 | | Medallón (`Data/`) | Producción (`results_tuning/`) |
 |---|---|---|
-| Celdas | 436 519 en tablas diarias (4 sitios) | 2 818 404 por archivo, de las cuales 2 178 827 tienen datos (las otras 639 577 tienen `TD` y `TMIN` nulos) |
+| Celdas | 436 519 en tablas diarias (4 sitios) | 2 818 404 por archivo, 2 178 827 con datos |
 | Buckets | 64 (`id_bucket=N`, sin ceros) | 8 192 (`id_bucket=NNNN`, 4 dígitos) |
-| Historia de Td | 2002–2016 (bronze no trae Td anterior) | Un archivo por año, 1981–2016 (`train_{año}.parquet`), con `ID`, `FECHA`, `TD`, `TMIN`, `doy`. En 2002–2016 los valores de `TD` y `TMIN` coinciden con los del medallón |
-| Climatología | Media 2002–2012 por celda y día del año | Media 1981–2016 por celda y día del año (verificado en una celda, `climatology_by_bucket/`) |
+| Historia de Td | 2002–2016 (bronze no trae Td anterior) | 1981–2016. En 2002–2016 los valores de `TD` y `TMIN` coinciden con los del medallón |
+| Climatología guardada | Media 2002–2012 por celda y día del año | Media 1981–2016 por celda y día del año |
 
-Esta tabla resume lo observado en los esquemas y en una celda de muestra. No se leyó el código de `tdew_estimation` para la climatología. Las celdas sin datos de producción también tienen `DEM` y `TDI` nulos en `static_covariates`; las 436 519 de los cuatro sitios no tienen nulos.
+Las 436 519 celdas de los cuatro sitios no tienen nulos en `static_covariates`; las celdas sin datos de producción tienen `DEM` y `TDI` nulos.
