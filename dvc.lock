@@ -1,0 +1,117 @@
+schema: '2.0'
+stages:
+  bronze:
+    cmd: uv run python -m pipeline.bronze
+    deps:
+    - path: Data/bronze/spatial_covariables
+      hash: md5
+      md5: 81fd5866f8219c7a4a9131d00a1b3cd5.dir
+      size: 121563128
+      nfiles: 6
+    - path: pipeline/bronze.py
+      hash: md5
+      md5: 1485b57f512e4868d587985079755c9e
+      size: 3260
+    outs:
+    - path: Data/bronze/_inventory.csv
+      hash: md5
+      md5: fa481cb9b43b9838d6aea98bd6dbb046
+      size: 19620
+      isexec: true
+  silver:
+    cmd: uv run python -m pipeline.silver --departments 
+      lima,cusco,iquitos_loreto,tarapoto_san_martin
+    deps:
+    - path: Data/bronze
+      hash: md5
+      md5: e0a7ba5080233710654925f24eeaa998.dir
+      size: 141982161492
+      nfiles: 267
+    - path: Data/bronze/_inventory.csv
+      hash: md5
+      md5: fa481cb9b43b9838d6aea98bd6dbb046
+      size: 19620
+      isexec: true
+    - path: Data/silver/department_grid_ids
+      hash: md5
+      md5: d1466c046238fc9c82c35f5cfb53ffca.dir
+      size: 12326499
+      nfiles: 4
+    - path: pipeline/silver.py
+      hash: md5
+      md5: a3eb0d11e147d8ad3850e96168076fc9
+      size: 12776
+    outs:
+    - path: Data/silver/grid_index.parquet
+      hash: md5
+      md5: 369b2a29728616e460a3c628989c5c4f
+      size: 14305070
+      isexec: true
+    - path: Data/silver/lst_normals.parquet
+      hash: md5
+      md5: c3cee3dae98999eabad63b5c3294bce3
+      size: 232185903
+      isexec: true
+    - path: Data/silver/static_covariates.parquet
+      hash: md5
+      md5: 9ed217515eb9843b000c430ed3ba6895
+      size: 28031495
+      isexec: true
+    - path: Data/silver/td
+      hash: md5
+      md5: 15bd8b5b09f3bbbe7bdd471689540e8a.dir
+      size: 13795988918
+      nfiles: 180
+    - path: Data/silver/tmax
+      hash: md5
+      md5: 614f46be92d5e6b6bd5501185d217e88.dir
+      size: 36757842776
+      nfiles: 480
+    - path: Data/silver/tmin
+      hash: md5
+      md5: 3bdb69d01eec9874a14c050ab3eb3e40.dir
+      size: 36737908746
+      nfiles: 480
+  gold:
+    cmd: uv run python -m pipeline.gold
+    deps:
+    - path: Data/silver/grid_index.parquet
+      hash: md5
+      md5: 369b2a29728616e460a3c628989c5c4f
+      size: 14305070
+      isexec: true
+    - path: Data/silver/lst_normals.parquet
+      hash: md5
+      md5: c3cee3dae98999eabad63b5c3294bce3
+      size: 232185903
+      isexec: true
+    - path: Data/silver/static_covariates.parquet
+      hash: md5
+      md5: 9ed217515eb9843b000c430ed3ba6895
+      size: 28031495
+      isexec: true
+    - path: Data/silver/td
+      hash: md5
+      md5: 15bd8b5b09f3bbbe7bdd471689540e8a.dir
+      size: 13795988918
+      nfiles: 180
+    - path: Data/silver/tmax
+      hash: md5
+      md5: 614f46be92d5e6b6bd5501185d217e88.dir
+      size: 36757842776
+      nfiles: 480
+    - path: Data/silver/tmin
+      hash: md5
+      md5: 3bdb69d01eec9874a14c050ab3eb3e40.dir
+      size: 36737908746
+      nfiles: 480
+    - path: pipeline/gold.py
+      hash: md5
+      md5: fe438fbec5133b0e9f8305e4322feef5
+      size: 8725
+    outs:
+    - path: Data/gold/model_input
+      hash: md5
+      md5: 184428666a645c6f24dde80a0f083ce4.dir
+      size: 54966480227
+      nfiles: 64

@@ -1,0 +1,47 @@
+{
+  "autoregressive": false,
+  "bead_id": "tdew-214.14.2",
+  "climatology_role": "target_anomaly_base",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-10-12T18:33:41+00:00",
+  "git_commit": "afa517fcaf3cc5f04b7876243106dd5c24671988",
+  "inputs": [
+    "TMIN_anom"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest_addendum_real_2017_2020.yaml",
+  "mlflow_run_id": "1624b52d4a41465daa40c6b56f43c41b",
+  "model_family": "timesfm-3.0",
+  "model_id": "google/timesfm-3.0-pytorch",
+  "notes": "Acuerdo TimesFM - Palacios (diferencia = TimesFM - Palacios), sin verdad observada: sesgo, RMSE, MAE y r entre productos, no error. TimesFM leido de /home/cvelasquez/tdew_timesfm/preds_real, Palacios de /media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/predictions_2017_2020. Pesos de TimesFM de uso no comercial.",
+  "output_files": [
+    "reports/timesfm_benchmark/real_limpio/product_figures_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/reproduction_palacios_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/agreement_overall_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/agreement_by_year_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/agreement_by_month_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/agreement_by_zone_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/agreement_by_tier_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/agreement_by_site_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/agreement_by_horizon_day_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/anomaly_series_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/drift_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/tmin_coherence_limpio.csv",
+    "/home/cvelasquez/tdew_timesfm/agg_real/agreement_by_cell_limpio.csv"
+  ],
+  "panel_cell_count": 2178827,
+  "panel_file": null,
+  "panel_id": "real_2178827_td",
+  "run_id": "4d9bb3e7a9924fe59c2e5763d6ac438b",
+  "seeds": [],
+  "split_id": "real_2017_2020",
+  "target_type": "td_anomaly",
+  "test_period": [
+    "2017-01-01",
+    "2020-12-31"
+  ],
+  "trained": false,
+  "training_period": null,
+  "validation_period": null,
+  "variant_label": "tmin_anom_full"
+}

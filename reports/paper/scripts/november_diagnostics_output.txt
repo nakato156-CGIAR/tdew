@@ -1,0 +1,31 @@
+exceedances: 4,220,212   affected cells: 132,920
+
+=== T1  affected cells by zone (top 8) ===
+  zone 0: 132,920 affected of 909,708 cells (14.6% of zone)
+
+=== T2  day-of-year distribution of exceedances, by year ===
+  year   n_exceed   peak_doy  peak_date   mean_doy   p10-p90 doy
+  2017   1,602,128       313     09 Nov      316.0   306-330
+  2018   1,349,093       331     27 Nov      322.2   309-333
+  2019     232,740       313     09 Nov      314.9   308-327
+  2020   1,036,251       331     26 Nov      318.2   308-331
+  -> a peak that MOVES between years supports onset misalignment;
+     a peak fixed on the same doys supports a structural recipe defect.
+
+=== T3a  LOYOCV skill by day-of-year band (affected zones, manifest) ===
+  band            doy        skill   uplift   med_h  n_feat   n
+  Aug-Sep      213-273     0.7030  +0.0329     21   9.85    61
+  Oct          274-304     0.7286  +0.0242     31  10.00    31
+  NOVEMBER     305-334     0.7317  +0.0231     15  10.20    30
+  Dec          335-365     0.7333  +0.0234     31   9.97    31
+  Jan-Jul        1-212     0.7324  +0.0377     21   9.61   212
+
+=== T3b  in-sample R^2 by doy band (affected zones, 24 coeff buckets) ===
+  band            doy        mean_R2   median_R2      n
+  Aug-Sep      213-273      0.5896      0.5841  161,833
+  Oct          274-304      0.6018      0.5970   82,243
+  NOVEMBER     305-334      0.6054      0.6034   79,590
+  Dec          335-365      0.6407      0.6264   82,243
+  Jan-Jul        1-212      0.6289      0.6261  562,436
+
+NOVEMBER DIAGNOSTICS DONE

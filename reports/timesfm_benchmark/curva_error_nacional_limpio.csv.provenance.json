@@ -1,0 +1,35 @@
+{
+  "autoregressive": false,
+  "bead_id": "tdew-214.12",
+  "climatology_role": "target_anomaly_base",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-10-02T15:48:25+00:00",
+  "git_commit": "31f6ed8a40aa5648ef8a01c4fe0dd717a2f4f5b5",
+  "inputs": [
+    "TMIN_anom"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml",
+  "mlflow_run_id": null,
+  "model_family": "timesfm-3.0",
+  "model_id": "google/timesfm-3.0-pytorch",
+  "notes": "backtest_root=/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean; selecci\u00f3n solo con a\u00f1os de entrenamiento, h {7,11,15,21,31,45}; cells=17027; curva de error acumulado",
+  "output_files": [
+    "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/curva_error_nacional_limpio.csv"
+  ],
+  "panel_cell_count": 17027,
+  "panel_file": "reports/timesfm_benchmark/panels/nacional_17027.csv",
+  "panel_id": "nacional_17027_limpio",
+  "run_id": "e8c85d9befbb43728aac06e79c7eac30",
+  "seeds": [],
+  "split_id": "ll4",
+  "target_type": "td_anomaly",
+  "test_period": [
+    "2013-01-01",
+    "2016-12-31"
+  ],
+  "trained": false,
+  "training_period": null,
+  "validation_period": null,
+  "variant_label": "tmin_anom_full"
+}

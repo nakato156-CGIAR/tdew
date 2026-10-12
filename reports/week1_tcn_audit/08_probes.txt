@@ -1,0 +1,13 @@
+/tmp/claude-1001/-home-cvelasquez-Code-tdew/9415381c-fc93-47a2-9bd6-06415dbba794/scratchpad/audit-wt/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py:68: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+sonda: fit sobre 80000 ventanas de train, evaluacion sobre 120000 de validation
+
+=== RMSE (degC) de sondas lineales sobre representaciones internas ===
+                                                          sonda    n_feat  rmse_lima  rmse_cusco  rmse_iquitos_loreto  rmse_tarapoto_san_martin  rmse_ALL_repond
+P0 entradas crudas (dynamic aplanado+static+region+target_cond)  166.0000     0.6208      0.7092               0.9313                    0.5236           0.8534
+ P1 salida del TCN aplanada (31x64) + static+region+target_cond 1995.0000     0.6678      0.7608               0.9923                    0.5900           0.9121
+       P2 pooled tras atencion (64) + static+region+target_cond   75.0000     0.6588      0.7578               0.9916                    0.5834           0.9104
+P3 entrada exacta de la cabeza: FiLM(pooled) (64) + target_cond   69.0000     0.6346      0.7467               1.0398                    0.5669           0.9440
+            P4 solo target_cond + static + region (sin ventana)   11.0000     1.0281      1.0456               1.4046                    0.8882           1.2952
+                        modelo entrenado (cabeza real, last.pt)       NaN     0.6679      0.7792               1.0928                    0.5963           0.9916
+                               persistencia (TD_anom_norm en t)       NaN     0.6460      0.7578               1.0165                    0.5494           0.9269

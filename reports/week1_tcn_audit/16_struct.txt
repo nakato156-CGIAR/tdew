@@ -1,0 +1,28 @@
+Uninstalled 1 package in 0.49ms
+Installed 1 package in 3ms
+/tmp/claude-1001/-home-cvelasquez-Code-tdew/9415381c-fc93-47a2-9bd6-06415dbba794/scratchpad/audit-wt/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py:68: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+celdas de Loreto en el bucket 0: 4776
+
+=== 1. redundancia espacial: series TD_anom_norm identicas entre celdas ===
+   400 celdas muestreadas -> 400 series distintas (longitud 5479)
+   correlacion entre pares de celdas distintas: mediana=0.9293 p10=0.7882 p90=0.9847 frac>0.999=0.0028
+   combinaciones (DEM,TDI,X,Y) distintas entre las 400 celdas: 400
+
+=== 2. por ano: RMSE del modelo vs predictores sin parametros (Loreto, bucket 0) ===
+ ano      split    n  std_label  rmse_modelo  rmse_persist  rmse_clim  autocorr1
+2002      train 2004     0.9961       0.1324        0.8620     1.1091     0.6966
+2003      train 2190     0.9779       0.1494        0.9527     1.1605     0.6159
+2004      train 2196     1.0401       0.1584        0.9180     1.2611     0.6849
+2005      train 2190     1.1360       0.1536        0.9223     1.2643     0.7334
+2006      train 2190     1.0409       0.1560        0.9277     1.1944     0.6785
+2007      train 2190     1.0293       0.1400        0.8992     1.1460     0.6902
+2008      train 2196     1.1732       0.1585        0.8221     1.4616     0.8014
+2009      train 2190     0.9490       0.1340        0.8179     1.0607     0.6990
+2010      train 2190     0.9840       0.1328        0.8919     1.1287     0.6678
+2011      train 2190     1.0185       0.1386        0.8821     1.1374     0.6965
+2012      train 2190     0.9961       0.1392        0.8960     1.1295     0.6726
+2013 validation 2010     1.3057       1.1091        1.0024     1.4980     0.7613
+2014 validation 2184     1.2170       1.0538        0.9848     1.3548     0.7351
+2015       test 2010     1.2447       1.0880        0.9591     1.6060     0.7599
+2016       test 2190     1.3225       1.1423        1.0270     1.5509     0.7568

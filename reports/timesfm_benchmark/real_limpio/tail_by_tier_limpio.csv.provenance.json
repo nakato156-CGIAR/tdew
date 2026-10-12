@@ -1,0 +1,42 @@
+{
+  "autoregressive": false,
+  "bead_id": "tdew-214.14.2",
+  "climatology_role": "target_anomaly_base",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-10-12T18:50:04+00:00",
+  "git_commit": "afa517fcaf3cc5f04b7876243106dd5c24671988",
+  "inputs": [
+    "TMIN_anom"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest_addendum_real_2017_2020.yaml",
+  "mlflow_run_id": "47d1b4c6254442d7b4b34853d57b87a9",
+  "model_family": "timesfm-3.0",
+  "model_id": "google/timesfm-3.0-pytorch",
+  "notes": "Cola calida (Td > 35 C) de TimesFM y de Palacios, analogo a sec-results-tail del paper. Sin verdad observada: es coincidencia entre productos y un criterio fisico, no error. TimesFM leido de /home/cvelasquez/tdew_timesfm/preds_real, Palacios de /media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/predictions_2017_2020. Pesos de TimesFM de uso no comercial.",
+  "output_files": [
+    "reports/timesfm_benchmark/real_limpio/tail_summary_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/tail_by_tier_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/tail_by_zone_class_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/tail_by_month_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/tail_by_year_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/tail_joint_limpio.csv",
+    "reports/timesfm_benchmark/real_limpio/tail_survival_limpio.csv",
+    "/home/cvelasquez/tdew_timesfm/agg_real/tail_by_cell_limpio.csv"
+  ],
+  "panel_cell_count": 2178827,
+  "panel_file": null,
+  "panel_id": "real_2178827_td",
+  "run_id": "b9050c04455446a09e9121551443a5ca",
+  "seeds": [],
+  "split_id": "real_2017_2020",
+  "target_type": "td_anomaly",
+  "test_period": [
+    "2017-01-01",
+    "2020-12-31"
+  ],
+  "trained": false,
+  "training_period": null,
+  "validation_period": null,
+  "variant_label": "tmin_anom_full"
+}

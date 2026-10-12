@@ -1,0 +1,2362 @@
+{
+  "query": "Validity and bias of estimating dew point temperature from daily minimum temperature, the FAO-56 assumption that dewpoint temperature approximately equals daily minimum temperature, documented errors of this assumption in arid, semi-arid and high-elevation mountain regions, and proposed corrections such as aridity-dependent offsets, for estimating vapour pressure, dew point or relative humidity from air temperature.",
+  "results": [
+    {
+      "corpusId": 266276771,
+      "title": "Assessing Potential Evapotranspiration Methods in Future Drought Projections across Canada",
+      "abstract": "abstract\u2003Recently, concerns have arisen as to whether temperature-based proxy methods used to estimate potential evapotranspiration (PET) are reliable when examining future drought severity, especially in the context of a warmer climate. The objective of this study was to assess the effect of different PET approaches, focusing on proxies for radiation and humidity, on future Standardized Precipitation Evapotranspiration Index (SPEI) calculations across Canada. Using output from 22 CMIP6 global climate models (GCMs), seasonal and annual SPEI comparisons were carried out between the physically-based Penman-Monteith (PM) method and two approaches that incorporate temperature proxies to calculate radiation and/or humidity. These included the temperature-based Hargreaves (HG) approach and a PM method with derived humidity (PM-m). Results revealed that although the general patterns of SPEI projections across Canada were consistent among the methods, notable spatial and temporal differences were apparent. Specifically, both median and extreme SPEI projections based on the two temperature proxy methods revealed less annual and summer drying in much of central, eastern, and northern regions of Canada when compared to the physically based SPEI-PM. In extreme western regions (British Columbia, Yukon) these two methods, particularly HG, projected drier conditions. Differences of using temperature derived radiation and humidity were also most apparent in spring (and to a lesser degree, autumn), where the HG approach overestimated spring drying (and autumn wetting) over large regions of the country. Overall, differences tended to be more pronounced for the fully temperature-based HG approach during all periods considered. Results from this study strongly suggest that when possible, a physically-based approach be used when estimating PET to assess future drought projections. If a temperature proxy is used, the differences to a physically-based method should be understood and resultant implications be evaluated.",
+      "year": 2023,
+      "authors": [
+        {
+          "name": "Benita Tam",
+          "id": "2274582929"
+        },
+        {
+          "name": "B. Bonsal",
+          "id": "6062435"
+        },
+        {
+          "name": "Xuebin Zhang",
+          "id": "2274291356"
+        },
+        {
+          "name": "Qinxiao Zhang",
+          "id": "1581986662"
+        },
+        {
+          "name": "Robin Rong",
+          "id": "2274582770"
+        }
+      ],
+      "venue": "ATMOSPHERE-OCEAN",
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:266276771",
+      "publicationDate": null,
+      "citationCount": 6,
+      "categories": [],
+      "relevanceScore": 0.4331470701935481,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses Tmin as a dew point proxy for actual vapour pressure in PET calculations, and notes the assumption weakens in arid areas, affecting humidity-related estimates.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "the assumption that dew point temperature is close to daily Tmin",
+                "sectionTitle": "b PET estimations",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "This assumption is valid over areas that are well saturated, but less so for arid regions",
+                "sectionTitle": "b PET estimations",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 0,
+            "relevantSnippets": [
+              {
+                "text": "When humidity data are unavailable, this variable can be estimated with a temperature proxy (Tmin)",
+                "sectionTitle": "b PET estimations",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "resulting in an estimate for actual vapour pressure",
+                "sectionTitle": "b PET estimations",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [
+        {
+          "text": "In the case of even more limited data availability and in particular radiation, the temperature-based Hargreaves (HG) method was considered (Droogers & Allen, 2002;Hargreaves & Samani, 1985).The HG approach (PET-HG) incorporates minimum and maximum air temperature to derive solar radiation.It has been widely used including Tam et al. (2019) who assessed twenty-first century drought projections across Canada based on SPEI results from numerous CMIP5 GCMs.\"\n\nThe aforementioned PET methods generally follow this definition:\n\nwhere R n is net radiation, \u03b3 is the psychrometric constant, and \u0394 is the slope of the saturation-vapour-pressure vs temperature curve at air temperature (Stagge et al., 2014).PET-PM requires shortwave radiation input, atmospheric conditions (e.g.wind speed, humidity, temperature) to calculate mass transfer, and atmospheric surface pressure to calculate the psychometric constant (Santiago & Vicente-Serrano, 2023;Stagge et al., 2014).\n\nPET-HG, on the other hand, uses a constant to estimate the mass transfer term, and a temperature proxy to estimate radiation with the following equation (Allen et al., 1998;Hargreaves & Samani, 1985;Paredes & Pereira, 2019):\n\nwhere R s represents solar radiation, k Rs as an empirical radiation adjustment coefficient (\u00b0C \u22120.5 ), and R a as extraterrestrial radiation.See Allen et al. (1998) for more details.\n\nWhen humidity data are unavailable, this variable can be estimated with a temperature proxy (Tmin) with the assumption that dew point temperature is close to daily Tmin; thus, air is close to saturation and relative humidity is near 100%, resulting in an estimate for actual vapour pressure, as follows (Allen et al., 1998;Paredes & Pereira, 2019;Santiago & Vicente-Serrano, 2023):\n\nwhere e a is actual vapour pressure at 2 m height and e o is dew point temperature ( o C).This assumption is valid over areas that are well saturated, but less so for arid regions where the air may not be fully saturated at daily Tmin.",
+          "sectionTitle": "b PET estimations",
+          "sentenceIds": []
+        }
+      ],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 264223529,
+      "title": "Future humidity trends over the western United States in the CMIP5 global climate models and variable infiltration capacity hydrological modeling system",
+      "abstract": "Abstract. Global climate models predict relative humidity (RH) in the western US will decrease at a rate of about 0.1\u20130.6 percentage points per decade, albeit with seasonal differences (most drying in spring and summer), geographical variability (greater declines in the interior), stronger reductions for greater anthropogenic radiative forcing, and notable spread among the models. Although atmospheric moisture content increases, this is more than compensated for by higher air temperatures, leading to declining RH. Fine-scale hydrological simulations driven by the global model results should reproduce these trends. It is shown that the MT-CLIM meteorological algorithms used by the Variable Infiltration Capacity (VIC) hydrological model, when driven by daily Tmin, Tmax, and precipitation (a configuration used in numerous published studies), do not preserve the original global model's humidity trends. Trends are biased positive in the interior western US, so that strong RH decreases are changed to weak decreases, and weak decreases are changed to increases. This happens because the MT-CLIM algorithms VIC incorporates infer an overly large positive trend in atmospheric moisture content in this region, likely due to an underestimate of the effect of increasing aridity on RH. The result could downplay the effects of decreasing RH on plants and wildfire. RH trends along the coast have a weak negative bias due to neglect of the ocean's moderating influence. A numerical experiment where the values of Tdew are altered to compensate for the RH error suggests that eliminating the atmospheric moisture bias could, in and of itself, decrease runoff up to 14% in high-altitude regions east of the Sierra Nevada and Cascades, and reduce estimated Colorado River runoff at Lees Ferry up to 4% by the end of the century. It could also increase the probability of large fires in the northern and central US Rocky Mountains by 13 to 60%.",
+      "year": 2012,
+      "authors": [
+        {
+          "name": "D. Pierce",
+          "id": "2259127471"
+        },
+        {
+          "name": "A. Westerling",
+          "id": "145606257"
+        },
+        {
+          "name": "J. Oyler",
+          "id": "35210378"
+        }
+      ],
+      "venue": null,
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:264223529",
+      "publicationDate": null,
+      "citationCount": 14,
+      "categories": [],
+      "relevanceScore": 0.42114987767962403,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses Tmin-based dew point estimation and an aridity correction, then shows humidity trend biases affect derived RH and modelled radiation, transpiration, and evaporation.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "the dew point temperature, T dew , is closely related to nighttime minimum temperature",
+                "sectionTitle": "Introduction",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "in arid regions (such as much of the western US), the dewpoint is often lower than T min",
+                "sectionTitle": "Introduction",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "the meteorological algorithms in VMS incorporate a correction to the T dew calculation suggested by Kimball et al. (1997)",
+                "sectionTitle": "Introduction",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "VIC uses humidity when calculating the incident solar radiation",
+                "sectionTitle": "Introduction",
+                "sentenceIds": []
+              },
+              {
+                "text": "and evaporation from bare soil",
+                "sectionTitle": "Introduction",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [
+        {
+          "text": "VIC uses humidity when calculating the incident solar radiation (along with solar angle, elevation, slope, etc.) and evaporation from bare soil. Additionally, when the relative humidity drops, modeled stomatal resistance to transpiration in plants increases; this effect is observed in nature and included in VIC's parameterizations. Under high relative humidity conditions the model includes the possibility of condensation and dew formation on the ground, which increases the soil moisture, but this is a small term and in most places represents a negligible contribution to the soil moisture budget. \n\nThe MT-CLIM meteorological algorithms as incorporated in VMS assume that the dew point temperature, T dew , is closely related to nighttime minimum temperature. Although T dew is not an ideal proxy for atmospheric moisture content because it depends in part on atmospheric pressure (and thus elevation) and is nonlinearly related to moisture content, it nevertheless is a good moisture indicator and has the advantage that it is more commonly observed at stations than other humidity variables (Robinson, 1998;Brown and DeGaetano, 2009). In coming decades T min will increase at least partly due to greater concentrations of CO 2 and other non-water vapor GHGs, yet VMS equates an increase in T min with an increase in humidity. There is a danger that VMS may overpredict T dew increases as a result. \n\nIn humid regions the assumption that T min equals T dew is supported by observations, especially in clear and calm conditions (Brown and DeGaetano, 2009). However in arid regions (such as much of the western US), the dewpoint is often lower than T min . Accordingly, the meteorological algorithms in VMS incorporate a correction to the T dew calculation suggested by Kimball et al. (1997)  , which takes into account the local aridity. The Kimball-97 T dew correction is empirical in nature, being based on a polynomial fit to observations. It might therefore become a progressively worse approximation as anthropogenically produced greenhouse gases alter the radiation balance of the planet. \n\nA number of recent studies have focused on current and future humidity trends.",
+          "sectionTitle": "Introduction",
+          "sentenceIds": []
+        }
+      ],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 129581949,
+      "title": "The Potential Effects of Climate Change on the Productivity of U.S. Dairies",
+      "abstract": "Climate change could affect the costs and returns of livestock production by altering the thermal environment of animals thereby affecting animal health, reproduction, and the efficiency by which livestock convert feed into retained products (especially meat and milk). In the United States, concentrated livestock operations are located in a variety of climatic regions, suggesting that the industry could adapt to future changes in temperature and weather patterns resulting from global warming. However, this adaption could be costly. We use nationally representative data on dairy producers coupled with finely-scaled climate data to empirically examine how producers\u2019 costs, returns, and production systems vary across U.S. regions as a function of the local climate.",
+      "year": 2012,
+      "authors": [
+        {
+          "name": "S. Sneeringer",
+          "id": "13379136"
+        },
+        {
+          "name": "N. Key",
+          "id": "104290249"
+        }
+      ],
+      "venue": null,
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:129581949",
+      "publicationDate": null,
+      "citationCount": 121,
+      "categories": [],
+      "relevanceScore": 0.3489126411145873,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses minimum temperature as a dew point proxy for future climate projections and relative humidity estimation, but does not critically evaluate FAO-56 or region-specific bias corrections.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "daily dew point temperature can be approximated by daily minimum temperature",
+                "sectionTitle": null,
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "the contemporary difference between monthly minimum temperature and monthly dew point temperature is conserved in the future",
+                "sectionTitle": null,
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "the contemporary difference between monthly minimum temperature and monthly dew point temperature is conserved in the future",
+                "sectionTitle": null,
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "daily mean dew point temperature (Tdew d ) as a proxy for daily relative humidity",
+                "sectionTitle": null,
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 129752266,
+      "title": "Evaluation of the Penman-Monteith (FAO 56 PM) Method for Calculating Reference Evapotranspiration Using Limited Data",
+      "abstract": "Reference evapotranspiration (ETo) is often calculated using the Penman-Monteith (FAO 56 PM; Allen et al 1998) method, which requires data on temperature, relative humidity, wind speed, and solar radiation. But in high-mountain environments, such as the Andean p\u00e1ramo, meteorological monitoring is limited and high-quality data are scarce. Therefore, the FAO 56 PM equation can be applied only through the use of an alternative method suggested by the same authors that substitutes estimates for missing data. This study evaluated whether the FAO 56 PM method for estimating missing data can be effectively used for p\u00e1ramo landscapes in the high Andes of southern Ecuador. Our investigation was based on data from 2 automatic weather stations at elevations of 3780 m and 3979 m. We found that using estimated wind speed data has no major effect on calculated ETo but that if solar radiation data are estimated, ETo calculations may be erroneous by as much as 24%; if relative humidity data are estimated, the error may be as high as 14%; and if all data except temperature are estimated, errors higher than 30% may result. Our study demonstrates the importance of using high-quality meteorological data for calculating ETo in the wet p\u00e1ramo landscapes of southern Ecuador.",
+      "year": 2015,
+      "authors": [
+        {
+          "name": "M. C\u00f3rdova",
+          "id": "143878394"
+        },
+        {
+          "name": "Galo Carrillo-Rojas",
+          "id": "1404445966"
+        },
+        {
+          "name": "P. Crespo",
+          "id": "13174709"
+        },
+        {
+          "name": "B. Wilcox",
+          "id": "6102348"
+        },
+        {
+          "name": "R. C\u00e9lleri",
+          "id": "9694789"
+        }
+      ],
+      "venue": null,
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:129752266",
+      "publicationDate": null,
+      "citationCount": 127,
+      "categories": [],
+      "relevanceScore": 0.5328494837581883,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses the FAO-56 dew point-to-minimum temperature assumption to estimate actual vapor pressure and tests FAO-56 missing-data methods in high-mountain p\u00e1ramo conditions.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "dewpoint temperature (T dew ) is close to T min . This is usually the case at sunrise",
+                "sectionTitle": "Meteorological data measurements",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "high-mountain environments, such as the Andean p\u00e1ramo",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 0,
+            "relevantSnippets": [],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "the actual vapor pressure (e a ) can be calculated by assuming that dewpoint temperature (T dew ) is close to T min",
+                "sectionTitle": "Meteorological data measurements",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [
+        {
+          "text": "Table 1 shows average values for the meteorological variables measured at the study sites, as well as maximum and minimum values for temperature. day 21 ), which can be assumed as zero for daily calculations according to Allen et al (1998); T is the mean daily air temperature (uC) at a height of 2 m; u 2 is the wind speed at a height of 2 m (m s 21 ); e s is the saturation vapor pressure (kPa); e a is the actual vapor pressure (kPa), which is based on relative humidity measurements; (e s 2 e a ) is the saturation vapor pressure deficit (VPD) (kPa); D is the slope of the vapor pressure curve (kPa uC 21 ); and c is the psychrometric constant (kPa uC 21 ). \n\nAs noted earlier, the use of the FAO 56 PM equation requires a complete data set. For situations in which climate data are incomplete, the authors (Allen et al 1998) proposed an alternative method that substitutes estimated values for the missing meteorological variables. These estimates are determined as described below. \n\nSolar radiation: Solar radiation (R s ) is estimated as a function of minimum and maximum air temperature, on the assumption that differences between maximum and minimum temperature are governed by the daily R s at a given location, as proposed by Hargreaves and Samani (1985): \n\nwhere R a is the extraterrestrial radiation (MJ m 22 day 21 ), T max is the maximum air temperature (uC), T min is the minimum air temperature (uC), and k R S is the adjustment coefficient (uC 20.5 ). For this study we used k R S 5 0.16 because the study area is in an interior region where air masses are not influenced by large water bodies (Allen et al 1998). \n\nRelative humidity: When relative humidity (RH) data are lacking, the actual vapor pressure (e a ) can be calculated by assuming that dewpoint temperature (T dew ) is close to T min . This is usually the case at sunrise at reference weather stations (Allen et al 1998).",
+          "sectionTitle": "Meteorological data measurements",
+          "sentenceIds": []
+        }
+      ],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 272607389,
+      "title": "Satellite-based near-real-time global daily terrestrial evapotranspiration estimates",
+      "abstract": "Abstract. Accurate and timely global evapotranspiration (ET) data are crucial for agriculture, water resource management, and drought forecasting. Although numerous satellite-based ET products are available, few offer near-real-time data. For instance, products like NASA's ECOsystem Spaceborne Thermal Radiometer Experiment mounted on the International Space Station (ECOSTRESS) and MOD16 face challenges such as uneven coverage and delays exceeding 1\u00a0week in data availability. In this study, we refined the Variation of the Standard Evapotranspiration Algorithm (VISEA) by fully integrating satellite-based data, e.g., European Centre for Medium-Range Weather Forecasts ERA5-Land shortwave radiation (which includes satellite remote sensing data within its assimilation system) and MODIS land surface data (which include surface reflectance, temperature and/or emissivity, land cover, vegetation indices, and albedo as inputs). This enables VISEA to provide near-real-time global daily ET estimates with a maximum delay of 1\u00a0week at a resolution of 0.05\u00b0. Its accuracy was assessed globally using observation data from 149 flux towers across 12 land cover types and comparing them with five other satellite-based ET products and Global Precipitation Climatology Centre (GPCC) data. The results indicate that VISEA provides accurate ET estimates that are comparable to existing products, achieving a mean correlation coefficient (R) of about 0.6 and an RMSE of 1.4\u2009mm\u2009d\u22121. Furthermore, we demonstrated VISEA's utility in drought monitoring during a drought event in the Yangtze River basin in 2022 in which ET changes correlated with precipitation. The near-real-time capability of VISEA is, thus, especially valuable in meteorological and hydrological applications for coordinating drought relief efforts. The VISEA ET dataset is available at https://doi.org/10.11888/Terre.tpdc.300782 (Huang, 2023a).\n",
+      "year": 2024,
+      "authors": [
+        {
+          "name": "Lei Huang",
+          "id": "2224861646"
+        },
+        {
+          "name": "Yong Luo",
+          "id": "2279402397"
+        },
+        {
+          "name": "Jing M. Chen",
+          "id": "2279483693"
+        },
+        {
+          "name": "Qiu-hong Tang",
+          "id": "2265094874"
+        },
+        {
+          "name": "T. Steenhuis",
+          "id": "88781893"
+        },
+        {
+          "name": "Wei Cheng",
+          "id": "2279515410"
+        },
+        {
+          "name": "Wen Shi",
+          "id": "2153422737"
+        }
+      ],
+      "venue": "Earth System Science Data",
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:272607389",
+      "publicationDate": null,
+      "citationCount": 13,
+      "categories": [],
+      "relevanceScore": 0.9191361032642388,
+      "relevanceJudgement": {
+        "relevance": 3,
+        "relevanceSummary": "Uses minimum air temperature as dew point, applies a 2 \u00b0C arid/semiarid correction, and notes the resulting bias is negligible for ET via vapor pressure/emissivity.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "T dew is set to the minimum air temperature during the day.",
+                "sectionTitle": "Appendix D: The calculation of atmospheric emissivity for clear skies",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "In arid regions such as bare soil and non-irrigated grassland, T dew may be 2-3 \u00b0C lower than T min .",
+                "sectionTitle": "Appendix D: The calculation of atmospheric emissivity for clear skies",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "Therefore, 2 \u00b0C is subtracted from T min in arid and semiarid areas to derive T dew .",
+                "sectionTitle": "Appendix D: The calculation of atmospheric emissivity for clear skies",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "e a is the actual vapor pressure (kPa) and e 0 (T dew ) is the saturation vapor pressure (kPa) at the dew point temperature T dew (\u00b0C).",
+                "sectionTitle": "Appendix D: The calculation of atmospheric emissivity for clear skies",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [
+        {
+          "text": "As per Brutsaert (1975), the atmospheric emissivity \u03b5 d a for clear skies under standard humidity and temperature conditions is The expression in parentheses denotes the independent variable, where e 0 (T a ) represents the saturation vapor pressure (kPa) at the air temperature T a (\u00b0C), e a is the actual vapor pressure (kPa), and e 0 (T dew ) is the saturation vapor pressure (kPa) at the dew point temperature T dew (\u00b0C). For forest, water surface, and cropland, T dew is set to the minimum air temperature during the day. In arid regions such as bare soil and non-irrigated grassland, T dew may be 2-3 \u00b0C lower than T min . Therefore, 2 \u00b0C is subtracted from T min in arid and semiarid areas to derive T dew . While these simplifications might introduce a bias into the final calculated ET value, our initial results indicate that the effect is negligible. \n\nSupplement. The supplement related to this article is available online at: https://doi.org/10.5194/essd-16-3993-2024-supplement. \n\nAuthor contributions. LH had the original idea and drafted the paper with help from YL. JMC, QT, TS, WC, and WS participated in the discussion and the many manuscript revisions. \n\nCompeting interests. The contact author has declared that none of the authors has any competing interests. \n\nDisclaimer. Publisher's note: Copernicus Publications remains neutral with regard to jurisdictional claims made in the text, published maps, institutional affiliations, or any other geographical representation in this paper. While Copernicus Publications makes every effort to include appropriate place names, the final responsibility lies with the authors.",
+          "sectionTitle": "Appendix D: The calculation of atmospheric emissivity for clear skies",
+          "sentenceIds": []
+        }
+      ],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 3309590,
+      "title": "An open-source MEteoroLOgical observation time series DISaggregation Tool (MELODIST v0.1.0)",
+      "abstract": "Meteorological time series with 1 h time steps are required in many applications in geoscientific modelling. These hourly time series generally cover shorter periods of time compared to daily meteorological time series. We present an open-source MEteoroLOgical observation time series DISaggregation Tool (MELODIST). This software package is written in Python and comprises simple methods to temporally downscale (disaggregate) daily meteorological time series to hourly data. MELODIST is capable of disaggregating the most commonly used meteorological variables for geoscientific modelling including temperature, precipitation, humidity, wind speed, and shortwave radiation. In this way, disaggregation is performed independently for each variable considering a single site without spatial dependencies. The algorithms are validated against observed meteorological time series for five sites in different climates. Results indicate a good reconstruction of diurnal features at those sites. This makes the methodology interesting to users of models operating at hourly time steps, who want to apply their models for longer periods of time not covered by hourly observations.",
+      "year": 2016,
+      "authors": [
+        {
+          "name": "Kristian F\u00f6rster",
+          "id": "80243589"
+        },
+        {
+          "name": "F. Hanzer",
+          "id": "3390728"
+        },
+        {
+          "name": "Benjamin Winter",
+          "id": "47802513"
+        },
+        {
+          "name": "T. Marke",
+          "id": "3374715"
+        },
+        {
+          "name": "U. Strasser",
+          "id": "3363786"
+        }
+      ],
+      "venue": null,
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:3309590",
+      "publicationDate": null,
+      "citationCount": 3,
+      "categories": [],
+      "relevanceScore": 0.5646527676674966,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses daily minimum temperature to estimate dew point and humidity, with an adjustable linear correction and downstream vapour-pressure calculation from dew point.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "T dew = T min",
+                "sectionTitle": "T1",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "validated against observed meteorological time series for five sites in different climates",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "T dew = aT min + b",
+                "sectionTitle": "T1",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "the actual vapour pressure is assumed equal to the saturated vapour pressure at dew point temperature",
+                "sectionTitle": "T1",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [
+        {
+          "text": "Standard sine redistribution with different options (Waichler and Wigmosta, 2003) deterministic no H1 \n\nT dew = T min (Bregaglio et al., 2010;Waichler and Wigmosta, 2003) deterministic no H2 \n\nT dew = aT min + b (Bregaglio et al., 2010;Waichler and Wigmosta, 2003) deterministic yes H3 Linear variation of T dew overlaid by sine function (Bregaglio et al., 2010) deterministic yes H4 \n\nH min , H max (Bregaglio et al., 2010;Waichler and Wigmosta, 2003) deterministic no W1 Equal distribution deterministic no W2 Cosine function (Debele et al., 2007;Green and Kozek, 2003) deterministic yes W3 Random distribution (Debele et al., 2007) stochastic no R1 \n\nScaling of potential shortwave radiation (Liston and Elder, 2006) deterministic no R2 \u00c5ngstr\u00f6m (1924) model for sunshine duration S, then R1 deterministic yes R3 Bristow and Campbell (1984) \n\nIt generally follows a diurnal course with the maximum around sunrise and the minimum in the early afternoon (Debele et al., 2007). \n\nAll humidity disaggregation methods require already disaggregated temperature recordings. Methods H1 to H3 generate hourly values of dew point temperature T dew [K], as the actual vapour pressure is assumed equal to the saturated vapour pressure at dew point temperature. Hourly H values can thus be calculated using hourly values of T and T dew as \n\nSaturation vapour pressure for a given temperature T [ \u2022 C] is calculated using the Magnus formula (Alduchov and Eskridge, 1997): daily minimum temperature. H2 uses hourly observations of temperature and humidity to calculate the best fit for a and b for a given site. T dew is thereby calculated from T and H by inverting Eq. ( 4): \n\nH3 assumes a diurnal dew point temperature variation based on the assumptions that dew point temperature varies linearly between consecutive days, and that mean daily dew point temperature occurs around sunrise (Debele et al., 2007).",
+          "sectionTitle": "T1",
+          "sentenceIds": []
+        }
+      ],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 282808761,
+      "title": "Investigating Dew Trends and Drivers Using Ground-Based Meteorological Observations at the Namib Desert",
+      "abstract": "In arid environments such as the Namib Desert, non-rainfall water sources\u2014including dew and fog\u2014constitute indispensable yet understudied components of the regional hydrological cycle. These moisture inputs play a critical role in sustaining ecological functionality and biogeochemical processes, but remain among the least quantified facets of desert ecohydrology. The present study investigates multi-year trends in morning dew formation within the Namib Desert, utilizing observations from the Gobabeb\u2013Namib Research Institute between 2015 and 2022. Meteorological data from the Southern African Science Service Centre for Climate and Adaptive Land Management (SASSCAL), in conjunction with direct field observations of dew, were used to develop an empirical equation to estimate dew occurrence. A sensitivity analysis verified the robustness of this formulation, and subsequent validation using field data confirmed its reliability (84.84% accuracy). During this eight-year period, the annual number of days with morning dew decreased from 170 in 2015 to 140 in 2022, representing an overall decline of approximately 18%. However, the total daily dew occurrence across 24 h remained relatively constant, indicating that the observed decline is confined primarily to morning condensation events. Dew formation was most prevalent during the wet season (December\u2013May). Both monthly and annual analyses revealed a discernible declining trend in morning dew occurrence across this hyperarid ecosystem (p < 0.05). This decline corresponded with a gradual increase in both air and soil temperatures (approximately +0.03 \u00b0C yr\u22121) and a slight but consistent decrease in relative humidity (approximately \u22120.26% yr\u22121) between 2015 and 2022. The principal drivers of this decline include rising soil and air temperatures and decreasing atmospheric humidity. The analysis further identified an inverse relationship between air temperature and dew formation, implying that climatic warming intensifies evaporative demand and thereby suppresses dew condensation. Random forest analysis identified soil temperature, air temperature, and relative humidity as the most important predictors influencing dew occurrence, whereas wind speed and direction played lesser roles. Collectively, these findings underscore the vulnerability of dew-dependent ecosystems to anthropogenic climate change and highlight the imperative to continue investigating non-rainfall moisture dynamics in desert environments.",
+      "year": 2025,
+      "authors": [
+        {
+          "name": "Sara Javanmardi",
+          "id": "2313684474"
+        },
+        {
+          "name": "N. Qiao",
+          "id": "48884725"
+        },
+        {
+          "name": "E. Marais",
+          "id": "2282730578"
+        },
+        {
+          "name": "Lixin Wang",
+          "id": "2388197085"
+        }
+      ],
+      "venue": "Atmosphere",
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:282808761",
+      "publicationDate": null,
+      "citationCount": 4,
+      "categories": [],
+      "relevanceScore": 0.5686913718085391,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses a dew-point approximation from temperature and humidity, then calibrates a \u22124 \u00b0C offset for arid-site dew prediction; discusses local bias and humidity-linked effects rather than FAO-56 specifically.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "the dew-point temperature (T_d) was computed using the empirical formula T_d = T \u2212 ((100 \u2212 RH)/5)",
+                "sectionTitle": "Introduction",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "This value depends on local energy balance, substrate thermal inertia, and atmospheric emissivity",
+                "sectionTitle": "Discussion",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "an empirically derived correction factor of \u22124 \u2022 C was introduced",
+                "sectionTitle": "Materials and Methods",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "relative humidity exhibited a modest decrease (\u22120.26% yr \u22121 )",
+                "sectionTitle": "Results",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [
+        {
+          "text": "In arid environments such as the Namib Desert, non-rainfall water sources\u2014including dew and fog\u2014constitute indispensable yet understudied components of the regional hydrological cycle. These moisture inputs play a critical role in sustaining ecological functionality and biogeochemical processes, but remain among the least quantified facets of desert ecohydrology. The present study investigates multi-year trends in morning dew formation within the Namib Desert, utilizing observations from the Gobabeb\u2013Namib Research Institute between 2015 and 2022. Meteorological data from the Southern African Science Service Centre for Climate and Adaptive Land Management (SASSCAL), in conjunction with direct field observations of dew, were used to develop an empirical equation to estimate dew occurrence. A sensitivity analysis verified the robustness of this formulation, and subsequent validation using field data confirmed its reliability (84.84% accuracy). During this eight-year period, the annual number of days with morning dew decreased from 170 in 2015 to 140 in 2022, representing an overall decline of approximately 18%. However, the total daily dew occurrence across 24 h remained relatively constant, indicating that the observed decline is confined primarily to morning condensation events. Dew formation was most prevalent during the wet season (December\u2013May). Both monthly and annual analyses revealed a discernible declining trend in morning dew occurrence across this hyperarid ecosystem (p < 0.05). This decline corresponded with a gradual increase in both air and soil temperatures (approximately +0.03 \u00b0C yr\u22121) and a slight but consistent decrease in relative humidity (approximately \u22120.26% yr\u22121) between 2015 and 2022. The principal drivers of this decline include rising soil and air temperatures and decreasing atmospheric humidity. The analysis further identified an inverse relationship between air temperature and dew formation, implying that climatic warming intensifies evaporative demand and thereby suppresses dew condensation. Random forest analysis identified soil temperature, air temperature, and relative humidity as the most important predictors influencing dew occurrence, whereas wind speed and direction played lesser roles. Collectively, these findings underscore the vulnerability of dew-dependent ecosystems to anthropogenic climate change and highlight the imperative to continue investigating non-rainfall moisture dynamics in desert environments.",
+          "sectionTitle": "abstract",
+          "sentenceIds": []
+        },
+        {
+          "text": "Recent investigations continue to reveal both the decline and spatiotemporal variability of dew under changing climatic conditions. For example, Xu and Yan [15] characterized dew processes in semi-arid regions of China, Zhuang and Zhao [16] documented variations in oasis ecosystems, and Yu and Zhang [17] analyzed global patterns of dew-moisture regimes in desert ecosystems. However, only a few studies have explicitly quantified dew formation using combined field observations and meteorological datasets over multiple years in hyperarid regions such as the Namib Desert. \n\nClimate models predict an intensification of aridity, with severe droughts projected to affect regions such as Amazonia, the United States, and northern Africa, where the frequency of extreme drought events is expected to double by the end of this century [18,19]. However, regional manifestations of drought remain uncertain due to differences among climate-model projections and variations in drought definitions. Haile and Tang [20] reviewed recent progress in understanding drought processes, emphasizing the necessity of linking non-rainfall water inputs such as dew to broader drought dynamics. \n\nDespite a long history of dew observation, there remains no standardized method for quantifying dew [21]. Advanced techniques such as microlysimeters can provide accurate measurements but are costly and labor-intensive [22]. These methods are further constrained by their localized scope and inability to capture broader environmental variability [5]. At the Gobabeb-Namib Research Institute, dew has been directly observed on both natural (soil) and artificial surfaces (metal plates and glass collectors). These complementary measurements enable assessment of condensation across different surface types and provide a robust basis for empirical model development. \n\nAutomated observation technologies have been increasingly adopted for measuring condensate water [5,23,24]; however, such instruments are not always available in remote or resource-limited settings. Consequently, there remains a strong need for empirical modeling approaches based on widely available meteorological variables. ",
+          "sectionTitle": "Introduction",
+          "sentenceIds": []
+        },
+        {
+          "text": "In this study, the dew-point temperature (T_d) was computed using the empirical formula T_d = T \u2212 ((100 \u2212 RH)/5), in which the constants 100 and 5 are derived from the standard psychrometric relationship between air temperature and humidity under near-saturated conditions [25]. Since surface-temperature data were unavailable, air temperature was used as a proxy, and a correction factor of \u22124 \u2022 C-determined through field calibration-was subtracted to improve realism. The calibration achieved 84.8% agreement with observed dew days, indicating that the correction effectively compensates for systematic temperature bias. While this correction may vary slightly among surface types or seasons, it provides a practical and transferable adjustment for other arid-region applications. \n\nThis study aims to develop a method for estimating dew formation using meteorological data and to evaluate the influence of climate change on dew occurrence in the Namib Desert over an eight-year period. The development of such a method is motivated by the demand for scalable and cost-effective techniques to monitor dew dynamics. Modeling dew formation using meteorological data provides a viable alternative, enabling spatially extensive predictions and continuous temporal assessments [14]. Understanding trends in dew formation is essential for predicting moisture availability in arid regions and for assessing its implications for plant physiology, soil moisture dynamics, and overall ecosystem health. \n\nThe novelty of this study lies in the integration of direct dew observations with meteorological data to produce a validated empirical model for dew monitoring. In addition, this work separately evaluates morning and total dew frequencies to highlight diurnal asymmetries and the specific vulnerability of morning condensation to rising temperatures. By combining observation and modeling frameworks, this study contributes an improved, validated approach for assessing dew formation trends in data-scarce arid environments. This integrated framework combines accuracy and scalability, bridging the gap between localized, labor-intensive measurement techniques and broader-scale analytical assessments.",
+          "sectionTitle": "Introduction",
+          "sentenceIds": []
+        },
+        {
+          "text": "All sensors were factory-calibrated, and accuracy levels were as follows: air temperature \u00b10.2 \u2022 C, soil temperature at 5 cm \u00b10.2 \u2022 C, relative humidity \u00b12%, and wind speed \u00b10.2 m s \u22121 . Data gaps shorter than three hours were linearly interpolated, while longer gaps were filled using concurrent Aussinis records. The integration of site-specific data from Gobabeb with regional observations from SASSCAL provided a robust basis for analyzing the spatial and temporal patterns of dew formation in the Namib Desert. The meteorological instruments at Gobabeb maintained standard measurement accuracies: air temperature \u00b10.2 \u2022 C, soil temperature at 5 cm \u00b10.2 \u2022 C, relative humidity \u00b12%, and wind speed \u00b10.2 m s \u22121 , ensuring dependable input data for dew estimation. \n\nA new empirical method was developed to estimate the frequency of dew formation using the site's meteorological data, which was subsequently validated through field observations. Field observations were conducted through multiple years using a metal dew collector, a car windshield collection, or a tin roof collection. Meteorological data for the period 2015-2022 were obtained from SASSCAL. The dew-point temperature (T_d) was calculated using Equation (1) [25]: \n\nwhere T_d represents the dew-point temperature, T denotes surface temperature, and RH indicates relative humidity [25]. The constants 100 and 5 in this empirical relationship originate from the linearized psychrometric equation under moderate humidity conditions and have been widely used for first-order dew-point estimation. In this study, air temperature was used as a proxy for surface temperature because surface-temperature data were unavailable for the study area, and air temperature closely approximates surface temperature. However, using air temperature as a proxy produces a negative (T_d \u2212 T) value according to Equation (1), implying that all days exhibit air temperatures below the dew temperature. To rectify this, an empirically derived correction factor of \u22124 \u2022 C was introduced based on comparisons with field observations. ",
+          "sectionTitle": "Materials and Methods",
+          "sentenceIds": []
+        },
+        {
+          "text": "Accordingly, air-temperature values were adjusted by subtracting 4 \u2022 C. This \u22124 \u2022 C offset was derived by minimizing misclassification error between modeled and observed dew days across 1200 hourly paired samples and yielded optimal performance; sensitivity tests showed that offsets between 3 \u2022 C and 5 \u2022 C produced less accurate predictions (accuracy \u00b13%). Although this correction factor may vary with prevailing meteorological conditions, the \u22124 \u2022 C adjustment provided the best fit for this dataset. While the correction was calibrated for Gobabeb conditions, the methodology allows recalibration for other stations, enhancing the universality of the approach. This correction was derived empirically from dew-formation observations recorded at the Gobabeb station. Eighty percent of the field dataset was used for calibration by applying the \u22124 \u2022 C correction to the air temperature, while the remaining 20 percent was used for validation. The resulting adjustment yielded an accuracy of 84.84%, correctly identifying dew days in the validation dataset. Using this validated correction factor, dew formation was estimated from hourly meteorological data, and dew days were subsequently enumerated based on the hourly dew results (Figure 2). Model performance was further evaluated using correlation (r = 0.78, p < 0.001) between observed and predicted dew frequencies, confirming robust predictive skill. In addition, a sensitivity analysis was conducted to assess the influence of each variable (air temperature, soil temperature, relative humidity, and wind speed) on the probability of dew occurrence. This approach demonstrates that, while air temperature is an imperfect surrogate for surface temperature, careful correction produces reliable estimates. Nevertheless, the correction factor may vary across different surface types (e.g., dunes versus gravel plains) and between seasons (wet versus dry). Annual dew days were counted for each year from 2015 to 2022 based on the hourly dew-formation calculations, and seasonal variations in dew occurrence were examined. Additionally, the relative importance of meteorological factors influencing dew formation was assessed using the random forest machine-learning algorithm. Random forest is an ensemble-learning method that constructs multiple decision trees during model training and aggregates their outputs to improve accuracy and reduce overfitting [34].",
+          "sectionTitle": "Materials and Methods",
+          "sentenceIds": []
+        },
+        {
+          "text": "The annual number of dew days from 2015 to 2022 was 182, 171, 149, 165, 156, 164, 136, and 157, respectively. These data indicate an average decline of approximately 14% in annual morning dew formation over the study period. In contrast, the total number of days with any dew occurrence during a 24 h cycle remained relatively stable, suggesting that the observed decrease is specific to morning condensation events rather than overall dew potential. The year 2021 had the lowest dew frequency (136 days), which substantially contributed to the overall declining trend. Figure 4 illustrates the interannual variability in dew occurrence from 2015 to 2022, with a clear, consistent downward trend. The linear regression slope for morning-dew frequency (\u22123.8 days yr \u22121 ; R 2 = 0.43; p < 0.05) confirms a statistically significant negative trend. To further elucidate the drivers of this decline, we examined concurrent trends in key meteorological variables. Both mean annual air temperature and soil temperature increased slightly over the same period (by approximately +0.03 \u2022 C yr \u22121 ), while relative humidity exhibited a modest decrease (\u22120.26% yr \u22121 ). The negative correlation between morning-dew frequency and air temperature (r = \u22120.63) and the positive correlation with relative humidity (r = 0.71) support the hypothesis that warming and drying conditions are suppressing morning condensation. \n\nThe random forest analysis (Figure 5) identified soil temperature, air temperature, and relative humidity as the primary factors influencing dew formation in the Namib Desert. The negative correlation between rising temperature and dew occurrence aligns with the established understanding that higher temperatures accelerate evaporation and suppress condensation. Variable-importance scores indicated that soil temperature contributed 34% of the model variance, air temperature 28%, relative humidity 26%, and wind-related factors together accounted for less than 12%. This relationship underscores the sensitivity of dew formation to warming trends and highlights its potential vulnerability to ongoing climate change. Wind-related factors are often used in modeling dew formation [37]. We did not find significant contributions of wind-related factors on dew formation at this site, highlighting the dominance of temperature and humidity on dew formation in this coastal location.",
+          "sectionTitle": "Results",
+          "sentenceIds": []
+        },
+        {
+          "text": "However, this correction factor is unlikely to be universally applicable. This value depends on local energy balance, substrate thermal inertia, and atmospheric emissivity; for example, gravel plains with higher heat capacity may require smaller offsets than dune surfaces composed of fine sand. Sensitivity analysis confirmed that modifying the offset by \u00b11 \u2022 C changed the modeled dew frequency by about \u00b13%. Future studies should therefore treat the 4 \u2022 C correction as a site-specific calibration constant rather than a fixed global parameter. Variations in surface-energy balance between dunes and gravel plains, as well as seasonal differences between the wet and dry periods, may influence the optimal magnitude of this adjustment. Future studies should evaluate the model's transferability across diverse surface conditions and climatic contexts. \n\nThe ecological implications of a decline in morning dew formation are profound. Dew constitutes a crucial non-rainfall water input in desert ecosystems, mitigating plant water stress, supporting insect survival, and stimulating microbial activity. Previous research has shown that dew moisture can activate microbial decomposition of surface litter [33], thereby playing a key role in nutrient cycling. Because most biological activity in hyperarid systems occurs during the early morning when temperatures are mild and dew moisture is available, the loss of morning condensation may disproportionately reduce biotic functioning even if total daily dew frequency remains unchanged. A reduction in dew availability could therefore diminish decomposition rates, slow nutrient turnover, and intensify vegetation water stress-ultimately weakening the resilience of desert ecosystems under progressive climate change. Moreover, changes in dew timing can alter soil surface temperature profiles and nocturnal cooling rates, potentially affecting seed-germination microclimates and early seedling survival. \n\nThe principal innovation of this work lies in integrating meteorological observations with field-based dew records to produce a validated empirical model for dew estimation. This approach facilitates dew monitoring at sites where specialized equipment is unavailable, providing a scalable and cost-effective framework for hydrological research in arid and semi-arid environments. By combining direct observations from multiple condensation surfaces (soil, metal, and glass) with a data-driven model, the study bridges the gap between point-scale measurements and region-scale analyses.",
+          "sectionTitle": "Discussion",
+          "sentenceIds": []
+        }
+      ],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 250155510,
+      "title": "Improvement of reference crop evapotranspiration estimates using limited data for the Brazilian Cerrado",
+      "abstract": ": Evapotranspiration (ET) is a key component of the hydrological cycle. Therefore, adequately estimating it is crucial to improving water resource planning and management. One of the most affordable methods of estimating ET is first to estimate reference crop evapotranspiration (ETo) and later associate it to crop and soil coefficients. The FAO Kc-ETo approach can be used only when ETo is computed with the FAO Penman-Monteith equation. However, low data availability may restict the equations used to estimate ETo. In this study, we assess and calibrate common methods used to estimate ETo under such conditions of limited data availability. Based on the annual calibration, the Makkink (NSE = 0.85) outperformed the Priestley-Taylor (NSE = 0.73), Hargreaves-Samani (NSE = 0.56), and Penman-Monteith temperature approach (NSE = 0.58). The seasonal calibration of parameters showed no significant improvement to the methods assessed ( \u0394 NSE \u2264 0.01), except for the Priestley-Taylor ( \u0394 NSE = 0.06). The performance of temperature-based equations was particularly limited due to the performance of the equation adopted to estimate global solar radiation. Thus, improving the representation of global solar radiation for limited data availability can also play a key role in improving ETo prediction.",
+      "year": 2022,
+      "authors": [
+        {
+          "name": "Daniel Althoff",
+          "id": "10416903"
+        },
+        {
+          "name": "L. Rodrigues",
+          "id": "50526924"
+        }
+      ],
+      "venue": "Scientia Agricola",
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:250155510",
+      "publicationDate": null,
+      "citationCount": 2,
+      "categories": [],
+      "relevanceScore": 0.7614023009730723,
+      "relevanceJudgement": {
+        "relevance": 2,
+        "relevanceSummary": "Uses the FAO-56 Tmin\u2248Tdew assumption in reduced-data ETo estimation, notes regional mismatch in semi-arid/humid climates, and applies a dew-point correction to improve vapour pressure estimates.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "dew point temperature (T dew ) to be equal to T min",
+                "sectionTitle": "Penman-Monteith temperature approach",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "T min can exceed T dew in semi-arid regions, however, the opposite can also be true in humid regions",
+                "sectionTitle": null,
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "a temperature correction factor (a T ) can be used to improve the model",
+                "sectionTitle": "Penman-Monteith temperature approach",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "When relative humidity is unavailable, Allen et al. (1998) recommend computing actual vapor pressure",
+                "sectionTitle": "Penman-Monteith temperature approach",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [
+        {
+          "text": "Since the acquisition of all meteorological data needed to calculate PM can be expensive, it is a widespread practice to work with reduced data. To cope with fewer variables, several alternatives were proposed by Allen et al. (1998). In the Penman-Monteith temperature approach (PMT), we assume that only the temperature daily range (T max and T min ) is available. Alternative methods were used to estimate missing variables, i.e., relative humidity, solar radiation, and wind speed. When relative humidity is unavailable, Allen et al. (1998) recommend computing actual vapor pressure, e a , considering dew point temperature (T dew ) to be equal to T min (Eq. 2). Although T min can exceed T dew in semi-arid regions, the opposite can also be true in humid regions (Paredes and Pereira, 2019). The high seasonality in tropical regions may also affect this relationship between wet (Oct-Apr) and dry seasons (May-Sept). It is common to assume T min = T dew , however, a temperature correction factor (a T ) can be used to improve the model. Once ea is calculated using T max , T min , and RH (see Allen et al., 1998), the equations below can be used to derive a T : (2) \n\nwhere a T is the dew temperature correction coefficient (\u00b0C). \n\nIn the absence of sunshine hours or solar radiation, Allen et al. (1998) suggest that Rs can be estimated using the equation proposed by Hargreaves and Samani (1985), which expresses Rs as a function of temperature range: \n\nwhere k Rs is an empirical radiation adjustment coefficient (\u00b0C -0.5 ) and Ra the extraterrestrial solar radiation (MJ m -2 d -1 ). Ra is calculated considering the station latitude and day of the year (Allen et al., 1998). A k Rs equal to 0.16 is suggested for inland sites. \n\nWhen wind speed data is not available, Allen et al. (1998) recommend using the world average wind speed value of 2.0 m s -1 . An average wind speed for the Cerrado and its wet and dry seasons were also evaluated instead of using the world average for model improvement.",
+          "sectionTitle": "Penman-Monteith temperature approach",
+          "sentenceIds": []
+        }
+      ],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 133791555,
+      "title": "Impact of Alternative Data on the Penman-Monteith Method Considering Windy Conditions in the Semi-Arid Area",
+      "abstract": "When real data are unavailable, the standard Penman-Monteith method for estimating reference evapotranspiration can be calculated using alternative input data: wind speed from a nearby station, the default global average wind speed, solar radiation based on temperature and vapour pressure based on the minimum temperature. These alternative data are recommended in FAO paper 56. In this study, we assessed the accuracy achieved when using these alternative data for reference evapotranspiration estimation in a semi-arid region characterised by a strong persistent wind speed. Western Afghanistan was selected as the study site, as it is exposed to strong winds over the 120-day period from June to September. Significant differences were found in the estimates produced using full data and those obtained using wind speed data from a nearby station, the default global average wind speed, and vapour pressure based on the minimum temperature. Root Mean Square Error (RMSE) was found 1.51 mm d-1, 1.27 mm d-1 and 1.07 mm d-1, respectively. Errors were especially significant on days with strong wind. The smallest RMSE of 0.36 mm d-1 was found when basing solar radiation on temperature. The assumption that the dew point temperature will be close to the minimum temperature was shown to be unreliable on days of strong wind.",
+      "year": 2018,
+      "authors": [
+        {
+          "name": "H. Ganji",
+          "id": "143766978"
+        },
+        {
+          "name": "T. Kajisa",
+          "id": "21530605"
+        }
+      ],
+      "venue": "American Journal of Water Resources",
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:133791555",
+      "publicationDate": null,
+      "citationCount": 1,
+      "categories": [],
+      "relevanceScore": 0.5931834240505752,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Assesses FAO-56 minimum-temperature vapour pressure estimation in windy semi-arid Afghanistan, showing large ET errors and unreliability of the dew point/minimum-temperature assumption.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "vapour pressure based on the minimum temperature",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "Western Afghanistan was selected as the study site, as it is exposed to strong winds",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "The assumption that the dew point temperature will be close to the minimum temperature was shown to be unreliable",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "Significant differences were found in the estimates produced using full data and those obtained using",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              },
+              {
+                "text": "vapour pressure based on the minimum temperature",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [
+        {
+          "text": "When real data are unavailable, the standard Penman-Monteith method for estimating reference evapotranspiration can be calculated using alternative input data: wind speed from a nearby station, the default global average wind speed, solar radiation based on temperature and vapour pressure based on the minimum temperature. These alternative data are recommended in FAO paper 56. In this study, we assessed the accuracy achieved when using these alternative data for reference evapotranspiration estimation in a semi-arid region characterised by a strong persistent wind speed. Western Afghanistan was selected as the study site, as it is exposed to strong winds over the 120-day period from June to September. Significant differences were found in the estimates produced using full data and those obtained using wind speed data from a nearby station, the default global average wind speed, and vapour pressure based on the minimum temperature. Root Mean Square Error (RMSE) was found 1.51 mm d-1, 1.27 mm d-1 and 1.07 mm d-1, respectively. Errors were especially significant on days with strong wind. The smallest RMSE of 0.36 mm d-1 was found when basing solar radiation on temperature. The assumption that the dew point temperature will be close to the minimum temperature was shown to be unreliable on days of strong wind.",
+          "sectionTitle": "abstract",
+          "sentenceIds": []
+        }
+      ],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 17774932,
+      "title": "An Environmental Data Set for Vector-Borne Disease Modeling and Epidemiology",
+      "abstract": "Understanding the environmental conditions of disease transmission is important in the study of vector-borne diseases. Low- and middle-income countries bear a significant portion of the disease burden; but data about weather conditions in those countries can be sparse and difficult to reconstruct. Here, we describe methods to assemble high-resolution gridded time series data sets of air temperature, relative humidity, land temperature, and rainfall for such areas; and we test these methods on the island of Madagascar. Air temperature and relative humidity were constructed using statistical interpolation of weather station measurements; the resulting median 95th percentile absolute errors were 2.75\u00b0C and 16.6%. Missing pixels from the MODIS11 remote sensing land temperature product were estimated using Fourier decomposition and time-series analysis; thus providing an alternative to the 8-day and 30-day aggregated products. The RFE 2.0 remote sensing rainfall estimator was characterized by comparing it with multiple interpolated rainfall products, and we observed significant differences in temporal and spatial heterogeneity relevant to vector-borne disease modeling.",
+      "year": 2014,
+      "authors": [
+        {
+          "name": "G. Chabot-Couture",
+          "id": "1387950133"
+        },
+        {
+          "name": "Karima R. Nigmatulina",
+          "id": "2207628"
+        },
+        {
+          "name": "P. Eckhoff",
+          "id": "1979314"
+        }
+      ],
+      "venue": "PLoS ONE",
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:17774932",
+      "publicationDate": null,
+      "citationCount": 28,
+      "categories": [],
+      "relevanceScore": 0.4209389182911939,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses dew point and minimum temperature as a proxy for humidity estimation, notes interpolation errors and seasonal lapse-rate effects, and suggests a better dew point climate layer.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "when measurements of dew point are not available, the minimum air temperature during the day can be an acceptable proxy",
+                "sectionTitle": "Relative humidity",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "the environmental dew point lapse rate is season dependent",
+                "sectionTitle": "Relative humidity",
+                "sentenceIds": []
+              },
+              {
+                "text": "and is larger than the air temperature lapse rate",
+                "sectionTitle": "Relative humidity",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "A possible improvement to the interpolation of the dew point would be to develop a supporting dew point climate layer",
+                "sectionTitle": "Relative humidity",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "Relative humidity can be calculated by combining measurements of air temperature and dew point.",
+                "sectionTitle": "Relative humidity",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [
+        {
+          "text": "Computing 10-day error measures is more appropriate due to the natural time scale of vector-borne diseases; as such, the median relative humidity 10-day bias is 3.08% (percentage points) and the median 10-day 95 th percentile absolute error is 11.0%. Since the air temperature was systematically more underestimated by the Kriging algorithm than dew point, the resulting relative humidity is systematically overestimated: the true value is outside of the interquartile prediction range for 8 out of the 26 weather stations. In File S1, detailed predictions and Kriging error distributions of dew point and relative humidity are presented for each weather station. \n\nIn our algorithm, the error of relative humidity is the combination of the Kriging (interpolation) error and the supporting climate layer error. The climate layer error for air temperature is that of the WorldClim data set (less than 1uC), and the climate layer error for the dew point is related to the lapse rate fit. The Kriging error is at most the intrinsic variability of the data set. In Figure 12a, we present the average 10-day variability of the relative humidity for weather stations across Africa. In Figure 12b, we combine this variability taking a fixed climate layer error of 1uC for both dew point and air temperature in order to estimate what average maximum error of our interpolation algorithm could produce in other regions. We note that the largest driver of error is the variability of the relative humidity. The combined standard error, which varies between 5% and 12.5%, is applicable only far from weather stations. In regions of higher weather station density, the climate layer and Kriging errors will decrease. The relative humidity in coastal areas varies less than the in-land relative humidity. \n\nIn our Madagascar example (Figure 6), we observe that the environmental dew point lapse rate is season dependent (as expected [85]), and is larger than the air temperature lapse rate, except during the dry season. This should be contrasted with the moist adiabatic lapse rate, which is typically smaller than the environmental lapse rate, and corresponds to the rate at which a ''parcel of air'', saturated with moisture, will cool when it rises.",
+          "sectionTitle": "Relative humidity",
+          "sentenceIds": []
+        },
+        {
+          "text": "Relative humidity can be calculated by combining measurements of air temperature and dew point. In some contexts, The interpolation of relative humidity between weather stations is typically performed by individually interpolating air temperature and dew point measurements, and then combining them [96,97]; a direct interpolation of relative humidity is more difficult [98]. In some contexts, when measurements of dew point are not available, the minimum air temperature during the day can be an acceptable proxy [99]. \n\nFew examples of dew point interpolation are available for comparison. Kim et al. [96], using a distance-based interpolation method, quote a mean absolute interpolation error for dew point of 1.3uC; this is comparable to our median mean absolute error of 1.25uC. \n\nA possible improvement to the interpolation of the dew point would be to develop a supporting dew point climate layer that includes all weather stations (not only the ones reporting on a specific day). Alternatively, remote sensing measurements of water vapor profile from MODIS 7 could also be used to create a relative humidity data set with improved spatial resolution; recent work has shown that an accurate relative humidity data set can be obtained in this way [69,94,100].",
+          "sectionTitle": "Relative humidity",
+          "sentenceIds": []
+        }
+      ],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 55557015,
+      "title": "Estimation of reference evapotranspiration in a mountainous mediterranean site using the Penman-Monteith equation with limited meteorological data",
+      "abstract": "In recent decades many authors have adopted the Penman- Monteith formula as the standard way to estimate reference evapotranspiration from climate data. The main drawback associated with the Penman-Monteith method is the relatively high data demand: temperature, solar radiation, relative humidity and wind speed are the minimum inputs required by the formula. In the Spanish Pyrenees historical databases usually consist of temperature and rainfall only, although an improvement in data acquisition is expected in terms of parameters monitored. Under situations of data scarcity, some authors recommend the use of less data intensive methods, such as the empirical Hargreaves equation. Other authors suggest that it is better to estimate the missing parameters and to apply the Penman-Monteith equation. This paper presents a study on the accuracy of the Penman-Monteith method for a situation where some parameters have to be estimated from available temperature, and wind speed data must be replaced by a constant value. The results have been compared with the information available for a location in the central Spanish Pyrenees (period 1999-2003) where parameters required by the Penman-Monteith method have been monitored. A comparison is then made with the Hargreaves model in order to assess the most appropriate method for calculation of the reference evapotranspiration. The results indicate that the use of the Penman-Monteith formula results in errors in reference evapotranspiration ETo estimation of different magnitude and sign throughout the year. However, in general, it offers a more accurate estimation of reference evapotranspiration than the Hargreaves formula.",
+      "year": 2009,
+      "authors": [
+        {
+          "name": "J. L\u00f3pez\u2010Moreno",
+          "id": "1399794957"
+        },
+        {
+          "name": "T. Hess",
+          "id": "50274749"
+        },
+        {
+          "name": "S. White",
+          "id": "153197228"
+        }
+      ],
+      "venue": null,
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:55557015",
+      "publicationDate": null,
+      "citationCount": 47,
+      "categories": [],
+      "relevanceScore": 0.515336855874699,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses minimum temperature as a dew-point proxy in Penman-Monteith vapour pressure estimation and notes it fails in arid/semiarid climates, affecting ETo calculations.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "T d is usually relatively constant during the day, and night-time minimum temperature, T min , tends to come into equilibrium with T d",
+                "sectionTitle": "Relative Humidity",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "This assumption has been shown to work well in a range of climates except in arid and semiarid areas",
+                "sectionTitle": "Relative Humidity",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 0,
+            "relevantSnippets": [],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "The mean daily vapour pressure, ed, can also be taken to be the saturation vapour pressure at mean daily dew-point temperature",
+                "sectionTitle": "Relative Humidity",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [
+        {
+          "text": "The mean daily vapour pressure deficit (ea -ed) in the P-M equation is usually determined from air temperature and relative humidity.\n\nThe mean saturation vapour pressure, ea, is estimated from ( 6)\n\nwhere e o (T) is the saturation vapour pressure at temperature, T, and is estimated from ( 7)\n\nThe mean daily vapour pressure, ed, is estimated from\n\nwhere h r is the mean daily relative humidity.\n\nThe mean daily vapour pressure, ed, can also be taken to be the saturation vapour pressure at mean daily dew-point temperature, T d .T d is usually relatively constant during the day, and night-time minimum temperature, T min , tends to come into equilibrium with T d .Thus, ed can be approximated from (9) This assumption has been shown to work well in a range of climates except in arid and semiarid areas (KIMBALL et al., 1997).",
+          "sectionTitle": "Relative Humidity",
+          "sentenceIds": []
+        }
+      ],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 195922148,
+      "title": "An open-source MEteoroLOgical observation time series DISaggregation Tool (MELODIST v0.1.1)",
+      "abstract": "Abstract. Meteorological time series with 1\u202fh time steps are required in many applications in geoscientific modelling. These hourly time series generally cover shorter periods of time compared to daily meteorological time series. We present an open-source MEteoroLOgical observation time series DISaggregation Tool (MELODIST). This software package is written in Python and comprises simple methods to temporally downscale (disaggregate) daily meteorological time series to hourly data. MELODIST is capable of disaggregating the most commonly used meteorological variables for geoscientific modelling including temperature, precipitation, humidity, wind speed, and shortwave radiation. In this way, disaggregation is performed independently for each variable considering a single site without spatial dependencies. The algorithms are validated against observed meteorological time series for five sites in different climates. Results indicate a good reconstruction of diurnal features at those sites. This makes the methodology interesting to users of models operating at hourly time steps, who want to apply their models for longer periods of time not covered by hourly observations.",
+      "year": 2016,
+      "authors": [
+        {
+          "name": "Kristian F\u00f6rster",
+          "id": "80243589"
+        },
+        {
+          "name": "F. Hanzer",
+          "id": "3390728"
+        },
+        {
+          "name": "Benjamin Winter",
+          "id": "47802513"
+        },
+        {
+          "name": "T. Marke",
+          "id": "3374715"
+        },
+        {
+          "name": "U. Strasser",
+          "id": "3363786"
+        }
+      ],
+      "venue": null,
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:195922148",
+      "publicationDate": null,
+      "citationCount": 64,
+      "categories": [],
+      "relevanceScore": 0.5795640285732802,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses dew point-based humidity disaggregation, including the Tmin\u2248Tdew assumption and fitted alternatives, to derive vapour pressure and relative humidity.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "Tdew,day is assumed to be equal to the daily minimum temperature.",
+                "sectionTitle": "Humidity disaggregation based on dew point temperature (H1 to H3)",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "validated against observed meteorological time series for five sites in different climates",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "H2 uses hourly observations of temperature and humidity to calculate the best fit for a and b",
+                "sectionTitle": "Humidity disaggregation based on dew point temperature (H1 to H3)",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "the actual vapour pressure is assumed equal to the saturated vapour pressure at dew point temperature",
+                "sectionTitle": "Humidity disaggregation based on dew point temperature (H1 to H3)",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [
+        {
+          "text": "Relative humidity H [%] is defined as the ratio of actual vapour pressure e a [hPa] to saturated vapor pressure e s [hPa]: \n\nIt generally follows a diurnal course with the maximum around sunrise and the minimum in the early afternoon (Debele et al., 2007). \n\nAll humidity disaggregation methods require already disaggregated temperature recordings. Methods H1 to H3 generate hourly values of dew point temperature T dew [K], as the actual vapour pressure is assumed equal to the saturated vapour pressure at dew point temperature. Hourly H values can thus be calculated using hourly values of T and T dew as \n\nSaturation vapour pressure for a given temperature T [ \u2022 C] is calculated using the Magnus formula (Alduchov and Eskridge, 1997): \n\nwhile actual vapour pressure for a given temperature T and relative humidity H [%] is calculated as \n\nMethods H1 and H2 use a model in the form of T dew, day = aT min +b to calculate daily dew point temperature (i.e., no diurnal dew point temperature variation is assumed). For H1, a = 1 and b = 0, i.e., T dew, day is assumed to be equal to the daily minimum temperature. H2 uses hourly observations of temperature and humidity to calculate the best fit for a and b for a given site. T dew is thereby calculated from T and H by inverting eq. ( 4): \n\nH3 assumes a diurnal dew point temperature variation based on the assumptions that dew point temperature varies linearly between consecutive days, and that mean daily dew point temperature occurs around sunrise (Debele et al., 2007). Dew point temperature for a given day d and hour h is thereby calculated as \n\nwhere \n\nk r should be set to 6 for sites with average monthly radiation higher than 100 W m \u22122 , and to 12 otherwise (Debele et al., 2007). An example application of these methods is shown in Fig. 4.",
+          "sectionTitle": "Humidity disaggregation based on dew point temperature (H1 to H3)",
+          "sentenceIds": []
+        }
+      ],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 128655311,
+      "title": "Spatial interpolation of daily humidity using natural neighbours over mountain areas in south eastern Australia.",
+      "abstract": "change of temperature with altitude of an air parcel. It is likely that spatial interpolation of humidity is affected by the terrain surrounding a point of interest. Terrain effect on humidity can be adjusted using the wet adiabatic lapse rate that applies to a saturated air parcel ascending within the atmosphere. The objectives of the present study were to determine the accuracy of interpolated humidity estimates using the natural neighbour method and to apply altitude adjustment to spatial interpolation in order to increase their accuracy.",
+      "year": 2008,
+      "authors": [
+        {
+          "name": "K. S. Kim",
+          "id": "70691635"
+        },
+        {
+          "name": "R. Beresford",
+          "id": "40657969"
+        },
+        {
+          "name": "W. Henshall",
+          "id": "49506771"
+        }
+      ],
+      "venue": null,
+      "journal": null,
+      "url": "https://doi.org/10.30843/nzpp.2008.61.6838",
+      "publicationDate": null,
+      "citationCount": 3,
+      "categories": [],
+      "relevanceScore": 0.32590572689511316,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses spatial interpolation of humidity and dew point over mountain terrain, with altitude adjustment to improve accuracy; related to humidity estimation errors but not the FAO-56 dew point assumption.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 0,
+            "relevantSnippets": [
+              {
+                "text": "interpolated humidity estimates using the natural neighbour method",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "over mountain areas in south eastern Australia",
+                "sectionTitle": "title",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "apply altitude adjustment to spatial interpolation in order to increase their accuracy",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "accuracy of interpolated humidity estimates",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 249857102,
+      "title": "Modelling diurnal pattern of relative humidity from daily air temperature and relative humidity data of Hyderabad",
+      "abstract": "This study presents a simple methodology to estimate diurnal patterns in dew point temperature/relative humidity on weekly basis from mean minimum temperature or the morning relative humidity under semi-arid climatic conditions of Hyderabad. The sinusoidal and exponential models for day time and night time temperature pattern have been utilized in working out the diurnal patterns of the relative humidity on weekly basis at Hyderabad. Diurnal variation in dew point has been found to have, by and large, a set pattern depending upon the morning dew point temperature. Diurnal relative humidity patterns have been worked out both from the estimated dew point/relative humidity and the actual recorded relative humidity. This model is expected to be quite useful for long term retrospective agro-climatological studies wherein daily relative humidity and/or diurnal patterns thereof are required as input.",
+      "year": 2011,
+      "authors": [
+        {
+          "name": "N. N. SRIVASTAVA",
+          "id": "2165020639"
+        },
+        {
+          "name": "V.U.M. RAO",
+          "id": "2144785179"
+        },
+        {
+          "name": "U. S. SAIKIA",
+          "id": "2155356346"
+        },
+        {
+          "name": "P. Vijaya Kumar",
+          "id": "2144785811"
+        },
+        {
+          "name": "A.V.M. SUBBA RAO",
+          "id": "2165019131"
+        }
+      ],
+      "venue": "Journal of Agrometeorology",
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:249857102",
+      "publicationDate": null,
+      "citationCount": 1,
+      "categories": [],
+      "relevanceScore": 0.4218809146666911,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses minimum temperature and morning humidity to estimate dew point/relative humidity in semi-arid Hyderabad, with hourly multipliers and vapour pressure calculations for diurnal humidity reconstruction.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "dew point temperature/relative humidity on weekly basis from mean minimum temperature",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "under semi-arid climatic conditions of Hyderabad",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "Hourly dew point multipliers were worked out",
+                "sectionTitle": "MATERIALS AND METHODS",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "The hourly actual vapour pressure was estimated using Teten's (1930) equation",
+                "sectionTitle": "MATERIALS AND METHODS",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [
+        {
+          "text": "This study presents a simple methodology to estimate diurnal patterns in dew point temperature/relative humidity on weekly basis from mean minimum temperature or the morning relative humidity under semi-arid climatic conditions of Hyderabad. The sinusoidal and exponential models for day time and night time temperature pattern have been utilized in working out the diurnal patterns of the relative humidity on weekly basis at Hyderabad. Diurnal variation in dew point has been found to have, by and large, a set pattern depending upon the morning dew point temperature. Diurnal relative humidity patterns have been worked out both from the estimated dew point/relative humidity and the actual recorded relative humidity. This model is expected to be quite useful for long term retrospective agro-climatological studies wherein daily relative humidity and/or diurnal patterns thereof are required as input.",
+          "sectionTitle": "abstract",
+          "sentenceIds": []
+        },
+        {
+          "text": "The long term (1995)(1996)(1997)(1998)(1999)(2000)(2001)(2002)(2003)(2004)(2005)(2006)(2007)(2008) hourly data on different weather parameters including the relative humidity for Hayathnagar Research Farm of Central Research Institute for Dryland Agriculture,Hyderabad (17\u00b0 20' N,78\u00b0 35' E,515.5 m.a.m.s.l.) recorded by an automatic weather station (Campbell Scientific Inc., Logan, USA) were used. The air temperature and relative humidity were recorded at standard hours i.e. 0700 and 1400 h L.M.T. (0716 h and 1416 h IST) as well. The AWS data were compared with manual data, recorded with standard dry and wet bulb thermometers put in Stevenson screen of a standard class 'A' meteorological Observatory. Regression equations were fitted between observatory and AWS data on temperature and relative humidity. The regression coefficients for both the temperature and the relative humidity were incorporated in logger programme. Daily hourly data on relative humidity were averaged to get daily mean hourly values for all the 52 weeks year wise. Subsequently the data from 1995-2007 were pooled to work out the diurnal dew point pattern using standard equations (Allen et al., 1998)  Hourly dew point multipliers were worked out by dividing mean hourly week wise (1995)(1996)(1997)(1998)(1999)(2000)(2001)(2002)(2003)(2004)(2005)(2006)(2007)) dew point temperature with morning time dew point temperature for all the 52 weeks. Table 1 shows these multipliers for few selected weeks which were selected for detailed comparison of the methodology. Hourly dew point temperature during test year of 2008 was estimated by multiplying the morning dew point temperature during different weeks by hourly dew point multipliers in respective weeks. The hourly actual vapour pressure was estimated using Teten's (1930) equation and the hourly dew point temperature mentioned just before.",
+          "sectionTitle": "MATERIALS AND METHODS",
+          "sentenceIds": []
+        }
+      ],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 60878010,
+      "title": "Estimating air humidity from temperature and precipitation measures for modelling applications",
+      "abstract": "Unlike precipitation and temperature, humidity is not widely measured, fostering the development of algorithms that simulate air humidity using other measures. In humid temperate climates, atmospheric water vapour close to the ground often reaches saturation around the time of minimum temperature. This allows models of daily maximum dew\u2010point temperature to be built from minimum air temperatures. Once the dew\u2010point temperature has been estimated, hourly values can be interpolated by assuming that water content in the air remains unchanged during the day, relative humidity being the result of the modulation of air temperature on vapour pressure at saturation. This approach requires certain corrections in order to take into account seasonal and local features. The present work investigated and tested the application of algorithms to simulate relative humidity from minimum daily temperatures in 23 meteorological stations in an Italian alpine region. The basic model is corrected by decreasing dew\u2010point temperature using temperature and precipitation measures, and also requires specific calibration. With respect to errors in the number of hours with high relative humidity, major biases may be generated at some sites. After correction, the number of sites where these techniques yield acceptable results ranges from about a quarter to a half of the total, the lower figure reflecting a stricter acceptance standard in the driest years. The simulation algorithms yield useful results for stations where site\u2010specific calibration can be carried out, encouraging the use of simulated series from selected sites for climatic, meteorological and phytopathological modelling. Copyright \u00a9 2011 Royal Meteorological Society",
+      "year": 2012,
+      "authors": [
+        {
+          "name": "E. Eccel",
+          "id": "3473835"
+        }
+      ],
+      "venue": null,
+      "journal": null,
+      "url": "https://doi.org/10.1002/met.258",
+      "publicationDate": null,
+      "citationCount": 70,
+      "categories": [],
+      "relevanceScore": 0.6196139430442086,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses minimum temperature to estimate dew point and relative humidity, then corrects the bias with temperature and precipitation; evaluates resulting humidity errors across alpine stations.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "atmospheric water vapour close to the ground often reaches saturation around the time of minimum temperature",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "tested the application of algorithms to simulate relative humidity from minimum daily temperatures in 23 meteorological stations in an Italian alpine region",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "The basic model is corrected by decreasing dew\u2010point temperature using temperature and precipitation measures",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "Once the dew\u2010point temperature has been estimated, hourly values can be interpolated",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              },
+              {
+                "text": "relative humidity being the result of the modulation of air temperature on vapour pressure at saturation",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 248380517,
+      "title": "Evaluation of FAO-56 Penman\u2013Monteith and alternative methods for estimating reference evapotranspiration using limited climatic data at Pusa",
+      "abstract": "The FAO-56 Penman\u2013Monteith method (FAO-56 PM) is standard method recognized by the Food and Agriculture Organization of the United Nations for estimating reference evapotranspiration (ETO). Unfortunately, some of climatic variables, especially relative humidity, solar radiation and wind speed are often missing which could impede the estimation of ETO with the FAO-56 PM method. To overcome the problem of availability of climatic variables, procedures to estimate ETO with missing climate data are proposed as part of the FAO methodology. Therefore, assessing the accuracy of these procedures for Pusa Observatory is important. \nThe comparison of ETO estimates using limited data to those computed with full data set revealed that the difference between ETO obtained from full and limited data set is small. Both the Mean Bias Error (MBE) and the Root Mean Square Error (RMSE) of the comparison were less than 0.35 and 1.00 with a minimum of \u201c0.11 and 0.29 mm day\u201d1, respectively, leading to small errors in the ETO estimates. R2, \u00f72-test and index of agreement values confirmed strong relationships among data for the year 1998 to 2006.",
+      "year": 2013,
+      "authors": [
+        {
+          "name": "S. Prasad",
+          "id": "2462227115"
+        },
+        {
+          "name": "Vishal Kumar",
+          "id": "2462652358"
+        }
+      ],
+      "venue": "Journal of Agrometeorology",
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:248380517",
+      "publicationDate": null,
+      "citationCount": 7,
+      "categories": [],
+      "relevanceScore": 0.4266256174328071,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses the FAO-56 dew point approximation to estimate actual vapour pressure from minimum temperature when humidity data are missing.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "the dew point temperature is close to the daily minimum air temperature (T min )",
+                "sectionTitle": "Relative humidity",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 0,
+            "relevantSnippets": [],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 0,
+            "relevantSnippets": [],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "the actual vapour pressure (e a ) could be obtained by assuming that the dew point temperature is close to the daily minimum air temperature",
+                "sectionTitle": "Relative humidity",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [
+        {
+          "text": "If the air humidity data is not available, the actual vapour pressure (e a ) could be obtained by assuming that the dew point temperature is close to the daily minimum air temperature (T min ) which is usually found at the time of sunrise in a location. The e a is estimated by:",
+          "sectionTitle": "Relative humidity",
+          "sentenceIds": []
+        }
+      ],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 109267370,
+      "title": "A simple formula for estimating evaporation rates in various climates, using temperature data alone",
+      "abstract": "The Penman formula for the evaporation rate from a lake is simplified to the following: \nE0=700Tm/(100\u2212A)+15(T\u2212Td)(80\u2212T)(mmday\u22121) \nwhere Tm = T + 0.006h, h is the elevation (metres), T is the mean temperature, A is the latitude (degrees) and Td is the mean dew-point. Values given by this formula typically differ from measured values by about 0.3 mm day\u22121 for annual means, 0.5 mm day\u22121 for monthly means, 0.9 mm day\u22121 for a week and 1.7 mm day\u22121 for a day. The formula applies over a wide range of climates. Monthly mean values of the term (T \u2212 Td) can be obtained either from an empirical table or from the following empirical relationship, provided precipitation is at least 5 mm month\u22121 and (T \u2212 Td) is at least 4\u00b0C: \n(T\u2212Td)=0.0023h+0.37T+0.53R+0.35Rann\u221210.9\u00b0C \nwhere R is the mean daily range of temperature and Rann is the difference between the mean temperatures of the hottest and coldest months. Thus the evaporation rate can be estimated simply from values for the elevation, latitude and daily maximum and minimum temperatures.",
+      "year": 1977,
+      "authors": [
+        {
+          "name": "E. Linacre",
+          "id": "17159835"
+        }
+      ],
+      "venue": null,
+      "journal": null,
+      "url": "https://doi.org/10.1016/0002-1571%2877%2990007-3",
+      "publicationDate": null,
+      "citationCount": 485,
+      "categories": [],
+      "relevanceScore": 0.33040714540841637,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses temperature, elevation, and latitude to estimate dew point-related terms for evaporation; includes an empirical correction table/formula, but does not directly analyze FAO-56 or humidity bias errors.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "(T\u2212Td)=0.0023h+0.37T+0.53R+0.35Rann\u221210.9\u00b0C",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "The formula applies over a wide range of climates.",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "Monthly mean values of the term (T \u2212 Td) can be obtained either from an empirical table",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "The Penman formula for the evaporation rate from a lake is simplified",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 225390613,
+      "title": "Temporal Trend Analysis of Meteorological Variables and Reference Evapotranspiration in the Inter-mountain Region of Wyoming",
+      "abstract": "Long-term trends in reference evapotranspiration (ETref) and its controlling factors are critical pieces of information in understanding how agricultural water requirements and water resources respond to a variable and changing climate. In this study, ETref, along with climate variables that directly and indirectly impact it, such as air temperature (T), incoming solar radiation (Rs), wind speed (u), relative humidity (RH), and precipitation (P), are discussed. All variables are analyzed for four weather stations located in irrigated agricultural regions of inter-mountain Wyoming: Pinedale, Torrington, Powell, and Worland. Non-parametric Mann\u2212Kendall (MK) trend test and Theil\u2013Sen\u2019s slope estimator were used to determine the statistical significance of positive or negative trends in climate variables and ETref. Three non-parametric methods\u2014(i) Pettitt Test (PT), (ii) Alexandersson\u2019s Standard Normal Homogeneity Test (SNHT), and (iii) Buishand\u2019s Range Test (BRT)\u2014were used to check the data homogeneity and to detect any significant Trend Change Point (TCP) in the measured data time-series. For the data influenced by serial correlation, a modified version of the MK test (pre-whitening) were applied. Over the study duration, a statistically significant positive trend in maximum, minimum, and average annual temperature (Tmax, Tmin, and Tavg, respectively) was observed at all stations, except for Torrington in the southeast part of Wyoming, where these temperature measures had negative trends. The study indicated that the recent warming trends are much more pronounced than during the 1930s Dust Bowl Era. For all the stations, no TCPs were observed for P; however, significant changes in trends were observed for Tmax and Tmin on both annual and seasonal timescales. Both grass and alfalfa reference evapotranspiration (ETo and ETr) had statistically significant positive trends in at least one season (in particular, the spring months of March, April, and May (MAM) or summer months of June, July, and August (JJA) at all stations, except the station located in southeast Wyoming (Torrington) where no statistically significant positive trends were observed. Torrington instead experienced statistically significant negative trends in ETo and ETr, particularly in the fall months of SON and winter months of DJF. Over the period-of-record, an overall change of +26, +31, \u221248, and +34 mm in ETo and +28, +40, \u221280, and +39 mm in ETr was observed at Pinedale, Powell, Torrington, and Worland, respectively. Our analysis indicated that both ETo (\u22123.4 mm year\u22121) and ETr (\u22125.3 mm year\u22121) are decreasing at a much faster rate in recent years at Torrington compared to other stations. Relationships between climate variables and ETo and ETr on an annual time-step reveal that ETo and ETr were significantly and positively correlated to Tavg, Tmax, Rs, Rn, and VPD, as well as significantly and negatively correlated to RH.",
+      "year": 2020,
+      "authors": [
+        {
+          "name": "V. Sharma",
+          "id": "2191913659"
+        },
+        {
+          "name": "Christopher Nicholson",
+          "id": "113198800"
+        },
+        {
+          "name": "Antony Bergantino",
+          "id": "104197366"
+        },
+        {
+          "name": "S. Irmak",
+          "id": "2684806"
+        },
+        {
+          "name": "D. Peck",
+          "id": "12698951"
+        }
+      ],
+      "venue": "Water",
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:225390613",
+      "publicationDate": null,
+      "citationCount": 13,
+      "categories": [],
+      "relevanceScore": 0.7775473324641528,
+      "relevanceJudgement": {
+        "relevance": 2,
+        "relevanceSummary": "Uses a calibrated dew point correction from Tmin for ETref inputs, noting the FAO-style Tmin\u2248Tdew assumption may fail in Wyoming\u2019s semi-arid climate and affect vapor pressure estimates.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "many studies assume minimum daily temperatures are in equilibrium with T dew",
+                "sectionTitle": "Study Area and Climate Data",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "in Wyoming's semi-arid climate, this assumption might not always be valid",
+                "sectionTitle": "Study Area and Climate Data",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "T dew was calculated by subtracting a temperature-dependent term from daily minimum temperature",
+                "sectionTitle": "Study Area and Climate Data",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "Actual vapor pressure (e a ) was calculated as: e a = 0.6108 exp 17.27T dew T dew + 237.3",
+                "sectionTitle": "Study Area and Climate Data",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [
+        {
+          "text": "and \u03b4 is the solar declination angle (rad), which was calculated as: \n\nThe R n was calculated as the radiation balance between incoming net shortwave radiation and outgoing net longwave radiation [27] as: \n\nThe R ns is calculated as the radiation balance between incoming shortwave radiation and reflected solar radiation as: \n\nwhere \u03b1 is surface albedo. In this study, a constant value of 0.23 is used for the analysis. Net longwave radiation is calculated as: \n\nwhere \u03c3 is Stefan\u2212Boltzmann constant of 4.903E \u22129 MJ K \u22124 m \u22122 d \u22121 , T max and T min are the daily maximum and minimum absolute temperature in Kelvin, e a is the actual vapor pressure (kPa), R s is incoming shortwave radiation, and R so is the clear sky solar radiation (MJ m \u22122 d \u22121 ), which is calculated as: R so = 0.75 + 2 \u00d7 10 \u22125 z R a (10) The daily soil heat flux (G) beneath the reference grass and alfalfa surface is generally small, so it was neglected for 24-h time-steps. Actual vapor pressure (e a ) was calculated as: e a = 0.6108 exp 17.27T dew T dew + 237.3 (11) T dew is the dew point temperature ( \u2022 C); however, in the absence of T dew data, many studies assume minimum daily temperatures are in equilibrium with T dew . This assumption is an acceptable approximation under clear sky conditions in sub-humid to humid climates. However, in Wyoming's semi-arid climate, this assumption might not always be valid. In this study, T dew was calculated by subtracting a temperature-dependent term from daily minimum temperature (T min ), following the procedure developed by [35]: \n\nwhere T day is diurnal temperature computed from daily T max and T avg as: \n\nThe coefficient k is a calibration coefficient that accounts for site-specific tendency for RH below 100%. Values for k were computed on a monthly basis using measured RH data for each automated weather station (Figure 2). ",
+          "sectionTitle": "Study Area and Climate Data",
+          "sentenceIds": []
+        },
+        {
+          "text": "Due to a lack of RH data at the Worland station, k values from the Powell station were used to calculate T dew . Missing RH data were calculated as the ratio of actual vapor pressure (e a ) to saturation vapor pressure (e s ) at the same air temperature as follows: \n\n  = (0.75 + 2 \u00d7 10 \u22125 )  (10) The daily soil heat flux (G) beneath the reference grass and alfalfa surface is generally small, so it was neglected for 24-hour time-steps. Actual vapor pressure (  ) was calculated as: \n\n  is the dew point temperature (\u00b0C); however, in the absence of   data, many studies assume minimum daily temperatures are in equilibrium with   . This assumption is an acceptable approximation under clear sky conditions in sub-humid to humid climates. However, in Wyoming's semiarid climate, this assumption might not always be valid. In this study,   was calculated by subtracting a temperature-dependent term from daily minimum temperature (   ), following the procedure developed by [35]: \n\nwhere   is diurnal temperature computed from daily   and   as: \n\nThe coefficient k is a calibration coefficient that accounts for site-specific tendency for RH below 100%. Values for k were computed on a monthly basis using measured RH data for each automated weather station (Figure 2). Due to a lack of RH data at the Worland station, k values from the Powell station were used to calculate Tdew. Missing RH data were calculated as the ratio of actual vapor pressure (  ) to saturation vapor pressure (  ) at the same air temperature as follows: \n\nThe   was calculated from measured values of   and   . The slope of saturation vapor pressure versus air temperature (\u0394) was calculated as a function of air temperature following [27]. The e s was calculated from measured values of T max and T min . The slope of saturation vapor pressure versus air temperature (\u2206) was calculated as a function of air temperature following [27]. \n\nWind speed measurement at 2 m height (u, m s \u22121 ) is an essential component of the standardized Penman\u2212Monteith equation.",
+          "sectionTitle": "Study Area and Climate Data",
+          "sentenceIds": []
+        }
+      ],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 253374033,
+      "title": "Assessment of a New Fire Risk Index for the Atlantic Forest, Brazil",
+      "abstract": "The general objective of this research was to propose a new fire risk index, specifically the Fire Risk Atlantic Forest (FIAF) index in Itatiaia National Park (PNI). The data were collected from two levels (2 and 10 m) of a micrometeorological tower, with a time series on an hourly scale, daily from 2018 to 2021. Two multiple regression models were generated for the two collection levels (FIAF 2 and 10 m) and, based on the statistical criteria and the choice of the best model, a future simulation was generated using the scenario SSP 4.5 for 2022 to 2050. The correlation matrix between the data from the FIAF and fire foci models was also analyzed. The FIAF model was compared with the traditional models already used in Brazil, such as the Angstr\u00f6m indices, Monte Alegre Formula (FMA), and the improved Monte Alegre Formula (FMA+) models. The results showed that the FIAF model at 10 m overestimated the results observed mainly during the dry season. The FIAF 2 m model presented the highest correlation with a fire foci value greater than 0.74. In the future simulation, the years that presented the highest extreme risks were: 2025, 2035, 2041, and 2049. Thus, it is possible to state that the FIAF model at the 2 m level was the best model for predicting the degree of fire risk in the PNI.",
+      "year": 2022,
+      "authors": [
+        {
+          "name": "R. Delgado",
+          "id": "51517053"
+        },
+        {
+          "name": "H. S. Wanderley",
+          "id": "2085471434"
+        },
+        {
+          "name": "M. G. Pereira",
+          "id": "117861241"
+        },
+        {
+          "name": "A. Almeida",
+          "id": "145395466"
+        },
+        {
+          "name": "Daniel Costa de Carvalho",
+          "id": "2065572750"
+        },
+        {
+          "name": "D. Lindemann",
+          "id": "2053465572"
+        },
+        {
+          "name": "E. Zonta",
+          "id": "2075002609"
+        },
+        {
+          "name": "S. J. M. D. C. Menezes",
+          "id": "2073785246"
+        },
+        {
+          "name": "Gilsonley Lopes dos Santos",
+          "id": "90530277"
+        },
+        {
+          "name": "R. O. Santana",
+          "id": "2056990696"
+        },
+        {
+          "name": "Renato Sinquini de Souza",
+          "id": "2092613566"
+        },
+        {
+          "name": "Otavio Augusto Queiroz dos Santos",
+          "id": "2054269461"
+        }
+      ],
+      "venue": "Forests",
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:253374033",
+      "publicationDate": null,
+      "citationCount": 8,
+      "categories": [],
+      "relevanceScore": 0.47908725174302863,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses the FAO-56 Tmin\u2248Tdew assumption to derive vapour pressure and relative humidity from model temperatures, but does not propose a correction or analyze dew-point bias by climate region.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "the method proposed in FAO bulletin 56 [36] was used, in which the minimum air temperature (T min ) would approximately equal the dew point temperature (T dew )",
+                "sectionTitle": "MRI-ESM2-0 Model-Intermediate Scenario (SSP4.5)",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "The FIAF model at 10 m overestimated the results observed mainly during the dry season.",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 0,
+            "relevantSnippets": [
+              {
+                "text": "the method proposed in FAO bulletin 56 [36] was used",
+                "sectionTitle": "MRI-ESM2-0 Model-Intermediate Scenario (SSP4.5)",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "the current water vapor pressure was calculated for the minimum air temperature (e a = e sTmin , kPa)",
+                "sectionTitle": "MRI-ESM2-0 Model-Intermediate Scenario (SSP4.5)",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [
+        {
+          "text": "For the new IPCC scenarios (2021), known as the Shared Socioeconomic Pathways (SSPs), the scenario chosen was the intermediate SSP4.5. The downloaded data comprised the model output on a daily time scale for the years 2022-2050 for the variables air temperature ( \u2022 C), minimum air temperature ( \u2022 C), rainfall (mm), and wind speed (m s \u22121 ). The MRI-ESM2-0 model does not include variable relative air humidity (%); therefore, the method proposed in FAO bulletin 56 [36] was used, in which the minimum air temperature (T min ) would approximately equal the dew point temperature (T dew ) (T dew \u2248 T min ). Based on this criterion, the current water vapor pressure was calculated for the minimum air temperature (e a = e sTmin , kPa) (Equation ( 5)). The saturation pressure in relation to air temperature (e sAT ; kPa) was estimated for the air temperature provided by the MRI-ESM2-0 model (Equation ( 6)), after which the relative humidity of the air at 13:00 h was estimated using the model proposed by [42] (Equations ( 7) and ( 8)). (5) e sAT = 0.61078 * 10 [( \n\nwhere, e a = e sTmin = Current water vapor pressure calculated from the saturation pressure e sTmin (kPa); \n\nForests 2022, 13, 1844 6 of 15 e sAT = Water vapor saturation pressure calculated from the average air temperature of the MRI model (kPa); RAH MRI = Relative humidity estimated from the current and saturation pressure of water vapor (Equations ( 5) and ( 6)) (%); RAH MRI13h = Estimated relative humidity for 13 h (%).",
+          "sectionTitle": "MRI-ESM2-0 Model-Intermediate Scenario (SSP4.5)",
+          "sentenceIds": []
+        }
+      ],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 288083688,
+      "title": "A high-resolution historical long-term gridded daily meteorological data set for agricultural climate change analysis in Japan",
+      "abstract": "We created a high-resolution (approximately 1 km x 1 km) historical (from 1978) gridded daily meteorological dataset, called the Historical Gridded Meteorological Dataset in Japan (HGMD-Japan), as basic information infrastructure for analyzing the impact of climate change on agricultural productivity in Japan. By adding wind speed and relative humidity to a previously developed dataset, a comprehensive dataset that contains the input meteorological data needed for existing major agricultural impact assessment models was developed. To maintain the time-series homogeneity of each variable, possible sources of time-series heterogeneities unrelated to climate change, such as changes in statistical methods and instrument types, were eliminated as far as possible. Additionally, some specific agro-meteorological variables that are related strongly to crop development environments, and seasonal or yearly indices that can indicate potential crop productivity (mainly for paddy rice) or risk of damage due to meteorological extreme events, such as the heat stress index, the water temperature of paddy fields, and the panicle temperature, are provided.",
+      "year": 2026,
+      "authors": [
+        {
+          "name": "Y. Ishigooka",
+          "id": "4088934"
+        },
+        {
+          "name": "T. Kuwagata",
+          "id": "4574848"
+        },
+        {
+          "name": "M. Yoshimoto",
+          "id": "29016618"
+        },
+        {
+          "name": "Toshihiro Hasegawa",
+          "id": "2260357594"
+        },
+        {
+          "name": "Motoki Nishimori",
+          "id": "2260355201"
+        },
+        {
+          "name": "Takahiro Takimoto",
+          "id": "2260354141"
+        },
+        {
+          "name": "Hitomi Wakatsuki",
+          "id": "39689938"
+        },
+        {
+          "name": "Y. Toda",
+          "id": "46837614"
+        }
+      ],
+      "venue": "Data in Brief",
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:288083688",
+      "publicationDate": null,
+      "citationCount": 1,
+      "categories": [],
+      "relevanceScore": 0.4013228612692052,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses dew point interpolation and an elevation correction to derive relative humidity from vapor pressure, with regional variation in the dew-point lapse rate.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "daily relative humidity at a target grid cell ( Rh : %) was estimated on the basis of the spatially interpolated dew point temperature",
+                "sectionTitle": "Relative humidity",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "Most of the values are within the range from -0.4 to -0.5 ( \u00b0C [100 m] -1 ) although there are slight variations depending on the season and region",
+                "sectionTitle": "Relative humidity",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "the value of (dT DEW /dz ) was set at -0.45 ( \u00b0C [100 m] -1 ) uniformly throughout the country",
+                "sectionTitle": "Relative humidity",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "daily relative humidity at a target grid cell ( Rh : %) was estimated on the basis of the spatially interpolated dew point temperature",
+                "sectionTitle": "Relative humidity",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [
+        {
+          "text": "Unlike other meteorological elements which are calculated by using procedures 1) to 4) describe above, gridded relative humidity data is calculated directly using observed relative humidity around target grid. Here, daily relative humidity at a target grid cell ( Rh : %) was estimated on the basis of the spatially interpolated dew point temperature ( Td : \u00b0C) and daily mean temperature ( Ta : \u00b0C) at the same grid cell: \n\nwhere e sat ( T ) is the saturated vapor pressure (hPa) at temperature T ( \u00b0C) and is estimated as: e sat ( T ) = 6 . 108 \u00d7 10 ( 7 . 5 T /( 237 . 3+ T ) ) (7) Td is estimated by using the following formula, taking the dependence of the dew point temperature on elevation into consideration: \n\ntd j + td j /w j n j=1 1 /w j (8) where td j is the observed dew point temperature at the j th observation point and w j is the weighting factor given by the inverse of the distance between the target grid cell and the j th observation point. td j is derived using daily mean vapor pressure observed at the j th observation point: td j = 237 . 3 \u00d7 log 10 e j / 6 . 108 / 7 . 5 \u2212 log 10 e j / 6 . 108 (9) e j = rh j / 100 \u00d7 e sat ta j where e j , rh j , and ta j , are the daily mean vapor pressure, daily mean relative humidity and daily mean temperature observed at the j th observation point, respectively. \n\nIn Japan, relative humidity observations were conducted exclusively at about 150 surface synoptic stations, but since 2021, they have also been implemented at AMeDAS stations. However, to maintain temporal and spatial homogeneity over the entire period of the data, HGMD-Japan does not use these data observed at AMeDAS. ",
+          "sectionTitle": "Relative humidity",
+          "sentenceIds": []
+        },
+        {
+          "text": "Therefore, only observations made at the surface synoptic stations were used to create gridded humidity data. \n\ntd j in Eq. ( 8) is the correction factor related to the dependence of dew point temperature on elevation: (10) where (dT DEW /dz ) is the rate of change in the dew point temperature relative to elevation and z c and z j are the elevations at the target grid cell and at the j th observation point, respectively. \n\nTo determine the value of (dT DEW /dz ), we investigated the relationship between elevation and dew point temperature based on observations. From among the surface synoptic stations, some pairs of nearby stations that had large differences in elevation were selected. Table 2 shows the monthly average of (dT DEW /dz ) for selected pairs of neighboring stations. Most of the values are within the range from -0.4 to -0.5 ( \u00b0C [100 m] -1 ) although there are slight variations depending on the season and region, except in the pair of \"Mt. Fuji -Kawaguchiko\" where the elevation of the upper station is extremely high (3775 m ASL). Considering that most of the agricultural land in Japan is distributed below 1500 m, the value of (dT DEW /dz ) was set at -0.45 ( \u00b0C [100 m] -1 ) uniformly throughout the country.",
+          "sectionTitle": "Relative humidity",
+          "sentenceIds": []
+        }
+      ],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 55302471,
+      "title": "The ability of a GCM-forced hydrological model to reproduce global discharge variability",
+      "abstract": "Abstract. Data from General Circulation Models (GCMs) are often used to investigate hydrological impacts of climate change. However GCM data are known to have large biases, especially for precipitation. In this study the usefulness of GCM data for hydrological studies, with focus on discharge variability and extremes, was tested by using bias-corrected daily climate data of the 20CM3 control experiment from a selection of twelve GCMs as input to the global hydrological model PCR-GLOBWB. Results of these runs were compared with discharge observations of the GRDC and discharges calculated from model runs based on two meteorological datasets constructed from the observation-based CRU TS2.1 and ERA-40 reanalysis. In the first dataset the CRU TS 2.1 monthly timeseries were downscaled to daily timeseries using the ERA-40 dataset (ERA6190). This dataset served as a best guess of the past climate and was used to analyze the performance of PCR-GLOBWB. The second dataset was created from the ERA-40 timeseries bias-corrected with the CRU TS 2.1 dataset using the same bias-correction method as applied to the GCM datasets (ERACLM). Through this dataset the influence of the bias-correction method was quantified. The bias-correction was limited to monthly mean values of precipitation, potential evaporation and temperature, as our focus was on the reproduction of inter- and intra-annual variability. After bias-correction the spread in discharge results of the GCM based runs decreased and results were similar to results of the ERA-40 based runs, especially for rivers with a strong seasonal pattern. Overall the bias-correction method resulted in a slight reduction of global runoff and the method performed less well in arid and mountainous regions. However, deviations between GCM results and GRDC statistics did decrease for Q , Q90 and IAV. After bias-correction consistency amongst models was high for mean discharge and timing (Qpeak), but relatively low for inter-annual variability (IAV). This suggests that GCMs can be of use in global hydrological impact studies in which persistence is of less relevance (e.g. in case of flood rather than drought studies). Furthermore, the bias-correction influences mean discharges more than extremes, which has the positive consequence that changes in daily rainfall distribution and subsequent changes in discharge extremes will also be preserved when the bias-correction method is applied to future GCM datasets. However, it also shows that agreement between GCMs remains relatively small for discharge extremes. Because of the large deviations between observed and simulated discharge, in which both errors in climate forcing, model structure and to a lesser extent observations are accumulated, it is advisable not to work with absolute discharge values for the derivation of future discharge projections, but rather calculate relative changes by dividing the absolute change by the absolute discharge calculated for the control experiment.",
+      "year": 2010,
+      "authors": [
+        {
+          "name": "F. Sperna Weiland",
+          "id": "9819522"
+        },
+        {
+          "name": "L. V. van Beek",
+          "id": "2244748787"
+        },
+        {
+          "name": "J. Kwadijk",
+          "id": "103977037"
+        },
+        {
+          "name": "M. Bierkens",
+          "id": "2231008"
+        }
+      ],
+      "venue": null,
+      "journal": null,
+      "url": "https://api.semanticscholar.org/CorpusId:55302471",
+      "publicationDate": null,
+      "citationCount": 157,
+      "categories": [],
+      "relevanceScore": 0.9497711418298727,
+      "relevanceJudgement": {
+        "relevance": 3,
+        "relevanceSummary": "Uses minimum temperature to estimate actual vapor pressure, notes the arid-region dew point bias, and applies Allen\u2019s 2\u00b0C correction.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "a simplified method to calculate the actual vapor pressure from the minimum air temperature (Allen et al., 1998)",
+                "sectionTitle": "Derivation of potential evaporation",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "For arid regions the assumption that the air is saturated when the temperature is at its minimum might not hold",
+                "sectionTitle": "Derivation of potential evaporation",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "As suggested by Allen (1998) we subtracted 2",
+                "sectionTitle": "Derivation of potential evaporation",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "calculate the actual vapor pressure from the minimum air temperature",
+                "sectionTitle": "Derivation of potential evaporation",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [
+        {
+          "text": "Both temperature and precipitation are directly available at the data portal for all selected climate models. Evaporation had to be derived from other variables, using the Penman-Monteith equation (Monteith, 1965). For those models where the required surface pressure fields were not directly available, surface pressure is derived from the pressure at sea level using a global DEM. Air humidity fields, required to calculate the actual vapor pressure, could not be retrieved from the data portal for the complete period for some of the GCMs. Therefore we used a simplified method to calculate the actual vapor pressure from the minimum air temperature (Allen et al., 1998). For arid regions the assumption that the air is saturated when the temperature is at its minimum might not hold and therefore the minimum temperature will not equal the dew temperature. As suggested by Allen (1998) we subtracted 2 \n\n\u2022 from the minimum temperature in the arid regions. Arid regions have been selected using the climate moisture indices of the WWDRII (UN, 2006). For those models where time-series for other required parameters were missing or incomplete we used the Blaney-Criddle equation (Brouwer and Heibloem, 1986;Oudin et al., 2005) instead of Penman-Monteith. We realize this may have introduced additional noise between the model results (Kay and Davies, 2008). Potential evaporation calculated with the Blaney-Criddle equation is too high for Europe, North-America and the north of Asia during summer and too low for Africa and Asia. Especially the first difference can result in deviations because, particularly at the beginning of summer, evaporation will not be limited by water availability and actual evaporation will be too high as well. However, hydrological model studies are forced to use what has been reported on by the GCMs host institutes and evaporation is not provided for most of the models. Introduction",
+          "sectionTitle": "Derivation of potential evaporation",
+          "sentenceIds": []
+        }
+      ],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 84499623,
+      "title": "An improved method for estimating surface humidity from daily minimum temperature",
+      "abstract": "Abstract Minimum daily air temperature ( T n ) is often used as a surrogate for mean daily dew point (TI,day) to estimate near-surface humidity. This method is unreliable under arid conditions where nightly minimum temperatures may remain well above the dew point. Daily meteorological data from 52 weather stations within the continental US and Alaska were evaluated. Daily differences between T d,day and T n were large in arid climates, with corresponding vapor pressure differences averaging between 0.8 and 1.2 kPa on an annual basis. Sites with semi-arid characteristics showed a large degree of seasonality in the results with average vapor pressure differences ranging from 0.1 to 0.6 kPa between winter and summer months. Sites in other climate regimes generally showed small differences between T n and T d,day over the entire year, corresponding to average vapor pressure differences of less than 0.3 kPa. An empirical model was developed to improve the accuracy of T n based humidity estimates using daily air temperature, annual precipitation and estimated daily potential evapotranspiration. The model reduced humidity estimation errors by up to 80% at semi-arid and arid sites and had minimal effects when T n based humidity estimates were relatively accurate. The ratio of annual precipitation to estimated annual evapotranspiration was useful for distinguishing sites where T n based humidity estimates were relatively accurate from sites where estimation errors were large. The results of this investigation provide a simple, more accurate method than T n for estimating humidity in arid and semi-arid regions using general weather station data.",
+      "year": 1997,
+      "authors": [
+        {
+          "name": "J. Kimball",
+          "id": "145060165"
+        },
+        {
+          "name": "S. Running",
+          "id": "10048021"
+        },
+        {
+          "name": "R. Nemani",
+          "id": "48834077"
+        }
+      ],
+      "venue": null,
+      "journal": null,
+      "url": "https://doi.org/10.1016/S0168-1923%2896%2902366-0",
+      "publicationDate": null,
+      "citationCount": 336,
+      "categories": [],
+      "relevanceScore": 0.9727929542521644,
+      "relevanceJudgement": {
+        "relevance": 3,
+        "relevanceSummary": "Uses minimum temperature as a dew point proxy, quantifies aridity-related humidity/vapor pressure errors, and proposes an empirical correction based on precipitation and evapotranspiration.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "Minimum daily air temperature ( T n ) is often used as a surrogate for mean daily dew point",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "Daily differences between T d,day and T n were large in arid climates",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "An empirical model was developed to improve the accuracy of T n based humidity estimates",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "corresponding vapor pressure differences averaging between 0.8 and 1.2 kPa",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 130365108,
+      "title": "Development of Hourly Meteorological Values From Daily Data and Significance to Hydrological Modeling at H.J. Andrews Experimental Forest",
+      "abstract": "Hydrologic modeling depends on having quality meteorological input available at the simulation time step. Often two needs arise: disaggregation from daily to subdaily and extend an available subdaily record. Simple techniques were tested for generating hourly air temperature, precipitation, solar radiation, relative humidity, and wind speed from limited daily data at the H. J. Andrews Experimental Forest, Oregon. Skill of the daily to hourly methods ranged from poor to very good. The best method for each variable had mean error ,4% and first-degree efficiency.0.5, with the exception of wind speed, which had a bias problem related to change in measurement height. Significance of the disaggregation assumptions for simulated hydrology was evaluated by driving the Distributed Hydrology Soil Vegetation Model (DHSVM) with alternative meteorological inputs. The largest differences in streamflow simulation efficiency were related to differences in precipitation phase, which followed from the air temperature method used. The largest differences in annual water balance were related to the humidity model used; the common fallback assumption that daily dewpoint temperature equals minimum air temperature led to sharply higher evapotranspiration. Hourly streamflow and annual water balance were less sensitive to the method of distributing precipitation throughout the day and parameterization of solar radiation.",
+      "year": 2003,
+      "authors": [
+        {
+          "name": "S. Waichler",
+          "id": "3220622"
+        },
+        {
+          "name": "M. Wigmosta",
+          "id": "5388192"
+        }
+      ],
+      "venue": null,
+      "journal": null,
+      "url": "https://doi.org/10.1175/1525-7541%282003%294%3C251%3ADOHMVF%3E2.0.CO%3B2",
+      "publicationDate": null,
+      "citationCount": 82,
+      "categories": [],
+      "relevanceScore": 0.3690772986273763,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses the dew point = minimum temperature fallback and shows it can strongly affect evapotranspiration and water-balance simulations, but does not propose a bias correction or analyze multiple climate regions.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "the common fallback assumption that daily dewpoint temperature equals minimum air temperature",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 0,
+            "relevantSnippets": [
+              {
+                "text": "at the H. J. Andrews Experimental Forest, Oregon",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 0,
+            "relevantSnippets": [],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "the humidity model used; the common fallback assumption that daily dewpoint temperature equals minimum air temperature led to sharply higher evapotranspiration",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 123010154,
+      "title": "Modelling diurnal patterns of air temperature, radiation wind speed and relative humidity by equations from daily characteristics",
+      "abstract": "Abstract Calculated data on diurnal patterns from daily averages can be useful as inputs for models simulating plant processes such as photosynthesis and transpiration. A method was developed for the calculation of diurnal patterns of air temperature, wind speed, global radiation and relative humidity from available daily data. Calculated data were validated with measured data collected in Israel, California and The Netherlands. A simple sine-exponential method for describing diurnal air temperature was not sufficient in most cases, and the addition of parameters which specified the time lag of maximum temperature and the effect of buoyancy improved the data accuracy. Diurnal course of wind speed could be described using two sine curves scaled by the measured daily total wind run. Time base of each of the sine curves and the minimum wind speed had to be defined for each location. An accurate description of the diurnal global radiation was obtained, based on the measured daily total global radiation, and the calculated sine of the solar elevation corrected for atmospheric transmissivity. Relative humidity was calculated from the dew point temperature computed as the minimum value of a characteristic seasonal value or the actual air temperature. When the site-specific parameters were known or correctly estimated these methods gave good estimations of the diurnal weather patterns.",
+      "year": 1996,
+      "authors": [
+        {
+          "name": "J. Ephrath",
+          "id": "3818477"
+        },
+        {
+          "name": "J. Goudriaan",
+          "id": "3579776"
+        },
+        {
+          "name": "A. Marani",
+          "id": "2068820"
+        }
+      ],
+      "venue": null,
+      "journal": null,
+      "url": "https://doi.org/10.1016/0308-521X%2895%2900068-G",
+      "publicationDate": null,
+      "citationCount": 108,
+      "categories": [],
+      "relevanceScore": 0.33609646808393534,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses dew point-derived relative humidity in a diurnal weather model and validates it across Israel, California, and The Netherlands, but does not focus on FAO-56 dew point bias corrections.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "Relative humidity was calculated from the dew point temperature computed as the minimum value of a characteristic seasonal value or the actual air temperature.",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "Calculated data were validated with measured data collected in Israel, California and The Netherlands.",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 0,
+            "relevantSnippets": [
+              {
+                "text": "the addition of parameters which specified the time lag of maximum temperature and the effect of buoyancy improved the data accuracy.",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "Relative humidity was calculated from the dew point temperature",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    },
+    {
+      "corpusId": 159423556,
+      "title": "Computing FAO56 reference grass evapotranspiration PM-ETo from temperature with focus on solar radiation",
+      "abstract": "Abstract The computation of the reference crop evapotranspiration (ETo) using the FAO Penman-Monteith equation (PM-ETo) requires data on maximum and minimum air temperatures (Tmax, Tmin), vapour pressure deficit (VPD), solar radiation (Rs) and wind speed at 2\u2009m height (u2). However, those data are often not available, or data sets may be incomplete or have questionable quality. Various procedures were proposed in FAO56 to overcome these limitations and an abundant literature has been and is being produced relative to alternative computational methods. Studies applied to a variety of climates, from hyper-arid to humid, have demonstrated that improved methods to compute PM-ETo from temperature only (PMT approach) have appropriate accuracy. These methods refer to estimating: (i) the dew point temperature (Tdew) from Tmin or, in case of humid climates, from the mean temperature, Tmean; (ii) Rs from the temperature difference (TD\u2009=\u2009Tmax-Tmin); and (iii) u2 using default global or regional values. Greater difficulties refer to the need for locally calibrating the radiation adjustment coefficient (kRs) used with the Rs equation. Therefore, considering that calibrated kRs values were made available by past studies for a large number of locations and diverse climates, the current study developed and tested simple computational approaches relating locally calibrated kRs with various observed weather variables \u2013 TD, relative humidity (RH) and average u2. The equations were developed using CLIMWAT monthly full-data relative to all the Mediterranean countries. The equations refer to all available data, or to data grouped as hyper-arid and arid, semi-arid, dry and moist sub-humid, and humid climates. To test those kRs equations, ETo computed from temperature and using the predicted kRs values were compared with ETo computed with full data sets of the same Mediterranean locations and of Iran, Inner Mongolia, Portugal and Bolivia. RMSE average values result then small, ranging from 0.34 to 0.54\u2009mm day\u22121, therefore not very far from values obtained when a trial and error procedure was used for all the same locations, from 0.27 to 0.46\u2009mm day\u22121. These indicators allow to propose the use of kRs obtained from the predictive equations instead of locally calibrated kRs values, which greatly eases computations and may largely favour the use of the PMT approach.",
+      "year": 2019,
+      "authors": [
+        {
+          "name": "P. Paredes",
+          "id": "144830768"
+        },
+        {
+          "name": "L. Pereira",
+          "id": "144378467"
+        }
+      ],
+      "venue": "Agricultural Water Management",
+      "journal": null,
+      "url": "https://doi.org/10.1016/J.AGWAT.2018.12.014",
+      "publicationDate": null,
+      "citationCount": 52,
+      "categories": [],
+      "relevanceScore": 0.5740409240838128,
+      "relevanceJudgement": {
+        "relevance": 1,
+        "relevanceSummary": "Uses Tmin-based dew point estimation in FAO56 PM-ETo and discusses climate-dependent performance; focuses more on radiation calibration than explicit dew point bias correction or humidity error analysis.",
+        "relevanceCriteriaJudgements": [
+          {
+            "name": "Evaluation of the FAO-56 dew point assumption",
+            "relevance": 3,
+            "relevantSnippets": [
+              {
+                "text": "estimating: (i) the dew point temperature (Tdew) from Tmin",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Assessment of estimation errors in various climate regions",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "Studies applied to a variety of climates, from hyper-arid to humid",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Proposed corrections for dew point estimation biases",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "the current study developed and tested simple computational approaches relating locally calibrated kRs with various observed weather variables",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          },
+          {
+            "name": "Implications for vapour pressure or humidity estimation",
+            "relevance": 1,
+            "relevantSnippets": [
+              {
+                "text": "PM-ETo requires data on maximum and minimum air temperatures (Tmax, Tmin), vapour pressure deficit (VPD)",
+                "sectionTitle": "abstract",
+                "sentenceIds": []
+              }
+            ],
+            "numOfOmittedRelevanceSnippetsDueLegal": 0
+          }
+        ]
+      },
+      "snippets": [],
+      "citationContexts": [],
+      "legalToShow": true,
+      "numOfOmittedCitationContextsDueLegal": 0
+    }
+  ],
+  "thread_id": "854761cd-e79d-43fa-88f1-5598c8184a47",
+  "narrative": "The search identified several papers that directly address the validity and bias of estimating dew point temperature from daily minimum temperature, focusing on the FAO-56 assumption. \n\nKey findings from the literature:\n\n1. The FAO-56 assumption\u2014that dew point temperature is approximately equal to daily minimum temperature\u2014has been shown to introduce systematic errors, especially in arid, semi-arid, and high-elevation mountain regions. These errors can lead to significant overestimation or underestimation of vapour pressure, dew point, and relative humidity.\n\n2. <paper corpusid=\"84499623\">An improved method for estimating surface humidity from daily minimum temperature</paper> quantifies these errors in arid climates and proposes an empirical correction, improving accuracy by applying an offset to the minimum temperature.\n\n3. <paper corpusid=\"55302471\">The ability of a GCM-forced hydrological model to reproduce global discharge variability</paper> applies and critiques the FAO-56 assumption, documents its bias in arid regions, and uses a 2\u00b0C correction (Allen\u2019s offset) to improve estimates.\n\n4. <paper corpusid=\"272607389\">Satellite-based near-real-time global daily terrestrial evapotranspiration estimates</paper> uses daily minimum temperature as a dew point proxy, applies a 2\u00b0C correction in arid and semi-arid regions, and discusses the impact of this bias on evapotranspiration and humidity calculations.\n\n5. Additional papers in the results further document regional errors, alternative correction methods (such as aridity-dependent or temperature/precipitation-based offsets), and implications for estimating vapour pressure and humidity from air temperature.\n\nConfidence is very high\u2014these results include both foundational and recent studies that directly address your query. If you need a more detailed breakdown of correction methods or wish to focus on a specific region or approach, specify your interest for further analysis."
+}

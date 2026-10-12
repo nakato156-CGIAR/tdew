@@ -1,7 +1,7 @@
 # HPC_code — run TDEW on SLURM / GPU
 
 This folder runs the TDEW pipeline on a cluster (SLURM, CPU multi-node) or a GPU, plus the
-benchmark harness for the scaling study in `tdew_estimation_pram.qmd`. Local single-machine
+benchmark harness for the scaling study in `../reports/pram/tdew_estimation_pram.qmd`. Local single-machine
 execution lives in [`../Local/`](../Local/); the shared algorithm lives in the `tdew_estimation`
 package and is used unchanged by both.
 

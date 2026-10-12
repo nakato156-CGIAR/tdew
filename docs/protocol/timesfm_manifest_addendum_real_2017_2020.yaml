@@ -1,0 +1,46 @@
+# Addendum — producto TimesFM 2017-2020 (E9)
+#
+# No modifica docs/protocol/timesfm_manifest.yaml ni el addendum de 2026-10-02.
+# Los registros de proveniencia del producto 2017-2020 citan este archivo.
+
+addendum_de: "docs/protocol/timesfm_manifest.yaml@2026-09-22"
+referencia_limpia: "docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml"
+fecha: "2026-10-02"
+bead_id: tdew-214.13
+plan: PLAN_3.md
+
+split_real:
+  nombre: real_2017_2020
+  contexto: ["1981-01-01", "2016-12-31"]   # 13.149 dias
+  horizonte: ["2017-01-01", "2020-12-31"]  # 1.461 dias, una sola pasada, sin reentrenar ni re-emitir
+  variante: tmin_anom_full                 # objetivo anomalia de Td, covariable futura anomalia de Tmin
+  tmin_futura: "$RES/future_tmin_by_bucket/id_bucket=XXXX/future_tmin_{2017..2020}.parquet (solo lectura)"
+  climatologia: "solo años de contexto (1981-2016)"
+  codigo: [experiments/timesfm/panel.py, experiments/timesfm/real.py, experiments/timesfm/real_compare.py]
+
+panel:
+  fuente: "$RES/tuning/predictions_2017_2020 (producto de Palacios)"
+  celdas: 2178827
+  valores: 3183266247   # 2.178.827 celdas x 1.461 dias
+  panel_id: real_2178827_td
+
+salida:
+  ruta: /home/cvelasquez/tdew_timesfm/preds_real/   # fuera de git y fuera de $RES
+  esquema: "ID int32, day int16 (0..1460), pred y q10..q90 float32; zstd"
+  sentinela: ".done por bucket; MANIFEST.csv regenerado desde los .done"
+
+sin_verdad_observada: >
+  No existe Td observada en 2017-2020. Las metricas del analisis posterior
+  (real_compare.py) son de acuerdo entre productos (diferencia TimesFM - Palacios:
+  sesgo, RMSE, MAE y r), no de error. El sesgo no se interpreta como sesgo del metodo.
+
+licencia: >
+  Los pesos de TimesFM 3.0 no permiten uso comercial ni productivo
+  (reports/timesfm_benchmark/limitaciones.md, sec. 9). El producto es un entregable
+  de investigacion y no un producto operativo.
+
+sin_cambio:
+  - variantes y checkpoint de TimesFM
+  - make_positive=False
+  - TF32 activado (como en el benchmark)
+  - producto de Palacios (solo lectura)

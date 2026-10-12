@@ -1,0 +1,59 @@
+{
+  "autoregressive": false,
+  "bead_id": "tdew-x46",
+  "climatology_role": "target_anomaly_base_and_input_covariates",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-09-24T19:20:49+00:00",
+  "git_commit": "e99316d1ef216cbab008c6af078a33cdff9d7009",
+  "inputs": [
+    "Tmin",
+    "Tmax",
+    "Td_historico",
+    "DEM",
+    "TDI",
+    "LST_DAY",
+    "LST_NIGHT",
+    "X",
+    "Y",
+    "sin(DOY)",
+    "cos(DOY)"
+  ],
+  "manifest_ref": "docs/protocol/week1_manifest.yaml@2026-09-15",
+  "mlflow_run_id": null,
+  "model_family": "tcn_attention",
+  "model_id": "week1-tcn-attention",
+  "notes": "Auditoria independiente del run week1-tcn-attention, ejecutada 2026-09-21 sobre un checkpoint ya entrenado (no reentrena nada); ver reports/week1_tcn_audit/README.md",
+  "output_files": [
+    "/home/cvelasquez/Code/tdew/reports/week1_tcn_audit/ablation.csv",
+    "/home/cvelasquez/Code/tdew/reports/week1_tcn_audit/ablation_gpu.csv",
+    "/home/cvelasquez/Code/tdew/reports/week1_tcn_audit/batches.csv",
+    "/home/cvelasquez/Code/tdew/reports/week1_tcn_audit/compare_predictors.csv",
+    "/home/cvelasquez/Code/tdew/reports/week1_tcn_audit/gradient_share.csv",
+    "/home/cvelasquez/Code/tdew/reports/week1_tcn_audit/memorization.csv",
+    "/home/cvelasquez/Code/tdew/reports/week1_tcn_audit/probes.csv",
+    "/home/cvelasquez/Code/tdew/reports/week1_tcn_audit/sensitivity_best.pt.csv",
+    "/home/cvelasquez/Code/tdew/reports/week1_tcn_audit/sensitivity_last.pt.csv",
+    "/home/cvelasquez/Code/tdew/reports/week1_tcn_audit/train_val_gap.csv"
+  ],
+  "panel_cell_count": 436519,
+  "panel_file": null,
+  "panel_id": "ALL",
+  "run_id": "40a3fd96aa704802ade89f20792bb2f1",
+  "seeds": [
+    0
+  ],
+  "split_id": "validation",
+  "target_type": "td_anomaly",
+  "test_period": null,
+  "trained": true,
+  "training_period": [
+    "2002-01-01",
+    "2012-12-31"
+  ],
+  "validation_period": [
+    "2013-01-01",
+    "2014-12-31"
+  ],
+  "variant_label": "week1-tcn-attention_L31_seed0"
+}

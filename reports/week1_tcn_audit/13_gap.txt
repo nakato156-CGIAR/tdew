@@ -1,0 +1,23 @@
+/tmp/claude-1001/-home-cvelasquez-Code-tdew/9415381c-fc93-47a2-9bd6-06415dbba794/scratchpad/audit-wt/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py:68: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+mismas celdas (seed=777, 4 buckets x 8 celdas/sitio) en los tres splits
+
+     split               sitio      n  celdas  std_TD_anom_norm  std_TD_clim  rmse_clim  rmse_persistencia  rmse_modelo  autocorr_lag1
+     train                lima 127552      32            0.8638       6.4515     0.9602             0.5893       0.5686         0.8116
+     train               cusco 127552      32            0.8053       7.2308     0.8952             0.6439       0.5673         0.7413
+     train      iquitos_loreto 127552      32            1.0714       1.9000     1.1909             0.9151       0.1466         0.7048
+     train tarapoto_san_martin 127552      32            0.7004       4.0944     0.7786             0.5271       0.3438         0.7708
+validation                lima  22368      32            0.9601       6.4478     1.0675             0.6712       0.6976         0.8022
+validation               cusco  22368      32            0.8970       7.2358     0.9980             0.7362       0.7510         0.7275
+validation      iquitos_loreto  22368      32            1.2589       1.9207     1.4058             1.0243       1.1059         0.7321
+validation tarapoto_san_martin  22368      32            0.8289       4.0968     0.9251             0.5969       0.6422         0.7901
+      test                lima  22400      32            1.0425       6.4475     1.2221             0.7039       0.7573         0.8155
+      test               cusco  22400      32            0.9637       7.2354     1.0978             0.7548       0.7687         0.7517
+      test      iquitos_loreto  22400      32            1.2874       1.9201     1.5803             1.0332       1.1493         0.7396
+      test tarapoto_san_martin  22400      32            0.8533       4.0966     1.0620             0.5991       0.6521         0.8006
+
+=== razon modelo validation / modelo train, y lo mismo para persistencia ===
+   lima                   modelo v/t=  1.23  persistencia v/t=  1.14  clim v/t=  1.11  std_anom v/t=  1.11
+   cusco                  modelo v/t=  1.32  persistencia v/t=  1.14  clim v/t=  1.11  std_anom v/t=  1.11
+   iquitos_loreto         modelo v/t=  7.54  persistencia v/t=  1.12  clim v/t=  1.18  std_anom v/t=  1.18
+   tarapoto_san_martin    modelo v/t=  1.87  persistencia v/t=  1.13  clim v/t=  1.19  std_anom v/t=  1.18

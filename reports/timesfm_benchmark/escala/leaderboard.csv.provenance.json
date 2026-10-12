@@ -1,0 +1,38 @@
+{
+  "autoregressive": false,
+  "bead_id": "tdew-214.14.2",
+  "climatology_role": "is_the_method",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-10-12T17:03:13+00:00",
+  "git_commit": "afa517fcaf3cc5f04b7876243106dd5c24671988",
+  "inputs": [
+    "doy"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest.yaml@2026-09-22",
+  "mlflow_run_id": null,
+  "model_family": "statistical_baseline",
+  "model_id": "climatology",
+  "notes": "backtest_predictions=/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_escala_sub/ll4/predictions.parquet; tuned con selecci\u00f3n con fuga (manifiesto de recetas con 1981-2016), no comparable con backtest_clean",
+  "output_files": [
+    "reports/timesfm_benchmark/escala/leaderboard.csv"
+  ],
+  "panel_cell_count": 5857,
+  "panel_file": null,
+  "panel_id": "tarapoto_san_martin",
+  "run_id": "dcd995b33c5647298b62f21c6e0cb86a",
+  "seeds": [],
+  "split_id": "ll4",
+  "target_type": "td_raw",
+  "test_period": [
+    "2013-01-01",
+    "2016-12-31"
+  ],
+  "trained": true,
+  "training_period": [
+    "1981-01-01",
+    "2012-12-31"
+  ],
+  "validation_period": null,
+  "variant_label": "climatology"
+}

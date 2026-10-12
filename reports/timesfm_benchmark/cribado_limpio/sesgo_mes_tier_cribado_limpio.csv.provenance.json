@@ -1,0 +1,37 @@
+{
+  "autoregressive": false,
+  "bead_id": "tdew-0bt",
+  "climatology_role": "target_anomaly_base",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-10-02T18:51:09+00:00",
+  "git_commit": "4895735d3adcb15aac6af78d188854758fa219f1",
+  "inputs": [
+    "TMIN_anom"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml",
+  "mlflow_run_id": "4c2c366b3e204b8f8ff384ed3d7ddbbd",
+  "model_family": "timesfm-3.0",
+  "model_id": "google/timesfm-3.0-pytorch",
+  "notes": "backtest_root=/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean; selecci\u00f3n solo con a\u00f1os de entrenamiento; cells=1092; predicciones float32 agregadas en float64; mes por FECHA, sesgo pooled; E5/E8 solo c\u00f3mputo sobre predicciones existentes",
+  "output_files": [
+    "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/cribado_limpio/tiers_cribado_limpio.csv",
+    "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/cribado_limpio/sesgo_mensual_cribado_limpio.csv",
+    "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/cribado_limpio/sesgo_mes_tier_cribado_limpio.csv"
+  ],
+  "panel_cell_count": 1092,
+  "panel_file": "reports/timesfm_benchmark/panels/cribado_estratificado.csv",
+  "panel_id": "cribado_1092_limpio",
+  "run_id": "5d55313991fe4329a5abb53904b177b6",
+  "seeds": [],
+  "split_id": "ll4",
+  "target_type": "td_anomaly",
+  "test_period": [
+    "2013-01-01",
+    "2016-12-31"
+  ],
+  "trained": false,
+  "training_period": null,
+  "validation_period": null,
+  "variant_label": "tmin_anom_full"
+}

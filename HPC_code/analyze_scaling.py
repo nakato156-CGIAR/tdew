@@ -81,7 +81,7 @@ def _slug(*parts) -> str:
 
 # ---------------------------------------------------------------------------------------
 # Theoretical reference: the memory-bandwidth-contention model (derived in
-# tdew_estimation_pram.qmd, "Theoretical Efficiency" section). Each unit of work needs
+# reports/pram/tdew_estimation_pram.qmd, "Theoretical Efficiency" section). Each unit of work needs
 # compute time t_c and moves q bytes over the memory bus shared by all p cores, so
 #   T_p ≈ W · (t_c / p + q / β)
 # and, with γ = (q/β) / t_c (memory-time : compute-time ratio per unit of work),

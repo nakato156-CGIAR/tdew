@@ -1,0 +1,14 @@
+version: 1
+metadata_columns:
+  ID: ID
+  department: departamento
+  date: fecha
+  year_horizon: anio_horizonte
+  TD_obs: TD_obs
+  TD_clim: TD_clim
+  seed: seed
+  fold: fold
+prediction_columns:
+  tuned: TD_pred_tuned
+  ridge_full: TD_pred_ridge_full
+  histgb_full: TD_pred_histgb_full

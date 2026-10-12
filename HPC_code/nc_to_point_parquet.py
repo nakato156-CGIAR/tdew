@@ -90,6 +90,7 @@ def open_pisco(nc_dir: Path, *, chunk_time: int = 31):
         )
 
     lon = _pick(_LON_NAMES, set(ds.coords) | set(ds.dims))
+
     lat = _pick(_LAT_NAMES, set(ds.coords) | set(ds.dims))
     tname = _pick(_TIME_NAMES, set(ds.coords) | set(ds.dims))
 

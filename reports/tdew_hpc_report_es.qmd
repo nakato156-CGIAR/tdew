@@ -117,7 +117,7 @@ $\gamma$ debe describir todos los tamaños de problema — exactamente las curva
 ajuste por mínimos cuadrados sobre los tres tamaños da $\gamma \approx 0{,}063$ (predicho $E(8)=0{,}71$,
 $E(32)=0{,}35$ vs medido 0,70–0,71 / 0,34–0,35) y un techo de aceleración
 $S(\infty) = 1+1/\gamma \approx 17$, consistente con la meseta de @fig-cpu-speedup. La derivación
-completa está en el documento de complejidad PRAM (`tdew_estimation_pram.qmd`, sección
+completa está en el documento de complejidad PRAM (`pram/tdew_estimation_pram.qmd`, sección
 "Theoretical Efficiency").
 
 ---
@@ -186,7 +186,7 @@ $\eta(M)=T_{bound}/T_{meas}$ — es el análogo de la eficiencia para una sola G
 $\eta \approx 0{,}9$ en el M más grande (prácticamente en su roofline), mientras que `convolve` está
 dominado por el costo de lanzamiento en M pequeños (plano en ≈ 7 ms, $\eta \approx 0{,}1$) y sube a
 medida que el lote llena el dispositivo — precisamente por eso la GPU prefiere **buckets grandes**.
-Derivación en `tdew_estimation_pram.qmd`, sección "Theoretical Efficiency".
+Derivación en `pram/tdew_estimation_pram.qmd`, sección "Theoretical Efficiency".
 
 ---
 

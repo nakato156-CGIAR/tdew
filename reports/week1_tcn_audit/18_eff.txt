@@ -1,0 +1,15 @@
+/tmp/claude-1001/-home-cvelasquez-Code-tdew/9415381c-fc93-47a2-9bd6-06415dbba794/scratchpad/audit-wt/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py:68: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+espectro de la correlacion entre celdas (bucket 0, serie completa)
+
+              sitio  celdas_muestreadas  dias  corr_mediana_entre_celdas  var_1er_componente  comp_para_90pct  comp_para_99pct  rango_efectivo_PR
+               lima                 300  5479                     0.6923              0.6453                3               15             2.1427
+              cusco                 300  5479                     0.5389              0.5245                4               15             2.8666
+     iquitos_loreto                 300  5479                     0.9262              0.8988                2                3             1.2307
+tarapoto_san_martin                 300  5479                     0.8100              0.7736                3                7             1.6204
+
+=== combinado con el tamano real de cada sitio ===
+   lima                   celdas= 29,079  ventanas_train=  115,937,973  rango_efectivo/celdas=0.0071  -> celdas efectivas ~ 208
+   cusco                  celdas= 60,041  ventanas_train=  239,383,467  rango_efectivo/celdas=0.0096  -> celdas efectivas ~ 574
+   iquitos_loreto         celdas=305,564  ventanas_train=1,218,283,668  rango_efectivo/celdas=0.0041  -> celdas efectivas ~ 1,254
+   tarapoto_san_martin    celdas= 41,835  ventanas_train=  166,796,145  rango_efectivo/celdas=0.0054  -> celdas efectivas ~ 226

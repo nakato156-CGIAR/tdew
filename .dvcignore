@@ -1,0 +1,15 @@
+# Add patterns of files dvc should ignore, which could improve
+# the performance. Learn more at
+# https://dvc.org/doc/user-guide/dvcignore
+
+__pycache__/
+*.py[oc]
+.pytest_cache/
+.ruff_cache/
+.venv/
+.git/
+mlruns/
+mlartifacts/
+*.log
+presentations/
+

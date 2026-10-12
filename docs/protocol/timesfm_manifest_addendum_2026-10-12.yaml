@@ -1,0 +1,59 @@
+# Addendum — erratas del manifiesto y fijaciones para la liberacion del codigo
+#
+# No modifica docs/protocol/timesfm_manifest.yaml (congelado el 2026-09-22) ni las
+# adendas anteriores. Registra lo que la auditoria previa a la liberacion encontro
+# distinto entre el manifiesto y lo que se ejecuto, y fija lo que el manifiesto dejaba
+# abierto. Ninguna entrada cambia una metrica publicada.
+
+addendum_de: "docs/protocol/timesfm_manifest.yaml@2026-09-22"
+fecha: "2026-10-12"
+bead_id: tdew-214.14
+
+erratas:
+  - campo: niveles.departamental
+    dice: "8192 celdas, panel ll4 del protocolo de reconstruccion, 2.048 por departamento"
+    ejecutado: >
+      2.048 celdas, 512 por departamento: las celdas de los folds de desarrollo dev_a y
+      dev_b, select_panel(Data/silver, "dev_a", seed=0) de
+      experiments/reconstruction/bucketed.py. Es un subconjunto estricto del panel ll4
+      de 2.048 por departamento.
+      Archivo: $TDEW_RECONSTRUCTION_WORK/panels/ll4_reducido_512.csv.
+  - campo: niveles.escala
+    dice: "436519 celdas"
+    ejecutado: >
+      TimesFM predijo las 436.519 celdas; la puntuacion se hizo sobre la submuestra de
+      61.113 (14 % redondeado de cada departamento, default_rng(20260922)) que alcanzo el
+      rival tuned.
+  - campo: reglas (climatologia)
+    dice: "igual que HPC_code_tunning/backtest.py:72-79"
+    ejecutado: "train_only_climatology, HPC_code_tunning/backtest.py:180-187 (las lineas citadas se movieron)"
+  - campo: variantes.tmin_td_short
+    dice: "contexto de 2 anios (730 dias)"
+    ejecutado: "731 dias en ll4 (2012 es bisiesto); mas largo en ll1 y ll2, porque el contexto empieza en 2011 y termina en el ultimo anio de entrenamiento"
+
+fijaciones:
+  checkpoint:
+    repo: google/timesfm-3.0-pytorch
+    revision: 43046b85ec22d584a13f8098c2ed39c889e129c2
+    nota: >
+      Snapshot de Hugging Face con el que se corrieron todos los niveles (unico snapshot
+      en la cache de la estacion de trabajo). experiments/timesfm/variants.py lo pasa a
+      from_pretrained(revision=...) desde el commit afa517f.
+  paquete: "timesfm 3.0.2 y torch 2.14.0 (uv.lock); rueda CUDA 13.0, torch.__version__ = 2.14.0+cu130"
+  precision: >
+    Cribado y nacional (22 de septiembre, antes de que run.py activara TF32): fp32 estricto,
+    se reproducen bit a bit con run.py --no-tf32. Departamental, escala y producto 2017-2020:
+    fp32 con TF32 en las multiplicaciones de matrices (valor por defecto), tambien bit a bit.
+    Verificado el 2026-10-12 con el commit afa517f: 32 celdas del cribado (tmin_anom_full y
+    uni_td_full), del nacional, del departamental y de la escala, y el bucket 0 completo del
+    producto 2017-2020 (sha256 del archivo identico); lote 4 y lote 16 dan la misma salida. Cambiar TF32 mueve cada valor hasta 0,0068 C y el RMSE menos de 1e-4 C.
+  paneles: >
+    Los seis paneles se reconstruyen con experiments/timesfm/scripts/make_panels.py y son
+    identicos a los usados (verificado el 2026-10-12).
+  entradas_externas: reports/timesfm_benchmark/INPUTS.sha256
+
+correcciones_de_etiquetas:
+  - "real.py, real_compare.py, real_tail.py: autoregressive pasa de True a False; TimesFM decodifica el horizonte de una pasada"
+  - "real_compare.reproduction_control: media anual = promedio de las 12 medias mensuales, como reports/paper/scripts/qc_fill.py; con esa definicion coinciden las 8 cantidades"
+  - "escala/leaderboard.csv: cells del agregado = celdas puntuadas (61.113); los pesos van en weight_cells"
+  - "evaluate.py: el n probabilistico se escribe como n_prob y no pisa el n de las metricas puntuales"

@@ -1,0 +1,26 @@
+{
+  "reference_context_length": 31,
+  "region_index": {
+    "Costa": 0,
+    "Selva": 2,
+    "Sierra": 1
+  },
+  "region_natural": {
+    "cusco": "Sierra",
+    "iquitos_loreto": "Selva",
+    "lima": "Costa",
+    "tarapoto_san_martin": "Selva"
+  },
+  "train_n_eligible_targets": {
+    "cusco": 239383467,
+    "iquitos_loreto": 1218283668,
+    "lima": 115937973,
+    "tarapoto_san_martin": 166796145
+  },
+  "weight": {
+    "cusco": 4.177397931996699e-09,
+    "iquitos_loreto": 8.208268946440477e-10,
+    "lima": 8.625301737852532e-09,
+    "tarapoto_san_martin": 5.995342398350993e-09
+  }
+}

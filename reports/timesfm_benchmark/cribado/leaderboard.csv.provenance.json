@@ -1,0 +1,37 @@
+{
+  "autoregressive": false,
+  "bead_id": "tdew-214",
+  "climatology_role": null,
+  "climatology_used": false,
+  "dataset_hash": null,
+  "generated_at": "2026-09-24T19:20:46+00:00",
+  "git_commit": "e99316d1ef216cbab008c6af078a33cdff9d7009",
+  "inputs": [
+    "TMIN"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest.yaml@2026-09-22",
+  "mlflow_run_id": null,
+  "model_family": "timesfm-2.5",
+  "model_id": "google/timesfm-2.5-200m-pytorch",
+  "notes": null,
+  "output_files": [
+    "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/cribado/leaderboard.csv",
+    "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/cribado/metrics_by_zone.csv",
+    "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/cribado/sesgo_seleccion_ll4.csv"
+  ],
+  "panel_cell_count": 1106,
+  "panel_file": "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/panels/cribado_estratificado.csv",
+  "panel_id": "cribado_estratificado",
+  "run_id": "79ce67ed411c40d79f13fdd31b5deb53",
+  "seeds": [],
+  "split_id": "ll4",
+  "target_type": "td_raw",
+  "test_period": [
+    "2013-01-01",
+    "2016-12-31"
+  ],
+  "trained": false,
+  "training_period": null,
+  "validation_period": null,
+  "variant_label": "tmin_td_25"
+}

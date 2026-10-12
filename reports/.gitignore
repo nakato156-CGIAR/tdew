@@ -4,3 +4,6 @@
 !TDEW_Avance_Parcial.pdf
 *_files/
 .quarto/
+
+# hand-authored source for published Claude Artifacts, not a Quarto render
+!timesfm_benchmark/artifact/index.html

@@ -1,0 +1,18 @@
+{
+  "thread_id": "854761cd-e79d-43fa-88f1-5598c8184a47",
+  "created_at": "2026-09-04T23:04:26.200244+00:00",
+  "updated_at": "2026-09-04T23:04:26.200280+00:00",
+  "turns": [
+    {
+      "turn": 1,
+      "ts": "2026-09-04T23:04:26.200257+00:00",
+      "file": "tdew-from-tmin.001.json",
+      "summary": {
+        "query": "Validity and bias of estimating dew point temperature from daily minimum temperature, the FAO-56 assumption that dewpoint temperature approximately equals daily minimum temperature, documented errors of this assumption in arid, semi-arid and high-elevation mountain regions, and proposed corrections such as aridity-dependent offsets, for estimating vapour pressure, dew point or relative humidity from air temperature.",
+        "mode": "infer",
+        "narrative": "The search identified several papers that directly address the validity and bias of estimating dew point temperature from daily minimum temperature, focusing on the FAO-56 assumption. \n\nKey findings from the literature:\n\n1. The FAO-56 assumption\u2014that dew point temperature is approximately equal to daily minimum temperature\u2014has been shown to introduce systematic errors, especially in arid, semi-arid, and high-elevation mountain regions. These errors can lead to significant overestimation or underestimation of vapour pressure, dew point, and relative humidity.\n\n2. <paper corpusid=\"84499623\">An improved method for estimating surface humidity from daily minimum temperature</paper> quantifies these errors in arid climates and proposes an empirical correction, improving accuracy by applying an offset to the minimum temperature.\n\n3. <paper corpusid=\"55302471\">The ability of a GCM-forced hydrological model to reproduce global discharge variability</paper> applies and critiques the FAO-56 assumption, documents its bias in arid regions, and uses a 2\u00b0C correction (Allen\u2019s offset) to improve estimates.\n\n4. <paper corpusid=\"272607389\">Satellite-based near-real-time global daily terrestrial evapotranspiration estimates</paper> uses daily minimum temperature as a dew point proxy, applies a 2\u00b0C correction in arid and semi-arid regions, and discusses the impact of this bias on evapotranspiration and humidity calculations.\n\n5. Additional papers in the results further document regional errors, alternative correction methods (such as aridity-dependent or temperature/precipitation-based offsets), and implications for estimating vapour pressure and humidity from air temperature.\n\nConfidence is very high\u2014these results include both foundational and recent studies that directly address your query. If you need a more detailed breakdown of correction methods or wish to focus on a specific region or approach, specify your interest for further analysis.",
+        "paper_count": 25
+      }
+    }
+  ]
+}

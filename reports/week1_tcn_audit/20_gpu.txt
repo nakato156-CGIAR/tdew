@@ -1,0 +1,46 @@
+/tmp/claude-1001/-home-cvelasquez-Code-tdew/9415381c-fc93-47a2-9bd6-06415dbba794/scratchpad/audit-wt/.venv/lib/python3.13/site-packages/torch/cuda/__init__.py:68: FutureWarning: The pynvml package is deprecated. Please install nvidia-ml-py instead. If you did not install pynvml directly, please report this to the maintainers of the package that installed pynvml for you.
+  import pynvml  # type: ignore[import]
+dispositivo: cuda NVIDIA RTX A2000 12GB
+train=2,551,040 ventanas (640 celdas), validation=559,200 ventanas (800 celdas)
+
+A actual  (787s)
+    paso  2,000  loss=0.10124  val_rmse_ALL=0.8682
+    paso  4,000  loss=0.09396  val_rmse_ALL=0.8860
+    paso  6,000  loss=0.08225  val_rmse_ALL=0.8966
+    paso  8,000  loss=0.07832  val_rmse_ALL=0.9109
+    paso 10,000  loss=0.07415  val_rmse_ALL=0.9155
+    paso 12,000  loss=0.06417  val_rmse_ALL=0.9297
+    paso 14,000  loss=0.06985  val_rmse_ALL=0.9346
+    paso 16,000  loss=0.06368  val_rmse_ALL=0.9404
+    paso 18,000  loss=0.07243  val_rmse_ALL=0.9362
+    paso 20,000  loss=0.06333  val_rmse_ALL=0.9513
+
+D FiLM identidad + residual persistencia  (812s)
+    paso  2,000  loss=0.09614  val_rmse_ALL=0.8721
+    paso  4,000  loss=0.09154  val_rmse_ALL=0.8990
+    paso  6,000  loss=0.07870  val_rmse_ALL=0.9049
+    paso  8,000  loss=0.07364  val_rmse_ALL=0.9274
+    paso 10,000  loss=0.07391  val_rmse_ALL=0.9233
+    paso 12,000  loss=0.06120  val_rmse_ALL=0.9352
+    paso 14,000  loss=0.06670  val_rmse_ALL=0.9278
+    paso 16,000  loss=0.05773  val_rmse_ALL=0.9230
+    paso 18,000  loss=0.07021  val_rmse_ALL=0.9323
+    paso 20,000  loss=0.06301  val_rmse_ALL=0.9439
+
+E actual, pesos uniformes  (856s)
+    paso  2,000  loss=0.11202  val_rmse_ALL=0.9125
+    paso  4,000  loss=0.09557  val_rmse_ALL=0.9383
+    paso  6,000  loss=0.08689  val_rmse_ALL=0.9321
+    paso  8,000  loss=0.08316  val_rmse_ALL=0.9335
+    paso 10,000  loss=0.07358  val_rmse_ALL=0.9403
+    paso 12,000  loss=0.06639  val_rmse_ALL=0.9336
+    paso 14,000  loss=0.07208  val_rmse_ALL=0.9267
+    paso 16,000  loss=0.06445  val_rmse_ALL=0.9352
+    paso 18,000  loss=0.07880  val_rmse_ALL=0.9264
+    paso 20,000  loss=0.06099  val_rmse_ALL=0.9370
+
+=== tras 20,000 pasos identicos (batch 1024) sobre 2,551,040 ventanas ===
+                                variante  rmse_ALL_repond  rmse_lima  rmse_cusco  rmse_iquitos_loreto  rmse_tarapoto_san_martin  segundos
+                                A actual           0.9513     0.6687      0.7671               1.0427                    0.5886  786.7602
+D FiLM identidad + residual persistencia           0.9439     0.6534      0.7614               1.0360                    0.5730  812.0296
+               E actual, pesos uniformes           0.9370     0.6554      0.7642               1.0255                    0.5865  856.0953

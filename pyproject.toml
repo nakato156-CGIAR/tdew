@@ -13,10 +13,13 @@ dependencies = [
     "numpy>=2.0",
     "pandas>=2.1",
     "pyarrow>=15",
+    "pyyaml>=6.0",
     "statsmodels>=0.14",
+    "scikit-learn>=1.5",
     "tqdm>=4.66",
     "dask[distributed]>=2024.1",
     "nvidia-ml-py>=13.610.43",
+    "zenml[server]>=0.96.4",
 ]
 
 [project.optional-dependencies]
@@ -32,6 +35,12 @@ benchmark = [
 gpu = [
     "cupy-cuda12x>=12",
 ]
+# Deep sequence models (TCN/GRU/Transformer, Semana 1 tdew-x46/tdew-2s6/tdew-efi).
+# PyPI's linux "torch" wheel bundles its own CUDA 12.x runtime (no separate
+# --index-url needed), same rationale as `gpu` above for cupy-cuda12x.
+deep = [
+    "torch>=2.5",
+]
 # .nc -> point-parquet extraction (PISCO download pipeline): xarray/netCDF4 for the rasters,
 # geopandas/rasterio for the potato-grid shapefile sampling. Not needed to train/benchmark.
 netcdf = [
@@ -44,10 +53,35 @@ netcdf = [
 multigpu = [
     "dask-cuda>=0.18.0",
 ]
+# Streamlit raster/video dashboard (visualizations/raster/).
+viz = [
+    "streamlit>=1.38",
+    "matplotlib>=3.8",
+    "imageio>=2.34",
+    "imageio-ffmpeg>=0.5",
+]
+# Data/experiment reproducibility layer: DVC for data versioning, MLflow for
+# experiment tracking (see tdew_estimation/experiment_tracking.py), pytest to
+# run the test suite (including the MLflow smoke test under tests/).
+tracking = [
+    "dvc>=3.67",
+    "mlflow>=3.0",
+    "pytest>=8",
+]
+timesfm = [
+    "jax>=0.4",
+    "timesfm[torch]>=3.0",
+]
 
 # Only the algorithm package is installable; HPC_code/ and Local/ are run as scripts.
 [tool.setuptools]
 packages = ["tdew_estimation"]
+
+# `pipeline/` and `experiments/` are run as `python -m pipeline.foo` (repo
+# root on sys.path via -m), not installed packages; this lets `pytest` import
+# them the same way without a separate install step.
+[tool.pytest.ini_options]
+pythonpath = ["."]
 
 [tool.ty.environment]
 python = ".venv"

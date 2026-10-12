@@ -1,0 +1,42 @@
+zone,label,moisture,seasonal,thermal,cells,pct,grid_cells
+0,A (r) A',perhumid,r,megathermal,909274,41.73227153876834,909708
+1,A (r) B',perhumid,r,mesothermal,42595,1.9549509896838988,42595
+2,A (r) C',perhumid,r,microthermal,10361,0.47553109999095844,10361
+3,A (r) D',perhumid,r,tundra,1999,0.09174661411851423,1999
+4,B (i) B',humid,i,mesothermal,20831,0.9560648917972836,20831
+5,B (i) C',humid,i,microthermal,5326,0.24444345512516596,5326
+6,B (i) D',humid,i,tundra,2643,0.12130380245884598,2643
+7,B (i) E',humid,i,frost,54,0.002478397780089929,54
+8,"B (o , i) B'",humid,"o , i",mesothermal,13145,0.6033062744311504,13145
+9,"B (o , i) C'",humid,"o , i",microthermal,124968,5.735563218190338,124968
+10,"B (o , i) D'",humid,"o , i",tundra,1549,0.07109329928443149,1549
+11,B (r) A',humid,r,megathermal,468724,21.512676316201333,468724
+12,B (r) B',humid,r,mesothermal,124707,5.72358429558657,124707
+13,B (r) C',humid,r,microthermal,2439,0.11194096640072847,2439
+14,B (r) D',humid,r,tundra,12985,0.5959628736012542,12985
+15,"C (i , p) A'",subhumid,"i , p",megathermal,76,0.003488115394200641,76
+16,"C (i , p) B'",subhumid,"i , p",mesothermal,256,0.011749441327833739,256
+17,C (i) A',subhumid,i,megathermal,2453,0.11258351397334437,2453
+18,C (i) B',subhumid,i,mesothermal,14591,0.6696722594313362,14591
+19,C (i) C',subhumid,i,microthermal,31169,1.4305403779189445,31169
+20,C (i) D',subhumid,i,tundra,30043,1.3788611945785507,30043
+21,C (i) E',subhumid,i,frost,348,0.015971896805023988,348
+22,"C (o , i) B'",subhumid,"o , i",mesothermal,3217,0.14764825293609818,3217
+23,"C (o , i) C'",subhumid,"o , i",microthermal,19953,0.9157679797432288,19953
+24,"C (o , i) D'",subhumid,"o , i",tundra,266,0.012208403879702243,266
+25,"C (o , i) E'",subhumid,"o , i",frost,488,0.02239737253118306,488
+26,C (r) A',subhumid,r,megathermal,6235,0.2861631510900131,6235
+27,C (r) B',subhumid,r,mesothermal,35239,1.6173381365294262,35239
+28,"D (i , p) A'",semi-arid,"i , p",megathermal,61205,2.809080298711187,95754
+29,"D (i , p) B'",semi-arid,"i , p",mesothermal,3385,0.15535882380748908,3385
+30,"D (i , p) C'",semi-arid,"i , p",microthermal,8237,0.3780474539740879,8237
+31,D (i) A',semi-arid,i,megathermal,2734,0.12548036168084936,2734
+32,D (i) B',semi-arid,i,mesothermal,10452,0.4797076592129618,10452
+33,D (i) C',semi-arid,i,microthermal,12070,0.553967800105286,12070
+34,D (i) D',semi-arid,i,tundra,131,0.0060124094294774204,131
+35,E (d) A',arid,d,megathermal,33823,1.5523490391848458,52580
+36,E (d) B',arid,d,mesothermal,127774,5.864348110244641,713611
+37,Glaciar,--,--,--,1139,0.05227583465782276,1139
+38,Lago Junín,--,--,--,228,0.010464346182601923,228
+39,Lago Titicaca,--,--,--,29424,1.3504514126178904,29424
+40,Loma,--,--,--,2291,0.10514832063307458,2291

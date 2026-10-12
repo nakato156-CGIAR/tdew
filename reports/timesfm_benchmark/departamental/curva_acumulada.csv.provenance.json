@@ -1,0 +1,41 @@
+{
+  "autoregressive": true,
+  "bead_id": "tdew-214",
+  "climatology_role": "target_anomaly_base",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-09-24T19:20:49+00:00",
+  "git_commit": "e99316d1ef216cbab008c6af078a33cdff9d7009",
+  "inputs": [],
+  "manifest_ref": "docs/protocol/reconstruction_manifest.yaml@2026-09-21",
+  "mlflow_run_id": null,
+  "model_family": "reconstruction",
+  "model_id": "tuned",
+  "notes": "feature_set completo en el sidecar <prediccion>.json de la corrida de experiments.reconstruction.cli que genero este modelo",
+  "output_files": [
+    "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/departamental/metrics.csv",
+    "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/departamental/metrics_macro.csv",
+    "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/departamental/curva_acumulada.csv",
+    "/home/cvelasquez/Code/tdew/reports/timesfm_benchmark/departamental/predicciones_largo.parquet"
+  ],
+  "panel_cell_count": 2048,
+  "panel_file": null,
+  "panel_id": "departamental",
+  "run_id": "018b64a195e146e1a16017e0591ad19e",
+  "seeds": [
+    0
+  ],
+  "split_id": "ll4",
+  "target_type": "td_anomaly",
+  "test_period": [
+    "2013-01-01",
+    "2016-12-31"
+  ],
+  "trained": true,
+  "training_period": [
+    "1981-01-01",
+    "2012-12-31"
+  ],
+  "validation_period": null,
+  "variant_label": "tuned_seed0"
+}

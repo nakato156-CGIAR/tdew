@@ -37,6 +37,12 @@ env/
 .codex
 .agents
 
+# Wiki: command/prompt definitions are content, not local agent settings
+!/Wiki/.claude/
+!/Wiki/.claude/**
+!/Wiki/.codex/
+!/Wiki/.codex/**
+
 # Jupyter / notebooks
 .ipynb_checkpoints/
 .notebook/
@@ -76,6 +82,47 @@ datasets/
 *.tif
 *.tiff
 
+# NOTE: the "data/" rule above also matches "Data/" case-insensitively on
+# Windows checkouts, which silently hid the whole Data/ medallion tree (the
+# project's real data dir) from git, including any DVC ".dvc" pointer files.
+# Targeted un-ignore so DVC pointer files can be tracked while the actual
+# (large) data content stays out of git. Extend this chain if more paths
+# under Data/ need their .dvc pointers tracked.
+!/Data/
+/Data/*
+!/Data/silver/
+/Data/silver/*
+!/Data/silver/department_grid_ids.dvc
+
 # Dask artifacts
 dask-worker-space/
 presentations/
+
+# Beads / Dolt files (added by bd init)
+.dolt/
+*.db
+.beads-credential-key
+.beads/proxieddb/
+
+# MLflow local tracking (docs/experiment_infrastructure.md): mlflow.db is
+# already covered by *.db above; mlruns/ is its local artifact store.
+mlruns/
+
+# Checkpoints de entrenamiento de modelos profundos (experiments/tcn/train.py).
+# Cada .pt pesa ~2 MB y se regenera desde el run de MLflow correspondiente;
+# el directorio se versiona por su ruta, no por su contenido.
+experiments/*/checkpoints/
+
+# Submuestras materializadas de la auditoria del TCN, regenerables con
+# semilla fija por experiments/tcn/audit_x46/03_build_sample.py (pueden
+# pesar varios GB, p.ej. sample_train_big.npz). El directorio de salida real
+# es experiments/tcn/audit_x46/out/, no reports/week1_tcn_audit/.
+experiments/tcn/audit_x46/out/
+reports/week1_tcn_audit/*.npz
+
+reports/paper/refs_pdf/
+reports/paper/*.typ
+# Rendered manuscripts are outputs; the Word reference document is an input the build
+# needs, so it is tracked.
+reports/paper/*.docx
+!reports/paper/reference-taac.docx

@@ -1,0 +1,51 @@
+{
+  "autoregressive": false,
+  "bead_id": "tdew-x46.1",
+  "climatology_role": "target_anomaly_base_and_input_covariates",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-09-24T19:20:46+00:00",
+  "git_commit": "e99316d1ef216cbab008c6af078a33cdff9d7009",
+  "inputs": [
+    "Tmin",
+    "Tmax",
+    "Td_historico",
+    "DEM",
+    "TDI",
+    "LST_DAY",
+    "LST_NIGHT",
+    "X",
+    "Y",
+    "sin(DOY)",
+    "cos(DOY)"
+  ],
+  "manifest_ref": "docs/protocol/week1_manifest.yaml@2026-09-15",
+  "mlflow_run_id": null,
+  "model_family": "tcn_attention",
+  "model_id": "week1-tcn-attention-ablation-x46.1",
+  "notes": null,
+  "output_files": [
+    "/home/cvelasquez/Code/tdew/reports/week1_tcn_ablation/ablation_summary.csv",
+    "/home/cvelasquez/Code/tdew/reports/week1_tcn_ablation/ablation_history.csv"
+  ],
+  "panel_cell_count": 436519,
+  "panel_file": null,
+  "panel_id": "ALL",
+  "run_id": "c6449283da1a43cd84aabca977531f24",
+  "seeds": [
+    0
+  ],
+  "split_id": "validation",
+  "target_type": "td_anomaly",
+  "test_period": null,
+  "trained": true,
+  "training_period": [
+    "2002-01-01",
+    "2012-12-31"
+  ],
+  "validation_period": [
+    "2013-01-01",
+    "2014-12-31"
+  ],
+  "variant_label": "residual+film+uniform_L31_seed0"
+}
