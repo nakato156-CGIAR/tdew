@@ -1,0 +1,5 @@
+product,zone_class,cells,cells_affected,values,above_35,pct_above_35,share_of_all_exceedances,above_38
+timesfm,selva_A(r)A',909274,150790,1328449314,5459267,0.4109503420617522,100.0,185698
+timesfm,resto,1269553,0,1854816933,0,0.0,0.0,0
+palacios,selva_A(r)A',909274,132920,1328449314,4220212,0.31767956485240806,100.0,131521
+palacios,resto,1269553,0,1854816933,0,0.0,0.0,0
