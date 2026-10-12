@@ -26,6 +26,7 @@ from tdew_estimation import provenance as prov
 from tdew_estimation.bucket_layout import bucket_dir_name
 from tdew_estimation.metrics import MetricsAccum
 
+from . import paths
 from .panel import DEFAULT_HISTORICAL_ROOT, build_panel, split_spec
 from .real import (
     DEFAULT_FUTURE_ROOT,
@@ -53,13 +54,15 @@ DIMENSIONS = ("year", "month", "zone", "tier", "site")
 PRODUCTS = ("timesfm", "palacios")
 SUFFIX = "_limpio"
 DEFAULT_OUT = Path("reports/timesfm_benchmark/real_limpio")
-DEFAULT_AGG = Path("/home/cvelasquez/tdew_timesfm/agg_real")
-_RES = Path("/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning")
+DEFAULT_AGG = paths.WORK / "agg_real"
+_RES = paths.RES
 DEFAULT_ZONE = _RES / "zone_table.parquet"
 DEFAULT_SUPPORT = _RES / "tuning" / "support_distance.parquet"
 DEFAULT_SILVER = Path("Data/silver/department_grid_ids")
 
-# Cifras del producto de Palacios publicadas en el paper (reports/paper/paper.qmd).
+# Cifras del producto de Palacios publicadas en el paper (reports/paper/paper.qmd). Las medias
+# anuales del paper son el promedio sin ponderar de las 12 medias mensuales nacionales
+# (reports/paper/scripts/qc_fill.py:82-85), no la media de todas las celdas-dia del año.
 PALACIOS_PAPER = {
     "n": 3_183_266_247, "mean": 19.39,
     "mean_2017": 19.36, "mean_2018": 19.30, "mean_2019": 19.41, "mean_2020": 19.51,
@@ -68,9 +71,20 @@ PALACIOS_PAPER = {
 PAPER_ROUNDING = 0.005  # el paper redondea a 2 decimales
 
 
+def paper_convention_figures(figures: pd.DataFrame, product: str) -> dict[str, float]:
+    """Cifras de ``product`` con la definicion del paper: ``mean_<año>`` = media de medias mensuales."""
+    row = figures.set_index("product").loc[product].to_dict()
+    out = {k: row[k] for k in PALACIOS_PAPER}
+    for year in YEARS:
+        out[f"mean_{year}"] = row[f"mean_{year}_monthly"]
+    return out
+
+
 def reproduction_control(observed: Mapping[str, float], *, full_panel: bool) -> pd.DataFrame:
     """Compara las cifras de Palacios recalculadas con las del paper.
 
+    ``observed["mean_<año>"]`` debe seguir la convencion del paper (media de las
+    medias mensuales); ``paper_convention_figures`` la arma desde ``product_figures``.
     Con un subconjunto de buckets el control no aplica: ``ok`` es NaN.
     """
     rows = []
@@ -122,6 +136,8 @@ class _Product:
         self.max = -np.inf
         self.year_n = np.zeros(len(YEARS))
         self.year_sum = np.zeros(len(YEARS))
+        self.month_n = np.zeros((len(YEARS), 12))
+        self.month_sum = np.zeros((len(YEARS), 12))
         self.cells = 0
         self.rows_only = 0
 
@@ -136,11 +152,15 @@ class _Product:
             self.total += float(f.sum())
             self.min = min(self.min, float(f.min()))
             self.max = max(self.max, float(f.max()))
-            years = YEAR[np.asarray(day)[finite].astype(np.int64)]
+            day_f = np.asarray(day)[finite].astype(np.int64)
+            years = YEAR[day_f]
             for k, year in enumerate(YEARS):
                 m = years == year
                 self.year_n[k] += int(m.sum())
                 self.year_sum[k] += float(f[m].sum())
+            slot = (years - YEARS[0]) * 12 + (MONTH[day_f] - 1)
+            self.month_n += np.bincount(slot, minlength=len(YEARS) * 12).reshape(len(YEARS), 12)
+            self.month_sum += np.bincount(slot, weights=f, minlength=len(YEARS) * 12).reshape(len(YEARS), 12)
         self.cells += int(np.unique(ids).size)
 
 
@@ -254,6 +274,11 @@ class Accumulator:
             }
             for k, year in enumerate(YEARS):
                 row[f"mean_{year}"] = p.year_sum[k] / p.year_n[k] if p.year_n[k] else np.nan
+            for k, year in enumerate(YEARS):
+                # Convencion del paper: promedio sin ponderar de las 12 medias mensuales.
+                with np.errstate(invalid="ignore", divide="ignore"):
+                    monthly = p.month_sum[k] / p.month_n[k]
+                row[f"mean_{year}_monthly"] = float(monthly.mean()) if (p.month_n[k] > 0).all() else np.nan
             rows.append(row)
         return pd.DataFrame(rows)
 
@@ -362,8 +387,7 @@ def write_outputs(acc: Accumulator, out_dir: Path, agg_dir: Path, *, full_panel:
 
     figures = acc.product_figures()
     save(figures, out_dir, "product_figures")
-    pal = figures.set_index("product").loc["palacios"].to_dict()
-    save(reproduction_control({k: pal[k] for k in PALACIOS_PAPER}, full_panel=full_panel),
+    save(reproduction_control(paper_convention_figures(figures, "palacios"), full_panel=full_panel),
          out_dir, "reproduction_palacios")
     save(pd.DataFrame([acc.agreement_overall()]), out_dir, "agreement_overall")
     for dim in DIMENSIONS:
@@ -387,7 +411,7 @@ def build_compare_provenance(*, n_cells: int, outputs: Sequence[Path], ids_file:
         bead_id=bead_id, manifest_ref=MANIFEST_REF_REAL, model_family=spec.family,
         model_id=spec.checkpoint, variant_label=spec.key, trained=False, training_period=None,
         validation_period=None, test_period=("2017-01-01", "2020-12-31"), split_id="real_2017_2020",
-        autoregressive=True, target_type=spec.target_type, climatology_used=spec.climatology_used,
+        autoregressive=False, target_type=spec.target_type, climatology_used=spec.climatology_used,
         climatology_role=spec.climatology_role, inputs=tuple(spec.inputs),
         panel_id=f"real_{n_cells}_td", panel_cell_count=int(n_cells),
         panel_file=str(ids_file) if ids_file else None,

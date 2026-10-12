@@ -25,6 +25,8 @@ import pandas as pd
 
 from tdew_estimation.bucket_layout import bucket_dir
 
+from . import paths
+
 # Mismos splits que HPC_code_tunning/backtest.py:61-66 — (train_end_year, (y0, y1)).
 SPLITS: dict[str, tuple[int, tuple[int, int]]] = {
     "ll1": (2015, (2016, 2016)),
@@ -39,9 +41,7 @@ TRAIN_START = 1981
 NUM_BUCKETS = 8192
 REQUIRED_COLUMNS = ("ID", "FECHA", "TD", "TMIN", "doy")
 
-DEFAULT_HISTORICAL_ROOT = Path(
-    "/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/bucketed_training_data"
-)
+DEFAULT_HISTORICAL_ROOT = paths.RES / "bucketed_training_data"
 
 
 @dataclass(frozen=True)

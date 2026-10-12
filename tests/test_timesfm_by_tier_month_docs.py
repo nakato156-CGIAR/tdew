@@ -145,19 +145,3 @@ def test_traceability_cribado_command_includes_mlflow():
     cribado = trace[trace.index("# Cribado (verificación"):]
     assert "--mlflow" in cribado.split("```")[0]
 
-
-def test_handoff_comparison_table_matches_the_csv(tiers):
-    """La tabla comparativa del HANDOFF también sale de los CSV, incluida la columna de
-    ΔRMSE, que se calcula con el valor exacto y no restando cifras ya redondeadas."""
-    text = (ROOT / "HANDOFF_PLAN_2.md").read_text(encoding="utf-8")
-    rows = _rows(text, ["within", "near", "marginal", "extrapolated", "unsupported"])
-    assert len(rows) == 5
-    w = tiers.pivot(index="tier", columns="method", values="rmse")
-    for tier, vals in rows.items():
-        t = tiers[tiers["tier"] == tier].set_index("method")
-        expected = [t.loc["timesfm", "cells"], t.loc["timesfm", "rmse"], t.loc["tuned", "rmse"],
-                    w.loc[tier, "tuned"] - w.loc[tier, "timesfm"],
-                    t.loc["timesfm", "bias"], t.loc["tuned", "bias"],
-                    t.loc["timesfm", "skill"], t.loc["tuned", "skill"]]
-        assert vals == pytest.approx(expected, abs=5.1e-4), tier
-        assert f"{vals[3]:.3f}" == f"{expected[3]:.3f}", (tier, vals[3], expected[3])

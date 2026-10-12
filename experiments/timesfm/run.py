@@ -22,7 +22,7 @@ import pyarrow.parquet as pq
 from tdew_estimation import provenance as prov
 
 from .panel import DEFAULT_HISTORICAL_ROOT, PanelBatch, iter_panel_batches, split_spec
-from .variants import Variant, parse_keys, variant
+from .variants import CHECKPOINT_REVISION, Variant, parse_keys, variant
 
 logger = logging.getLogger("timesfm.run")
 
@@ -71,6 +71,7 @@ def build_provenance(
         panel_cell_count=len(cells),
         panel_file=str(ids_file),
         output_files=(str(target),),
+        notes=f"checkpoint {spec.checkpoint}@{CHECKPOINT_REVISION}",
     )
 
 
@@ -180,7 +181,7 @@ def load_model(
     """Carga el modelo de la variante."""
     from timesfm3 import TimesFM3Forecaster
 
-    model = TimesFM3Forecaster.from_pretrained(spec.checkpoint, device=device)
+    model = TimesFM3Forecaster.from_pretrained(spec.checkpoint, device=device, revision=CHECKPOINT_REVISION)
     model.config.per_core_batch_size = int(batch_size)
     return model
 

@@ -24,14 +24,15 @@ import pyarrow.parquet as pq
 
 from tdew_estimation import provenance as prov
 
+from . import paths
 from .real import refuse_under_res
 from .real_compare import DEFAULT_SUPPORT, DEFAULT_ZONE
 from .variants import variant
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_PALACIOS = Path("/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean/ll4/predictions.parquet")
-DEFAULT_TFM = Path("/home/cvelasquez/tdew_timesfm/preds_nacional/ll4__tmin_anom_full.parquet")
+DEFAULT_PALACIOS = paths.RES / "tuning/backtest_clean/ll4/predictions.parquet"
+DEFAULT_TFM = paths.WORK / "preds_nacional/ll4__tmin_anom_full.parquet"
 DEFAULT_OUT = Path("reports/timesfm_benchmark/kl_limpio")
 SUFFIX = "_limpio"
 LO, HI = -20.0, 50.0

@@ -36,7 +36,7 @@ def make_inputs(tmp_path, *, scale=2.0):
         "mean_2017": 19.4, "mean_2018": 19.3, "mean_2019": 19.5, "mean_2020": 19.5}))
     _write(report, "reproduction_palacios", pd.DataFrame({
         "quantity": ["n", "mean", "mean_2019", "mean_2020"], "paper": [N, 19.39, 19.41, 19.51],
-        "observed": [N, 19.388, 19.398, 19.503], "diff": [0.0, -0.002, -0.012, -0.007], "ok": [True, True, False, False]}))
+        "observed": [N, 19.388, 19.407, 19.509], "diff": [0.0, -0.002, -0.003, -0.001], "ok": [True, True, True, True]}))
     _write(report, "agreement_overall", pd.DataFrame([{"n": N, "rmse": 0.46, "mae": 0.32, "bias": 0.05, "r": 0.998}]))
     for name, col, keys in (("year", "year", [2017, 2018]), ("tier", "tier", ["within", "unsupported"]),
                             ("site", "site", ["lima", "otro"]), ("month", "month", [1, 2])):
@@ -160,7 +160,7 @@ def test_ratios_and_extreme_days_are_computed_in_the_builder(tmp_path):
     (lambda c: c["cola"]["celdas"].__setitem__("ambos", 0), "mapa"),
     (lambda c: c["anomalia"]["timesfm"].pop(), "1 461"),
     (lambda c: c["manifiesto"].__setitem__("omitidas", 3), "manifiesto"),
-    (lambda c: c["control"][2].__setitem__("ok", True), "control de reproduccion"),
+    (lambda c: c["control"][2].__setitem__("ok", False), "control de reproduccion"),
     (lambda c: c["acuerdo"]["global"].__setitem__("n", 5), "acuerdo"),
 ])
 def test_check_parity_campo_aborts_on_each_inconsistency(tmp_path, paper_like, mutate, message):

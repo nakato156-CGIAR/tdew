@@ -25,7 +25,8 @@ def test_record_declares_real_split_without_observed_truth(tmp_path):
     assert rec.panel_cell_count == 2178827
     assert rec.test_period == ("2017-01-01", "2020-12-31")
     assert rec.trained is False and rec.training_period is None
-    assert rec.autoregressive is True
+    # TimesFM decodifica el horizonte de una pasada (timesfm3 model.decode), igual que en ll1-ll4.
+    assert rec.autoregressive is False
     assert rec.variant_label == "tmin_anom_full"
     assert rec.manifest_ref == real.MANIFEST_REF_REAL
     assert rec.manifest_ref.endswith("timesfm_manifest_addendum_real_2017_2020.yaml")

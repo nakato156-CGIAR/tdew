@@ -129,7 +129,8 @@ def score(
 
     rows = []
     for (site, method), accum in accums.items():
-        rows.append({"site": site, "method": method, "cells": len(seen_cells[site]), **accum.finalize()})
+        rows.append({"site": site, "method": method, "cells": len(seen_cells[site]),
+                     "weight_cells": counts.get(site, np.nan), **accum.finalize()})
     frame = pd.DataFrame(rows)
     total = sum(counts.values())
     for method in methods:
@@ -145,7 +146,9 @@ def score(
             {
                 "site": "ALL_reponderado",
                 "method": method,
-                "cells": total,
+                # Celdas puntuadas; las 436.519 del departamento completo solo son pesos.
+                "cells": int(part["cells"].sum()),
+                "weight_cells": total,
                 "n": int(part["n"].sum()),
                 "rmse": float(np.sqrt(mse)),
                 "mae": float(mae),

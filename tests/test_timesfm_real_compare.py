@@ -247,3 +247,30 @@ def test_main_runs_over_synthetic_buckets_and_records_provenance(tmp_path, monke
     assert rows[-1]["panel_cell_count"] == len(IDS_A) + len(IDS_B)
     assert "sin verdad observada" in rows[-1]["notes"]
     assert (out / "agreement_overall_limpio.csv.provenance.json").exists()
+
+
+def test_annual_means_follow_the_paper_convention_mean_of_monthly_means():
+    # Enero de 2017 vale 10, el resto del año 20: la media de medias mensuales pesa enero 1/12,
+    # la media de celdas-dia lo pesa 31/365. El paper usa la primera (qc_fill.py).
+    acc = rc.Accumulator()
+    pal = _pal(IDS_A)
+    jan17 = (pal["FECHA"].dt.year == 2017) & (pal["FECHA"].dt.month == 1)
+    pal["TD_predicted"] = np.where(jan17, 10.0, 20.0)
+    tfm = _tfm(IDS_A)
+    acc.add_bucket(3, tfm, pal, meta=_meta(IDS_A))
+    fig = acc.product_figures()
+    p = fig.set_index("product").loc["palacios"]
+    assert p["mean_2017_monthly"] == pytest.approx((10.0 + 11 * 20.0) / 12)
+    assert p["mean_2017"] == pytest.approx((31 * 10.0 + 334 * 20.0) / 365)
+    obs = rc.paper_convention_figures(fig, "palacios")
+    assert obs["mean_2017"] == pytest.approx(p["mean_2017_monthly"])
+    assert obs["mean_2018"] == pytest.approx(20.0)
+
+
+def test_compare_and_tail_provenance_are_not_autoregressive(tmp_path):
+    from experiments.timesfm import real_tail as rt
+
+    kw = dict(n_cells=3, outputs=[tmp_path / "a.csv"], bead_id="tdew-214.14",
+              tfm_root=tmp_path, palacios_root=tmp_path)
+    assert rc.build_compare_provenance(ids_file=None, **kw).autoregressive is False
+    assert rt.build_tail_provenance(**kw).autoregressive is False

@@ -31,6 +31,7 @@ from tdew_estimation import experiment_tracking as et
 from tdew_estimation import provenance as prov
 from tdew_estimation.bucket_layout import bucket_dir_name
 
+from . import paths
 from .real import (
     DEFAULT_OUT_DIR,
     DEFAULT_PALACIOS_ROOT,
@@ -51,7 +52,7 @@ logger = logging.getLogger("timesfm.real_tail")
 PRODUCTS = ("timesfm", "palacios")
 SUFFIX = "_limpio"
 DEFAULT_OUT = Path("reports/timesfm_benchmark/real_limpio")
-DEFAULT_AGG = Path("/home/cvelasquez/tdew_timesfm/agg_real")
+DEFAULT_AGG = paths.WORK / "agg_real"
 
 THRESHOLDS = (35.0, 38.0)  # umbral primario del paper y uno mas alto
 PRIMARY = THRESHOLDS[0]
@@ -329,7 +330,7 @@ def build_tail_provenance(*, n_cells: int, outputs: Sequence[Path], bead_id: str
         bead_id=bead_id, manifest_ref=MANIFEST_REF_REAL, model_family=spec.family,
         model_id=spec.checkpoint, variant_label=spec.key, trained=False, training_period=None,
         validation_period=None, test_period=("2017-01-01", "2020-12-31"), split_id="real_2017_2020",
-        autoregressive=True, target_type=spec.target_type, climatology_used=spec.climatology_used,
+        autoregressive=False, target_type=spec.target_type, climatology_used=spec.climatology_used,
         climatology_role=spec.climatology_role, inputs=tuple(spec.inputs),
         panel_id=f"real_{n_cells}_td", panel_cell_count=int(n_cells), panel_file=None,
         output_files=tuple(str(p) for p in outputs),

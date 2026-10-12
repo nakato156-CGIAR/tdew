@@ -28,6 +28,7 @@ import pyarrow.parquet as pq
 from tdew_estimation import experiment_tracking as et
 from tdew_estimation import provenance as prov
 
+from . import paths
 from .evaluate import CLEAN_BACKTEST_ROOT, MANIFEST_REF_LIMPIO, build_row_provenance
 
 logger = logging.getLogger("timesfm.by_tier_month")
@@ -53,7 +54,7 @@ _PROVENANCE_NAMES = {
 REFERENCE_COLS = ["TD_obs", "pred_tuned", "pred_clim", "pred_tmin", "pred_ols"]
 SKILL_REFERENCE = "climatology"
 
-_RES = Path("/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning")
+_RES = paths.RES
 DEFAULT_SUPPORT = _RES / "tuning" / "support_distance.parquet"
 DEFAULT_PAPER_CSV = Path(__file__).resolve().parents[2] / "reports/paper/scripts/validation_by_support.csv"
 

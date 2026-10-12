@@ -25,6 +25,7 @@ from HPC_code_tunning.backtest import RIVAL_PROVENANCE, build_rival_provenance
 from tdew_estimation import provenance as prov
 from tdew_estimation.metrics import regression_metrics
 
+from . import paths
 from .panel import SPLITS
 from .probabilistic import COLUMNS as QUANTILE_COLUMNS
 from .probabilistic import probabilistic_metrics
@@ -39,7 +40,7 @@ RIVALS = {
     "zone_ols": "pred_ols",
     "tuned": "pred_tuned",
 }
-_RES_TUNING = Path("/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning")
+_RES_TUNING = paths.RES / "tuning"
 # Run con fuga: la seleccion de recetas vio los anos 1981-2016. Se conserva solo
 # como referencia historica; no es el default.
 LEAKY_BACKTEST_ROOT = _RES_TUNING / "backtest"
@@ -190,7 +191,11 @@ def score_split(
             **point,
             "skill_vs_clim": 1.0 - point["rmse"] / clim if clim else np.nan,
         }
-        row.update(probabilistic_metrics(merged))
+        prob = probabilistic_metrics(merged)
+        # El `n` de las metricas probabilisticas cuenta filas con los nueve deciles finitos;
+        # no debe pisar el `n` de las metricas puntuales.
+        prob["n_prob"] = prob.pop("n")
+        row.update(prob)
         rows.append(row)
 
         if not rivals_done:

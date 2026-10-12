@@ -20,6 +20,7 @@ import numpy as np
 import pandas as pd
 
 from .panel import DEFAULT_HISTORICAL_ROOT, PanelBatch, iter_panel_batches, split_spec
+from .variants import CHECKPOINT_REVISION, TIMESFM_30
 
 logger = logging.getLogger("timesfm.throughput")
 
@@ -47,7 +48,7 @@ def sweep(
     import torch
     from timesfm3 import TimesFM3Forecaster
 
-    model = TimesFM3Forecaster.from_pretrained("google/timesfm-3.0-pytorch", device=device)
+    model = TimesFM3Forecaster.from_pretrained(TIMESFM_30, device=device, revision=CHECKPOINT_REVISION)
     rows: list[dict[str, object]] = []
     for context in contexts:
         for horizon in horizons:

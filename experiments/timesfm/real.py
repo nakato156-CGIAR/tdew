@@ -34,6 +34,7 @@ from tdew_estimation import experiment_tracking as et
 from tdew_estimation import provenance as prov
 from tdew_estimation.bucket_layout import bucket_dir_name
 
+from . import paths
 from .panel import (
     DEFAULT_HISTORICAL_ROOT,
     NUM_BUCKETS,
@@ -42,7 +43,7 @@ from .panel import (
     split_spec,
 )
 from .run import QUANTILE_COLUMNS, build_inputs, enable_tf32, load_model, predict_panel, to_physical
-from .variants import Variant, variant
+from .variants import CHECKPOINT_REVISION, Variant, variant
 
 logger = logging.getLogger("timesfm.real")
 
@@ -55,15 +56,11 @@ HORIZON_DAYS = 1461
 CODE_VERSION = "real-v1"
 MANIFEST_REF_REAL = "docs/protocol/timesfm_manifest_addendum_real_2017_2020.yaml"
 MLFLOW_EXPERIMENT = "tdew-timesfm-benchmark"
-DEFAULT_PALACIOS_ROOT = Path(
-    "/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/predictions_2017_2020"
-)
-DEFAULT_FUTURE_ROOT = Path(
-    "/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/future_tmin_by_bucket"
-)
-DEFAULT_OUT_DIR = Path("/home/cvelasquez/tdew_timesfm/preds_real")
+DEFAULT_PALACIOS_ROOT = paths.RES / "tuning/predictions_2017_2020"
+DEFAULT_FUTURE_ROOT = paths.RES / "future_tmin_by_bucket"
+DEFAULT_OUT_DIR = paths.WORK / "preds_real"
 
-RES_ROOT = Path("/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning")
+RES_ROOT = paths.RES
 
 DONE_NAME = ".done"
 PRED_NAME = "pred.parquet"
@@ -540,7 +537,7 @@ def build_real_provenance(
         validation_period=None,
         test_period=("2017-01-01", "2020-12-31"),
         split_id="real_2017_2020",
-        autoregressive=True,
+        autoregressive=False,  # decodificacion de una pasada, sin recursion sobre Td predicho
         target_type=spec.target_type,
         climatology_used=spec.climatology_used,
         climatology_role=spec.climatology_role,
@@ -555,7 +552,8 @@ def build_real_provenance(
             "entre productos, no de error. Pesos de TimesFM 3.0 de uso no comercial: entregable "
             f"de investigacion, no operativo. TF32 {'activado' if tf32 else 'desactivado'}, make_positive=False, "
             f"timesfm {_timesfm_version()}, Tmin futura leida de {future_root} (future_tmin_by_bucket), "
-            f"contexto 1981-2016, un bucket por unidad de trabajo, code_version={CODE_VERSION}."
+            f"contexto 1981-2016, un bucket por unidad de trabajo, code_version={CODE_VERSION}, "
+            f"checkpoint {spec.checkpoint}@{CHECKPOINT_REVISION}."
         ),
     )
 

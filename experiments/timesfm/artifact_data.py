@@ -29,11 +29,13 @@ from typing import Sequence
 import numpy as np
 import pandas as pd
 
+from . import paths
+
 logger = logging.getLogger("timesfm.artifact")
 
 REPORT = Path("reports/timesfm_benchmark")
 SILVER = Path("Data/silver")
-RES = Path("/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning")
+RES = paths.RES
 
 # Geometria de la rejilla nacional, verificada contra zone_table.parquet.
 LAT_MAX, LON_MIN, STEP = 1.22, -81.40, 0.01
@@ -51,14 +53,14 @@ MAX_BYTES = 2 * 1024 * 1024
 
 # Producto completo 2017-2020 (E9): salidas de real_compare y real_tail.
 CAMPO = "real_limpio"
-AGG_REAL = Path("/home/cvelasquez/tdew_timesfm/agg_real")
-MANIFIESTO_REAL = Path("/home/cvelasquez/tdew_timesfm/preds_real/MANIFEST.csv")
+AGG_REAL = paths.WORK / "agg_real"
+MANIFIESTO_REAL = paths.WORK / "preds_real/MANIFEST.csv"
 CAMPO_CELDAS = 2_178_827
 CAMPO_VALORES = 3_183_266_247
 TASA_COLA = 35.0
 # Cantidades del control de reproduccion de Palacios que no coinciden con el paper (el texto de la
 # pagina lo dice; si cambian, la pagina deja de ser cierta y hay que reescribirla).
-CONTROL_FALLAN = frozenset({"mean_2019", "mean_2020"})
+CONTROL_FALLAN: frozenset[str] = frozenset()
 # Cola calida de Palacios en el paper (sec-results-tail, tbl-support): celdas afectadas por nivel de
 # soporte, total de celdas, porcentaje de valores sobre 35 C y maximo.
 PAPER_COLA = {"celdas_por_tier": {"within": 0, "near": 10, "marginal": 391, "extrapolated": 18888,
@@ -134,7 +136,7 @@ def build_layers(res: Path = RES, silver: Path = SILVER,
     # 1.461 dias de cada una de las 436.519 celdas de los cuatro departamentos.
     # Se pinta primero para que el muestreo disperso del backtest siga
     # distinguiendose encima.
-    escala_path = Path("/home/cvelasquez/tdew_timesfm/panel_436k.csv")
+    escala_path = paths.WORK / "panel_436k.csv"
     n_escala = 0
     if escala_path.exists():
         escala_ids = pd.read_csv(escala_path)["ID"].to_numpy()
@@ -156,7 +158,7 @@ def build_layers(res: Path = RES, silver: Path = SILVER,
     # propia de TimesFM dentro de los departamentos. La pasada de escala lo
     # contiene, de modo que ya no necesita capa propia; se conserva el recuento
     # porque es la muestra sobre la que corren la TCN y los tests pareados.
-    panel_path = Path("/home/cvelasquez/tdew_reconstruction/panels/ll4_reducido_512.csv")
+    panel_path = paths.RECONSTRUCTION_WORK / "panels/ll4_reducido_512.csv"
     n_panel = 0
     if panel_path.exists():
         panel_ids = pd.read_csv(panel_path)["ID"].to_numpy()

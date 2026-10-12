@@ -86,6 +86,17 @@ _REAL_SMOKE_FILES = tuple(
 )
 TRACKED_METRIC_FILES = TRACKED_METRIC_FILES + _REAL_SMOKE_FILES
 
+# E9 sobre el campo completo (8.192 buckets): real_compare.py y real_tail.py, mas la
+# divergencia KL de kl.py (tdew-214.13).
+_REAL_FULL = REPORTS_ROOT / "timesfm_benchmark/real_limpio"
+_REAL_FULL_FILES = tuple(_REAL_FULL / path.name for path in _REAL_SMOKE_FILES) + tuple(
+    _REAL_FULL / f"tail_{name}_limpio.csv"
+    for name in ("summary", "by_tier", "by_zone_class", "by_month", "by_year", "joint", "survival")
+)
+_KL_FILES = tuple(REPORTS_ROOT / "timesfm_benchmark/kl_limpio" / f"kl_{name}_limpio.csv"
+                  for name in ("by_group", "hist"))
+TRACKED_METRIC_FILES = TRACKED_METRIC_FILES + _REAL_FULL_FILES + _KL_FILES
+
 # CSV/parquet bajo reports/ que existen hoy pero cuyo script de origen no
 # está instrumentado todavía (bead de seguimiento tdew-z39.7), o que no son
 # una métrica de precisión en sí (paneles, listas de IDs, benchmarks de
@@ -110,6 +121,9 @@ EXCLUDED_FILES = {
         "reports/paper/scripts/validation_by_support.py lee desde una ruta externa "
         "(RES/BACKTEST_ROOT fuera del repo) y no pasa por tdew_estimation.provenance -- "
         "salida ad hoc del backtest para el paper, no un run instrumentado",
+    **{path: "prueba de Kumo RFM sobre la reconstruccion de Td (epic tdew-a0d), fuera del benchmark "
+              "TimesFM; sus scripts no pasan por tdew_estimation.provenance"
+       for path in (REPORTS_ROOT / "kumo_test").rglob("*.parquet")},
     REPORTS_ROOT / "paper/scripts/zone_table_supplement.csv":
         "conteo de celdas por zona de clasificacion climatica (analogo a un panel de "
         "celdas), no una metrica de precision de pronostico",

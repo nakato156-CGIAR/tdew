@@ -15,6 +15,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 TIMESFM_30 = "google/timesfm-3.0-pytorch"
+# Snapshot de Hugging Face con el que se corrio todo el benchmark (cache local de la estacion de
+# trabajo, octubre de 2026). Fijarlo evita que una subida nueva al mismo repo cambie los pesos.
+CHECKPOINT_REVISION = "43046b85ec22d584a13f8098c2ed39c889e129c2"
 
 
 @dataclass(frozen=True)
@@ -110,14 +113,14 @@ VARIANTS: tuple[Variant, ...] = (
         target="TD",
         covariates=("TMIN",),
         context_start_year=2002,
-        note="Contexto de 11 anios (4.018 dias), el del sondeo previo.",
+        note="Contexto desde 2002: 11 anios (4.018 dias) en ll4; mas largo en ll1 y ll2.",
     ),
     Variant(
         key="tmin_td_short",
         target="TD",
         covariates=("TMIN",),
         context_start_year=2011,
-        note="Contexto de 2 anios (730 dias), el minimo para que el ciclo anual sea visible dos veces.",
+        note="Contexto desde 2011: 2 anios (731 dias, 2012 es bisiesto) en ll4; mas largo en ll1 y ll2. El minimo para que el ciclo anual sea visible dos veces.",
     ),
     Variant(
         key="tmin_td_symavg",

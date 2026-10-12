@@ -14,6 +14,7 @@ from typing import Sequence
 
 import pandas as pd
 
+from . import paths
 from . import plots
 
 logger = logging.getLogger("timesfm.figuras")
@@ -96,7 +97,7 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument(
         "--runtime-csv",
         type=Path,
-        default=Path("/home/cvelasquez/tdew_timesfm/preds_cribado/runtime_ll4.csv"),
+        default=paths.WORK / "preds_cribado/runtime_ll4.csv",
     )
     parser.add_argument("--suffix", default="",
                         help='sufijo de las entradas y salidas, p. ej. "_limpio"')
