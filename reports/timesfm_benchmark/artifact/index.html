@@ -14,7 +14,7 @@
   --ink:#17212A; --ink-soft:#53636F; --ink-faint:#81909B;
   --line:#DCE3E7; --line-soft:#E9EEF1;
   --sea:#E7EDF0; --land:#BCC8D0; --land-ext:#D8DEE3; --fuera:#B02A1E;
-  --tfm-suave:#A5D5C9;
+  --tfm-suave:#A5D5C9; --campo:#CBE5DD;
   --lima:#E69F00; --cusco:#0072B2; --loreto:#009E73; --sanmartin:#D55E00;
   --tfm:#008C6A; --tuned:#1769AA; --clim:#D89200; --tcn:#C95512;
   --ols:#56B4E9; --tmin:#CC79A7;
@@ -30,7 +30,7 @@
   --ink:#E4ECF2; --ink-soft:#9AABB7; --ink-faint:#71808C;
   --line:#25333E; --line-soft:#1B2831;
   --sea:#101A22; --land:#3A4C5A; --land-ext:#1E2A34; --fuera:#E0776B;
-  --tfm-suave:#1F6B5B; --ramp0:#12322B; --ramp1:#1D6353; --ramp2:#2E8F77; --ramp3:#4DB89B; --ramp4:#86DCC3;
+  --tfm-suave:#1F6B5B; --campo:#17463C; --ramp0:#12322B; --ramp1:#1D6353; --ramp2:#2E8F77; --ramp3:#4DB89B; --ramp4:#86DCC3;
   --ok:#4DB89B; --warn:#E0A253; --crit:#E0776B;
 }}
 *{box-sizing:border-box}
@@ -475,7 +475,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
   }
 
   // Cuatro clases de igual amplitud, un tono por clase: un degradado continuo no
-  // se distingue a simple vista entre zonas vecinas.
+  // permite distinguir a simple vista las zonas vecinas.
   const NCLASES = 4;
   const VAR_CLASE = ["--ramp1","--ramp2","--ramp3","--ramp4"];
   const corteClase = k => skillMin + (skillMax - skillMin) * k / NCLASES;
@@ -492,6 +492,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
     const ajena = hexARgb(css("--land-ext")), fueraCol = hexARgb(css("--fuera"));
     const panelCol = hexARgb(css("--tcn"));
     const escalaCol = hexARgb(css("--tfm-suave"));
+    const campoCol = hexARgb(css("--campo"));
     const dep = {}; for(const k in VAR_DEP) dep[k] = hexARgb(css(VAR_DEP[k]));
     const foco = hexARgb(css("--tfm"));
     const cacheZona = {};
@@ -503,7 +504,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
       if(c === 0){ rgb = mar; }
       else if(c === 1){ rgb = ajena; }
       else if(capaActiva === "regiones"){ rgb = c < 6 ? dep[c] : tierra; }
-      else if(capaActiva === "muestreo"){ rgb = capas.muestreo[i] === 4 ? escalaCol : tierra; }
+      else if(capaActiva === "muestreo"){ const m = capas.muestreo[i]; rgb = m === 4 ? escalaCol : (m === 5 ? campoCol : tierra); }
       else {
         const z = capas.zona[i];
         if(z === 0){ rgb = tierra; }
@@ -529,7 +530,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
       for(let y = 0; y < nLat; y++){
         for(let x = 0; x < nLon; x++){
           const v = capas.muestreo[y * nLon + x];
-          if(v === 0 || v === 4) continue;
+          if(v === 0 || v === 4 || v === 5) continue;
           const col = v === 3 ? panelCol : (v === 2 ? foco : fueraCol);
           for(let dy = -1; dy <= 1; dy++) for(let dx = -1; dx <= 1; dx++){
             const yy = y + dy, xx = x + dx;
@@ -576,16 +577,18 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
         <div class="fila"><span class="muestra" style="background:${css("--land-ext")}"></span>
         dominio modelado fuera del Perú</div>`;
     } else if(capaActiva === "muestreo"){
-      leyenda.innerHTML = `<div class="fila"><span class="muestra" style="background:${css("--tfm-suave")}"></span>
-        cuatro departamentos, cobertura completa <span class="num" style="color:var(--ink-faint)">${(D.meta.escalaCeldas||0).toLocaleString("es")}</span></div>
+      leyenda.innerHTML = `<div class="fila"><span class="muestra" style="background:${css("--campo")}"></span>
+        todo el Perú, 2017–2020 <span class="num" style="color:var(--ink-faint)">${(D.meta.campoCeldas||0).toLocaleString("es")}</span></div>
+        <div class="fila"><span class="muestra" style="background:${css("--tfm-suave")}"></span>
+        cuatro departamentos, 2013–2016 también <span class="num" style="color:var(--ink-faint)">${(D.meta.escalaCeldas||0).toLocaleString("es")}</span></div>
         <div class="fila"><span class="muestra" style="background:${css("--tfm")}"></span>
         backtest, en el Perú <span class="num" style="color:var(--ink-faint)">${D.meta.muestreoDentro.toLocaleString("es")}</span></div>
         <div class="fila"><span class="muestra" style="background:${css("--fuera")}"></span>
         backtest, fuera del Perú <span class="num" style="color:var(--ink-faint)">${D.meta.muestreoFuera.toLocaleString("es")}</span></div>
         <p class="nota">Estas son <strong>todas</strong> las celdas con medición propia de
         TimesFM: ${D.meta.medidasHoy.toLocaleString("es")} en total, cada una con sus 1.461 días
-        predichos. Los cuatro departamentos ya están cubiertos celda por celda, sin hueco; el
-        muestreo disperso del backtest se dibuja engordado para que sea visible.</p>`;
+        predichos. El producto 2017–2020 cubre todo el campo de Palacios, y el backtest
+        2013–2016 queda dentro de esa cobertura; su muestreo disperso se dibuja engordado para que sea visible.</p>`;
     } else {
       leyenda.innerHTML = `<div>Skill vs. climatología</div>
         ${VAR_CLASE.map((v, k) => `<div class="fila"><span class="muestra" style="background:var(${v})"></span><span class="num">${corteClase(k).toFixed(2)} – ${corteClase(k + 1).toFixed(2)}</span></div>`).join("")}

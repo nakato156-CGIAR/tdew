@@ -136,12 +136,25 @@ def build_layers(res: Path = RES, silver: Path = SILVER,
     # 1.461 dias de cada una de las 436.519 celdas de los cuatro departamentos.
     # Se pinta primero para que el muestreo disperso del backtest siga
     # distinguiendose encima.
+    # El producto 2017-2020 es la cobertura mas extensa de todas: TimesFM reconstruyo
+    # cada celda del producto de Palacios, que abarca todo el Peru. Se pinta antes
+    # que la pasada de escala (codigo 5) y las dos se solapan.
+    campo_path = AGG_REAL / "agreement_by_cell_limpio.csv"
+    n_campo = 0
+    if campo_path.exists():
+        campo_ids = pd.read_csv(campo_path, usecols=["ID"])["ID"].to_numpy(np.int64)
+        sample[campo_ids] = 5
+        n_campo = int((sample == 5).sum())
+        if n_campo != CAMPO_CELDAS:
+            raise ValueError(f"el campo 2017-2020 cubre {n_campo} celdas y se esperaban {CAMPO_CELDAS}")
+    logger.info("campo 2017-2020: %d celdas", n_campo)
+
     escala_path = paths.WORK / "panel_436k.csv"
     n_escala = 0
     if escala_path.exists():
         escala_ids = pd.read_csv(escala_path)["ID"].to_numpy()
         sample[escala_ids] = 4
-        n_escala = int((sample == 4).sum())
+        n_escala = len(np.unique(escala_ids))
         if n_escala != sum(CELLS_EXPECTED.values()):
             raise ValueError(
                 f"la pasada de escala cubre {n_escala} celdas y los cuatro "
@@ -182,6 +195,7 @@ def build_layers(res: Path = RES, silver: Path = SILVER,
         "muestreoFuera": int((sample == 1).sum()),
         "panelDepartamental": n_panel,
         "escalaCeldas": n_escala,
+        "campoCeldas": n_campo,
         # Unicas, no la suma: el muestreo del backtest y la pasada de escala se
         # solapan y esas celdas no deben contarse dos veces.
         "medidasHoy": int((sample > 0).sum()),
