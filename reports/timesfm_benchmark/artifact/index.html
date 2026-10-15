@@ -474,11 +474,14 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
     }
   }
 
-  function rampa(t){
-    const pasos = [css("--ramp0"),css("--ramp1"),css("--ramp2"),css("--ramp3"),css("--ramp4")].map(hexARgb);
-    const x = Math.max(0, Math.min(1, t)) * (pasos.length - 1);
-    const i = Math.min(pasos.length - 2, Math.floor(x)), f = x - i;
-    return [0,1,2].map(k => Math.round(pasos[i][k] + (pasos[i+1][k] - pasos[i][k]) * f));
+  // Cuatro clases de igual amplitud, un tono por clase: un degradado continuo no
+  // se distingue a simple vista entre zonas vecinas.
+  const NCLASES = 4;
+  const VAR_CLASE = ["--ramp1","--ramp2","--ramp3","--ramp4"];
+  const corteClase = k => skillMin + (skillMax - skillMin) * k / NCLASES;
+  function claseSkill(sk){
+    const t = (sk - skillMin) / (skillMax - skillMin || 1);
+    return Math.min(NCLASES - 1, Math.max(0, Math.floor(t * NCLASES)));
   }
 
   function pintar(){
@@ -492,6 +495,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
     const dep = {}; for(const k in VAR_DEP) dep[k] = hexARgb(css(VAR_DEP[k]));
     const foco = hexARgb(css("--tfm"));
     const cacheZona = {};
+    const colClase = VAR_CLASE.map(v => hexARgb(css(v)));
 
     for(let i = 0; i < nLat * nLon; i++){
       const c = capas.categoria[i];
@@ -508,7 +512,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
           const s = skillPorZona[z - 1];
           if(s === undefined){ rgb = tierra; }
           else {
-            if(!cacheZona[z]) cacheZona[z] = rampa((s - skillMin) / (skillMax - skillMin || 1));
+            if(!cacheZona[z]) cacheZona[z] = colClase[claseSkill(s)];
             rgb = cacheZona[z];
           }
         }
@@ -583,10 +587,9 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
         predichos. Los cuatro departamentos ya están cubiertos celda por celda, sin hueco; el
         muestreo disperso del backtest se dibuja engordado para que sea visible.</p>`;
     } else {
-      leyenda.innerHTML = `<div>Skill vs. climatología</div><div class="rampa"></div>
-        <div class="fila" style="justify-content:space-between">
-          <span class="num">${skillMin.toFixed(2)}</span><span class="num">${skillMax.toFixed(2)}</span></div>
-        <p class="nota">Rampa secuencial de un solo tono: el skill es positivo en las ${Object.values(D.zonas).filter(m => m && m.timesfm).length}
+      leyenda.innerHTML = `<div>Skill vs. climatología</div>
+        ${VAR_CLASE.map((v, k) => `<div class="fila"><span class="muestra" style="background:var(${v})"></span><span class="num">${corteClase(k).toFixed(2)} – ${corteClase(k + 1).toFixed(2)}</span></div>`).join("")}
+        <p class="nota">Cuatro clases de igual amplitud: el skill es positivo en las ${Object.values(D.zonas).filter(m => m && m.timesfm).length}
         zonas medidas, así que no corresponde una escala divergente. Las zonas sin celdas en
         el muestreo quedan en gris.</p>`;
     }
