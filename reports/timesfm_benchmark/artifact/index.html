@@ -491,7 +491,6 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
     const mar = hexARgb(css("--sea")), tierra = hexARgb(css("--land"));
     const ajena = hexARgb(css("--land-ext")), fueraCol = hexARgb(css("--fuera"));
     const panelCol = hexARgb(css("--tcn"));
-    const escalaCol = hexARgb(css("--tfm-suave"));
     const campoCol = hexARgb(css("--campo"));
     const dep = {}; for(const k in VAR_DEP) dep[k] = hexARgb(css(VAR_DEP[k]));
     const foco = hexARgb(css("--tfm"));
@@ -504,7 +503,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
       if(c === 0){ rgb = mar; }
       else if(c === 1){ rgb = ajena; }
       else if(capaActiva === "regiones"){ rgb = c < 6 ? dep[c] : tierra; }
-      else if(capaActiva === "muestreo"){ const m = capas.muestreo[i]; rgb = m === 4 ? escalaCol : (m === 5 ? campoCol : tierra); }
+      else if(capaActiva === "muestreo"){ const m = capas.muestreo[i]; rgb = (m === 4 || m === 5) ? campoCol : tierra; }
       else {
         const z = capas.zona[i];
         if(z === 0){ rgb = tierra; }
@@ -579,8 +578,6 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
     } else if(capaActiva === "muestreo"){
       leyenda.innerHTML = `<div class="fila"><span class="muestra" style="background:${css("--campo")}"></span>
         todo el Perú, 2017–2020 <span class="num" style="color:var(--ink-faint)">${(D.meta.campoCeldas||0).toLocaleString("es")}</span></div>
-        <div class="fila"><span class="muestra" style="background:${css("--tfm-suave")}"></span>
-        cuatro departamentos, 2013–2016 también <span class="num" style="color:var(--ink-faint)">${(D.meta.escalaCeldas||0).toLocaleString("es")}</span></div>
         <div class="fila"><span class="muestra" style="background:${css("--tfm")}"></span>
         backtest, en el Perú <span class="num" style="color:var(--ink-faint)">${D.meta.muestreoDentro.toLocaleString("es")}</span></div>
         <div class="fila"><span class="muestra" style="background:${css("--fuera")}"></span>
