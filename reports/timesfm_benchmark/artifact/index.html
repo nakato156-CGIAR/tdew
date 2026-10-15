@@ -98,7 +98,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
 </header>
 <nav class="story-nav" aria-label="Secciones">
   <div class="wrap">
-    <a href="#resultado">Resultado</a><a href="#horizonte">Horizonte</a><a href="#soporte">Soporte</a><a href="#sesgo-mensual">Sesgo mensual</a><a href="#alcance">Alcance</a><a href="#escala">Escala</a><a href="#divergencia">Divergencia KL</a><a href="#campo">Campo 2017–2020</a><a href="#cola-larga">Cola larga</a><a href="#anomalias">Anomalías</a><a href="#limites">Límites</a><a href="#protocolo">Protocolo</a>
+    <a href="#resultado">Resultado</a><a href="#intervalo">Intervalo de predicción</a><a href="#horizonte">Horizonte</a><a href="#soporte">Soporte</a><a href="#sesgo-mensual">Sesgo mensual</a><a href="#alcance">Alcance</a><a href="#escala">Escala</a><a href="#divergencia">Divergencia KL</a><a href="#campo">Campo 2017–2020</a><a href="#cola-larga">Cola larga</a><a href="#anomalias">Anomalías</a><a href="#limites">Límites</a><a href="#protocolo">Protocolo</a>
   </div>
 </nav>
 
@@ -123,6 +123,43 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
       </figure>
     </div>
     <div class="finding"><strong>La brecha principal es pequeña en magnitud absoluta:</strong> 0.074 °C de RMSE frente a Palacios. La pregunta útil no es solo si existe, sino si se mantiene al aumentar el horizonte y al cambiar de región.</div>
+
+    <div id="intervalo" style="margin-top:54px;scroll-margin-top:70px">
+      <div class="section-head">
+        <p class="eyebrow section-index">Cuantiles · Validación</p>
+        <div class="section-copy">
+          <h2>El intervalo q10–q90 cubre cerca del 80 % esperado</h2>
+          <p>TimesFM devuelve nueve cuantiles. q10–q90 forma un intervalo de predicción nominal del 80 %; no es un intervalo de confianza para la media. La cobertura se recalculó contra Td observado en el backtest limpio ll4 (2013–2016), sobre 1 092 celdas y 1 595 412 pares válidos.</p>
+        </div>
+      </div>
+      <div class="readout">
+        <div><strong>81,75 %</strong><span>Cobertura observada · nominal 80 %</span></div>
+        <div><strong>2,02 °C</strong><span>Anchura media del intervalo q10–q90</span></div>
+        <div><strong>0</strong><span>Cruces entre cuantiles en las filas evaluadas</span></div>
+      </div>
+      <div class="horizon-layout">
+        <div class="tabla-caja">
+          <table>
+            <thead><tr><th>Periodo</th><th>Pares</th><th>Cobertura</th><th>Anchura media</th></tr></thead>
+            <tbody>
+              <tr><td>2013</td><td>398 580</td><td>81,38 %</td><td>1,93 °C</td></tr>
+              <tr><td>2014</td><td>398 580</td><td>80,78 %</td><td>2,01 °C</td></tr>
+              <tr><td>2015</td><td>398 580</td><td>82,27 %</td><td>2,02 °C</td></tr>
+              <tr><td>2016</td><td>399 672</td><td>82,58 %</td><td>2,14 °C</td></tr>
+              <tr><td>Trimestre 1</td><td>394 212</td><td>84,25 %</td><td>1,73 °C</td></tr>
+              <tr><td>Trimestre 2</td><td>397 488</td><td>80,16 %</td><td>2,06 °C</td></tr>
+              <tr><td>Trimestre 3</td><td>401 856</td><td>82,25 %</td><td>2,22 °C</td></tr>
+              <tr><td>Trimestre 4</td><td>401 856</td><td>80,39 %</td><td>2,08 °C</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <aside class="side-note">
+          <h3>Las colas no quedan igual de calibradas</h3>
+          <p>El 10,27 % de las observaciones cayó bajo q10 y el 7,97 % sobre q90. La cobertura agregada se aproxima al 80 % nominal, con diferencias entre colas y periodos.</p>
+          <p>La validación usa el panel de cribado limpio. Para el producto 2017–2020 no hay Td observado con el que medir cobertura; allí solo se dispone de comparación entre productos.</p>
+        </aside>
+      </div>
+    </div>
 
     <div class="model-grid" aria-label="Estrategias de predicción">
       <article class="model-card"><span class="tag">Sin memoria</span><h3>Cada día se resuelve por separado</h3><p>Climatología, <code>Td = Tmin</code> y <code>zone_ols</code> no mantienen estado dentro del bloque.</p></article>
