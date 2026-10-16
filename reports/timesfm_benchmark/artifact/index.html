@@ -62,6 +62,7 @@ h3{font-size:18px;line-height:1.3;font-weight:600}p{margin:0}.num{font-family:"I
 .horizon-layout{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(300px,.7fr);gap:28px;align-items:start}.horizon-layout>*{min-width:0}.side-note{background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:20px}.side-note h3{font-family:"IBM Plex Sans",sans-serif;font-size:15px}.side-note p{font-size:13.5px;color:var(--ink-soft);margin-top:8px}
 .capa-row{display:flex;flex-wrap:wrap;gap:8px;margin:12px 0 14px}.capas{display:flex;flex-direction:column;gap:7px}.capas button,.capa-row button{font-family:inherit;font-size:13px;text-align:left;cursor:pointer;background:var(--surface);color:var(--ink-soft);border:1px solid var(--line);border-radius:4px;padding:8px 11px;line-height:1.35}.capas button[aria-pressed="true"],.capa-row button[aria-pressed="true"]{border-color:var(--tfm);color:var(--ink);box-shadow:inset 2px 0 0 var(--tfm)}
 .grafico{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:16px 16px 10px}#curva{display:block;width:100%;height:auto}.leyenda-linea{display:flex;flex-wrap:wrap;gap:8px 18px;margin-top:10px;font-size:12.5px}.leyenda-linea span{display:flex;align-items:center;gap:7px;color:var(--ink-soft)}.leyenda-linea i{width:16px;height:3px;border-radius:2px;display:inline-block}
+.leyenda-toggle button{font:inherit;font-size:12.5px;display:flex;align-items:center;gap:7px;cursor:pointer;background:none;border:1px solid var(--line);border-radius:4px;padding:3px 9px;color:var(--ink-soft)}.leyenda-toggle button[aria-pressed="false"]{color:var(--ink-faint);text-decoration:line-through}.leyenda-toggle button[aria-pressed="false"] i{background:var(--ink-faint)!important;opacity:.5}
 .scope-warning{margin:34px 0 0;background:color-mix(in srgb,var(--warn) 7%,var(--surface));border:1px solid color-mix(in srgb,var(--warn) 30%,var(--line));border-radius:6px;padding:18px 20px}.scope-warning h3{font-family:"IBM Plex Sans",sans-serif;font-size:15px}.scope-warning p{font-size:13.5px;color:var(--ink-soft);margin-top:6px}
 .mapa-caja{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:24px;align-items:start;margin-top:26px}.lienzo-marco{position:relative;background:var(--sea);border:1px solid var(--line);border-radius:6px;overflow:hidden;display:flex;justify-content:center}#mapa,#mapa-cola{display:block;width:100%;height:auto;max-height:700px;object-fit:contain;image-rendering:pixelated;cursor:crosshair}.leyenda{margin-top:14px;font-size:12.5px;color:var(--ink-soft);display:flex;flex-direction:column;gap:6px}.leyenda .fila{display:flex;align-items:center;gap:8px}.muestra{width:13px;height:13px;border-radius:2px;flex:none;border:1px solid rgba(0,0,0,.14)}.rampa{height:9px;border-radius:2px;background:linear-gradient(90deg,var(--ramp0),var(--ramp1),var(--ramp2),var(--ramp3),var(--ramp4))}#mapa-cola{cursor:default}#lectura{min-height:82px;margin-top:14px;padding:11px 12px;border:1px solid var(--line);border-radius:4px;background:var(--surface);font-size:13px;line-height:1.5}#lectura .titulo{font-weight:600}.bloque-zona{margin-top:10px;padding-top:9px;border-top:1px solid var(--line)}.cabecera-zona{font-family:"IBM Plex Mono",monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint)}.medido-en{font-size:12.5px;color:var(--ink-faint);margin:0 0 8px;line-height:1.5}.medido-en strong{color:var(--ink-soft);font-weight:500}#lectura dl{display:grid;grid-template-columns:auto 1fr;gap:2px 12px;margin:7px 0 0}#lectura dt{color:var(--ink-soft)}#lectura dd{margin:0;font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}
 .tabla-caja{max-width:100%;overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--surface)}table{border-collapse:collapse;width:100%;font-size:13.5px;min-width:520px}#t-horizonte{min-width:0}#t-horizonte th,#t-horizonte td{padding-inline:10px}th,td{padding:8px 12px;text-align:right;white-space:nowrap;border-bottom:1px solid var(--line-soft)}th:first-child,td:first-child{text-align:left}thead th{font-family:"IBM Plex Mono",monospace;font-size:10.5px;letter-spacing:.08em;text-transform:uppercase;color:var(--ink-faint);font-weight:500;background:var(--surface-2)}tbody td:not(:first-child){font-family:"IBM Plex Mono",monospace;font-variant-numeric:tabular-nums}tbody tr:last-child td{border-bottom:none}td.mejor{font-weight:600;color:var(--ok)}td.mejor::after{content:" ▪";font-size:8px;vertical-align:middle;opacity:.65}tr.foco td:first-child{box-shadow:inset 3px 0 0 var(--tfm)}tr.alerta td:first-child{box-shadow:inset 3px 0 0 var(--warn)}.pill{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:7px;vertical-align:baseline}
@@ -359,9 +360,14 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
     </div>
     <div class="chart-shell">
       <figure class="fig">
-        <figcaption><span class="fig-titulo">Anomalía media diaria de Td, 2017–2020</span><span class="fig-sub">Promedio sobre todas las celdas. °C sobre la climatología.</span></figcaption>
+        <figcaption><span class="fig-titulo">Td medio diario, 2017–2020</span><span class="fig-sub">Promedio sobre todas las celdas, en °C. Pulsa una serie de la leyenda para apagarla: queda en gris para seguir comparando.</span></figcaption>
+        <svg id="fig-td-diario" viewBox="0 0 760 300" role="img" aria-label="Td medio diario de TimesFM, de Palacios y de la climatología"></svg>
+        <div class="leyenda-linea leyenda-toggle" id="leyenda-td-diario"></div>
+      </figure>
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">Anomalía media diaria de Td, 2017–2020</span><span class="fig-sub">Promedio sobre todas las celdas. °C sobre la climatología. Pulsa una serie de la leyenda para apagarla.</span></figcaption>
         <svg id="fig-anom" viewBox="0 0 760 300" role="img" aria-label="Anomalía media diaria de Td de TimesFM y de Palacios"></svg>
-        <div class="leyenda-linea" id="leyenda-anom"></div>
+        <div class="leyenda-linea leyenda-toggle" id="leyenda-anom"></div>
       </figure>
       <figure class="fig">
         <figcaption><span class="fig-titulo">Qué tanto se parecen las dos series</span><span class="fig-sub">Los días extremos son el 5 % más cálido y el 5 % más frío según Palacios (74 días cada uno).</span></figcaption>
@@ -1341,28 +1347,53 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
 
     /* serie de anomalia */
     (function(){
-      const A = C.anomalia, svg = el("fig-anom"), W = 760, H = 300, M = {t: 14, r: 20, b: 36, l: 46};
-      const n = A.timesfm.length, todo = A.timesfm.concat(A.palacios);
-      const lim = Math.ceil(Math.max(...todo.map(Math.abs)) * 5) / 5;
-      const X = d => M.l + d / (n - 1) * (W - M.l - M.r);
-      const Y = v => M.t + (lim - v) / (2 * lim) * (H - M.t - M.b);
-      let o = "";
-      ticks(-lim, lim, 5).forEach(v => {
-        const cero = Math.abs(v) < 1e-9;
-        o += `<line x1="${M.l}" y1="${Y(v)}" x2="${W - M.r}" y2="${Y(v)}" stroke="${cero ? "var(--fig-axis)" : "var(--fig-grid)"}" stroke-width="${cero ? 1.4 : 1}"/>`;
-        o += `<text x="${M.l - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${v.toFixed(1)}</text>`;
-      });
-      const ini = new Date(A.inicio + "T00:00:00Z");
-      for(let y = ini.getUTCFullYear(); y < ini.getUTCFullYear() + 4; y++){
-        const d = Math.round((Date.UTC(y, 0, 1) - ini.getTime()) / 86400000);
-        o += `<line x1="${X(d)}" y1="${M.t}" x2="${X(d)}" y2="${H - M.b}" stroke="var(--fig-grid)"/>`;
-        o += `<text x="${X(d) + 4}" y="${H - M.b + 16}" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${y}</text>`;
+      const A = C.anomalia;
+      const colSerie = {palacios: col("palacios"), timesfm: col("timesfm"), clim: css("--ink-soft")};
+      const NOMS = {palacios: "Palacios", timesfm: "TimesFM", clim: "Climatología"};
+      // Serie diaria con leyenda que enciende o apaga cada línea. La línea apagada
+      // no desaparece: queda en gris para que siga sirviendo de referencia, y los
+      // ejes no cambian al apagarla.
+      function serieDiaria(svgId, legId, series, {cero, dec}){
+        const svg = el(svgId), W = 760, H = 300, M = {t: 14, r: 20, b: 36, l: 46};
+        const activa = {}; series.forEach(s => activa[s.k] = true);
+        const n = series[0].v.length, todo = series.flatMap(s => s.v);
+        let lo, hi;
+        if(cero){ hi = Math.ceil(Math.max(...todo.map(Math.abs)) * 5) / 5; lo = -hi; }
+        else { lo = Math.floor(Math.min(...todo) - .5); hi = Math.ceil(Math.max(...todo) + .5); }
+        const X = d => M.l + d / (n - 1) * (W - M.l - M.r);
+        const Y = v => M.t + (hi - v) / (hi - lo) * (H - M.t - M.b);
+        const ini = new Date(A.inicio + "T00:00:00Z");
+        function dibujar(){
+          let o = "";
+          ticks(lo, hi, 5).forEach(v => {
+            const z = cero && Math.abs(v) < 1e-9;
+            o += `<line x1="${M.l}" y1="${Y(v)}" x2="${W - M.r}" y2="${Y(v)}" stroke="${z ? "var(--fig-axis)" : "var(--fig-grid)"}" stroke-width="${z ? 1.4 : 1}"/>`;
+            o += `<text x="${M.l - 8}" y="${Y(v) + 4}" text-anchor="end" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${v.toFixed(dec)}</text>`;
+          });
+          for(let y = ini.getUTCFullYear(); y < ini.getUTCFullYear() + 4; y++){
+            const d = Math.round((Date.UTC(y, 0, 1) - ini.getTime()) / 86400000);
+            o += `<line x1="${X(d)}" y1="${M.t}" x2="${X(d)}" y2="${H - M.b}" stroke="var(--fig-grid)"/>`;
+            o += `<text x="${X(d) + 4}" y="${H - M.b + 16}" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${y}</text>`;
+          }
+          // Primero las apagadas (grises, al fondo) y encima las activas.
+          [...series.filter(s => !activa[s.k]), ...series.filter(s => activa[s.k])].forEach(s => {
+            const on = activa[s.k];
+            o += `<path d="${s.v.map((v, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join("")}" fill="none" stroke="${on ? colSerie[s.k] : "var(--ink-faint)"}" stroke-width="${on ? 1.1 : 1}" ${s.k === "clim" && on ? 'stroke-dasharray="4 3"' : ""} stroke-linejoin="round" opacity="${on ? .92 : .35}"/>`;
+          });
+          svg.innerHTML = o;
+        }
+        el(legId).innerHTML = series.map(s => `<button type="button" data-k="${s.k}" aria-pressed="true"><i style="width:16px;height:3px;border-radius:2px;display:inline-block;background:${colSerie[s.k]}"></i>${NOMS[s.k]}</button>`).join("");
+        el(legId).querySelectorAll("button").forEach(b => b.addEventListener("click", () => {
+          activa[b.dataset.k] = !activa[b.dataset.k];
+          b.setAttribute("aria-pressed", String(activa[b.dataset.k]));
+          dibujar();
+        }));
+        dibujar();
       }
-      ["palacios", "timesfm"].forEach(k => {
-        o += `<path d="${A[k].map((v, i) => `${i ? "L" : "M"}${X(i).toFixed(1)},${Y(v).toFixed(1)}`).join("")}" fill="none" stroke="${col(k)}" stroke-width="1.1" stroke-linejoin="round" opacity=".92"/>`;
-      });
-      svg.innerHTML = o;
-      leyenda2("leyenda-anom");
+      serieDiaria("fig-td-diario", "leyenda-td-diario", [
+        {k: "clim", v: A.clim}, {k: "palacios", v: A.td_palacios}, {k: "timesfm", v: A.td_timesfm}], {cero: false, dec: 0});
+      serieDiaria("fig-anom", "leyenda-anom", [
+        {k: "palacios", v: A.palacios}, {k: "timesfm", v: A.timesfm}], {cero: true, dec: 1});
       const s = A.estadisticos;
       tabla("t-anom", ["Medida", "Palacios", "TimesFM"], [
         {c: ["Correlación diaria entre las dos series", f(s.r, 3), "—"]},

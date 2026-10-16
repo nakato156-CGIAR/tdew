@@ -483,6 +483,9 @@ def campo(report: Path = REPORT, agg: Path = AGG_REAL, manifest: Path = MANIFIES
             "inicio": str(serie["date"].iloc[0]),
             "timesfm": [round(float(v), 3) for v in serie["anom_timesfm"]],
             "palacios": [round(float(v), 3) for v in serie["anom_palacios"]],
+            "td_timesfm": [round(float(v), 3) for v in serie["mean_timesfm"]],
+            "td_palacios": [round(float(v), 3) for v in serie["mean_palacios"]],
+            "clim": [round(float(v), 3) for v in serie["clim_mean"]],
             "estadisticos": anomalia_estadisticos(serie),
         },
         "cola": {
