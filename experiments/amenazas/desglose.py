@@ -13,8 +13,9 @@ Para los bloques ll4 (test 2013-2016) y ll4b (test 2009-2012) sobre las 17.027 c
     de 2 grados y de bloques mes-anio (2000 replicas, semilla 0).
 
 Todos los metodos se evaluan sobre las mismas filas (interseccion de ID y FECHA). Los
-metodos opcionales (``tuned`` sin rezagos de Td, TimesFM con mediana) entran solos si
-su parquet existe, de modo que basta re-ejecutar el script cuando aparezcan.
+metodos opcionales (``tuned`` sin rezagos de Td, TimesFM ``tmin_anom_med`` con contexto
+desde 2002) entran solos si su parquet existe, de modo que basta re-ejecutar el script
+cuando aparezcan.
 
 Uso: ``uv run python -m experiments.amenazas.desglose [--splits ll4 ll4b]``
 """
@@ -68,7 +69,7 @@ KEY_GAPS: tuple[tuple[str, str], ...] = (
     ("tuned", "llr_simple"),
     ("tuned", "llr_rezagos"),
     ("timesfm_td", "llr_simple"),
-    ("tuned_sin_td", "tuned"),
+    ("tuned", "tuned_sin_td"),
     ("tuned_sin_td", "llr_simple"),
     ("timesfm_anom", "tuned_sin_td"),
     ("timesfm_anom_med", "timesfm_anom"),

@@ -65,6 +65,39 @@ ll4,panel,35,E (d) A',267,390087,tuned,0.66652
 ll4,panel,36,E (d) B',991,1447851,tuned,0.79784
 ll4,panel,39,Lago Titicaca,256,374016,tuned,0.92778
 ll4,panel,40,Loma,24,35064,tuned,0.72860
+ll4,panel,0,A (r) A',7091,10359951,tuned_sin_td,1.48363
+ll4,panel,1,A (r) B',351,512811,tuned_sin_td,0.74023
+ll4,panel,2,A (r) C',74,108114,tuned_sin_td,0.89077
+ll4,panel,3,A (r) D',16,23376,tuned_sin_td,0.88175
+ll4,panel,4,B (i) B',174,254214,tuned_sin_td,0.60733
+ll4,panel,5,B (i) C',35,51135,tuned_sin_td,0.99833
+ll4,panel,6,B (i) D',22,32142,tuned_sin_td,0.98676
+ll4,panel,8,"B (o , i) B'",110,160710,tuned_sin_td,0.78251
+ll4,panel,9,"B (o , i) C'",981,1433241,tuned_sin_td,0.82187
+ll4,panel,10,"B (o , i) D'",12,17532,tuned_sin_td,1.02315
+ll4,panel,11,B (r) A',3695,5398395,tuned_sin_td,1.00611
+ll4,panel,12,B (r) B',944,1379184,tuned_sin_td,0.69024
+ll4,panel,13,B (r) C',19,27759,tuned_sin_td,0.86131
+ll4,panel,14,B (r) D',89,130029,tuned_sin_td,0.89975
+ll4,panel,17,C (i) A',17,24837,tuned_sin_td,0.66612
+ll4,panel,18,C (i) B',91,132951,tuned_sin_td,0.68780
+ll4,panel,19,C (i) C',246,359406,tuned_sin_td,1.07504
+ll4,panel,20,C (i) D',219,319959,tuned_sin_td,1.01119
+ll4,panel,22,"C (o , i) B'",18,26298,tuned_sin_td,0.70578
+ll4,panel,23,"C (o , i) C'",174,254214,tuned_sin_td,0.96908
+ll4,panel,26,C (r) A',39,56979,tuned_sin_td,0.64966
+ll4,panel,27,C (r) B',275,401775,tuned_sin_td,0.65767
+ll4,panel,28,"D (i , p) A'",491,717351,tuned_sin_td,0.84389
+ll4,panel,29,"D (i , p) B'",29,42369,tuned_sin_td,1.22907
+ll4,panel,30,"D (i , p) C'",68,99348,tuned_sin_td,1.18407
+ll4,panel,31,D (i) A',20,29220,tuned_sin_td,0.61894
+ll4,panel,32,D (i) B',81,118341,tuned_sin_td,0.70254
+ll4,panel,33,D (i) C',107,156327,tuned_sin_td,1.06888
+ll4,panel,34,D (i) D',1,1461,tuned_sin_td,1.08996
+ll4,panel,35,E (d) A',267,390087,tuned_sin_td,0.64397
+ll4,panel,36,E (d) B',991,1447851,tuned_sin_td,0.78486
+ll4,panel,39,Lago Titicaca,256,374016,tuned_sin_td,0.89544
+ll4,panel,40,Loma,24,35064,tuned_sin_td,0.71888
 ll4,panel,0,A (r) A',7091,10359951,llr_simple,1.48009
 ll4,panel,1,A (r) B',351,512811,llr_simple,0.75615
 ll4,panel,2,A (r) C',74,108114,llr_simple,0.89455
@@ -164,6 +197,39 @@ ll4,panel,35,E (d) A',267,390087,timesfm_anom,0.58199
 ll4,panel,36,E (d) B',991,1447851,timesfm_anom,0.74079
 ll4,panel,39,Lago Titicaca,256,374016,timesfm_anom,0.81741
 ll4,panel,40,Loma,24,35064,timesfm_anom,0.66669
+ll4,panel,0,A (r) A',7091,10359951,timesfm_anom_med,1.54620
+ll4,panel,1,A (r) B',351,512811,timesfm_anom_med,0.72808
+ll4,panel,2,A (r) C',74,108114,timesfm_anom_med,0.83004
+ll4,panel,3,A (r) D',16,23376,timesfm_anom_med,0.84951
+ll4,panel,4,B (i) B',174,254214,timesfm_anom_med,0.61386
+ll4,panel,5,B (i) C',35,51135,timesfm_anom_med,0.92244
+ll4,panel,6,B (i) D',22,32142,timesfm_anom_med,0.88826
+ll4,panel,8,"B (o , i) B'",110,160710,timesfm_anom_med,0.74244
+ll4,panel,9,"B (o , i) C'",981,1433241,timesfm_anom_med,0.76660
+ll4,panel,10,"B (o , i) D'",12,17532,timesfm_anom_med,0.88361
+ll4,panel,11,B (r) A',3695,5398395,timesfm_anom_med,1.02118
+ll4,panel,12,B (r) B',944,1379184,timesfm_anom_med,0.67924
+ll4,panel,13,B (r) C',19,27759,timesfm_anom_med,0.81011
+ll4,panel,14,B (r) D',89,130029,timesfm_anom_med,0.83216
+ll4,panel,17,C (i) A',17,24837,timesfm_anom_med,0.60005
+ll4,panel,18,C (i) B',91,132951,timesfm_anom_med,0.68542
+ll4,panel,19,C (i) C',246,359406,timesfm_anom_med,1.01252
+ll4,panel,20,C (i) D',219,319959,timesfm_anom_med,0.88876
+ll4,panel,22,"C (o , i) B'",18,26298,timesfm_anom_med,0.69145
+ll4,panel,23,"C (o , i) C'",174,254214,timesfm_anom_med,0.90799
+ll4,panel,26,C (r) A',39,56979,timesfm_anom_med,0.63854
+ll4,panel,27,C (r) B',275,401775,timesfm_anom_med,0.65611
+ll4,panel,28,"D (i , p) A'",491,717351,timesfm_anom_med,0.84286
+ll4,panel,29,"D (i , p) B'",29,42369,timesfm_anom_med,1.19470
+ll4,panel,30,"D (i , p) C'",68,99348,timesfm_anom_med,1.10056
+ll4,panel,31,D (i) A',20,29220,timesfm_anom_med,0.56552
+ll4,panel,32,D (i) B',81,118341,timesfm_anom_med,0.69567
+ll4,panel,33,D (i) C',107,156327,timesfm_anom_med,0.98281
+ll4,panel,34,D (i) D',1,1461,timesfm_anom_med,0.87473
+ll4,panel,35,E (d) A',267,390087,timesfm_anom_med,0.59778
+ll4,panel,36,E (d) B',991,1447851,timesfm_anom_med,0.75531
+ll4,panel,39,Lago Titicaca,256,374016,timesfm_anom_med,0.83696
+ll4,panel,40,Loma,24,35064,timesfm_anom_med,0.67491
 ll4,peru,0,A (r) A',2147,3136767,clim,1.51805
 ll4,peru,1,A (r) B',197,287817,clim,0.95937
 ll4,peru,2,A (r) C',74,108114,clim,1.21286
@@ -228,6 +294,38 @@ ll4,peru,34,D (i) D',1,1461,tuned,1.18697
 ll4,peru,35,E (d) A',199,290739,tuned,0.67912
 ll4,peru,36,E (d) B',726,1060686,tuned,0.84749
 ll4,peru,40,Loma,24,35064,tuned,0.72860
+ll4,peru,0,A (r) A',2147,3136767,tuned_sin_td,1.13708
+ll4,peru,1,A (r) B',197,287817,tuned_sin_td,0.67832
+ll4,peru,2,A (r) C',74,108114,tuned_sin_td,0.89077
+ll4,peru,3,A (r) D',16,23376,tuned_sin_td,0.88175
+ll4,peru,4,B (i) B',174,254214,tuned_sin_td,0.60733
+ll4,peru,5,B (i) C',35,51135,tuned_sin_td,0.99833
+ll4,peru,6,B (i) D',22,32142,tuned_sin_td,0.98676
+ll4,peru,8,"B (o , i) B'",110,160710,tuned_sin_td,0.78251
+ll4,peru,9,"B (o , i) C'",889,1298829,tuned_sin_td,0.82602
+ll4,peru,10,"B (o , i) D'",12,17532,tuned_sin_td,1.02315
+ll4,peru,11,B (r) A',1698,2480778,tuned_sin_td,0.82132
+ll4,peru,12,B (r) B',705,1030005,tuned_sin_td,0.64345
+ll4,peru,13,B (r) C',19,27759,tuned_sin_td,0.86131
+ll4,peru,14,B (r) D',89,130029,tuned_sin_td,0.89975
+ll4,peru,17,C (i) A',17,24837,tuned_sin_td,0.66612
+ll4,peru,18,C (i) B',91,132951,tuned_sin_td,0.68780
+ll4,peru,19,C (i) C',225,328725,tuned_sin_td,1.08195
+ll4,peru,20,C (i) D',89,130029,tuned_sin_td,1.12316
+ll4,peru,22,"C (o , i) B'",18,26298,tuned_sin_td,0.70578
+ll4,peru,23,"C (o , i) C'",145,211845,tuned_sin_td,0.98669
+ll4,peru,26,C (r) A',39,56979,tuned_sin_td,0.64966
+ll4,peru,27,C (r) B',255,372555,tuned_sin_td,0.65762
+ll4,peru,28,"D (i , p) A'",42,61362,tuned_sin_td,0.69385
+ll4,peru,29,"D (i , p) B'",29,42369,tuned_sin_td,1.22907
+ll4,peru,30,"D (i , p) C'",56,81816,tuned_sin_td,1.22891
+ll4,peru,31,D (i) A',3,4383,tuned_sin_td,0.74511
+ll4,peru,32,D (i) B',81,118341,tuned_sin_td,0.70254
+ll4,peru,33,D (i) C',45,65745,tuned_sin_td,1.06268
+ll4,peru,34,D (i) D',1,1461,tuned_sin_td,1.08996
+ll4,peru,35,E (d) A',199,290739,tuned_sin_td,0.65802
+ll4,peru,36,E (d) B',726,1060686,tuned_sin_td,0.83445
+ll4,peru,40,Loma,24,35064,tuned_sin_td,0.71888
 ll4,peru,0,A (r) A',2147,3136767,llr_simple,1.13634
 ll4,peru,1,A (r) B',197,287817,llr_simple,0.69008
 ll4,peru,2,A (r) C',74,108114,llr_simple,0.89455
@@ -324,6 +422,38 @@ ll4,peru,34,D (i) D',1,1461,timesfm_anom,0.88505
 ll4,peru,35,E (d) A',199,290739,timesfm_anom,0.59889
 ll4,peru,36,E (d) B',726,1060686,timesfm_anom,0.79065
 ll4,peru,40,Loma,24,35064,timesfm_anom,0.66669
+ll4,peru,0,A (r) A',2147,3136767,timesfm_anom_med,1.17640
+ll4,peru,1,A (r) B',197,287817,timesfm_anom_med,0.66615
+ll4,peru,2,A (r) C',74,108114,timesfm_anom_med,0.83004
+ll4,peru,3,A (r) D',16,23376,timesfm_anom_med,0.84951
+ll4,peru,4,B (i) B',174,254214,timesfm_anom_med,0.61386
+ll4,peru,5,B (i) C',35,51135,timesfm_anom_med,0.92244
+ll4,peru,6,B (i) D',22,32142,timesfm_anom_med,0.88826
+ll4,peru,8,"B (o , i) B'",110,160710,timesfm_anom_med,0.74244
+ll4,peru,9,"B (o , i) C'",889,1298829,timesfm_anom_med,0.76950
+ll4,peru,10,"B (o , i) D'",12,17532,timesfm_anom_med,0.88361
+ll4,peru,11,B (r) A',1698,2480778,timesfm_anom_med,0.82174
+ll4,peru,12,B (r) B',705,1030005,timesfm_anom_med,0.62740
+ll4,peru,13,B (r) C',19,27759,timesfm_anom_med,0.81011
+ll4,peru,14,B (r) D',89,130029,timesfm_anom_med,0.83216
+ll4,peru,17,C (i) A',17,24837,timesfm_anom_med,0.60005
+ll4,peru,18,C (i) B',91,132951,timesfm_anom_med,0.68542
+ll4,peru,19,C (i) C',225,328725,timesfm_anom_med,1.02328
+ll4,peru,20,C (i) D',89,130029,timesfm_anom_med,1.00087
+ll4,peru,22,"C (o , i) B'",18,26298,timesfm_anom_med,0.69145
+ll4,peru,23,"C (o , i) C'",145,211845,timesfm_anom_med,0.92520
+ll4,peru,26,C (r) A',39,56979,timesfm_anom_med,0.63854
+ll4,peru,27,C (r) B',255,372555,timesfm_anom_med,0.65542
+ll4,peru,28,"D (i , p) A'",42,61362,timesfm_anom_med,0.64991
+ll4,peru,29,"D (i , p) B'",29,42369,timesfm_anom_med,1.19470
+ll4,peru,30,"D (i , p) C'",56,81816,timesfm_anom_med,1.14421
+ll4,peru,31,D (i) A',3,4383,timesfm_anom_med,0.64393
+ll4,peru,32,D (i) B',81,118341,timesfm_anom_med,0.69567
+ll4,peru,33,D (i) C',45,65745,timesfm_anom_med,1.00730
+ll4,peru,34,D (i) D',1,1461,timesfm_anom_med,0.87473
+ll4,peru,35,E (d) A',199,290739,timesfm_anom_med,0.61939
+ll4,peru,36,E (d) B',726,1060686,timesfm_anom_med,0.80614
+ll4,peru,40,Loma,24,35064,timesfm_anom_med,0.67491
 ll4b,panel,0,A (r) A',7091,10359951,clim,1.66393
 ll4b,panel,1,A (r) B',351,512811,clim,0.92446
 ll4b,panel,2,A (r) C',74,108114,clim,1.17711
@@ -555,6 +685,39 @@ ll4b,panel,35,E (d) A',267,390087,timesfm_anom,0.58903
 ll4b,panel,36,E (d) B',991,1447851,timesfm_anom,0.69366
 ll4b,panel,39,Lago Titicaca,256,374016,timesfm_anom,0.75936
 ll4b,panel,40,Loma,24,35064,timesfm_anom,0.64697
+ll4b,panel,0,A (r) A',7091,10359951,timesfm_anom_med,1.39858
+ll4b,panel,1,A (r) B',351,512811,timesfm_anom_med,0.67435
+ll4b,panel,2,A (r) C',74,108114,timesfm_anom_med,0.80828
+ll4b,panel,3,A (r) D',16,23376,timesfm_anom_med,0.76598
+ll4b,panel,4,B (i) B',174,254214,timesfm_anom_med,0.59574
+ll4b,panel,5,B (i) C',35,51135,timesfm_anom_med,0.85699
+ll4b,panel,6,B (i) D',22,32142,timesfm_anom_med,0.81942
+ll4b,panel,8,"B (o , i) B'",110,160710,timesfm_anom_med,0.73947
+ll4b,panel,9,"B (o , i) C'",981,1433241,timesfm_anom_med,0.73579
+ll4b,panel,10,"B (o , i) D'",12,17532,timesfm_anom_med,0.78409
+ll4b,panel,11,B (r) A',3695,5398395,timesfm_anom_med,0.98925
+ll4b,panel,12,B (r) B',944,1379184,timesfm_anom_med,0.68549
+ll4b,panel,13,B (r) C',19,27759,timesfm_anom_med,0.79736
+ll4b,panel,14,B (r) D',89,130029,timesfm_anom_med,0.76967
+ll4b,panel,17,C (i) A',17,24837,timesfm_anom_med,0.58317
+ll4b,panel,18,C (i) B',91,132951,timesfm_anom_med,0.69568
+ll4b,panel,19,C (i) C',246,359406,timesfm_anom_med,0.89412
+ll4b,panel,20,C (i) D',219,319959,timesfm_anom_med,0.83458
+ll4b,panel,22,"C (o , i) B'",18,26298,timesfm_anom_med,0.71691
+ll4b,panel,23,"C (o , i) C'",174,254214,timesfm_anom_med,0.83515
+ll4b,panel,26,C (r) A',39,56979,timesfm_anom_med,0.59682
+ll4b,panel,27,C (r) B',275,401775,timesfm_anom_med,0.65753
+ll4b,panel,28,"D (i , p) A'",491,717351,timesfm_anom_med,0.73551
+ll4b,panel,29,"D (i , p) B'",29,42369,timesfm_anom_med,1.08160
+ll4b,panel,30,"D (i , p) C'",68,99348,timesfm_anom_med,0.99866
+ll4b,panel,31,D (i) A',20,29220,timesfm_anom_med,0.57759
+ll4b,panel,32,D (i) B',81,118341,timesfm_anom_med,0.69595
+ll4b,panel,33,D (i) C',107,156327,timesfm_anom_med,0.94609
+ll4b,panel,34,D (i) D',1,1461,timesfm_anom_med,0.88262
+ll4b,panel,35,E (d) A',267,390087,timesfm_anom_med,0.62511
+ll4b,panel,36,E (d) B',991,1447851,timesfm_anom_med,0.74113
+ll4b,panel,39,Lago Titicaca,256,374016,timesfm_anom_med,0.81325
+ll4b,panel,40,Loma,24,35064,timesfm_anom_med,0.68881
 ll4b,peru,0,A (r) A',2147,3136767,clim,1.27826
 ll4b,peru,1,A (r) B',197,287817,clim,0.82558
 ll4b,peru,2,A (r) C',74,108114,clim,1.17711
@@ -779,3 +942,35 @@ ll4b,peru,34,D (i) D',1,1461,timesfm_anom,0.87784
 ll4b,peru,35,E (d) A',199,290739,timesfm_anom,0.60585
 ll4b,peru,36,E (d) B',726,1060686,timesfm_anom,0.73442
 ll4b,peru,40,Loma,24,35064,timesfm_anom,0.64697
+ll4b,peru,0,A (r) A',2147,3136767,timesfm_anom_med,1.08502
+ll4b,peru,1,A (r) B',197,287817,timesfm_anom_med,0.64791
+ll4b,peru,2,A (r) C',74,108114,timesfm_anom_med,0.80828
+ll4b,peru,3,A (r) D',16,23376,timesfm_anom_med,0.76598
+ll4b,peru,4,B (i) B',174,254214,timesfm_anom_med,0.59574
+ll4b,peru,5,B (i) C',35,51135,timesfm_anom_med,0.85699
+ll4b,peru,6,B (i) D',22,32142,timesfm_anom_med,0.81942
+ll4b,peru,8,"B (o , i) B'",110,160710,timesfm_anom_med,0.73947
+ll4b,peru,9,"B (o , i) C'",889,1298829,timesfm_anom_med,0.73740
+ll4b,peru,10,"B (o , i) D'",12,17532,timesfm_anom_med,0.78409
+ll4b,peru,11,B (r) A',1698,2480778,timesfm_anom_med,0.77542
+ll4b,peru,12,B (r) B',705,1030005,timesfm_anom_med,0.61824
+ll4b,peru,13,B (r) C',19,27759,timesfm_anom_med,0.79736
+ll4b,peru,14,B (r) D',89,130029,timesfm_anom_med,0.76967
+ll4b,peru,17,C (i) A',17,24837,timesfm_anom_med,0.58317
+ll4b,peru,18,C (i) B',91,132951,timesfm_anom_med,0.69568
+ll4b,peru,19,C (i) C',225,328725,timesfm_anom_med,0.90477
+ll4b,peru,20,C (i) D',89,130029,timesfm_anom_med,0.92808
+ll4b,peru,22,"C (o , i) B'",18,26298,timesfm_anom_med,0.71691
+ll4b,peru,23,"C (o , i) C'",145,211845,timesfm_anom_med,0.85003
+ll4b,peru,26,C (r) A',39,56979,timesfm_anom_med,0.59682
+ll4b,peru,27,C (r) B',255,372555,timesfm_anom_med,0.65400
+ll4b,peru,28,"D (i , p) A'",42,61362,timesfm_anom_med,0.65274
+ll4b,peru,29,"D (i , p) B'",29,42369,timesfm_anom_med,1.08160
+ll4b,peru,30,"D (i , p) C'",56,81816,timesfm_anom_med,1.02819
+ll4b,peru,31,D (i) A',3,4383,timesfm_anom_med,0.66763
+ll4b,peru,32,D (i) B',81,118341,timesfm_anom_med,0.69595
+ll4b,peru,33,D (i) C',45,65745,timesfm_anom_med,0.91636
+ll4b,peru,34,D (i) D',1,1461,timesfm_anom_med,0.88262
+ll4b,peru,35,E (d) A',199,290739,timesfm_anom_med,0.64735
+ll4b,peru,36,E (d) B',726,1060686,timesfm_anom_med,0.78740
+ll4b,peru,40,Loma,24,35064,timesfm_anom_med,0.68881

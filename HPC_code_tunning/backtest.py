@@ -123,6 +123,41 @@ RIVAL_PROVENANCE: Dict[str, Dict[str, object]] = {
 }
 
 
+def tuned_inputs_from_features(features: Sequence[str]) -> Tuple[Tuple[str, ...], bool]:
+    """``(inputs, autoregressive)`` for ``tuned`` from the feature names it really uses.
+
+    ``RIVAL_PROVENANCE["tuned"]`` hard-codes the default pool (TMIN anomalies plus Td
+    lags, hence autoregressive). A run whose manifest/pool excludes ``TD_anom_lag*``
+    (tdew-f6a, ``experiments/timesfm/scripts/10_tuned_sin_rezagos_td.sh``) has no Td
+    input and no recursion in ``forecast_zoned``, so its provenance must say so.
+    Feature names are grouped the same way as the default record (``TMIN_anom*`` ->
+    ``TMIN_anom``, ``TD_anom_lag*`` -> ``TD_anom_lag``; ``const`` is dropped; any other
+    name is kept as is), so the default pool yields exactly the default record.
+    """
+    groups: List[str] = []
+    for name in features:
+        name = str(name).strip()
+        if not name or name == "const":
+            continue
+        if name.startswith("TMIN_anom"):
+            group = "TMIN_anom"
+        elif name.startswith("TD_anom_lag"):
+            group = "TD_anom_lag"
+        else:
+            group = name
+        if group not in groups:
+            groups.append(group)
+    order = {"TMIN_anom": 0, "TD_anom_lag": 1}
+    inputs = tuple(sorted(groups, key=lambda g: (order.get(g, 2), g)))
+    return inputs, "TD_anom_lag" in inputs
+
+
+def manifest_feature_names(manifest: pd.DataFrame) -> Tuple[str, ...]:
+    """Union (sorted) of every feature name appearing in a manifest's ``feature_list``."""
+    names = {f.strip() for fl in manifest["feature_list"] for f in str(fl).split(",") if f.strip()}
+    return tuple(sorted(names))
+
+
 def build_rival_provenance(
     method: str,
     *,
@@ -134,6 +169,7 @@ def build_rival_provenance(
     panel_file: Optional[str],
     output_files: Tuple[str, ...],
     notes: Optional[str] = None,
+    tuned_features: Optional[Sequence[str]] = None,
 ) -> prov.MetricProvenance:
     """The provenance record for one of the four ladder methods on one split.
 
@@ -142,8 +178,14 @@ def build_rival_provenance(
     is asking: PAPER_PLAN.md when this module runs on its own, or
     docs/protocol/timesfm_manifest.yaml when experiments/timesfm/evaluate.py
     cites them as rivals inside the TimesFM benchmark.
+
+    ``tuned_features`` (only read for ``method == "tuned"``) is the set of feature names
+    the run's manifest really uses; when given, ``inputs``/``autoregressive`` are derived
+    from it via :func:`tuned_inputs_from_features`. ``None`` keeps the default record.
     """
-    meta = RIVAL_PROVENANCE[method]
+    meta = dict(RIVAL_PROVENANCE[method])
+    if method == "tuned" and tuned_features is not None:
+        meta["inputs"], meta["autoregressive"] = tuned_inputs_from_features(tuned_features)
     train_end_year, holdout_years = SPLITS[split]
     training_period = (
         (f"{TRAIN_START}-01-01", f"{train_end_year}-12-31") if meta["trained"] else None
@@ -301,6 +343,7 @@ def run_backtest(
     manifest_ref: str = "PAPER_PLAN.md#5,9",
     panel_id: str = "unspecified",
     panel_file: Optional[str] = None,
+    tuned_features: Optional[Sequence[str]] = None,
 ) -> pd.DataFrame:
     """Read each bucket shard once, run every requested split from it, finalize + score all."""
     from HPC_code_tunning.train_zoned import train_bucket_zoned  # GPU import, kept lazy
@@ -327,6 +370,7 @@ def run_backtest(
         m = _finalize_split(
             s, frames[s], ols[s], out_root / s,
             bead_id=bead_id, manifest_ref=manifest_ref, panel_id=panel_id, panel_file=panel_file,
+            tuned_features=tuned_features,
         )
         all_metrics.append(m)
         logger.info("[%s] metrics:\n%s", s, m.to_string(index=False))
@@ -340,6 +384,7 @@ def _finalize_split(
     split_name: str, frames: List[pd.DataFrame],
     ols: Dict[int, _OLSAccum], out_dir: Path,
     *, bead_id: str, manifest_ref: str, panel_id: str, panel_file: Optional[str],
+    tuned_features: Optional[Sequence[str]] = None,
 ) -> pd.DataFrame:
     """Concatenate a split's per-bucket frames, add global zone-OLS, score, write outputs."""
     train_end_year, holdout_years = SPLITS[split_name]
@@ -380,7 +425,7 @@ def _finalize_split(
             build_rival_provenance(
                 method, split=split_name, cells=cells, bead_id=bead_id,
                 manifest_ref=manifest_ref, panel_id=panel_id, panel_file=panel_file,
-                output_files=outputs,
+                output_files=outputs, tuned_features=tuned_features,
             )
         )
     return metrics
@@ -503,7 +548,10 @@ def main(argv=None) -> int:
         if not id_to_zone:
             raise SystemExit("the ID whitelist left no assigned cells")
 
-    manifest = ZoneManifest(read_manifest(manifest_path))
+    manifest_df = read_manifest(manifest_path)
+    manifest = ZoneManifest(manifest_df)
+    # Provenance of `tuned` follows the features the manifest really uses (tdew-f6a).
+    tuned_features = manifest_feature_names(manifest_df)
     candidates = [c.strip() for c in args.candidates.split(",") if c.strip()]
     h_grid = [int(h) for h in args.h_grid.split(",")]
     buckets = choose_buckets(prepared_root, args.n_buckets, seed=args.seed)
@@ -524,6 +572,7 @@ def main(argv=None) -> int:
         prepared_root=prepared_root, manifest=manifest, id_to_zone=id_to_zone,
         tunings=tunings, split_names=split_names, bucket_ids=buckets, out_root=out_root,
         bead_id=args.bead_id, manifest_ref=args.manifest_ref, panel_id=panel_id, panel_file=panel_file,
+        tuned_features=tuned_features,
     )
     logger.info("ALL METRICS:\n%s", combined.to_string(index=False))
     logger.info("wrote %s", out_root / "metrics_all.csv")

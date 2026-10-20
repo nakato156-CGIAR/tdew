@@ -68,3 +68,59 @@ def test_build_rival_provenance_rejects_unknown_method():
             "not_a_method", split="ll4", cells=1, bead_id="tdew-214",
             manifest_ref="x", panel_id="x", panel_file=None, output_files=("x",),
         )
+
+
+# --- tdew-f6a: inputs/autoregressive of `tuned` follow the manifest really used ---------
+
+from HPC_code_tunning.backtest import manifest_feature_names, tuned_inputs_from_features  # noqa: E402
+from HPC_code_tunning.feature_spec import DEFAULT_CANDIDATE_POOL  # noqa: E402
+
+_SIN_TD = ("const", "TMIN_anom", "TMIN_anom_lag1", "TMIN_anom_lag2", "TMIN_anom_lag7", "TMIN_anom_lag30")
+
+
+def _tuned(**kw):
+    return build_rival_provenance(
+        "tuned", split="ll4b", cells=10, bead_id="tdew-f6a", manifest_ref="x",
+        panel_id="buckets_n64_seed0", panel_file=None, output_files=("predictions.parquet",), **kw,
+    )
+
+
+def test_default_pool_reproduces_the_static_tuned_record():
+    inputs, autoregressive = tuned_inputs_from_features(DEFAULT_CANDIDATE_POOL)
+    assert inputs == RIVAL_PROVENANCE["tuned"]["inputs"]
+    assert autoregressive is RIVAL_PROVENANCE["tuned"]["autoregressive"]
+
+
+def test_without_tuned_features_the_record_is_unchanged():
+    record = _tuned()
+    assert record.inputs == ("TMIN_anom", "TD_anom_lag")
+    assert record.autoregressive is True
+
+
+def test_pool_without_td_lags_is_not_autoregressive():
+    record = _tuned(tuned_features=_SIN_TD)
+    assert record.inputs == ("TMIN_anom",)
+    assert record.autoregressive is False
+    # the shared dict must not be mutated by the override
+    assert RIVAL_PROVENANCE["tuned"]["inputs"] == ("TMIN_anom", "TD_anom_lag")
+    assert RIVAL_PROVENANCE["tuned"]["autoregressive"] is True
+
+
+def test_manifest_feature_names_is_the_union_of_feature_lists():
+    import pandas as pd
+
+    manifest = pd.DataFrame({
+        "feature_list": ["const,TMIN_anom,TMIN_anom_lag1", "const,TMIN_anom,TMIN_anom_lag30"],
+    })
+    names = manifest_feature_names(manifest)
+    assert names == ("TMIN_anom", "TMIN_anom_lag1", "TMIN_anom_lag30", "const")
+    assert tuned_inputs_from_features(names) == (("TMIN_anom",), False)
+
+
+def test_other_methods_ignore_tuned_features():
+    record = build_rival_provenance(
+        "zone_ols", split="ll4", cells=1, bead_id="x", manifest_ref="x", panel_id="x",
+        panel_file=None, output_files=("x",), tuned_features=_SIN_TD,
+    )
+    assert record.inputs == ("TMIN",)
+    assert record.autoregressive is False
