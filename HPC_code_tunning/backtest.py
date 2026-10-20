@@ -63,6 +63,8 @@ SPLITS: Dict[str, Tuple[int, Tuple[int, int]]] = {
     "ll1": (2015, (2016, 2016)),
     "ll2": (2014, (2015, 2016)),
     "ll4": (2012, (2013, 2016)),
+    # Bloque sin El Nino dominante (tdew-03g); el mismo valor vive en experiments/timesfm/panel.py.
+    "ll4b": (2008, (2009, 2012)),
 }
 TRAIN_START = 1981
 

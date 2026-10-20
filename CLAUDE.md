@@ -6,6 +6,10 @@ This file provides instructions and context for AI coding agents working on this
 
 Before writing any documentation, report, Notion page, or other prose deliverable, read [`ESTILO_REDACCION.md`](ESTILO_REDACCION.md) and follow it. It requires Spanish, impersonal/passive voice ("se hizo", not "yo hice"), and bans a specific list of AI-sounding filler patterns. This does not apply to code comments or short back-and-forth chat replies.
 
+## Paper nuevo: no se toca el paper vigente
+
+`reports/paper/` (`paper.qmd`, `paper_taac.qmd`, `paper_taac_esm.qmd`, `scripts/`) y `PAPER_PLAN.md` son de Palacios y **no se modifican**. El paper nuevo (LLR frente a TimesFM) vive en `reports/paper_nuevo/`, con todos sus `.qmd`, bibliografía y figuras. Si se reutiliza material del paper vigente, se copia a la carpeta nueva citando el origen. Ver `reports/paper_nuevo/README.md` y `HANDOFF.md`.
+
 ## Python Environment / Tooling (uv)
 
 This project is managed with **uv** (`uv.lock` is the source of truth for dependencies). Always run Python and CLI tooling through `uv run ...` (e.g. `uv run zenml status`, `uv run pytest`, `uv run python ...`) instead of manually activating `.venv` with `source .venv/bin/activate`. This guarantees the locked dependency set is used and keeps behavior consistent across machines and agents.
@@ -29,6 +33,18 @@ Each row now has a `Bead ID` (rich text) property holding the matching `bd` issu
 2. Update that row via the Notion MCP `update-page` tool: set `Status` = `Completed` and `Progress` = `1`.
 
 When creating a new bead for a task that also exists (or will exist) as a Notion row, set that row's `Bead ID` property so this mapping stays intact.
+
+## Long-running jobs: always in tmux
+
+The workstation is reached over SSH, and the SSH session (and the `claude` process inside it) dies when the user's laptop sleeps or disconnects. Any job that runs more than a few minutes (TimesFM runs, `select_backtest`/`backtest`, LLR over the national panel, training, downloads) **must be launched in a detached tmux session**, never with a bare `nohup ... &` or `run_in_background` from the agent shell:
+
+```bash
+tmux new-session -d -s <bead-id>-<what> 'cd /home/cvelasquez/Code/tdew && uv run python -m ... 2>&1 | tee /home/cvelasquez/tdew_timesfm/<what>.log; echo EXIT=$? >> /home/cvelasquez/tdew_timesfm/<what>.log'
+tmux ls                                  # verify the session exists
+tmux capture-pane -p -t <session> | tail # inspect without attaching
+```
+
+Verify with `tmux ls` right after launching and report the session name to the user. Outputs go to `/home/cvelasquez/tdew_timesfm/` (logs and predictions), with the exit code appended to the log. Monitoring cadence: see the `background-training-watcher-protocol` memory. Incident 2026-10-20: A3 and LLR runs were first launched with `nohup`, outside tmux; they finished, but would not have survived a dead SSH session.
 
 ## Non-Interactive Shell Commands
 

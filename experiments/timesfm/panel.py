@@ -16,7 +16,7 @@ metodo de Palacios usa como covariable).
 from __future__ import annotations
 
 from concurrent.futures import ThreadPoolExecutor
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from pathlib import Path
 from typing import Iterable, Iterator, Sequence
 
@@ -32,6 +32,8 @@ SPLITS: dict[str, tuple[int, tuple[int, int]]] = {
     "ll1": (2015, (2016, 2016)),
     "ll2": (2014, (2015, 2016)),
     "ll4": (2012, (2013, 2016)),
+    # Bloque sin El Nino dominante (tdew-03g): mismo ancho que ll4 pero 2009-2012.
+    "ll4b": (2008, (2009, 2012)),
     # Hueco real de Palacios: no hay Td observada en el horizonte. La Tmin futura
     # sale de `future_tmin_by_bucket`, no de `bucketed_training_data`.
     "real": (2016, (2017, 2020)),
@@ -135,6 +137,49 @@ class PanelBatch:
             ("TMIN", "holdout"): self.tmin_hold,
         }[(which, block)]
         return values - self.clim_for(which, block=block)
+
+
+TMIN_SHUFFLE_MODES = ("year", "cell")
+
+
+def shuffle_tmin(panel: PanelBatch, mode: str, seed: int = 0) -> PanelBatch:
+    """Control negativo (tdew-077): rompe la relacion Tmin-Td del bloque oculto.
+
+    Solo cambia ``tmin_hold``; ``td_hold`` y el contexto quedan intactos. Se baraja
+    la *anomalia* y se suma la climatologia propia de cada celda, de modo que el
+    nivel y el ciclo estacional de la covariable siguen siendo plausibles y lo unico
+    que se pierde es la coincidencia dia a dia con la Td observada.
+
+    ``year``: cada anio del bloque oculto recibe la anomalia de otro anio del
+    contexto, en la misma celda y el mismo dia del anio (el 29 de febrero usa
+    el 28 si el donante no es bisiesto). El donante depende de ``seed`` y del
+    anio, no del lote, asi que el resultado no cambia con ``cells_per_batch``.
+    ``cell``: la anomalia viene de otra celda del lote (desplazamiento de la mitad
+    de las celdas); las celdas vecinas comparten tiempo, por eso es un control mas
+    debil que ``year``.
+    """
+    if mode not in TMIN_SHUFFLE_MODES:
+        raise ValueError(f"modo de barajado desconocido: {mode!r}; hay {TMIN_SHUFFLE_MODES}")
+    own_clim = panel.clim_for("TMIN", block="holdout")
+    if mode == "cell":
+        if panel.n_cells < 2:
+            raise ValueError("el barajado entre celdas necesita al menos 2 celdas en el lote")
+        donor = np.roll(panel.anomaly("TMIN", block="holdout"), panel.n_cells // 2, axis=0)
+    else:
+        ctx_anom = panel.anomaly("TMIN", block="context")
+        column = {
+            (int(y), int(d)): i
+            for i, (y, d) in enumerate(zip(panel.ctx_dates.year, panel.ctx_doy))
+        }
+        ctx_years = np.unique(panel.ctx_dates.year)
+        donor = np.empty_like(panel.tmin_hold)
+        hold_years = panel.hold_dates.year.to_numpy()
+        for year in np.unique(hold_years):
+            donor_year = int(np.random.default_rng([seed, int(year)]).choice(ctx_years))
+            for j in np.flatnonzero(hold_years == year):
+                doy = int(panel.hold_doy[j])
+                donor[:, j] = ctx_anom[:, column.get((donor_year, doy), column[(donor_year, 365)])]
+    return replace(panel, tmin_hold=(own_clim + donor).astype(np.float32))
 
 
 def _buckets_for(ids: Sequence[int]) -> dict[int, np.ndarray]:

@@ -21,7 +21,15 @@ import pyarrow.parquet as pq
 
 from tdew_estimation import provenance as prov
 
-from .panel import DEFAULT_HISTORICAL_ROOT, PanelBatch, iter_panel_batches, split_spec
+from .panel import (
+    DEFAULT_HISTORICAL_ROOT,
+    SPLITS,
+    TMIN_SHUFFLE_MODES,
+    PanelBatch,
+    iter_panel_batches,
+    shuffle_tmin,
+    split_spec,
+)
 from .variants import CHECKPOINT_REVISION, Variant, parse_keys, variant
 
 logger = logging.getLogger("timesfm.run")
@@ -41,6 +49,8 @@ def build_provenance(
     cells: Sequence[int],
     target: Path,
     bead_id: str = "tdew-214",
+    tmin_shuffle: str | None = None,
+    shuffle_seed: int = 0,
 ) -> prov.MetricProvenance:
     """El registro de proveniencia de una corrida (una variante, un split, un
     panel de celdas). Separado de ``run_variant`` para poder probarlo sin GPU
@@ -71,7 +81,12 @@ def build_provenance(
         panel_cell_count=len(cells),
         panel_file=str(ids_file),
         output_files=(str(target),),
-        notes=f"checkpoint {spec.checkpoint}@{CHECKPOINT_REVISION}",
+        notes=f"checkpoint {spec.checkpoint}@{CHECKPOINT_REVISION}"
+        + (
+            f"; CONTROL NEGATIVO: Tmin del horizonte barajada (modo {tmin_shuffle}, semilla {shuffle_seed})"
+            if tmin_shuffle
+            else ""
+        ),
     )
 
 
@@ -292,6 +307,8 @@ def run_variant(
     shard: tuple[int, int] | None = None,
     bead_id: str = "tdew-214",
     future_root: Path | None = None,
+    tmin_shuffle: str | None = None,
+    shuffle_seed: int = 0,
 ) -> pd.DataFrame:
     """Corre una o varias variantes sobre el mismo conjunto de celdas.
 
@@ -341,6 +358,8 @@ def run_variant(
                 max_cells_per_batch=cells_per_batch,
                 future_root=future_root,
             ):
+                if tmin_shuffle:
+                    panel = shuffle_tmin(panel, tmin_shuffle, shuffle_seed)
                 point, quantiles, effective = predict_panel(
                     model, panel, spec, batch_size=effective
                 )
@@ -385,6 +404,8 @@ def run_variant(
                 cells=cells,
                 target=target,
                 bead_id=bead_id,
+                tmin_shuffle=tmin_shuffle,
+                shuffle_seed=shuffle_seed,
             )
         )
         logger.info("[%s] listo en %.1f s -> %s", key, elapsed, target)
@@ -400,7 +421,7 @@ def read_ids(path: Path) -> list[int]:
 def main(argv: Sequence[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--variants", default="all", help="'all' o lista separada por comas")
-    parser.add_argument("--split", default="ll4", choices=("ll1", "ll2", "ll4", "real"))
+    parser.add_argument("--split", default="ll4", choices=tuple(SPLITS))
     parser.add_argument("--ids-file", type=Path, required=True, help="CSV con columna ID")
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--historical-root", type=Path, default=DEFAULT_HISTORICAL_ROOT)
@@ -414,6 +435,9 @@ def main(argv: Sequence[str] | None = None) -> int:
                         help="corre solo la porcion i de n; reparte una pasada entre procesos")
     parser.add_argument("--no-tf32", action="store_true",
                         help="desactiva TF32 (mas lento, numerica identica a FP32)")
+    parser.add_argument("--tmin-shuffle", choices=TMIN_SHUFFLE_MODES, default=None,
+                        help="control negativo: baraja la Tmin del horizonte (no la Td)")
+    parser.add_argument("--shuffle-seed", type=int, default=0)
     parser.add_argument("--bead-id", default="tdew-214",
                         help="bead que gobierna esta corrida, para tdew_estimation.provenance")
     args = parser.parse_args(argv)
@@ -450,6 +474,8 @@ def main(argv: Sequence[str] | None = None) -> int:
         shard=shard,
         bead_id=args.bead_id,
         future_root=args.future_root,
+        tmin_shuffle=args.tmin_shuffle,
+        shuffle_seed=args.shuffle_seed,
     )
     path = args.out_dir / f"runtime_{args.split}{suffix}.csv"
     if path.exists():
