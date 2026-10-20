@@ -1,0 +1,53 @@
+{
+  "autoregressive": true,
+  "bead_id": "tdew-ra6",
+  "climatology_role": "anomaly_reference",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-10-20T22:09:07+00:00",
+  "git_commit": "7e17e8163c1599d56e6c2f69bbb16cf6a2a4fa68",
+  "inputs": [
+    "isd_global_hourly",
+    "pisco",
+    "palacios",
+    "timesfm",
+    "era5",
+    "era5_land"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest_addendum_real_2017_2020.yaml",
+  "mlflow_run_id": null,
+  "model_family": "comparison",
+  "model_id": "multi",
+  "notes": "A4: error de Td y de anomalias de Td frente a estaciones ISD (NOAA NCEI global-hourly) del Peru; criterio diario h4b2; 26 estaciones en 26 celdas PISCO. Fuentes: pisco (bucketed_training_data, 2009-2016), palacios (tuning/predictions_2017_2020, entrenado en 1981-2016, autorregresivo), timesfm (preds_real tmin_anom_full, zero-shot con contexto 1981-2016), era5 y era5_land (Open-Meteo, puntos). La columna kind distingue td y anom; anomalias respecto de climatologia armonica 2009-2016 de cada fuente. Bootstrap de estaciones 2000 replicas semilla 0. Configuracion: {\"min_hours\": 4, \"min_blocks\": 2, \"clim_years\": [2009, 2016], \"n_harm\": 3, \"min_clim_days\": 730, \"min_station_days\": 180, \"samples\": {\"productos\": [[\"pisco\"], [\"palacios\", \"timesfm\"]], \"con_reanalisis\": [[\"pisco\", \"era5\", \"era5_land\"], [\"palacios\", \"timesfm\", \"era5\", \"era5_land\"]]}, \"res\": \"/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning\", \"work_timesfm\": \"/home/cvelasquez/tdew_timesfm\"}",
+  "output_files": [
+    "reports/paper_nuevo/resultados/a4_por_anio_h4b2.csv",
+    "reports/paper_nuevo/resultados/a4_por_periodo_h4b2.csv",
+    "reports/paper_nuevo/resultados/a4_todas_las_parejas_por_periodo_h4b2.csv",
+    "reports/paper_nuevo/resultados/a4_por_estacion_h4b2.csv",
+    "reports/paper_nuevo/resultados/a4_resumen_entre_estaciones_h4b2.csv",
+    "reports/paper_nuevo/resultados/a4_por_estacion_anio_anom_h4b2.csv",
+    "reports/paper_nuevo/resultados/a4_delta_rmse_bootstrap_h4b2.csv",
+    "reports/paper_nuevo/resultados/a4_dejar_una_estacion_fuera_h4b2.csv",
+    "reports/paper_nuevo/resultados/a4_desacuerdo_oni_h4b2.csv"
+  ],
+  "panel_cell_count": 26,
+  "panel_file": "reports/paper_nuevo/resultados/a4_estaciones_h4b2.csv",
+  "panel_id": "isd_pe_estaciones_h4b2",
+  "run_id": "963a60ddedae4e81833a8406722309c7",
+  "seeds": [
+    0
+  ],
+  "split_id": "real_2017_2020+pisco_2009_2016",
+  "target_type": "td_raw",
+  "test_period": [
+    "2009-01-01",
+    "2020-12-31"
+  ],
+  "trained": true,
+  "training_period": [
+    "1981-01-01",
+    "2016-12-31"
+  ],
+  "validation_period": null,
+  "variant_label": "a4_contraste_externo_h4b2"
+}

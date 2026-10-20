@@ -1,0 +1,37 @@
+{
+  "min_hours": 4,
+  "min_blocks": 2,
+  "clim_years": [
+    2009,
+    2016
+  ],
+  "n_harm": 3,
+  "min_clim_days": 730,
+  "min_station_days": 180,
+  "samples": {
+    "productos": [
+      [
+        "pisco"
+      ],
+      [
+        "palacios",
+        "timesfm"
+      ]
+    ],
+    "con_reanalisis": [
+      [
+        "pisco",
+        "era5",
+        "era5_land"
+      ],
+      [
+        "palacios",
+        "timesfm",
+        "era5",
+        "era5_land"
+      ]
+    ]
+  },
+  "res": "/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning",
+  "work_timesfm": "/home/cvelasquez/tdew_timesfm"
+}

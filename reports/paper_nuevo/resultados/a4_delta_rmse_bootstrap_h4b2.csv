@@ -1,0 +1,15 @@
+muestra,kind,periodo,a,b,delta_rmse,ic95_lo,ic95_hi,n_estaciones,n_dias
+productos,td,2017-2020,timesfm,palacios,-0.0007,-0.0312,0.0356,26,32997
+productos,anom,2017-2020,timesfm,palacios,-0.0452,-0.0725,-0.0087,23,31501
+con_reanalisis,td,2017-2020,timesfm,palacios,-0.0007,-0.0312,0.0356,26,32997
+con_reanalisis,td,2017-2020,era5_land,palacios,-1.2762,-1.9871,-0.4424,26,32997
+con_reanalisis,td,2017-2020,era5_land,timesfm,-1.2755,-1.9814,-0.4346,26,32997
+con_reanalisis,td,2017-2020,era5,palacios,-0.8960,-1.6934,0.0275,26,32997
+con_reanalisis,td,2009-2016,era5_land,pisco,-0.9877,-1.5762,-0.2976,23,55907
+con_reanalisis,td,2009-2016,era5,pisco,-0.8266,-1.5602,0.0450,23,55907
+con_reanalisis,anom,2017-2020,timesfm,palacios,-0.0452,-0.0725,-0.0087,23,31501
+con_reanalisis,anom,2017-2020,era5_land,palacios,-0.2965,-0.4854,-0.1115,23,31501
+con_reanalisis,anom,2017-2020,era5_land,timesfm,-0.2513,-0.4230,-0.0853,23,31501
+con_reanalisis,anom,2017-2020,era5,palacios,-0.2887,-0.5210,-0.0779,23,31501
+con_reanalisis,anom,2009-2016,era5_land,pisco,-0.1194,-0.2530,-0.0127,23,55907
+con_reanalisis,anom,2009-2016,era5,pisco,-0.1002,-0.2777,0.0430,23,55907

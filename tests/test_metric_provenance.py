@@ -103,6 +103,17 @@ _A1_FILES = tuple(REPORTS_ROOT / "paper_nuevo/resultados" / f"a1_{name}.csv"
                   for name in ("por_metodo", "por_zona", "victorias_zona", "brechas"))
 TRACKED_METRIC_FILES = TRACKED_METRIC_FILES + _A1_FILES
 
+# A4 del paper nuevo (tdew-ra6): experiments/a4_externo/compare.py, criterio principal y
+# sensibilidad _h4b2.
+_A4_DIR = REPORTS_ROOT / "paper_nuevo/resultados"
+_A4_METRIC_NAMES = (
+    "por_anio", "por_periodo", "todas_las_parejas_por_periodo", "por_estacion",
+    "resumen_entre_estaciones", "por_estacion_anio_anom", "delta_rmse_bootstrap",
+    "dejar_una_estacion_fuera", "desacuerdo_oni",
+)
+_A4_FILES = tuple(_A4_DIR / f"a4_{name}{suffix}.csv" for name in _A4_METRIC_NAMES for suffix in ("", "_h4b2"))
+TRACKED_METRIC_FILES = TRACKED_METRIC_FILES + _A4_FILES
+
 # CSV/parquet bajo reports/ que existen hoy pero cuyo script de origen no
 # está instrumentado todavía (bead de seguimiento tdew-z39.7), o que no son
 # una métrica de precisión en sí (paneles, listas de IDs, benchmarks de
@@ -111,6 +122,14 @@ EXCLUDED_FILES = {
     REPORTS_ROOT / "timesfm_benchmark/coste_throughput.csv":
         "experiments.timesfm.throughput mide celdas/s y VRAM, no precision -- "
         "autoregressive/target_type/climatology_used no aplican a un benchmark de hardware",
+    **{_A4_DIR / f"a4_{name}{suffix}.csv": "tabla auxiliar de A4 (tdew-ra6): metadatos de estaciones, "
+              "conteos de dias validos o indices ENSO de NOAA CPC, no una metrica de error"
+       for name in ("estaciones", "estaciones_excluidas", "dias_por_estacion_anio", "indices_2009_2020")
+       for suffix in ("", "_h4b2")},
+    **{_A4_DIR / f"a4_tmin_{name}.csv": "A4 (tdew-ra6), experiments/a4_externo/tmin_check.py: estadisticos "
+              "descriptivos de la covariable Tmin 2013-2016 frente a 2017-2020, no una metrica de "
+              "precision de Td (target_type no aplica)"
+       for name in ("por_mes", "global", "por_anio", "celda_mes", "costura", "rugosidad")},
     REPORTS_ROOT / "paper_nuevo/resultados/costo.csv":
         "tabla de tiempos de pared copiada a mano de logs y runtime_*.csv (tdew-03g), "
         "no una metrica de precision; cada fila cita su fuente",

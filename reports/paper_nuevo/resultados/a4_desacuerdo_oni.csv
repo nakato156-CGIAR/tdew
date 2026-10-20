@@ -1,0 +1,5 @@
+anio,n,sesgo_tfm_menos_pal,rmse_entre_productos,rmse_entre_productos_nacional,sesgo_nacional,rmse_td_palacios_vs_estacion,rmse_td_timesfm_vs_estacion,rmse_anom_palacios_vs_estacion,rmse_anom_timesfm_vs_estacion,oni_media,oni_max,oni_min,nino12_media,nino12_max
+2017,7665,0.0791,0.3037,0.4556,0.0643,2.8613,2.8660,1.4641,1.4200,-0.0592,0.3500,-0.7600,0.0342,1.8300
+2018,7665,0.0824,0.3425,0.4315,0.0262,2.9060,2.9286,1.5445,1.4892,0.1425,1.0500,-0.7100,-0.2175,0.8400
+2019,7665,0.0784,0.3214,0.5002,0.1294,3.1583,3.1466,2.1058,2.0493,0.6492,0.9900,0.2000,-0.0008,0.8000
+2020,7686,0.0615,0.3334,0.4695,-0.0074,1.8927,1.9623,1.1786,1.1940,-0.2108,0.7100,-1.1100,-0.4225,0.4400
