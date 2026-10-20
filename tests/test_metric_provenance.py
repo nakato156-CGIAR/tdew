@@ -98,6 +98,11 @@ _KL_FILES = tuple(REPORTS_ROOT / "timesfm_benchmark/kl_limpio" / f"kl_{name}_lim
                   for name in ("by_group", "hist"))
 TRACKED_METRIC_FILES = TRACKED_METRIC_FILES + _REAL_FULL_FILES + _KL_FILES
 
+# A1 del paper nuevo (tdew-03g): experiments/amenazas/desglose.py.
+_A1_FILES = tuple(REPORTS_ROOT / "paper_nuevo/resultados" / f"a1_{name}.csv"
+                  for name in ("por_metodo", "por_zona", "victorias_zona", "brechas"))
+TRACKED_METRIC_FILES = TRACKED_METRIC_FILES + _A1_FILES
+
 # CSV/parquet bajo reports/ que existen hoy pero cuyo script de origen no
 # está instrumentado todavía (bead de seguimiento tdew-z39.7), o que no son
 # una métrica de precisión en sí (paneles, listas de IDs, benchmarks de
@@ -106,6 +111,9 @@ EXCLUDED_FILES = {
     REPORTS_ROOT / "timesfm_benchmark/coste_throughput.csv":
         "experiments.timesfm.throughput mide celdas/s y VRAM, no precision -- "
         "autoregressive/target_type/climatology_used no aplican a un benchmark de hardware",
+    REPORTS_ROOT / "paper_nuevo/resultados/costo.csv":
+        "tabla de tiempos de pared copiada a mano de logs y runtime_*.csv (tdew-03g), "
+        "no una metrica de precision; cada fila cita su fuente",
     REPORTS_ROOT / "timesfm_benchmark/curva_error_cribado.csv":
         "version con fuga, generada antes de que existiera `evaluate --growth-curve`; "
         "se conserva sin cambios (PLAN_1 §4). La version limpia si esta instrumentada",

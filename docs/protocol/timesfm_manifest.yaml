@@ -88,7 +88,8 @@ niveles:
     seleccion: >
       Muestra estratificada por zona SENAMHI sobre las celdas del backtest de
       Palacios: hasta 40 celdas por zona, numpy.random.default_rng(20260922).
-      Toca las 38 zonas que el muestreo de 64 buckets alcanza.
+      Toca las 38 zonas que el muestreo de 64 buckets alcanza (33 en el cribado
+      limpio, reports/timesfm_benchmark/README.md).
     archivo: reports/timesfm_benchmark/panels/cribado_estratificado.csv
     splits: [ll4]
     proposito: comparar las 9 variantes entre si
@@ -96,13 +97,15 @@ niveles:
     celdas: 17041
     seleccion: >
       Las mismas celdas del backtest de Palacios (64 buckets completos, cada uno
-      una rejilla nacional). Cubre las 38 zonas alcanzadas.
+      una rejilla nacional). Cubre las 38 zonas alcanzadas. El panel limpio
+      (panels/nacional_17027.csv, sin las 14 celdas ausentes del backtest limpio)
+      cubre 33 de las 41 zonas SENAMHI.
     archivo: reports/timesfm_benchmark/panels/nacional_17041.csv
     splits: [ll1, ll2, ll4]
     proposito: comparacion pareada contra la cifra publicada
   - id: departamental
-    celdas: 8192
-    seleccion: panel ll4 del protocolo de reconstruccion, 2.048 celdas por departamento
+    celdas: 2048
+    seleccion: panel ll4 del protocolo de reconstruccion (ll4_reducido_512.csv), 512 celdas por departamento
     fuente: experiments/reconstruction/protocol.py
     splits: [ll4]
     proposito: unica mesa donde la TCN es comparable
@@ -144,7 +147,7 @@ metricas:
   efecto:
     fuente: HPC_code_tunning/effect_sizes.py
     lista:
-      - delta_rmse con IC 95 % por block-bootstrap de ubicacion (1.000 remuestreos)
+      - delta_rmse con IC 95 % por bootstrap de ubicacion (cada celda ID es un bloque; 1.000 remuestreos; sin bloques espaciales ni temporales)
       - fraccion de celdas donde gana
       - Cohen's d pareado sobre diferencias por ubicacion
       - p-valor de permutacion por sign-flip (5.000)
@@ -165,7 +168,13 @@ metricas:
 coste:
   hardware: NVIDIA RTX A2000 12GB
   barrido: reports/timesfm_benchmark/coste_throughput.csv
-  resumen: PENDIENTE
+  resumen: >
+    TF32 activo, contexto completo: 5,09 celdas/s medidas a volumen real (pasada de
+    escala, 436.519 celdas en 85.686 s = 23 h 48 min; TRACEABILITY.md seccion 7).
+    Equivale a unos 56 min para las 17.041 celdas del backtest y unos 6,4 dias
+    extrapolados para las 2.818.404 celdas del grid. Producto 2017-2020: 2.178.827
+    celdas en 438.074 s (unos 5,1 dias) a 4,97 celdas/s, preds_real/MANIFEST.csv.
+    Prediccion de Palacios sobre el grid 2017-2020: 20 min (tuning/b3_fill.log).
 
 fuera_de_alcance:
   - Fine-tuning y LoRA. El paquete instalado es solo de inferencia.

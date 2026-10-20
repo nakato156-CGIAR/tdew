@@ -164,11 +164,16 @@ en el clúster. La temperatura sostenida de 83 °C sugiere además que mejorar l
 refrigeración permitiría sostener relojes más altos dentro del mismo presupuesto de
 70 W.
 
-Extrapolando a contexto completo y horizonte de cuatro años: 90 minutos para las
-17.041 celdas del backtest nacional, 38,5 horas para las 436.519 celdas de los
-cuatro departamentos y unos 10,3 días para las 2,8 millones del grid nacional. Con
-contexto de 4.018 días esa última cifra baja a unos 3,5 días. El método de Palacios
-cubre el grid completo en 20 minutos (`$RES/tuning/b3_fill.log`).
+Con TF32 activo y contexto completo, el ritmo medido a volumen real fue de 5,09
+celdas/s (pasada de escala, `TRACEABILITY.md` §7): unos 56 minutos para las 17.041
+celdas del backtest nacional, 23 h 48 min cronometradas para las 436.519 celdas de
+los cuatro departamentos y unos 6,4 días extrapolados para las 2,8 millones del grid
+nacional. El producto 2017-2020 (2.178.827 celdas) se corrió completo en 438.074 s
+de cómputo, unos 5,1 días, a 4,97 celdas/s (`$WORK/preds_real/MANIFEST.csv`). Las
+cifras anteriores de 90 minutos, 38,5 horas y 10,3 días salían del barrido sin TF32;
+con ese mismo barrido y contexto de 4.018 días el grid nacional bajaba a unos 3,5
+días (no se volvió a medir con TF32). El método de Palacios cubre el grid completo
+en 20 minutos de predicción (`$RES/tuning/b3_fill.log`).
 
 ## 9. Los pesos de la versión 3.0 no permiten uso comercial ni productivo
 

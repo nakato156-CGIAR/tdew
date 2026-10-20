@@ -131,4 +131,7 @@ del directorio y agrega una columna `id_bucket` que no está en el archivo.
 Medido en el smoke test (buckets 0 y 1, RTX A2000): 4,3 celdas/s con
 `--batch-size 32` (3,4 con 4 y 4,1 con 16; la salida es idéntica bit a bit), pico
 de 7,4 GB de VRAM y 49,6 B por fila con zstd (los float32 casi no comprimen).
-Extrapolado: ≈ 5,9 días y ≈ 158 GB para el producto completo.
+Extrapolado entonces: ≈ 5,9 días y ≈ 158 GB para el producto completo. La corrida
+real (2026-10-02 a 2026-10-07, `$WORK/preds_real/MANIFEST.csv`) escribió las
+2.178.827 celdas en 438.074 s de cómputo (≈ 5,1 días) a 4,97 celdas/s acumuladas,
+con 157,5 GB (49,5 B por fila).

@@ -1,0 +1,49 @@
+{
+  "autoregressive": true,
+  "bead_id": "tdew-03g",
+  "climatology_role": "baseline_and_anomaly_reference",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-10-20T21:28:39+00:00",
+  "git_commit": "4a10f16800a30b283e37349e7c1e76caea1a880b",
+  "inputs": [
+    "clim",
+    "llr_rezagos",
+    "llr_simple",
+    "timesfm_anom",
+    "timesfm_td",
+    "tuned",
+    "tuned_sin_td"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest.yaml",
+  "mlflow_run_id": null,
+  "model_family": "comparison",
+  "model_id": "multi",
+  "notes": "Entrenamiento 1981 hasta el anio previo al bloque de prueba de cada split ({'ll4': 2012, 'll4b': 2008}); autoregressive=True porque incluye tuned. Comparacion A1 sobre filas comunes a todos los metodos; mascara Peru = experiments.timesfm.artifact_data.peru_mask (shapely.contains_xy, 8272 celdas dentro); bootstrap 2000 replicas semilla 0, bloques espaciales de 2 grados y mes-anio. Entradas: {'ll4': {'clim': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4__llr_simple.parquet', 'llr_simple': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4__llr_simple.parquet', 'tuned': '/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean/ll4/predictions.parquet', 'llr_rezagos': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4__llr_tmin_lags.parquet', 'timesfm_anom': '/home/cvelasquez/tdew_timesfm/preds_nacional/ll4__tmin_anom_full.parquet'}, 'll4b': {'clim': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4b__llr_simple.parquet', 'llr_simple': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4b__llr_simple.parquet', 'tuned': '/home/cvelasquez/tdew_timesfm/tuning_ll4b/ll4b/predictions.parquet', 'tuned_sin_td': '/home/cvelasquez/tdew_timesfm/tuning_sin_td_ll4b/ll4b/predictions.parquet', 'llr_rezagos': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4b__llr_tmin_lags.parquet', 'timesfm_td': '/home/cvelasquez/tdew_timesfm/preds_nacional_ll4b/ll4b__tmin_td_full.parquet', 'timesfm_anom': '/home/cvelasquez/tdew_timesfm/preds_nacional_ll4b/ll4b__tmin_anom_full.parquet'}}",
+  "output_files": [
+    "reports/paper_nuevo/resultados/a1_por_metodo.csv",
+    "reports/paper_nuevo/resultados/a1_por_zona.csv",
+    "reports/paper_nuevo/resultados/a1_victorias_zona.csv",
+    "reports/paper_nuevo/resultados/a1_brechas.csv"
+  ],
+  "panel_cell_count": 17027,
+  "panel_file": "reports/timesfm_benchmark/panels/nacional_17027.csv",
+  "panel_id": "nacional_17027",
+  "run_id": "514e304744c2442cbd4a624ee8d912a7",
+  "seeds": [
+    0
+  ],
+  "split_id": "ll4,ll4b",
+  "target_type": "td_raw",
+  "test_period": [
+    "2009-01-01",
+    "2016-12-31"
+  ],
+  "trained": true,
+  "training_period": [
+    "1981-01-01",
+    "2012-12-31"
+  ],
+  "validation_period": null,
+  "variant_label": "a1_desglose"
+}
