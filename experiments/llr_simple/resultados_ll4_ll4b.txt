@@ -1,10 +1,12 @@
 ll4b celdas 17027 filas 24876447
-clim          rmse 1.3618 bias -0.300 | 2009:1.241 2010:1.426 2011:1.409 2012:1.363
-tuned (Palacios) rmse 1.1220 bias -0.156 | 2009:1.035 2010:1.127 2011:1.117 2012:1.202
-LLR simple    rmse 1.0984 bias -0.140 | 2009:1.027 2010:1.095 2011:1.096 2012:1.171
-LLR Tmin+rezagos rmse 1.0891 bias -0.117 | 2009:1.032 2010:1.089 2011:1.076 2012:1.156
-TimesFM td    rmse 1.1058 bias +0.035 | 2009:1.185 2010:1.081 2011:1.062 2012:1.092
-TimesFM anom  rmse 1.0462 bias -0.108 | 2009:1.026 2010:1.021 2011:1.034 2012:1.102
+clim                 rmse 1.3618 bias -0.300 | 2009:1.241 2010:1.426 2011:1.409 2012:1.363
+tuned (Palacios)     rmse 1.1220 bias -0.156 | 2009:1.035 2010:1.127 2011:1.117 2012:1.202
+tuned sin rezagos Td rmse 1.1082 bias -0.124 | 2009:1.050 2010:1.103 2011:1.091 2012:1.184
+LLR simple           rmse 1.0984 bias -0.140 | 2009:1.027 2010:1.095 2011:1.096 2012:1.171
+LLR Tmin+rezagos     rmse 1.0891 bias -0.117 | 2009:1.032 2010:1.089 2011:1.076 2012:1.156
+TimesFM td           rmse 1.1058 bias +0.035 | 2009:1.185 2010:1.081 2011:1.062 2012:1.092
+TimesFM anom         rmse 1.0462 bias -0.108 | 2009:1.026 2010:1.021 2011:1.034 2012:1.102
+TimesFM anom med     rmse 1.1083 bias +0.089 | 2009:1.195 2010:1.075 2011:1.050 2012:1.108
 brecha (positivo = el segundo gana), bloques mes-anio:
   pred_llr_simple - tfm_td: -0.0075  IC mes-anio [-0.0591, +0.0421]  TimesFM/2do mejor en 22/48 meses
   pred_llr_simple - tfm_anom: +0.0521  IC mes-anio [+0.0320, +0.0724]  TimesFM/2do mejor en 37/48 meses
@@ -14,13 +16,21 @@ brecha (positivo = el segundo gana), bloques mes-anio:
   pred_tuned - tfm_anom: +0.0758  IC mes-anio [+0.0500, +0.1028]  TimesFM/2do mejor en 37/48 meses
   pred_tuned - pred_llr_simple: +0.0236  IC mes-anio [+0.0085, +0.0394]  TimesFM/2do mejor en 29/48 meses
   pred_tuned - pred_llr_tmin_lags: +0.0329  IC mes-anio [+0.0189, +0.0463]  TimesFM/2do mejor en 38/48 meses
+  pred_tuned - pred_tuned_sin_td: +0.0138  IC mes-anio [-0.0002, +0.0277]  TimesFM/2do mejor en 30/48 meses
+  pred_tuned_sin_td - pred_llr_simple: +0.0098  IC mes-anio [-0.0025, +0.0231]  TimesFM/2do mejor en 34/48 meses
+  pred_tuned_sin_td - pred_llr_tmin_lags: +0.0191  IC mes-anio [+0.0113, +0.0262]  TimesFM/2do mejor en 40/48 meses
+  pred_tuned_sin_td - tfm_anom: +0.0620  IC mes-anio [+0.0415, +0.0843]  TimesFM/2do mejor en 41/48 meses
+  tfm_anom_med - tfm_anom: +0.0620  IC mes-anio [+0.0223, +0.1010]  TimesFM/2do mejor en 32/48 meses
+  pred_llr_simple - tfm_anom_med: -0.0099  IC mes-anio [-0.0600, +0.0458]  TimesFM/2do mejor en 20/48 meses
 
 ll4 celdas 17027 filas 24876447
-clim          rmse 1.5352 bias -0.363 | 2013:1.393 2014:1.391 2015:1.648 2016:1.684
-tuned (Palacios) rmse 1.2279 bias -0.033 | 2013:1.149 2014:1.186 2015:1.245 2016:1.324
-LLR simple    rmse 1.1748 bias -0.010 | 2013:1.143 2014:1.152 2015:1.172 2016:1.231
-LLR Tmin+rezagos rmse 1.1611 bias +0.025 | 2013:1.137 2014:1.148 2015:1.142 2016:1.215
-TimesFM anom  rmse 1.1536 bias +0.104 | 2013:1.205 2014:1.127 2015:1.080 2016:1.199
+clim                 rmse 1.5352 bias -0.363 | 2013:1.393 2014:1.391 2015:1.648 2016:1.684
+tuned (Palacios)     rmse 1.2279 bias -0.033 | 2013:1.149 2014:1.186 2015:1.245 2016:1.324
+tuned sin rezagos Td rmse 1.1742 bias +0.014 | 2013:1.154 2014:1.151 2015:1.166 2016:1.224
+LLR simple           rmse 1.1748 bias -0.010 | 2013:1.143 2014:1.152 2015:1.172 2016:1.231
+LLR Tmin+rezagos     rmse 1.1611 bias +0.025 | 2013:1.137 2014:1.148 2015:1.142 2016:1.215
+TimesFM anom         rmse 1.1536 bias +0.104 | 2013:1.205 2014:1.127 2015:1.080 2016:1.199
+TimesFM anom med     rmse 1.2009 bias +0.201 | 2013:1.281 2014:1.188 2015:1.115 2016:1.214
 brecha (positivo = el segundo gana), bloques mes-anio:
   pred_llr_simple - tfm_anom: +0.0212  IC mes-anio [-0.0099, +0.0532]  TimesFM/2do mejor en 29/48 meses
   pred_llr_tmin_lags - tfm_anom: +0.0074  IC mes-anio [-0.0257, +0.0397]  TimesFM/2do mejor en 29/48 meses
@@ -29,3 +39,9 @@ brecha (positivo = el segundo gana), bloques mes-anio:
   pred_tuned - tfm_anom: +0.0743  IC mes-anio [+0.0121, +0.1382]  TimesFM/2do mejor en 35/48 meses
   pred_tuned - pred_llr_simple: +0.0531  IC mes-anio [+0.0181, +0.0967]  TimesFM/2do mejor en 36/48 meses
   pred_tuned - pred_llr_tmin_lags: +0.0669  IC mes-anio [+0.0282, +0.1163]  TimesFM/2do mejor en 39/48 meses
+  pred_tuned - pred_tuned_sin_td: +0.0537  IC mes-anio [+0.0206, +0.0970]  TimesFM/2do mejor en 37/48 meses
+  pred_tuned_sin_td - pred_llr_simple: -0.0006  IC mes-anio [-0.0117, +0.0108]  TimesFM/2do mejor en 27/48 meses
+  pred_tuned_sin_td - pred_llr_tmin_lags: +0.0131  IC mes-anio [+0.0034, +0.0233]  TimesFM/2do mejor en 28/48 meses
+  pred_tuned_sin_td - tfm_anom: +0.0206  IC mes-anio [-0.0175, +0.0596]  TimesFM/2do mejor en 29/48 meses
+  tfm_anom_med - tfm_anom: +0.0473  IC mes-anio [+0.0276, +0.0674]  TimesFM/2do mejor en 35/48 meses
+  pred_llr_simple - tfm_anom_med: -0.0261  IC mes-anio [-0.0730, +0.0210]  TimesFM/2do mejor en 21/48 meses

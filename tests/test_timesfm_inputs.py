@@ -98,7 +98,15 @@ def test_unknown_target_is_rejected(panel):
 
 def test_every_variant_key_is_unique():
     keys = [spec.key for spec in VARIANTS]
-    assert len(keys) == len(set(keys)) == 9
+    assert len(keys) == len(set(keys)) == 10
+
+
+def test_tmin_anom_med_is_tmin_anom_full_with_short_context():
+    """Control de regimen MODIS (tdew-03g): misma entrada que la titular, contexto desde 2002."""
+    full, med = variant("tmin_anom_full"), variant("tmin_anom_med")
+    assert (med.target, med.covariates) == (full.target, full.covariates)
+    assert med.context_start_year == 2002 and full.context_start_year == 1981
+    assert (med.symmetric_averaging, med.znorm, med.autoregressive) == (False, False, False)
 
 
 def test_to_physical_also_converts_the_quantile_cube(panel):
@@ -173,7 +181,7 @@ def test_inputs_is_an_alias_for_covariates():
 
 
 def test_no_timesfm_variant_is_autoregressive():
-    """Las nueve variantes son de una sola pasada (zero-shot, horizonte completo
+    """Todas las variantes son de una sola pasada (zero-shot, horizonte completo
     en una llamada); ninguna realimenta su propia predicción como `tuned` de
     Palacios. Ver docs/protocol/timesfm_manifest.yaml, seccion `rivales`."""
     for spec in VARIANTS:

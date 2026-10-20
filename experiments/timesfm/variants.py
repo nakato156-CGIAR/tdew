@@ -116,6 +116,17 @@ VARIANTS: tuple[Variant, ...] = (
         note="Contexto desde 2002: 11 anios (4.018 dias) en ll4; mas largo en ll1 y ll2.",
     ),
     Variant(
+        key="tmin_anom_med",
+        target="TD_anom",
+        covariates=("TMIN_anom",),
+        context_start_year=2002,
+        note=(
+            "tmin_anom_full con contexto desde 2002 (tdew-03g): control de regimen MODIS. Antes de"
+            " 2000 PISCO no usa LST de MODIS; aqui TimesFM solo ve el regimen con MODIS."
+            " 7 anios de contexto en ll4b, 11 en ll4."
+        ),
+    ),
+    Variant(
         key="tmin_td_short",
         target="TD",
         covariates=("TMIN",),
