@@ -179,3 +179,61 @@ def test_first_batch_does_not_require_reading_every_bucket(monkeypatch, many_buc
     restantes = list(generador)
     assert primero.n_cells + sum(b.n_cells for b in restantes) == len(ids)
     assert len(set(leidos)) == len(ids)
+
+
+@pytest.fixture
+def trending_root(tmp_path):
+    """Como `historical_root` pero con Td y Tmin que suben 0,1 por anio: la climatologia
+    depende de que anios se promedian."""
+    root = tmp_path / "trend"
+    ids = [8192 * 2 + 3, 3]
+    directory = root / "id_bucket=0003"
+    directory.mkdir(parents=True)
+    for year in range(1981, 2017):
+        block = pd.date_range(f"{year}-01-01", f"{year}-12-31", freq="D")
+        frames = [
+            pd.DataFrame({
+                "ID": location, "FECHA": block,
+                "TD": (k + 0.1 * (year - 1981) + np.sin(block.dayofyear / 58.0)).astype("float32"),
+                "TMIN": (5 + k + 0.1 * (year - 1981) + block.dayofyear / 100.0).astype("float32"),
+                "doy": block.dayofyear.astype("int16"),
+            })
+            for k, location in enumerate(ids)
+        ]
+        pd.concat(frames, ignore_index=True).to_parquet(directory / f"train_{year}.parquet")
+    return root, ids
+
+
+def test_clim_start_year_defaults_to_the_context_start(trending_root):
+    """Sin `clim_start_year` el panel es el de siempre: climatologia con los anios del contexto."""
+    root, ids = trending_root
+    a = build_panel(ids, split_spec("ll4b", context_start_year=2002), historical_root=root)
+    b = build_panel(ids, split_spec("ll4b", context_start_year=2002, clim_start_year=2002), historical_root=root)
+    np.testing.assert_array_equal(a.td_clim, b.td_clim)
+    np.testing.assert_array_equal(a.td_ctx, b.td_ctx)
+    # Fila 0 = ID 3 (desplazamiento 1). Media 2002..2008 en el doy 100: 1 + 0,1 * 24 + seno.
+    assert a.ids[0] == 3
+    np.testing.assert_allclose(a.td_clim[0, 100], 1 + 2.4 + np.sin(100 / 58.0), atol=1e-5)
+
+
+def test_clim_start_year_decouples_climatology_from_context(trending_root):
+    """Contexto 2002-2008 con climatologia 1981-2008: el contexto no cambia, la climatologia
+    es la del contexto largo, y el bloque oculto sigue fuera de ambas."""
+    root, ids = trending_root
+    full = build_panel(ids, split_spec("ll4b"), historical_root=root)
+    short_fixed = build_panel(ids, split_spec("ll4b", context_start_year=2002, clim_start_year=1981),
+                              historical_root=root)
+    short_own = build_panel(ids, split_spec("ll4b", context_start_year=2002), historical_root=root)
+    assert short_fixed.ctx_dates[0] == pd.Timestamp("2002-01-01")
+    np.testing.assert_array_equal(short_fixed.td_ctx, short_own.td_ctx)
+    np.testing.assert_array_equal(short_fixed.td_clim, full.td_clim)
+    np.testing.assert_array_equal(short_fixed.tmin_clim, full.tmin_clim)
+    assert not np.allclose(short_own.td_clim[:, 1:], full.td_clim[:, 1:])
+    np.testing.assert_array_equal(short_fixed.td_hold, full.td_hold)
+
+
+def test_clim_start_year_outside_training_is_rejected():
+    with pytest.raises(ValueError):
+        split_spec("ll4b", clim_start_year=2009)
+    with pytest.raises(ValueError):
+        split_spec("ll4b", clim_start_year=1980)

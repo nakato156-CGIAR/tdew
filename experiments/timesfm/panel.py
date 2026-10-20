@@ -54,6 +54,17 @@ class SplitSpec:
     train_end_year: int
     holdout_years: tuple[int, int]
     context_start_year: int = TRAIN_START
+    # Primer anio de la climatologia de las anomalias. ``None`` = el mismo que el contexto
+    # (comportamiento historico: tmin_anom_med usa climatologia 2002-train_end).
+    clim_start_year: int | None = None
+
+    @property
+    def climatology_start_year(self) -> int:
+        return self.context_start_year if self.clim_start_year is None else int(self.clim_start_year)
+
+    @property
+    def climatology_start(self) -> pd.Timestamp:
+        return pd.Timestamp(f"{self.climatology_start_year}-01-01")
 
     @property
     def context_end(self) -> pd.Timestamp:
@@ -80,11 +91,19 @@ class SplitSpec:
         return int((self.context_end - self.context_start).days) + 1
 
 
-def split_spec(name: str, *, context_start_year: int = TRAIN_START) -> SplitSpec:
+def split_spec(
+    name: str, *, context_start_year: int = TRAIN_START, clim_start_year: int | None = None
+) -> SplitSpec:
     """Devuelve la ventana de un split, opcionalmente con contexto recortado.
 
     ``context_start_year`` permite las variantes de contexto corto sin tocar el
     bloque oculto: recorta por la izquierda, nunca por la derecha.
+
+    ``clim_start_year`` fija el primer anio de la climatologia (de Td y de Tmin)
+    con la que se forman y deshacen las anomalias, con independencia del contexto;
+    la climatologia termina siempre en ``train_end``. Por defecto (``None``) coincide
+    con ``context_start_year``, que es como se corrio ``tmin_anom_med``: recortar el
+    contexto a 2002 recortaba tambien la climatologia a 2002-train_end.
     """
     if name not in SPLITS:
         raise KeyError(f"split desconocido: {name!r}; hay {sorted(SPLITS)}")
@@ -94,7 +113,11 @@ def split_spec(name: str, *, context_start_year: int = TRAIN_START) -> SplitSpec
             f"context_start_year={context_start_year} deja el contexto vacio "
             f"para el split {name} (train_end={train_end})"
         )
-    return SplitSpec(name, train_end, holdout, context_start_year)
+    if clim_start_year is not None and not TRAIN_START <= clim_start_year <= train_end:
+        raise ValueError(
+            f"clim_start_year={clim_start_year} fuera de [{TRAIN_START}, {train_end}] para el split {name}"
+        )
+    return SplitSpec(name, train_end, holdout, context_start_year, clim_start_year)
 
 
 @dataclass
@@ -151,8 +174,9 @@ def shuffle_tmin(panel: PanelBatch, mode: str, seed: int = 0) -> PanelBatch:
     que se pierde es la coincidencia dia a dia con la Td observada.
 
     ``year``: cada anio del bloque oculto recibe la anomalia de otro anio del
-    contexto, en la misma celda y el mismo dia del anio (el 29 de febrero usa
-    el 28 si el donante no es bisiesto). El donante depende de ``seed`` y del
+    contexto, en la misma celda y el mismo dia del anio (``doy``). El emparejamiento
+    es por ``doy``, no por fecha de calendario: solo el ``doy`` 366 (31 de diciembre
+    de un anio bisiesto) cae al 365 cuando el donante no es bisiesto. El donante depende de ``seed`` y del
     anio, no del lote, asi que el resultado no cambia con ``cells_per_batch``.
     ``cell``: la anomalia viene de otra celda del lote (desplazamiento de la mitad
     de las celdas); las celdas vecinas comparten tiempo, por eso es un control mas
@@ -260,7 +284,8 @@ def build_panel(
             raise ValueError("build_panel espera IDs de un solo bucket; usa iter_panel_batches")
         bucket = int(buckets[0])
 
-    years = range(spec.context_start_year, (spec.train_end_year if future else spec.holdout_years[1]) + 1)
+    first_year = min(spec.context_start_year, spec.climatology_start_year)
+    years = range(first_year, (spec.train_end_year if future else spec.holdout_years[1]) + 1)
     frame = _read_bucket(root, bucket, years)
     frame = frame[frame["ID"].isin(wanted)]
     if frame.empty:
@@ -277,7 +302,8 @@ def build_panel(
     ctx_dates = pd.date_range(spec.context_start, spec.context_end, freq="D")
     hold_dates = pd.date_range(spec.holdout_start, spec.holdout_end, freq="D")
 
-    ctx = frame[frame["FECHA"] <= spec.context_end]
+    ctx = frame[(frame["FECHA"] >= spec.context_start) & (frame["FECHA"] <= spec.context_end)]
+    clim_rows = frame[(frame["FECHA"] >= spec.climatology_start) & (frame["FECHA"] <= spec.context_end)]
     if future:
         hold = fut[(fut["FECHA"] >= spec.holdout_start) & (fut["FECHA"] <= spec.holdout_end)]
     else:
@@ -288,12 +314,19 @@ def build_panel(
     # pero el filtro no lo asume.
     usable = set(wanted.tolist())
     # En `real` no hay Td futura: del hold-out solo se exige Tmin.
-    checks = ((ctx, ["TD", "TMIN"]), (hold, ["TMIN"] if future else ["TD", "TMIN"]))
+    checks = (
+        (ctx, ["TD", "TMIN"]),
+        (clim_rows, ["TD", "TMIN"]),
+        (hold, ["TMIN"] if future else ["TD", "TMIN"]),
+    )
     for part, cols in checks:
         bad = part.loc[part[cols].isna().any(axis=1), "ID"].unique()
         usable -= set(int(v) for v in bad)
     counts = ctx.groupby("ID").size()
     usable &= {int(i) for i in counts.index[counts == len(ctx_dates)]}
+    n_clim_days = int((spec.context_end - spec.climatology_start).days) + 1
+    counts_c = clim_rows.groupby("ID").size()
+    usable &= {int(i) for i in counts_c.index[counts_c == n_clim_days]}
     counts_h = hold.groupby("ID").size()
     usable &= {int(i) for i in counts_h.index[counts_h == len(hold_dates)]}
     if not usable:
@@ -303,9 +336,12 @@ def build_panel(
     ctx = ctx[ctx["ID"].isin(usable)]
     hold = hold[hold["ID"].isin(usable)]
 
-    # Climatologia solo con anios de train, replicando backtest.train_only_climatology.
+    clim_rows = clim_rows[clim_rows["ID"].isin(usable)]
+
+    # Climatologia solo con anios de train, replicando backtest.train_only_climatology:
+    # de ``climatology_start_year`` a ``train_end``, que por defecto es el contexto.
     clim = (
-        ctx.groupby(["ID", "doy"], sort=False)
+        clim_rows.groupby(["ID", "doy"], sort=False)
         .agg(TD_clim=("TD", "mean"), TMIN_clim=("TMIN", "mean"))
         .reset_index()
     )

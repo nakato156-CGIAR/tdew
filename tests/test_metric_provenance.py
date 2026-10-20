@@ -103,6 +103,11 @@ _A1_FILES = tuple(REPORTS_ROOT / "paper_nuevo/resultados" / f"a1_{name}.csv"
                   for name in ("por_metodo", "por_zona", "victorias_zona", "brechas"))
 TRACKED_METRIC_FILES = TRACKED_METRIC_FILES + _A1_FILES
 
+# A1, escalera de inicio del contexto (tdew-03g): experiments/amenazas/escalera_contexto.py.
+_A1_ESCALERA_FILES = tuple(REPORTS_ROOT / "paper_nuevo/resultados" / f"a1_escalera_contexto{suffix}.csv"
+                           for suffix in ("", "_brechas"))
+TRACKED_METRIC_FILES = TRACKED_METRIC_FILES + _A1_ESCALERA_FILES
+
 # A4 del paper nuevo (tdew-ra6): experiments/a4_externo/compare.py, criterio principal y
 # sensibilidad _h4b2.
 _A4_DIR = REPORTS_ROOT / "paper_nuevo/resultados"

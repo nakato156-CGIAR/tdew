@@ -7,7 +7,7 @@ import pandas as pd
 import pytest
 
 from experiments.timesfm.panel import PanelBatch, split_spec
-from experiments.timesfm.run import build_inputs, build_provenance, to_physical
+from experiments.timesfm.run import build_inputs, build_provenance, output_name, to_physical
 from experiments.timesfm.variants import VARIANTS, variant
 
 
@@ -241,3 +241,63 @@ def test_build_provenance_for_anomaly_target_variant_sets_climatology_role(tmp_p
     assert record.climatology_used is True
     assert record.climatology_role == "target_anomaly_base"
     assert record.panel_cell_count == 1106
+
+
+def test_output_name_marks_the_context_override_and_keeps_the_default():
+    """Escalera de contexto (tdew-03g): el recorte va en el nombre y no pisa la salida titular."""
+    assert output_name("ll4", "tmin_anom_full") == "ll4__tmin_anom_full.parquet"
+    assert output_name("ll4b", "tmin_anom_full", context_start_year=1991) == "ll4b__tmin_anom_full__ctx1991.parquet"
+    assert (
+        output_name("ll4", "tmin_anom_full", shard=(0, 2), context_start_year=1986)
+        == "ll4__tmin_anom_full__ctx1986__shard0de2.parquet"
+    )
+    assert (
+        output_name("ll4b", "tmin_anom_full", context_start_year=1991, clim_start_year=1981)
+        == "ll4b__tmin_anom_full__ctx1991__clim1981.parquet"
+    )
+
+
+def test_build_provenance_records_the_context_override(tmp_path):
+    spec = variant("tmin_anom_full")
+    panel_spec = split_spec("ll4b", context_start_year=1996)
+    common = dict(split="ll4b", panel_spec=panel_spec, ids_file=tmp_path / "cribado_estratificado.csv",
+                  cells=[1, 2], target=tmp_path / "out.parquet")
+
+    record = build_provenance(spec, context_start_year=1996, **common)
+    assert "CONTEXTO desde 1996" in record.notes and "la variante dice 1981" in record.notes
+    assert "CLIMATOLOGIA de las anomalias con 1996-2008" in record.notes
+    assert f"{panel_spec.context_length} dias" in record.notes
+
+    fixed = build_provenance(spec, context_start_year=1996, clim_start_year=1981,
+                             **{**common, "panel_spec": split_spec("ll4b", context_start_year=1996,
+                                                                   clim_start_year=1981)})
+    assert "CLIMATOLOGIA de las anomalias con 1981-2008" in fixed.notes
+    assert "--clim-start-year=1981" in fixed.notes
+
+    default = build_provenance(spec, **common)
+    assert "CONTEXTO" not in default.notes and "CLIMATOLOGIA" not in default.notes
+
+
+def test_context_start_year_cli_reaches_run_variant(monkeypatch, tmp_path):
+    from experiments.timesfm import run as run_mod
+
+    seen = {}
+
+    def fake_run_variant(keys, **kwargs):
+        seen.update(kwargs)
+        return pd.DataFrame([{"variant": "tmin_anom_full"}])
+
+    monkeypatch.setattr(run_mod, "run_variant", fake_run_variant)
+    ids = tmp_path / "ids.csv"
+    pd.DataFrame({"ID": [1, 2]}).to_csv(ids, index=False)
+    out = tmp_path / "out"
+    out.mkdir()
+    base = ["--variants", "tmin_anom_full", "--split", "ll4b", "--ids-file", str(ids), "--out-dir", str(out)]
+    run_mod.main(base + ["--context-start-year", "1986"])
+    assert seen["context_start_year"] == 1986 and seen["clim_start_year"] is None
+    assert (out / "runtime_ll4b_ctx1986.csv").exists()
+    run_mod.main(base + ["--context-start-year", "1986", "--clim-start-year", "1981"])
+    assert seen["clim_start_year"] == 1981
+    assert (out / "runtime_ll4b_ctx1986_clim1981.csv").exists()
+    run_mod.main(base)
+    assert seen["context_start_year"] is None and seen["clim_start_year"] is None

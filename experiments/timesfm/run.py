@@ -51,10 +51,27 @@ def build_provenance(
     bead_id: str = "tdew-214",
     tmin_shuffle: str | None = None,
     shuffle_seed: int = 0,
+    context_start_year: int | None = None,
+    clim_start_year: int | None = None,
 ) -> prov.MetricProvenance:
     """El registro de proveniencia de una corrida (una variante, un split, un
     panel de celdas). Separado de ``run_variant`` para poder probarlo sin GPU
-    ni modelo cargado."""
+    ni modelo cargado.
+
+    ``context_start_year`` y ``clim_start_year`` son las sobrescrituras de
+    ``--context-start-year`` y ``--clim-start-year``: si alguna no es ``None`` queda en
+    ``notes`` el contexto efectivo y los anios de la climatologia de las anomalias
+    (``panel_spec.climatology_start_year`` a ``train_end``).
+    """
+    context_note = (
+        f"; CONTEXTO desde {panel_spec.context_start_year} (--context-start-year={context_start_year};"
+        f" la variante dice {spec.context_start_year}), {panel_spec.context_length} dias hasta"
+        f" {panel_spec.context_end.date().isoformat()}; CLIMATOLOGIA de las anomalias con"
+        f" {panel_spec.climatology_start_year}-{panel_spec.train_end_year}"
+        f" (--clim-start-year={clim_start_year})"
+        if context_start_year is not None or clim_start_year is not None
+        else ""
+    )
     return prov.MetricProvenance(
         run_id=prov.new_run_id(),
         generated_at=prov.now_iso(),
@@ -86,7 +103,8 @@ def build_provenance(
             f"; CONTROL NEGATIVO: Tmin del horizonte barajada (modo {tmin_shuffle}, semilla {shuffle_seed})"
             if tmin_shuffle
             else ""
-        ),
+        )
+        + context_note,
     )
 
 
@@ -292,6 +310,21 @@ def _table(panel: PanelBatch, point: np.ndarray, quantiles: np.ndarray) -> pa.Ta
     return pa.Table.from_pydict(columns, schema=_SCHEMA)
 
 
+def output_name(
+    split: str,
+    key: str,
+    *,
+    shard: tuple[int, int] | None = None,
+    context_start_year: int | None = None,
+    clim_start_year: int | None = None,
+) -> str:
+    """Nombre del parquet: ``<split>__<key>[__ctx<anio>][__clim<anio>][__shard<i>de<n>].parquet``."""
+    ctx = f"__ctx{int(context_start_year)}" if context_start_year is not None else ""
+    ctx += f"__clim{int(clim_start_year)}" if clim_start_year is not None else ""
+    suffix = f"__shard{shard[0]}de{shard[1]}" if shard else ""
+    return f"{split}__{key}{ctx}{suffix}.parquet"
+
+
 def run_variant(
     keys: Iterable[str],
     *,
@@ -309,6 +342,8 @@ def run_variant(
     future_root: Path | None = None,
     tmin_shuffle: str | None = None,
     shuffle_seed: int = 0,
+    context_start_year: int | None = None,
+    clim_start_year: int | None = None,
 ) -> pd.DataFrame:
     """Corre una o varias variantes sobre el mismo conjunto de celdas.
 
@@ -316,6 +351,13 @@ def run_variant(
     repartir una pasada grande entre varios procesos sobre la misma GPU. Medido:
     dos procesos concurrentes rinden ~1,7x lo de uno solo, porque un proceso con
     lotes pequenos no llena los 26 multiprocesadores de la tarjeta.
+
+    ``context_start_year`` sobrescribe el anio de inicio del contexto de cada
+    variante (escalera de contexto, tdew-03g) y anade ``__ctx<anio>`` al nombre del
+    parquet para no pisar la salida de la variante con su contexto propio.
+    ``clim_start_year`` fija el primer anio de la climatologia de las anomalias con
+    independencia del contexto (``__clim<anio>`` en el nombre); por defecto coincide
+    con el inicio del contexto, como en las corridas anteriores.
     """
     out_dir.mkdir(parents=True, exist_ok=True)
     if device == "cuda" and tf32:
@@ -335,9 +377,11 @@ def run_variant(
     rows = []
     for key in keys:
         spec = variant(key)
-        panel_spec = split_spec(split, context_start_year=spec.context_start_year)
-        suffix = f"__shard{shard[0]}de{shard[1]}" if shard else ""
-        target = out_dir / f"{split}__{key}{suffix}.parquet"
+        start_year = spec.context_start_year if context_start_year is None else int(context_start_year)
+        panel_spec = split_spec(split, context_start_year=start_year, clim_start_year=clim_start_year)
+        target = out_dir / output_name(
+            split, key, shard=shard, context_start_year=context_start_year, clim_start_year=clim_start_year
+        )
         logger.info(
             "[%s]%s %s | contexto %d d, horizonte %d d, %d celdas",
             key,
@@ -387,6 +431,8 @@ def run_variant(
                 "split": split,
                 "shard": f"{shard[0]}/{shard[1]}" if shard else "",
                 "cells": seen,
+                "context_start_year": panel_spec.context_start_year,
+                "clim_start_year": panel_spec.climatology_start_year,
                 "context_days": panel_spec.context_length,
                 "horizon_days": panel_spec.horizon,
                 "seconds": elapsed,
@@ -406,6 +452,8 @@ def run_variant(
                 bead_id=bead_id,
                 tmin_shuffle=tmin_shuffle,
                 shuffle_seed=shuffle_seed,
+                context_start_year=context_start_year,
+                clim_start_year=clim_start_year,
             )
         )
         logger.info("[%s] listo en %.1f s -> %s", key, elapsed, target)
@@ -438,6 +486,12 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--tmin-shuffle", choices=TMIN_SHUFFLE_MODES, default=None,
                         help="control negativo: baraja la Tmin del horizonte (no la Td)")
     parser.add_argument("--shuffle-seed", type=int, default=0)
+    parser.add_argument("--context-start-year", type=int, default=None,
+                        help="sobrescribe el anio de inicio del contexto de la variante; la salida"
+                             " lleva __ctx<anio> en el nombre (escalera de contexto, tdew-03g)")
+    parser.add_argument("--clim-start-year", type=int, default=None,
+                        help="primer anio de la climatologia de las anomalias (hasta train_end); por"
+                             " defecto el inicio del contexto. La salida lleva __clim<anio>")
     parser.add_argument("--bead-id", default="tdew-214",
                         help="bead que gobierna esta corrida, para tdew_estimation.provenance")
     args = parser.parse_args(argv)
@@ -476,8 +530,12 @@ def main(argv: Sequence[str] | None = None) -> int:
         future_root=args.future_root,
         tmin_shuffle=args.tmin_shuffle,
         shuffle_seed=args.shuffle_seed,
+        context_start_year=args.context_start_year,
+        clim_start_year=args.clim_start_year,
     )
-    path = args.out_dir / f"runtime_{args.split}{suffix}.csv"
+    ctx = f"_ctx{args.context_start_year}" if args.context_start_year is not None else ""
+    ctx += f"_clim{args.clim_start_year}" if args.clim_start_year is not None else ""
+    path = args.out_dir / f"runtime_{args.split}{ctx}{suffix}.csv"
     if path.exists():
         summary = pd.concat([pd.read_csv(path), summary], ignore_index=True)
     summary.to_csv(path, index=False)

@@ -9,6 +9,14 @@ Protocolo por split: climatologia y coeficientes con los anios de entrenamiento
 (1981..``train_end_year``); ``h`` se elige con los ultimos cuatro anios de
 entrenamiento como validacion (coeficientes ajustados con los anteriores) y despues
 se reajusta con todo el entrenamiento. La Td del bloque oculto no entra en nada.
+
+``train_start`` (``--train-start``, escalera de contexto de tdew-03g) recorta por la
+izquierda solo los anios con que se ajustan los coeficientes y se elige ``h``, igual que
+``--context-start-year`` recorta el contexto de TimesFM. La climatologia (de Td y de
+Tmin) sigue con 1981..``train_end`` (y 1981..``train_end``-4 en la validacion), simetrico
+con la escalera de TimesFM, que fija la climatologia con ``--clim-start-year 1981``. En
+``llr_lags`` los rezagos tampoco toman la anomalia de Tmin de dias anteriores a
+``train_start``.
 """
 
 from __future__ import annotations
@@ -96,15 +104,43 @@ def predict(a, b, td, tm, doy, cols, clim_td, clim_tm):
     return clim_td[:, d] + a[:, d - 1] + b[:, d - 1] * (tm[:, cols] - clim_tm[:, d]), td[:, cols]
 
 
-def run_split(split: str, ids: Sequence[int], root: Path = DEFAULT_HISTORICAL_ROOT):
+def check_train_start(split: str, train_start: int) -> None:
+    """La validacion de ``h`` necesita al menos un anio interno antes de los cuatro de validacion."""
+    train_end = SPLITS[split][0]
+    if not TRAIN_START <= train_start <= train_end - VALIDATION_YEARS:
+        raise ValueError(
+            f"train_start={train_start} fuera de [{TRAIN_START}, {train_end - VALIDATION_YEARS}] "
+            f"para el split {split}"
+        )
+
+
+def drop_before(x: np.ndarray, year: np.ndarray, train_start: int) -> np.ndarray:
+    """Copia de ``x`` (una anomalia ya formada) con NaN en los dias anteriores a ``train_start``."""
+    if train_start <= TRAIN_START:
+        return x
+    out = x.copy()
+    out[:, year < train_start] = np.nan
+    return out
+
+
+def output_stem(split: str, method: str, train_start: int | None) -> str:
+    """``<split>__<metodo>`` y, si se recorta el entrenamiento, ``__train<anio>``."""
+    return f"{split}__{method}" + (f"__train{train_start}" if train_start is not None else "")
+
+
+def run_split(split: str, ids: Sequence[int], root: Path = DEFAULT_HISTORICAL_ROOT,
+              train_start: int = TRAIN_START):
+    check_train_start(split, train_start)
     train_end, (y0, y1) = SPLITS[split]
     ids, dates, td, tm = load_arrays(ids, root)
     doy, year = dates.dayofyear.to_numpy(), dates.year.to_numpy()
     td64, tm64 = td.astype("f8"), tm.astype("f8")
 
-    inner = year <= train_end - VALIDATION_YEARS
+    # Climatologia con todos los anios desde 1981; coeficientes desde ``train_start``.
+    inner_clim = year <= train_end - VALIDATION_YEARS
+    inner = (year >= train_start) & inner_clim
     valid = (year > train_end - VALIDATION_YEARS) & (year <= train_end)
-    c_td, c_tm = climatology(td64, doy, inner), climatology(tm64, doy, inner)
+    c_td, c_tm = climatology(td64, doy, inner_clim), climatology(tm64, doy, inner_clim)
     scores = {}
     for h in H_GRID:
         a, b = fit(td64, tm64, doy, inner, h, c_td, c_tm)
@@ -113,8 +149,9 @@ def run_split(split: str, ids: Sequence[int], root: Path = DEFAULT_HISTORICAL_RO
         logger.info("validacion h=%d rmse=%.4f", h, scores[h])
     h_best = min(scores, key=scores.get)
 
-    train = year <= train_end
-    c_td, c_tm = climatology(td64, doy, train), climatology(tm64, doy, train)
+    train_clim = year <= train_end
+    train = (year >= train_start) & train_clim
+    c_td, c_tm = climatology(td64, doy, train_clim), climatology(tm64, doy, train_clim)
     a, b = fit(td64, tm64, doy, train, h_best, c_td, c_tm)
     hold = np.flatnonzero((year >= y0) & (year <= y1))
     pred, obs = predict(a, b, td64, tm64, doy, hold, c_td, c_tm)
@@ -127,7 +164,8 @@ def run_split(split: str, ids: Sequence[int], root: Path = DEFAULT_HISTORICAL_RO
             "pred_clim": c_td[:, doy[hold]].ravel(),
         }
     )
-    return frame, {"split": split, "h_best": h_best, "validation_rmse": scores}
+    return frame, {"split": split, "train_start": int(train_start), "train_end": int(train_end),
+                   "h_best": h_best, "validation_rmse": scores}
 
 
 def main(argv: Sequence[str] | None = None) -> int:
@@ -136,13 +174,18 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--ids-file", type=Path, required=True)
     parser.add_argument("--out-dir", type=Path, required=True)
     parser.add_argument("--historical-root", type=Path, default=DEFAULT_HISTORICAL_ROOT)
+    parser.add_argument("--train-start", type=int, default=None,
+                        help=f"primer anio de entrenamiento (por defecto {TRAIN_START}); la salida lleva "
+                             "__train<anio> en el nombre")
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
     ids = pd.read_csv(args.ids_file).ID.unique()
-    frame, info = run_split(args.split, ids, args.historical_root)
+    start = TRAIN_START if args.train_start is None else args.train_start
+    frame, info = run_split(args.split, ids, args.historical_root, train_start=start)
     args.out_dir.mkdir(parents=True, exist_ok=True)
-    frame.to_parquet(args.out_dir / f"{args.split}__llr_simple.parquet", index=False)
-    (args.out_dir / f"{args.split}__llr_simple.json").write_text(
+    stem = output_stem(args.split, "llr_simple", args.train_start)
+    frame.to_parquet(args.out_dir / f"{stem}.parquet", index=False)
+    (args.out_dir / f"{stem}.json").write_text(
         json.dumps({**info, "ids_file": str(args.ids_file), "n_cells": int(len(ids))}, indent=2)
     )
     rmse = float(np.sqrt(np.nanmean((frame.pred_llr_simple - frame.TD_obs) ** 2)))
