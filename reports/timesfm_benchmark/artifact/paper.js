@@ -6,6 +6,8 @@
   const root = document.getElementById('paper');
   if (!A || !root) return;
   const $ = id => document.getElementById(id);
+  // El encabezado y Límites pueden no tener estos elementos: se escriben solo si existen.
+  const put = (id, t) => { const e = $(id); if (e) e.textContent = t; };
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   const num = (x, sign = false) => x == null ? '—' : (sign && x > 0 ? '+' : '') + Number(x).toFixed(3);
   const miles = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
@@ -81,7 +83,7 @@
   const pierden = variantes.filter(r => tunedC && r.rmse >= tunedC.rmse);
   const clave = r => r.method.replace('timesfm:','');
   if (tunedC) {
-    $('kpi-cribado').textContent = `${ganan.length} de ${variantes.length}`;
+    put('kpi-cribado', `${ganan.length} de ${variantes.length}`);
     $('paper-robustez-titulo').textContent = `${ganan.length} de las ${variantes.length} configuraciones de TimesFM superan a Palacios`;
     $('paper-cribado-sub').textContent = `Cribado sobre ${miles(tunedC.cells)} celdas del bloque ${period('ll4')}. RMSE en °C; menor es mejor. Sin IC: es la etapa en que se eligió la configuración.`;
     const filas = cribado.filter(r => r.method.startsWith('timesfm:') || r.method === 'tuned' || r.method === 'climatology');
@@ -146,17 +148,17 @@
     'El argumento a favor de TimesFM está en que no requiere diseño ni entrenamiento; en cómputo total no sale más barato. ' +
     (cr ? `La configuración de TimesFM se eligió una sola vez, en un cribado de 9 configuraciones sobre ${miles(cr.celdas)} celdas, de las que se puntúan ${miles(tunedC ? tunedC.cells : 0)} (${dur(seg(cr))}), y se reutilizó sin cambios en ${period('ll4b')}. ` : '') +
     'Las corridas de producto no forman una comparación controlada: los registros de Palacios no anotan el host y TimesFM compartió la GPU en algunos tramos. El preprocesamiento de PISCO, el regrillado de Tmin y las climatologías son comunes a todos los métodos y no se cargan a ninguno. Los tiempos de los LLR seleccionados no se midieron.';
-  $('kpi-entrena-sub').textContent = `Palacios: ${dur(entrena)} de selección de recetas y ajuste en producción`;
+  put('kpi-entrena-sub', `Palacios: ${dur(entrena)} de selección de recetas y ajuste en producción`);
 
   /* ---- elección y KPIs -------------------------------------------------- */
   const gains = columns.map(([s,a]) => m(s,a,'tuned').rmse - m(s,a,'timesfm_anom').rmse);
   $('paper-eleccion-timesfm').textContent = 'Menos RMSE que Palacios: ' + columns.map(([s,a],i)=>`${num(gains[i])} °C en ${period(s)}, ${a === 'panel' ? 'dominio completo' : 'Perú'}`).join('; ') + '.';
   $('paper-eleccion-tuned').textContent = `Una vez seleccionadas las recetas y ajustados los coeficientes, Palacios reconstruye 2017–2020 en ${dur(prod.pred)}, frente a ${dur(prod.tf)} de TimesFM.`;
   const brTuned = columns.flatMap(([s,a]) => ['espacial_2g','mes_anio'].map(e => gap(s,a,'tuned',e)));
-  $('kpi-brecha').textContent = `${num(Math.min(...gains))}–${num(Math.max(...gains))} °C`;
-  $('kpi-brecha-sub').textContent = 'en los dos bloques, en el Perú y en el dominio completo' + (brTuned.every(r => r.ic_hi < 0) ? '; IC del 95 % sin cero en los dos esquemas' : '');
+  put('kpi-brecha', `${num(Math.min(...gains))}–${num(Math.max(...gains))} °C`);
+  put('kpi-brecha-sub', 'en los dos bloques, en el Perú y en el dominio completo' + (brTuned.every(r => r.ic_hi < 0) ? '; IC del 95 % sin cero en los dos esquemas' : ''));
 
   /* ---- sesgo en Límites ------------------------------------------------ */
   const sg = (s,k) => num(m(s,'panel',k).sesgo,true);
-  $('lim-sesgo').textContent = `En el dominio completo, el sesgo de TimesFM es ${sg('ll4b','timesfm_anom')} °C en ${period('ll4b')} y ${sg('ll4','timesfm_anom')} °C en ${period('ll4')}; el de Palacios, ${sg('ll4b','tuned')} y ${sg('ll4','tuned')} °C. La tabla de precisión de la sección Paper lo muestra también para el Perú.`;
+  put('lim-sesgo', `En el dominio completo, el sesgo de TimesFM es ${sg('ll4b','timesfm_anom')} °C en ${period('ll4b')} y ${sg('ll4','timesfm_anom')} °C en ${period('ll4')}; el de Palacios, ${sg('ll4b','tuned')} y ${sg('ll4','tuned')} °C. La tabla de precisión de la sección Paper lo muestra también para el Perú.`);
 })();

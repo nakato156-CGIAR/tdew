@@ -69,7 +69,7 @@ def test_html_keeps_no_leaky_figures_as_current_values():
 
 def test_html_tolerates_zones_without_measurements():
     html = (REAL / "artifact/index.html").read_text(encoding="utf-8")
-    assert "no tiene celdas en el muestreo" in html
+    assert "zonasMedidas" in html and "no tiene celdas en el muestreo" in html
 
 
 def test_html_static_counts_match_datos_js():
@@ -85,6 +85,16 @@ def test_html_static_counts_match_datos_js():
     assert f"{100 * meta['muestreoFuera'] / total:.1f} %" in html
 
 
+def test_html_warns_next_to_departamental_and_escala_that_tuned_is_not_clean():
+    html = (REAL / "artifact/index.html").read_text(encoding="utf-8")
+    note = "no es comparable con las cifras limpias"
+    assert html.count(note) == 2
+    dept = html.index("TimesFM obtiene el menor RMSE en los cuatro.")
+    escala = html.index("su corrida sobre toda la rejilla fue eliminada por memoria.")
+    assert note in html[dept:dept + 600]
+    assert note in html[escala:escala + 600]
+
+
 def test_html_has_no_38_zonas_even_across_line_breaks():
     import re
 
@@ -93,10 +103,26 @@ def test_html_has_no_38_zonas_even_across_line_breaks():
     assert not re.search(r"\b38/41", html)
 
 
-def test_html_bias_comes_from_data_and_drops_stale_figures():
-    """El sesgo de Limites se calcula en paper.js desde AMENAZAS, no se escribe a mano."""
+def test_horizon_narrative_matches_the_clean_error_curve():
+    """El texto de la seccion de horizonte cita los dias de cruce de la curva limpia."""
+    curve = pd.read_csv(REAL / "curva_error_nacional_limpio.csv")
+    wide = curve.pivot(index="dia", columns="method", values="rmse_acumulado")
+    gap = wide["timesfm"] - wide["tuned"]          # > 0: Palacios va por delante
+    ahead = gap[gap > 0].index
+    first, last = int(ahead.min()), int(ahead.max())
     html = (REAL / "artifact/index.html").read_text(encoding="utf-8")
-    js = (REAL / "artifact/paper.js").read_text(encoding="utf-8")
-    assert 'id="lim-sesgo"' in html and "$('lim-sesgo')" in js
+    assert f"hasta el día {first - 1}" in html and f"el día {last}" in html
+    assert f"{gap.max():.2f} °C" in html
+    assert f"el día {int(gap.idxmax())}" in html
+    assert gap.loc[:first - 1].max() < 0 and gap.loc[last + 1:].max() < 0
+    assert "En los primeros días Palacios tiene la ventaja" not in html
+
+
+def test_html_skill_and_bias_and_license_figures_match_clean_data():
+    html = (REAL / "artifact/index.html").read_text(encoding="utf-8")
+    ma = pd.read_csv(REAL / "nacional_limpio/metrics_all.csv").set_index(["split", "method"])
+    assert f"{ma.loc[('ll4', 'timesfm'), 'bias']:+.3f}".replace("-", "−") in html or \
+        f"+{ma.loc[('ll4', 'timesfm'), 'bias']:.3f}" in html
     assert "+0.105" not in html
     assert "seis veces el semiancho" not in html
+    assert "1 106 celdas" in html           # la cifra de TimesFM 2.5 declara su panel de origen

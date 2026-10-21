@@ -163,30 +163,34 @@ def test_datos_publicados_coinciden_con_generador(datos):
     assert json.loads(text.removeprefix("window.AMENAZAS = ").strip().removesuffix(";")) == datos
 
 
-SECCIONES = ["paper", "amenazas", "alcance", "limites", "protocolo"]
-RETIRADAS = ["resultado", "intervalo", "horizonte", "soporte", "sesgo-mensual", "escala", "divergencia",
-             "campo", "cola-larga", "anomalias", "am-a4", "am-fig-zonas", "am-fig-rmse", "am-fig-brechas",
-             "fig-heatmap", "lim-campo"]
+SECCIONES = ["resultado", "horizonte", "soporte", "sesgo-mensual", "alcance", "escala", "divergencia",
+             "campo", "paper", "amenazas", "limites", "protocolo"]
+# Lo que salio de la seccion A1-A4: A4, victorias por zona, matrices duplicadas y la regla E/C+A.
+RETIRADAS = ["am-a4", "am-fig-zonas", "am-fig-rmse", "am-fig-brechas", "am-t-regla", "am-conclusion"]
 FUERA_DE_NARRATIVA = ["T1", "transferencia", "El Niño", "ERA5", "ISD", "TCN", "ganador universal", "E/C+A",
                       "Amenazas A1–A4", "recibe más información"]
 
 
-def test_html_solo_tiene_las_secciones_de_la_tesis():
+def _seccion(s, sid):
+    return re.search(rf'<section id="{sid}">.*?</section>', s, re.S).group(0)
+
+
+def test_html_conserva_el_benchmark_y_reemplaza_a1_a4():
     s = HTML.read_text(encoding="utf-8")
-    orden = [s.index(f'<section id="{x}"') for x in SECCIONES]
-    assert orden == sorted(orden)
     assert re.findall(r'<section id="([^"]+)"', s) == SECCIONES
     nav = re.search(r'<nav class="story-nav".*?</nav>', s, re.S).group(0)
-    assert re.findall(r'href="#([^"]+)"', nav) == SECCIONES
+    assert 'href="#paper">Paper<' in nav and 'href="#amenazas">Controles<' in nav
     for x in RETIRADAS:
         assert f'id="{x}"' not in s, x
 
 
-def test_texto_sin_temas_fuera_de_la_narrativa():
-    for f in (HTML, HTML.with_name("paper.js")):
-        s = f.read_text(encoding="utf-8")
+def test_paper_y_controles_sin_temas_fuera_de_la_narrativa():
+    s = HTML.read_text(encoding="utf-8")
+    textos = {"paper": _seccion(s, "paper"), "amenazas": _seccion(s, "amenazas"),
+              "paper.js": HTML.with_name("paper.js").read_text(encoding="utf-8")}
+    for nombre, t in textos.items():
         for palabra in FUERA_DE_NARRATIVA:
-            assert palabra not in s, (f.name, palabra)
+            assert palabra not in t, (nombre, palabra)
 
 
 def test_cribado_seis_de_nueve_superan_a_tuned():
@@ -225,8 +229,8 @@ def test_pagina_se_dibuja_sin_errores_y_con_costos_del_csv():
     dom = r.stdout
     for svg in ("am-fig-anio", "am-fig-a2", "am-fig-escalera", "am-fig-a3"):
         assert re.search(rf'<svg id="{svg}"[^>]*>.*?<(circle|line|path|rect)', dom, re.S), svg
-    assert "backtest, en el Perú" in dom          # leyenda del mapa
-    assert re.search(r'id="kpi-cribado">6 de 9<', dom)
+    assert re.search(r'id="paper-robustez-titulo">6 de las 9 configuraciones', dom)
+    assert re.search(r'<svg id="fig-ranking"[^>]*>.*?<circle', dom, re.S)    # el benchmark original sigue
     tabla = re.search(r'<table id="paper-costos"[^>]*>(.*?)</table>', dom, re.S).group(1)
     filas = [[re.sub(r"<[^>]+>", "", c) for c in re.findall(r"<td[^>]*>(.*?)</td>", f, re.S)]
              for f in re.findall(r"<tr[^>]*>(.*?)</tr>", tabla, re.S)[1:]]
