@@ -14,8 +14,9 @@ Para los bloques ll4 (test 2013-2016) y ll4b (test 2009-2012) sobre las 17.027 c
 
 Todos los metodos se evaluan sobre las mismas filas (interseccion de ID y FECHA). Los
 metodos opcionales (``tuned`` sin rezagos de Td, TimesFM ``tmin_anom_med`` con contexto
-desde 2002) entran solos si su parquet existe, de modo que basta re-ejecutar el script
-cuando aparezcan.
+desde 2002, LLR simple y con rezagos con ``h`` y anio de inicio del ajuste elegidos por
+validacion interna, ``llr_simple_sel`` y ``llr_rezagos_sel``, de ``15_llr_seleccion.sh``)
+entran solos si su parquet existe, de modo que basta re-ejecutar el script cuando aparezcan.
 
 Uso: ``uv run python -m experiments.amenazas.desglose [--splits ll4 ll4b]``
 """
@@ -55,6 +56,8 @@ def method_sources(split: str) -> dict[str, tuple[Path, str]]:
         "tuned_sin_td": (WORK / f"tuning_sin_td_{split}/{split}/predictions.parquet", "pred_tuned"),
         "llr_simple": (WORK / f"llr_simple/{split}__llr_simple.parquet", "pred_llr_simple"),
         "llr_rezagos": (WORK / f"llr_simple/{split}__llr_tmin_lags.parquet", "pred_llr_tmin_lags"),
+        "llr_simple_sel": (WORK / f"llr_simple/{split}__llr_simple_sel.parquet", "pred_llr_simple_sel"),
+        "llr_rezagos_sel": (WORK / f"llr_simple/{split}__llr_tmin_lags_sel.parquet", "pred_llr_tmin_lags_sel"),
         "timesfm_td": (tfm_dir / f"{split}__tmin_td_full.parquet", "pred"),
         "timesfm_anom": (tfm_dir / f"{split}__tmin_anom_full.parquet", "pred"),
         "timesfm_anom_med": (WORK / f"preds_nacional_med/{split}__tmin_anom_med.parquet", "pred"),
@@ -74,6 +77,10 @@ KEY_GAPS: tuple[tuple[str, str], ...] = (
     ("timesfm_anom", "tuned_sin_td"),
     ("timesfm_anom_med", "timesfm_anom"),
     ("timesfm_anom_med", "llr_rezagos"),
+    ("timesfm_anom", "llr_rezagos_sel"),
+    ("timesfm_anom", "llr_simple_sel"),
+    ("llr_rezagos_sel", "llr_rezagos"),
+    ("llr_simple_sel", "llr_simple"),
 )
 
 

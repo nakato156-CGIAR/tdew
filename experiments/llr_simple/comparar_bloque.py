@@ -2,7 +2,8 @@
 
 Columnas opcionales (se incluyen si el archivo existe): `tuned` completo, `tuned` sin rezagos
 de Td (tdew-f6a, 10_tuned_sin_rezagos_td.sh), LLR con rezagos de Tmin y TimesFM tmin_anom_med
-(contexto desde 2002, control de regimen MODIS, tdew-03g). Todas se cruzan por (ID, FECHA)
+(contexto desde 2002, control de regimen MODIS, tdew-03g) y los LLR con h y anio de inicio
+elegidos por validacion interna (`_sel`, 15_llr_seleccion.sh). Todas se cruzan por (ID, FECHA)
 con inner join, asi que las cifras son sobre las celdas y dias comunes a todas.
 """
 import os
@@ -23,6 +24,10 @@ import os
 _lp = f"{W}/llr_simple/{split}__llr_tmin_lags.parquet"
 if os.path.exists(_lp):
     df = df.merge(pd.read_parquet(_lp, columns=["ID", "FECHA", "pred_llr_tmin_lags"]), on=["ID", "FECHA"], how="inner")
+for _m in ("llr_simple_sel", "llr_tmin_lags_sel"):  # tdew-03g, seleccion conjunta de h y train_start
+    _sp = f"{W}/llr_simple/{split}__{_m}.parquet"
+    if os.path.exists(_sp):
+        df = df.merge(pd.read_parquet(_sp, columns=["ID", "FECHA", f"pred_{_m}"]), on=["ID", "FECHA"], how="inner")
 _tp = {"ll4b": f"{W}/tuning_ll4b/ll4b/predictions.parquet",
        "ll4": "/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean/ll4/predictions.parquet"}.get(split)
 if _tp and os.path.exists(_tp):
@@ -33,7 +38,7 @@ if os.path.exists(_ts):
 df["y"] = df.FECHA.dt.year; df["m"] = df.FECHA.dt.month
 o = df.TD_obs.to_numpy("f8")
 print(split, "celdas", df.ID.nunique(), "filas", len(df))
-cols = {"clim": "pred_clim", **({"tuned (Palacios)": "pred_tuned"} if "pred_tuned" in df else {}), **({"tuned sin rezagos Td": "pred_tuned_sin_td"} if "pred_tuned_sin_td" in df else {}), "LLR simple": "pred_llr_simple", **({"LLR Tmin+rezagos": "pred_llr_tmin_lags"} if "pred_llr_tmin_lags" in df else {}), "TimesFM td": "tfm_td", "TimesFM anom": "tfm_anom", "TimesFM anom med": "tfm_anom_med"}
+cols = {"clim": "pred_clim", **({"tuned (Palacios)": "pred_tuned"} if "pred_tuned" in df else {}), **({"tuned sin rezagos Td": "pred_tuned_sin_td"} if "pred_tuned_sin_td" in df else {}), "LLR simple": "pred_llr_simple", **({"LLR Tmin+rezagos": "pred_llr_tmin_lags"} if "pred_llr_tmin_lags" in df else {}), "LLR simple sel": "pred_llr_simple_sel", "LLR rezagos sel": "pred_llr_tmin_lags_sel", "TimesFM td": "tfm_td", "TimesFM anom": "tfm_anom", "TimesFM anom med": "tfm_anom_med"}
 cols = {k: c for k, c in cols.items() if c in df}
 for k, c in cols.items():
     e = df[c].to_numpy("f8") - o
@@ -63,5 +68,7 @@ if "pred_tuned_sin_td" in df:  # tdew-f6a
     boot("pred_tuned_sin_td", "pred_llr_simple")
     if "pred_llr_tmin_lags" in df: boot("pred_tuned_sin_td", "pred_llr_tmin_lags")
     boot("pred_tuned_sin_td", "tfm_anom")
+for _c in ("pred_llr_tmin_lags_sel", "pred_llr_simple_sel"):  # tdew-03g
+    if _c in df: boot(_c, "tfm_anom")
 if "tfm_anom_med" in df:  # tdew-03g, control de regimen MODIS
     boot("tfm_anom_med", "tfm_anom"); boot("pred_llr_simple", "tfm_anom_med")

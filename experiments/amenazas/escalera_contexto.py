@@ -3,7 +3,7 @@
 TimesFM ``tmin_anom_full`` con contexto desde 1981, 1986, 1991, 1996 y 2002 (climatologia de
 las anomalias fija en 1981-train_end, ``13_escalera_contexto.sh``) y los dos LLR con los
 mismos anios de inicio para los coeficientes y la eleccion de ``h`` (climatologia tambien
-1981-train_end, ``14_escalera_llr.sh``). En ll4b se anade el control con contexto y
+1981-train_end, ``14_escalera_llr.sh``). En ll4b y ll4 se anade el control con contexto y
 climatologia desde 2002 (el comportamiento de ``tmin_anom_med``).
 
 Todo se evalua sobre las mismas filas ``(ID, FECHA)``: celdas del panel de cribado comunes con
@@ -44,7 +44,7 @@ TFM_DIR = WORK / "preds_cribado_escalera"
 LLR_DIR = WORK / "llr_escalera"
 METHODS = ("timesfm", "llr_simple", "llr_rezagos")
 # Control de climatologia: (split, inicio de contexto, inicio de climatologia).
-CONTROLS = (("ll4b", 2002, 2002),)
+CONTROLS = (("ll4b", 2002, 2002), ("ll4", 2002, 2002))
 
 
 def tuned_path(split: str) -> Path:

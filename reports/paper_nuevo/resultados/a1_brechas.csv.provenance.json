@@ -4,12 +4,14 @@
   "climatology_role": "baseline_and_anomaly_reference",
   "climatology_used": true,
   "dataset_hash": null,
-  "generated_at": "2026-10-20T22:58:40+00:00",
-  "git_commit": "a21e2087b20d5f76c1c4fccf8377ff7c3785e364",
+  "generated_at": "2026-10-20T23:58:30+00:00",
+  "git_commit": "43ec7a78912d585daf7c7406c9285a7f4ad7914e",
   "inputs": [
     "clim",
     "llr_rezagos",
+    "llr_rezagos_sel",
     "llr_simple",
+    "llr_simple_sel",
     "timesfm_anom",
     "timesfm_anom_med",
     "timesfm_td",
@@ -20,7 +22,7 @@
   "mlflow_run_id": null,
   "model_family": "comparison",
   "model_id": "multi",
-  "notes": "Entrenamiento 1981 hasta el anio previo al bloque de prueba de cada split ({'ll4': 2012, 'll4b': 2008}); autoregressive=True porque incluye tuned. Comparacion A1 sobre filas comunes a todos los metodos; mascara Peru = experiments.timesfm.artifact_data.peru_mask (shapely.contains_xy, 8272 celdas dentro); bootstrap 2000 replicas semilla 0, bloques espaciales de 2 grados y mes-anio. Entradas: {'ll4': {'clim': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4__llr_simple.parquet', 'llr_simple': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4__llr_simple.parquet', 'tuned': '/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean/ll4/predictions.parquet', 'tuned_sin_td': '/home/cvelasquez/tdew_timesfm/tuning_sin_td_ll4/ll4/predictions.parquet', 'llr_rezagos': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4__llr_tmin_lags.parquet', 'timesfm_anom': '/home/cvelasquez/tdew_timesfm/preds_nacional/ll4__tmin_anom_full.parquet', 'timesfm_anom_med': '/home/cvelasquez/tdew_timesfm/preds_nacional_med/ll4__tmin_anom_med.parquet'}, 'll4b': {'clim': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4b__llr_simple.parquet', 'llr_simple': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4b__llr_simple.parquet', 'tuned': '/home/cvelasquez/tdew_timesfm/tuning_ll4b/ll4b/predictions.parquet', 'tuned_sin_td': '/home/cvelasquez/tdew_timesfm/tuning_sin_td_ll4b/ll4b/predictions.parquet', 'llr_rezagos': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4b__llr_tmin_lags.parquet', 'timesfm_td': '/home/cvelasquez/tdew_timesfm/preds_nacional_ll4b/ll4b__tmin_td_full.parquet', 'timesfm_anom': '/home/cvelasquez/tdew_timesfm/preds_nacional_ll4b/ll4b__tmin_anom_full.parquet', 'timesfm_anom_med': '/home/cvelasquez/tdew_timesfm/preds_nacional_med/ll4b__tmin_anom_med.parquet'}}",
+  "notes": "Entrenamiento 1981 hasta el anio previo al bloque de prueba de cada split ({'ll4': 2012, 'll4b': 2008}); autoregressive=True porque incluye tuned. Comparacion A1 sobre filas comunes a todos los metodos; mascara Peru = experiments.timesfm.artifact_data.peru_mask (shapely.contains_xy, 8272 celdas dentro); bootstrap 2000 replicas semilla 0, bloques espaciales de 2 grados y mes-anio. Entradas: {'ll4': {'clim': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4__llr_simple.parquet', 'llr_simple': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4__llr_simple.parquet', 'tuned': '/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean/ll4/predictions.parquet', 'tuned_sin_td': '/home/cvelasquez/tdew_timesfm/tuning_sin_td_ll4/ll4/predictions.parquet', 'llr_rezagos': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4__llr_tmin_lags.parquet', 'llr_simple_sel': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4__llr_simple_sel.parquet', 'llr_rezagos_sel': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4__llr_tmin_lags_sel.parquet', 'timesfm_anom': '/home/cvelasquez/tdew_timesfm/preds_nacional/ll4__tmin_anom_full.parquet', 'timesfm_anom_med': '/home/cvelasquez/tdew_timesfm/preds_nacional_med/ll4__tmin_anom_med.parquet'}, 'll4b': {'clim': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4b__llr_simple.parquet', 'llr_simple': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4b__llr_simple.parquet', 'tuned': '/home/cvelasquez/tdew_timesfm/tuning_ll4b/ll4b/predictions.parquet', 'tuned_sin_td': '/home/cvelasquez/tdew_timesfm/tuning_sin_td_ll4b/ll4b/predictions.parquet', 'llr_rezagos': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4b__llr_tmin_lags.parquet', 'llr_simple_sel': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4b__llr_simple_sel.parquet', 'llr_rezagos_sel': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4b__llr_tmin_lags_sel.parquet', 'timesfm_td': '/home/cvelasquez/tdew_timesfm/preds_nacional_ll4b/ll4b__tmin_td_full.parquet', 'timesfm_anom': '/home/cvelasquez/tdew_timesfm/preds_nacional_ll4b/ll4b__tmin_anom_full.parquet', 'timesfm_anom_med': '/home/cvelasquez/tdew_timesfm/preds_nacional_med/ll4b__tmin_anom_med.parquet'}}",
   "output_files": [
     "reports/paper_nuevo/resultados/a1_por_metodo.csv",
     "reports/paper_nuevo/resultados/a1_por_zona.csv",
@@ -30,7 +32,7 @@
   "panel_cell_count": 17027,
   "panel_file": "reports/timesfm_benchmark/panels/nacional_17027.csv",
   "panel_id": "nacional_17027",
-  "run_id": "f224cfc18c5d4f41bbbdcd5cae7db985",
+  "run_id": "bfb45e4df44a434697473bc568bd5dfa",
   "seeds": [
     0
   ],

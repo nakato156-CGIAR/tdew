@@ -164,6 +164,72 @@ ll4,panel,35,E (d) A',267,390087,llr_rezagos,0.62534
 ll4,panel,36,E (d) B',991,1447851,llr_rezagos,0.78361
 ll4,panel,39,Lago Titicaca,256,374016,llr_rezagos,0.88416
 ll4,panel,40,Loma,24,35064,llr_rezagos,0.69404
+ll4,panel,0,A (r) A',7091,10359951,llr_simple_sel,1.48130
+ll4,panel,1,A (r) B',351,512811,llr_simple_sel,0.75518
+ll4,panel,2,A (r) C',74,108114,llr_simple_sel,0.87294
+ll4,panel,3,A (r) D',16,23376,llr_simple_sel,0.84592
+ll4,panel,4,B (i) B',174,254214,llr_simple_sel,0.62026
+ll4,panel,5,B (i) C',35,51135,llr_simple_sel,0.95163
+ll4,panel,6,B (i) D',22,32142,llr_simple_sel,0.90975
+ll4,panel,8,"B (o , i) B'",110,160710,llr_simple_sel,0.77742
+ll4,panel,9,"B (o , i) C'",981,1433241,llr_simple_sel,0.79725
+ll4,panel,10,"B (o , i) D'",12,17532,llr_simple_sel,0.93240
+ll4,panel,11,B (r) A',3695,5398395,llr_simple_sel,1.00990
+ll4,panel,12,B (r) B',944,1379184,llr_simple_sel,0.69754
+ll4,panel,13,B (r) C',19,27759,llr_simple_sel,0.83657
+ll4,panel,14,B (r) D',89,130029,llr_simple_sel,0.86461
+ll4,panel,17,C (i) A',17,24837,llr_simple_sel,0.68421
+ll4,panel,18,C (i) B',91,132951,llr_simple_sel,0.69946
+ll4,panel,19,C (i) C',246,359406,llr_simple_sel,1.02971
+ll4,panel,20,C (i) D',219,319959,llr_simple_sel,0.92990
+ll4,panel,22,"C (o , i) B'",18,26298,llr_simple_sel,0.69899
+ll4,panel,23,"C (o , i) C'",174,254214,llr_simple_sel,0.94507
+ll4,panel,26,C (r) A',39,56979,llr_simple_sel,0.67560
+ll4,panel,27,C (r) B',275,401775,llr_simple_sel,0.66985
+ll4,panel,28,"D (i , p) A'",491,717351,llr_simple_sel,0.88216
+ll4,panel,29,"D (i , p) B'",29,42369,llr_simple_sel,1.20518
+ll4,panel,30,"D (i , p) C'",68,99348,llr_simple_sel,1.13123
+ll4,panel,31,D (i) A',20,29220,llr_simple_sel,0.63756
+ll4,panel,32,D (i) B',81,118341,llr_simple_sel,0.70894
+ll4,panel,33,D (i) C',107,156327,llr_simple_sel,1.01198
+ll4,panel,34,D (i) D',1,1461,llr_simple_sel,0.94976
+ll4,panel,35,E (d) A',267,390087,llr_simple_sel,0.65922
+ll4,panel,36,E (d) B',991,1447851,llr_simple_sel,0.79741
+ll4,panel,39,Lago Titicaca,256,374016,llr_simple_sel,0.86037
+ll4,panel,40,Loma,24,35064,llr_simple_sel,0.70493
+ll4,panel,0,A (r) A',7091,10359951,llr_rezagos_sel,1.46640
+ll4,panel,1,A (r) B',351,512811,llr_rezagos_sel,0.73716
+ll4,panel,2,A (r) C',74,108114,llr_rezagos_sel,0.86680
+ll4,panel,3,A (r) D',16,23376,llr_rezagos_sel,0.84723
+ll4,panel,4,B (i) B',174,254214,llr_rezagos_sel,0.60316
+ll4,panel,5,B (i) C',35,51135,llr_rezagos_sel,0.94313
+ll4,panel,6,B (i) D',22,32142,llr_rezagos_sel,0.90490
+ll4,panel,8,"B (o , i) B'",110,160710,llr_rezagos_sel,0.76197
+ll4,panel,9,"B (o , i) C'",981,1433241,llr_rezagos_sel,0.79353
+ll4,panel,10,"B (o , i) D'",12,17532,llr_rezagos_sel,0.92332
+ll4,panel,11,B (r) A',3695,5398395,llr_rezagos_sel,0.99262
+ll4,panel,12,B (r) B',944,1379184,llr_rezagos_sel,0.68490
+ll4,panel,13,B (r) C',19,27759,llr_rezagos_sel,0.82637
+ll4,panel,14,B (r) D',89,130029,llr_rezagos_sel,0.86549
+ll4,panel,17,C (i) A',17,24837,llr_rezagos_sel,0.63358
+ll4,panel,18,C (i) B',91,132951,llr_rezagos_sel,0.68074
+ll4,panel,19,C (i) C',246,359406,llr_rezagos_sel,1.02097
+ll4,panel,20,C (i) D',219,319959,llr_rezagos_sel,0.93102
+ll4,panel,22,"C (o , i) B'",18,26298,llr_rezagos_sel,0.68419
+ll4,panel,23,"C (o , i) C'",174,254214,llr_rezagos_sel,0.93851
+ll4,panel,26,C (r) A',39,56979,llr_rezagos_sel,0.64085
+ll4,panel,27,C (r) B',275,401775,llr_rezagos_sel,0.65331
+ll4,panel,28,"D (i , p) A'",491,717351,llr_rezagos_sel,0.83588
+ll4,panel,29,"D (i , p) B'",29,42369,llr_rezagos_sel,1.19217
+ll4,panel,30,"D (i , p) C'",68,99348,llr_rezagos_sel,1.11995
+ll4,panel,31,D (i) A',20,29220,llr_rezagos_sel,0.59607
+ll4,panel,32,D (i) B',81,118341,llr_rezagos_sel,0.69251
+ll4,panel,33,D (i) C',107,156327,llr_rezagos_sel,1.00221
+ll4,panel,34,D (i) D',1,1461,llr_rezagos_sel,0.95872
+ll4,panel,35,E (d) A',267,390087,llr_rezagos_sel,0.61519
+ll4,panel,36,E (d) B',991,1447851,llr_rezagos_sel,0.77245
+ll4,panel,39,Lago Titicaca,256,374016,llr_rezagos_sel,0.85805
+ll4,panel,40,Loma,24,35064,llr_rezagos_sel,0.69079
 ll4,panel,0,A (r) A',7091,10359951,timesfm_anom,1.48045
 ll4,panel,1,A (r) B',351,512811,timesfm_anom,0.69451
 ll4,panel,2,A (r) C',74,108114,timesfm_anom,0.81203
@@ -390,6 +456,70 @@ ll4,peru,34,D (i) D',1,1461,llr_rezagos,1.02392
 ll4,peru,35,E (d) A',199,290739,llr_rezagos,0.63891
 ll4,peru,36,E (d) B',726,1060686,llr_rezagos,0.83321
 ll4,peru,40,Loma,24,35064,llr_rezagos,0.69404
+ll4,peru,0,A (r) A',2147,3136767,llr_simple_sel,1.13937
+ll4,peru,1,A (r) B',197,287817,llr_simple_sel,0.69008
+ll4,peru,2,A (r) C',74,108114,llr_simple_sel,0.87294
+ll4,peru,3,A (r) D',16,23376,llr_simple_sel,0.84592
+ll4,peru,4,B (i) B',174,254214,llr_simple_sel,0.62026
+ll4,peru,5,B (i) C',35,51135,llr_simple_sel,0.95163
+ll4,peru,6,B (i) D',22,32142,llr_simple_sel,0.90975
+ll4,peru,8,"B (o , i) B'",110,160710,llr_simple_sel,0.77742
+ll4,peru,9,"B (o , i) C'",889,1298829,llr_simple_sel,0.80177
+ll4,peru,10,"B (o , i) D'",12,17532,llr_simple_sel,0.93240
+ll4,peru,11,B (r) A',1698,2480778,llr_simple_sel,0.83102
+ll4,peru,12,B (r) B',705,1030005,llr_simple_sel,0.65536
+ll4,peru,13,B (r) C',19,27759,llr_simple_sel,0.83657
+ll4,peru,14,B (r) D',89,130029,llr_simple_sel,0.86461
+ll4,peru,17,C (i) A',17,24837,llr_simple_sel,0.68421
+ll4,peru,18,C (i) B',91,132951,llr_simple_sel,0.69946
+ll4,peru,19,C (i) C',225,328725,llr_simple_sel,1.03926
+ll4,peru,20,C (i) D',89,130029,llr_simple_sel,1.03689
+ll4,peru,22,"C (o , i) B'",18,26298,llr_simple_sel,0.69899
+ll4,peru,23,"C (o , i) C'",145,211845,llr_simple_sel,0.96625
+ll4,peru,26,C (r) A',39,56979,llr_simple_sel,0.67560
+ll4,peru,27,C (r) B',255,372555,llr_simple_sel,0.67061
+ll4,peru,28,"D (i , p) A'",42,61362,llr_simple_sel,0.74422
+ll4,peru,29,"D (i , p) B'",29,42369,llr_simple_sel,1.20518
+ll4,peru,30,"D (i , p) C'",56,81816,llr_simple_sel,1.17581
+ll4,peru,31,D (i) A',3,4383,llr_simple_sel,0.75869
+ll4,peru,32,D (i) B',81,118341,llr_simple_sel,0.70894
+ll4,peru,33,D (i) C',45,65745,llr_simple_sel,1.03111
+ll4,peru,34,D (i) D',1,1461,llr_simple_sel,0.94976
+ll4,peru,35,E (d) A',199,290739,llr_simple_sel,0.67321
+ll4,peru,36,E (d) B',726,1060686,llr_simple_sel,0.84502
+ll4,peru,40,Loma,24,35064,llr_simple_sel,0.70493
+ll4,peru,0,A (r) A',2147,3136767,llr_rezagos_sel,1.12392
+ll4,peru,1,A (r) B',197,287817,llr_rezagos_sel,0.67427
+ll4,peru,2,A (r) C',74,108114,llr_rezagos_sel,0.86680
+ll4,peru,3,A (r) D',16,23376,llr_rezagos_sel,0.84723
+ll4,peru,4,B (i) B',174,254214,llr_rezagos_sel,0.60316
+ll4,peru,5,B (i) C',35,51135,llr_rezagos_sel,0.94313
+ll4,peru,6,B (i) D',22,32142,llr_rezagos_sel,0.90490
+ll4,peru,8,"B (o , i) B'",110,160710,llr_rezagos_sel,0.76197
+ll4,peru,9,"B (o , i) C'",889,1298829,llr_rezagos_sel,0.79803
+ll4,peru,10,"B (o , i) D'",12,17532,llr_rezagos_sel,0.92332
+ll4,peru,11,B (r) A',1698,2480778,llr_rezagos_sel,0.81004
+ll4,peru,12,B (r) B',705,1030005,llr_rezagos_sel,0.63925
+ll4,peru,13,B (r) C',19,27759,llr_rezagos_sel,0.82637
+ll4,peru,14,B (r) D',89,130029,llr_rezagos_sel,0.86549
+ll4,peru,17,C (i) A',17,24837,llr_rezagos_sel,0.63358
+ll4,peru,18,C (i) B',91,132951,llr_rezagos_sel,0.68074
+ll4,peru,19,C (i) C',225,328725,llr_rezagos_sel,1.02950
+ll4,peru,20,C (i) D',89,130029,llr_rezagos_sel,1.04142
+ll4,peru,22,"C (o , i) B'",18,26298,llr_rezagos_sel,0.68419
+ll4,peru,23,"C (o , i) C'",145,211845,llr_rezagos_sel,0.95838
+ll4,peru,26,C (r) A',39,56979,llr_rezagos_sel,0.64085
+ll4,peru,27,C (r) B',255,372555,llr_rezagos_sel,0.65315
+ll4,peru,28,"D (i , p) A'",42,61362,llr_rezagos_sel,0.69051
+ll4,peru,29,"D (i , p) B'",29,42369,llr_rezagos_sel,1.19217
+ll4,peru,30,"D (i , p) C'",56,81816,llr_rezagos_sel,1.16458
+ll4,peru,31,D (i) A',3,4383,llr_rezagos_sel,0.71526
+ll4,peru,32,D (i) B',81,118341,llr_rezagos_sel,0.69251
+ll4,peru,33,D (i) C',45,65745,llr_rezagos_sel,1.01646
+ll4,peru,34,D (i) D',1,1461,llr_rezagos_sel,0.95872
+ll4,peru,35,E (d) A',199,290739,llr_rezagos_sel,0.63354
+ll4,peru,36,E (d) B',726,1060686,llr_rezagos_sel,0.82345
+ll4,peru,40,Loma,24,35064,llr_rezagos_sel,0.69079
 ll4,peru,0,A (r) A',2147,3136767,timesfm_anom,1.11807
 ll4,peru,1,A (r) B',197,287817,timesfm_anom,0.63434
 ll4,peru,2,A (r) C',74,108114,timesfm_anom,0.81203
@@ -619,6 +749,72 @@ ll4b,panel,35,E (d) A',267,390087,llr_rezagos,0.61593
 ll4b,panel,36,E (d) B',991,1447851,llr_rezagos,0.73518
 ll4b,panel,39,Lago Titicaca,256,374016,llr_rezagos,0.81840
 ll4b,panel,40,Loma,24,35064,llr_rezagos,0.66955
+ll4b,panel,0,A (r) A',7091,10359951,llr_simple_sel,1.35874
+ll4b,panel,1,A (r) B',351,512811,llr_simple_sel,0.68172
+ll4b,panel,2,A (r) C',74,108114,llr_simple_sel,0.78959
+ll4b,panel,3,A (r) D',16,23376,llr_simple_sel,0.75644
+ll4b,panel,4,B (i) B',174,254214,llr_simple_sel,0.58474
+ll4b,panel,5,B (i) C',35,51135,llr_simple_sel,0.83531
+ll4b,panel,6,B (i) D',22,32142,llr_simple_sel,0.80453
+ll4b,panel,8,"B (o , i) B'",110,160710,llr_simple_sel,0.71949
+ll4b,panel,9,"B (o , i) C'",981,1433241,llr_simple_sel,0.72524
+ll4b,panel,10,"B (o , i) D'",12,17532,llr_simple_sel,0.79309
+ll4b,panel,11,B (r) A',3695,5398395,llr_simple_sel,0.97240
+ll4b,panel,12,B (r) B',944,1379184,llr_simple_sel,0.67097
+ll4b,panel,13,B (r) C',19,27759,llr_simple_sel,0.76892
+ll4b,panel,14,B (r) D',89,130029,llr_simple_sel,0.77383
+ll4b,panel,17,C (i) A',17,24837,llr_simple_sel,0.59491
+ll4b,panel,18,C (i) B',91,132951,llr_simple_sel,0.66513
+ll4b,panel,19,C (i) C',246,359406,llr_simple_sel,0.87639
+ll4b,panel,20,C (i) D',219,319959,llr_simple_sel,0.83065
+ll4b,panel,22,"C (o , i) B'",18,26298,llr_simple_sel,0.67674
+ll4b,panel,23,"C (o , i) C'",174,254214,llr_simple_sel,0.84348
+ll4b,panel,26,C (r) A',39,56979,llr_simple_sel,0.59749
+ll4b,panel,27,C (r) B',275,401775,llr_simple_sel,0.64144
+ll4b,panel,28,"D (i , p) A'",491,717351,llr_simple_sel,0.78241
+ll4b,panel,29,"D (i , p) B'",29,42369,llr_simple_sel,1.03182
+ll4b,panel,30,"D (i , p) C'",68,99348,llr_simple_sel,0.96040
+ll4b,panel,31,D (i) A',20,29220,llr_simple_sel,0.58982
+ll4b,panel,32,D (i) B',81,118341,llr_simple_sel,0.67498
+ll4b,panel,33,D (i) C',107,156327,llr_simple_sel,0.92363
+ll4b,panel,34,D (i) D',1,1461,llr_simple_sel,0.88165
+ll4b,panel,35,E (d) A',267,390087,llr_simple_sel,0.63669
+ll4b,panel,36,E (d) B',991,1447851,llr_simple_sel,0.74148
+ll4b,panel,39,Lago Titicaca,256,374016,llr_simple_sel,0.79691
+ll4b,panel,40,Loma,24,35064,llr_simple_sel,0.68196
+ll4b,panel,0,A (r) A',7091,10359951,llr_rezagos_sel,1.34895
+ll4b,panel,1,A (r) B',351,512811,llr_rezagos_sel,0.67274
+ll4b,panel,2,A (r) C',74,108114,llr_rezagos_sel,0.78111
+ll4b,panel,3,A (r) D',16,23376,llr_rezagos_sel,0.74898
+ll4b,panel,4,B (i) B',174,254214,llr_rezagos_sel,0.57718
+ll4b,panel,5,B (i) C',35,51135,llr_rezagos_sel,0.83498
+ll4b,panel,6,B (i) D',22,32142,llr_rezagos_sel,0.81087
+ll4b,panel,8,"B (o , i) B'",110,160710,llr_rezagos_sel,0.70514
+ll4b,panel,9,"B (o , i) C'",981,1433241,llr_rezagos_sel,0.71963
+ll4b,panel,10,"B (o , i) D'",12,17532,llr_rezagos_sel,0.78115
+ll4b,panel,11,B (r) A',3695,5398395,llr_rezagos_sel,0.96630
+ll4b,panel,12,B (r) B',944,1379184,llr_rezagos_sel,0.66670
+ll4b,panel,13,B (r) C',19,27759,llr_rezagos_sel,0.75758
+ll4b,panel,14,B (r) D',89,130029,llr_rezagos_sel,0.76926
+ll4b,panel,17,C (i) A',17,24837,llr_rezagos_sel,0.58651
+ll4b,panel,18,C (i) B',91,132951,llr_rezagos_sel,0.65024
+ll4b,panel,19,C (i) C',246,359406,llr_rezagos_sel,0.87501
+ll4b,panel,20,C (i) D',219,319959,llr_rezagos_sel,0.83955
+ll4b,panel,22,"C (o , i) B'",18,26298,llr_rezagos_sel,0.66892
+ll4b,panel,23,"C (o , i) C'",174,254214,llr_rezagos_sel,0.83520
+ll4b,panel,26,C (r) A',39,56979,llr_rezagos_sel,0.60347
+ll4b,panel,27,C (r) B',275,401775,llr_rezagos_sel,0.63316
+ll4b,panel,28,"D (i , p) A'",491,717351,llr_rezagos_sel,0.76353
+ll4b,panel,29,"D (i , p) B'",29,42369,llr_rezagos_sel,1.02097
+ll4b,panel,30,"D (i , p) C'",68,99348,llr_rezagos_sel,0.96369
+ll4b,panel,31,D (i) A',20,29220,llr_rezagos_sel,0.57085
+ll4b,panel,32,D (i) B',81,118341,llr_rezagos_sel,0.65759
+ll4b,panel,33,D (i) C',107,156327,llr_rezagos_sel,0.92343
+ll4b,panel,34,D (i) D',1,1461,llr_rezagos_sel,0.89814
+ll4b,panel,35,E (d) A',267,390087,llr_rezagos_sel,0.60239
+ll4b,panel,36,E (d) B',991,1447851,llr_rezagos_sel,0.72309
+ll4b,panel,39,Lago Titicaca,256,374016,llr_rezagos_sel,0.79252
+ll4b,panel,40,Loma,24,35064,llr_rezagos_sel,0.67052
 ll4b,panel,0,A (r) A',7091,10359951,timesfm_td,1.39697
 ll4b,panel,1,A (r) B',351,512811,timesfm_td,0.66487
 ll4b,panel,2,A (r) C',74,108114,timesfm_td,0.76991
@@ -878,6 +1074,70 @@ ll4b,peru,34,D (i) D',1,1461,llr_rezagos,0.97957
 ll4b,peru,35,E (d) A',199,290739,llr_rezagos,0.63048
 ll4b,peru,36,E (d) B',726,1060686,llr_rezagos,0.78042
 ll4b,peru,40,Loma,24,35064,llr_rezagos,0.66955
+ll4b,peru,0,A (r) A',2147,3136767,llr_simple_sel,1.05455
+ll4b,peru,1,A (r) B',197,287817,llr_simple_sel,0.63845
+ll4b,peru,2,A (r) C',74,108114,llr_simple_sel,0.78959
+ll4b,peru,3,A (r) D',16,23376,llr_simple_sel,0.75644
+ll4b,peru,4,B (i) B',174,254214,llr_simple_sel,0.58474
+ll4b,peru,5,B (i) C',35,51135,llr_simple_sel,0.83531
+ll4b,peru,6,B (i) D',22,32142,llr_simple_sel,0.80453
+ll4b,peru,8,"B (o , i) B'",110,160710,llr_simple_sel,0.71949
+ll4b,peru,9,"B (o , i) C'",889,1298829,llr_simple_sel,0.72692
+ll4b,peru,10,"B (o , i) D'",12,17532,llr_simple_sel,0.79309
+ll4b,peru,11,B (r) A',1698,2480778,llr_simple_sel,0.77491
+ll4b,peru,12,B (r) B',705,1030005,llr_simple_sel,0.60685
+ll4b,peru,13,B (r) C',19,27759,llr_simple_sel,0.76892
+ll4b,peru,14,B (r) D',89,130029,llr_simple_sel,0.77383
+ll4b,peru,17,C (i) A',17,24837,llr_simple_sel,0.59491
+ll4b,peru,18,C (i) B',91,132951,llr_simple_sel,0.66513
+ll4b,peru,19,C (i) C',225,328725,llr_simple_sel,0.88442
+ll4b,peru,20,C (i) D',89,130029,llr_simple_sel,0.92437
+ll4b,peru,22,"C (o , i) B'",18,26298,llr_simple_sel,0.67674
+ll4b,peru,23,"C (o , i) C'",145,211845,llr_simple_sel,0.86088
+ll4b,peru,26,C (r) A',39,56979,llr_simple_sel,0.59749
+ll4b,peru,27,C (r) B',255,372555,llr_simple_sel,0.63803
+ll4b,peru,28,"D (i , p) A'",42,61362,llr_simple_sel,0.67004
+ll4b,peru,29,"D (i , p) B'",29,42369,llr_simple_sel,1.03182
+ll4b,peru,30,"D (i , p) C'",56,81816,llr_simple_sel,0.98663
+ll4b,peru,31,D (i) A',3,4383,llr_simple_sel,0.68932
+ll4b,peru,32,D (i) B',81,118341,llr_simple_sel,0.67498
+ll4b,peru,33,D (i) C',45,65745,llr_simple_sel,0.89519
+ll4b,peru,34,D (i) D',1,1461,llr_simple_sel,0.88165
+ll4b,peru,35,E (d) A',199,290739,llr_simple_sel,0.65241
+ll4b,peru,36,E (d) B',726,1060686,llr_simple_sel,0.78485
+ll4b,peru,40,Loma,24,35064,llr_simple_sel,0.68196
+ll4b,peru,0,A (r) A',2147,3136767,llr_rezagos_sel,1.05360
+ll4b,peru,1,A (r) B',197,287817,llr_rezagos_sel,0.63461
+ll4b,peru,2,A (r) C',74,108114,llr_rezagos_sel,0.78111
+ll4b,peru,3,A (r) D',16,23376,llr_rezagos_sel,0.74898
+ll4b,peru,4,B (i) B',174,254214,llr_rezagos_sel,0.57718
+ll4b,peru,5,B (i) C',35,51135,llr_rezagos_sel,0.83498
+ll4b,peru,6,B (i) D',22,32142,llr_rezagos_sel,0.81087
+ll4b,peru,8,"B (o , i) B'",110,160710,llr_rezagos_sel,0.70514
+ll4b,peru,9,"B (o , i) C'",889,1298829,llr_rezagos_sel,0.72113
+ll4b,peru,10,"B (o , i) D'",12,17532,llr_rezagos_sel,0.78115
+ll4b,peru,11,B (r) A',1698,2480778,llr_rezagos_sel,0.77560
+ll4b,peru,12,B (r) B',705,1030005,llr_rezagos_sel,0.60228
+ll4b,peru,13,B (r) C',19,27759,llr_rezagos_sel,0.75758
+ll4b,peru,14,B (r) D',89,130029,llr_rezagos_sel,0.76926
+ll4b,peru,17,C (i) A',17,24837,llr_rezagos_sel,0.58651
+ll4b,peru,18,C (i) B',91,132951,llr_rezagos_sel,0.65024
+ll4b,peru,19,C (i) C',225,328725,llr_rezagos_sel,0.88297
+ll4b,peru,20,C (i) D',89,130029,llr_rezagos_sel,0.93652
+ll4b,peru,22,"C (o , i) B'",18,26298,llr_rezagos_sel,0.66892
+ll4b,peru,23,"C (o , i) C'",145,211845,llr_rezagos_sel,0.85136
+ll4b,peru,26,C (r) A',39,56979,llr_rezagos_sel,0.60347
+ll4b,peru,27,C (r) B',255,372555,llr_rezagos_sel,0.62922
+ll4b,peru,28,"D (i , p) A'",42,61362,llr_rezagos_sel,0.63136
+ll4b,peru,29,"D (i , p) B'",29,42369,llr_rezagos_sel,1.02097
+ll4b,peru,30,"D (i , p) C'",56,81816,llr_rezagos_sel,0.99067
+ll4b,peru,31,D (i) A',3,4383,llr_rezagos_sel,0.67827
+ll4b,peru,32,D (i) B',81,118341,llr_rezagos_sel,0.65759
+ll4b,peru,33,D (i) C',45,65745,llr_rezagos_sel,0.88684
+ll4b,peru,34,D (i) D',1,1461,llr_rezagos_sel,0.89814
+ll4b,peru,35,E (d) A',199,290739,llr_rezagos_sel,0.61948
+ll4b,peru,36,E (d) B',726,1060686,llr_rezagos_sel,0.76734
+ll4b,peru,40,Loma,24,35064,llr_rezagos_sel,0.67052
 ll4b,peru,0,A (r) A',2147,3136767,timesfm_td,1.08324
 ll4b,peru,1,A (r) B',197,287817,timesfm_td,0.63328
 ll4b,peru,2,A (r) C',74,108114,timesfm_td,0.76991
