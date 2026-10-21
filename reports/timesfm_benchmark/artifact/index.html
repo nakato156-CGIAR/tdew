@@ -2081,7 +2081,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
         `<text x="${X(corte + 1)}" y="${Mg.t - 8}" font-size="11" font-family="${MONO}" fill="var(--fig-muted)">PRODUCTOS · ${per(P4("anom", "palacios").periodo)}</text>`}],
       series: F4.map(f => ({n: NOM[f], corto: f === "palacios" ? "Palacios" : NOM[f], color: col(f), dash: f === "era5_land" ? "5 3" : "", valor: (p, y) => val(f, y),
         tip: (p, y) => { const r = anom.find(q => q.fuente === f && Number(q.anio) === y); return r ? ` · ${miles(r.n_dias)} días · ${r.n_estaciones} estaciones` : ""; }})),
-      yDom: dominio(anom.filter(r => F4.includes(r.fuente)).map(r => r.rmse), 0.1), H: 300, etiquetasFin: true,
+      yDom: dominio(anom.filter(r => F4.includes(r.fuente)).map(r => r.rmse), 0.1), H: 300, etiquetasFin: false,
       ejeX: "año · RMSE de anomalía frente a estación, °C"
     });
     leyenda("am-leyenda-a4", F4.map(f => ({n: NOM[f], color: col(f), dash: f === "era5_land"})));
