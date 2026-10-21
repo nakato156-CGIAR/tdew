@@ -78,6 +78,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
 .am-grupo{display:inline-block;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);border:1px solid var(--line);border-radius:3px;padding:2px 7px;margin-top:8px}.am-grupo.mas{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,var(--line))}
 #am-t-info td{text-align:left;font-family:inherit;white-space:normal;min-width:90px}#am-t-info td:first-child{white-space:nowrap}
 #am-t-info{table-layout:fixed;min-width:720px}#am-t-info th,#am-t-info td{text-align:left;white-space:normal;vertical-align:top;font-family:"IBM Plex Sans",system-ui,sans-serif;font-size:13px;line-height:1.4}#am-t-info th{font-family:"IBM Plex Mono",monospace;font-size:10px}#am-t-info th:nth-child(1){width:24%}#am-t-info th:nth-child(2){width:8%}#am-t-info th:nth-child(3){width:12%}#am-t-info th:nth-child(4){width:22%}#am-t-info th:nth-child(5){width:19%}#am-t-info th:nth-child(6){width:15%}#am-t-info th:nth-child(2),#am-t-info td:nth-child(2){text-align:center}#am-t-info td:nth-child(2){font-family:"IBM Plex Mono",monospace}
+.am-intro{font-size:14px;line-height:1.55;color:var(--ink-soft);max-width:78ch;margin:0 0 16px}
 .am-lista{margin:10px 0 0;padding-left:18px;font-size:13.5px;color:var(--ink-soft);max-width:var(--measure)}.am-lista li+li{margin-top:5px}.am-lista strong{color:var(--ink);font-weight:600}
 @media(max-width:820px){.am-grid4,.am-glosario{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
@@ -459,6 +460,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
       </figure>
       <figure class="fig">
         <figcaption><span class="fig-titulo" id="am-titulo-zonas"></span><span class="fig-sub">Zonas en que el primer método tiene menor RMSE que el segundo. La barra llena es el total de zonas del ámbito.</span><span class="am-grupo">Cada fila indica su grupo</span></figcaption>
+        <p class="am-intro">Las brechas anteriores son promedios de todo el panel; este gráfico mira si la ventaja es general o la ponen unas pocas zonas. Para cada duelo «A vs. B» se calcula el RMSE de los dos métodos dentro de cada zona climática SENAMHI y se cuenta en cuántas tiene menos error A. Las cuatro primeras filas enfrentan a TimesFM con cada rival; las dos últimas comparan entre sí a los métodos que solo usan Tmin, sin TimesFM. Cada zona cuenta igual, gane por 0.001 °C o por 0.1 °C: el tamaño de la diferencia está en el gráfico de brechas.</p>
         <svg id="am-fig-zonas" viewBox="0 0 760 260" role="img" aria-label="Zonas ganadas por comparación"></svg>
       </figure>
     </div>
