@@ -1,3 +1,5 @@
+> Orientación vigente: [ORIENTACION_PAPER.md](ORIENTACION_PAPER.md). Guía narrativa, mapa de evidencia e interpretaciones retiradas: [historia_paper.md](historia_paper.md); leerla antes de redactar. Se comparan elecciones prácticas según precisión, preparación y costo; la regla E/C+A queda retirada. La sección Paper se actualizó localmente, sin publicación remota.
+
 # Paper nuevo (LLR frente a TimesFM)
 
 Carpeta de los fuentes Quarto (`.qmd`), bibliografía y figuras del paper nuevo. Se creó el 2026-10-20 a partir de `HANDOFF.md`.
@@ -10,5 +12,5 @@ Carpeta de los fuentes Quarto (`.qmd`), bibliografía y figuras del paper nuevo.
 
 ## Estado
 
-- La narrativa (E: modelo de fundación sin diseño local, o C+A: la covariable hace el trabajo) se decide tras A1–A3 (`tdew-03g`, `tdew-f6a`, `tdew-077`). Ver `HANDOFF.md` y el plan de la sesión.
+- La narrativa compara elecciones prácticas según precisión, preparación específica y costo; se sigue `ORIENTACION_PAPER.md`. A1–A4 se conservan como evidencia con sus límites.
 - Antes de redactar: leer `ESTILO_REDACCION.md`. El uso de IA generativa se declara en el paper y el contenido se valida con Palacios y SENAMHI.

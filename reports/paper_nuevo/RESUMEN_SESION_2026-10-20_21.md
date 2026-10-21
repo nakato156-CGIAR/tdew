@@ -1,3 +1,5 @@
+> Actualización editorial (2026-10-21): este documento conserva el registro histórico de la sesión anterior. La orientación vigente está en [ORIENTACION_PAPER.md](ORIENTACION_PAPER.md). Se retiraron la regla E/C+A, el supuesto quiebre MODIS en 2000, IC con cero como empate y el barajado como prueba de inutilidad de Td histórica. Las publicaciones remotas citadas aquí son anteriores; esta actualización es local.
+
 # Resumen de la sesión del 20 y 21 de octubre de 2026
 
 Rama `tdew-214-real-2017-2020`. Punto de partida: commit `24c79b1` y `HANDOFF.md`. Punto final: commit `46d09be`. Contenido generado con asistencia de IA (Claude); las cifras y la metodología deben validarse con Palacios y SENAMHI antes de citarse. El trabajo usa datos inéditos de PISCO y del pipeline de Palacios, y datos de terceros (NOAA ISD; Open-Meteo con licencia CC BY 4.0). No hay datos personales.

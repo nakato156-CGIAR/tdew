@@ -1,9 +1,6 @@
-# Síntesis de las amenazas A1-A4 para la Decisión 1
+# Síntesis de A1–A4 para la elección práctica de método
 
-Fecha: 2026-10-20. Rama `tdew-214-real-2017-2020`, commit `010fd8a`. Este documento reúne los resultados de A1-A4 para aplicar la regla de la «Decisión 1» de `HANDOFF.md` §5, que elige entre dos narrativas para el paper nuevo:
-
-- **E:** un modelo de fundación zero-shot sin diseño local iguala o supera a la regresión diseñada por zona.
-- **C+A:** la covariable hace el trabajo, el diseño experto no mejora a un regresor simple y el protocolo de validación cambia la conclusión más que el estimador.
+Actualización editorial del 21 de octubre de 2026. Se sigue `../ORIENTACION_PAPER.md`: precisión, preparación específica y costo por etapa, sin ganador universal. La regla E/C+A queda retirada.
 
 No se corrió ningún experimento nuevo. Las cifras se copiaron de `a1_desglose.md`, `a1_brechas.csv`, `a1_escalera_contexto.md`, `a4_contraste_externo.md`, `costo.md`, `experiments/llr_simple/resultados_ll4_ll4b.txt` y las notas de los beads. Las del control A3 salen de volver a ejecutar el script de evaluación sobre predicciones ya existentes (`uv run python -m experiments.timesfm.control_tmin_barajada_eval`). Los intervalos de `resultados_ll4_ll4b.txt` provienen de otro sorteo de bloques mes-año y difieren de los de `a1_brechas.csv` en la tercera cifra decimal; aquí se usan los de `a1_brechas.csv`.
 
@@ -13,8 +10,8 @@ Convenciones. Brecha = RMSE(A) − RMSE(B) en °C, pareada sobre las mismas 24.8
 
 | Etiqueta (bead) | Pregunta | Experimento | Resultado | Estado |
 |---|---|---|---|---|
-| A1 (`tdew-03g`) | ¿La ventaja de TimesFM se debe al El Niño 2015-2016 o al estimador? | Bloque `ll4b` (prueba 2009-2012) con climatología, `tuned`, dos LLR propios (con y sin selección interna de `h` y año de inicio) y TimesFM (`tmin_anom_full`, `tmin_td_full`, `tmin_anom_med`); desglose por Perú y zona; escalera de inicio del contexto en el panel de cribado; costo en la misma máquina | TimesFM `tmin_anom_full` tiene el RMSE más bajo en los dos bloques y ámbitos. Frente al LLR con rezagos seleccionado, empate en el panel de `ll4` (−0,003) y ventaja de 0,025-0,028 °C con IC sin cero en `ll4b` y en el Perú. `tmin_td_full` no supera al LLR simple en `ll4b` | resultados completos en `ll4` y `ll4b`; bead abierto (`IN_PROGRESS`) |
-| A2 (`tdew-f6a`) | ¿Cuánto cuestan la autorregresión y el criterio de selección de `tuned`? | `tuned` con el pool sin rezagos de Td (`const`, `TMIN_anom` y sus rezagos), en `ll4` y `ll4b` | RMSE de 1,2279 a 1,1742 en `ll4` y de 1,1220 a 1,1082 en `ll4b`; sin rezagos de Td empata con el LLR simple | cerrado |
+| A1 (`tdew-03g`) | ¿La ventaja de TimesFM se debe al El Niño 2015-2016 o al estimador? | Bloque `ll4b` (prueba 2009-2012) con climatología, `tuned`, dos LLR propios (con y sin selección interna de `h` y año de inicio) y TimesFM (`tmin_anom_full`, `tmin_td_full`, `tmin_anom_med`); desglose por Perú y zona; escalera de inicio del contexto en el panel de cribado; costo en la misma máquina | TimesFM `tmin_anom_full` tiene el RMSE más bajo en los dos bloques y ámbitos. Frente al LLR con rezagos seleccionado, brecha puntual de −0,003 en el panel de `ll4`, con IC que incluyen cero y sin prueba de equivalencia y ventaja de 0,025-0,028 °C con IC sin cero en `ll4b` y en el Perú. `tmin_td_full` no supera al LLR simple en `ll4b` | resultados completos en `ll4` y `ll4b`; bead abierto (`IN_PROGRESS`) |
+| A2 (`tdew-f6a`) | ¿Cuánto cuestan la autorregresión y el criterio de selección de `tuned`? | `tuned` con el pool sin rezagos de Td (`const`, `TMIN_anom` y sus rezagos), en `ll4` y `ll4b` | RMSE de 1,2279 a 1,1742 en `ll4` y de 1,1220 a 1,1082 en `ll4b`; sin rezagos de Td tiene una brecha con el LLR simple cuyo IC mes-año contiene cero, sin prueba de equivalencia | cerrado |
 | A3 (`tdew-077`) | ¿La habilidad de TimesFM viene de la covariable? | TimesFM con la Tmin del bloque oculto barajada entre años (tres semillas) o entre celdas, panel de cribado de 1.092 celdas, `ll4` | Con barajado entre años el RMSE sube de 0,8389 a 1,506-1,551, peor que la climatología (1,2840); con barajado entre celdas queda en 1,2656 | cerrado |
 | A4 (`tdew-ra6`) | ¿Qué exactitud tienen los productos 2017-2020 frente a Td atmosférico? | Contraste con 12-13 estaciones de aeropuerto ISD; chequeo de la Tmin regridada 2017-2020 | Los dos productos heredan el sesgo húmedo de PISCO (+1,4 °C); en anomalías TimesFM queda 0,046 °C por debajo de `tuned` (IC [−0,073; −0,019]); en Td no se distinguen | cerrado; ERA5-Land no se usa como comparación (otro producto, otra grilla e insumos) |
 | T1 (`tdew-kpp`) | ¿Se sostiene «sin conocer el país»? | — | — | abierto; se hace al final por decisión del usuario |
@@ -67,67 +64,13 @@ En todas las filas el IC mes-año es más ancho que el espacial. En tres casos e
 
 Por zonas, TimesFM anom gana al LLR con rezagos seleccionado en 32 de 33 zonas del panel en `ll4` y en las 33 en `ll4b`; en el Perú gana en las 32 zonas en los dos bloques. TimesFM td gana al LLR con rezagos seleccionado en 20 de 33 zonas del panel en `ll4b` (`a1_victorias_zona.csv`).
 
-## 4. Regla de la Decisión 1 aplicada de forma literal
+## 4. Elección práctica e incertidumbre
 
-La regla de `HANDOFF.md` §5 dice: «Si TimesFM sigue ganando en 2009-2012 y su brecha con el LLR simple se mantiene con intervalos que excluyan el cero por bloques mes-año: seguir con E como tesis. Si la brecha desaparece: paper C + A». Son dos condiciones:
+TimesFM presenta menor RMSE puntual que Palacios en ambos bloques y ámbitos. Frente al LLR con rezagos seleccionado, las diferencias son menores; en el dominio completo de 2013–2016 ambos IC incluyen cero. Esto no prueba equivalencia. Se consideran también MAE, sesgo, recursos disponibles y costos por etapa, según la sección Paper del artefacto.
 
-- (1) TimesFM gana en 2009-2012 (`ll4b`).
-- (2) Su brecha con el rival tiene IC por bloques mes-año que excluye el cero.
+Los LLR simples no necesitan zonas. La zonificación y las recetas por zona × día del año son de Palacios. TimesFM requiere historial local de Td y Tmin, climatologías y Tmin del bloque. Se eligió su configuración en el cribado de 2013–2016; 2009–2012 no participó en esa selección. No se ha probado transferencia.
 
-Se aplican frente al LLR simple, que es el rival que nombra la regla, y frente al LLR con rezagos seleccionado, que es el rival con entradas equiparables más fuerte.
-
-La variante de referencia es `tmin_anom_full`, por decisión del usuario del 2026-10-20 (anotada en el bead `tdew-03g`). Es la equiparable en información con el LLR: recibe la Tmin en anomalía con la climatología de entrenamiento y tiene como objetivo la anomalía de Td. `tmin_td_full` recibe la Tmin cruda y queda como sensibilidad. `tmin_anom_full` se eligió entre nueve variantes en el cribado de `ll4` (bead `tdew-214.11.8`), así que `ll4b` es la evidencia fuera de muestra y `ll4` está expuesto a ese sesgo de selección. La regla no dice si (2) se evalúa solo en `ll4b` o en los dos bloques («se mantiene»); por eso la tabla muestra los dos.
-
-| rival | ámbito | (1) gana en `ll4b` | (2) IC mes-año sin cero en `ll4b` | (2) IC mes-año sin cero en `ll4` |
-|---|---|---|---|---|
-| LLR simple | panel | sí (−0,052) | sí [−0,073; −0,033] | no [−0,053; +0,010] |
-| LLR simple | Perú | sí (−0,044) | sí [−0,057; −0,033] | sí [−0,063; −0,031] |
-| LLR con rezagos sel. | panel | sí (−0,028) | sí [−0,044; −0,013] | no [−0,029; +0,021] |
-| LLR con rezagos sel. | Perú | sí (−0,025) | sí [−0,034; −0,016] | sí [−0,038; −0,014] |
-
-`tmin_anom_full` también gana a `tuned` en `ll4b` en los dos ámbitos, con IC mes-año sin cero (sección 3).
-
-Resultado de la regla:
-
-- **Lectura sobre `ll4b`:** las dos condiciones se cumplen en el panel y en el Perú, frente a los dos rivales. La regla indica E.
-- **Lectura que exige los dos bloques:** se cumple en el Perú frente a los dos rivales y falla en el panel frente a los dos, porque en `ll4` el IC mes-año incluye el cero (frente al LLR con rezagos seleccionado la brecha puntual es −0,003). La regla da E en el Perú y C+A en el panel.
-
-**Sensibilidad con `tmin_td_full` (solo `ll4b`).** Frente al LLR simple, la brecha es +0,007 °C en el panel (IC mes-año [−0,042; +0,059]) y −0,009 °C en el Perú ([−0,037; +0,019]); ninguno excluye el cero. Frente al LLR con rezagos seleccionado pierde en RMSE puntual (1,106 frente a 1,074 en el panel y 0,840 frente a 0,830 en el Perú), sin IC calculado. A `tuned` le gana en RMSE puntual (1,106 frente a 1,122 y 0,840 frente a 0,861). Si se aplicara la regla a esta variante, indicaría C+A. La ventaja de TimesFM sobre los LLR depende, por tanto, de que la covariable y el objetivo entren en anomalía.
-
-### Dos lecturas posibles
-
-**E: TimesFM zero-shot iguala o supera a la regresión diseñada.**
-
-A favor:
-- `tmin_anom_full` tiene el RMSE más bajo de la escalera en los dos bloques y ámbitos, y gana a `tuned` por 0,056 a 0,079 °C con IC sin cero en todos los casos.
-- `ll4b` no participó en la elección de la variante, y es donde la ventaja es más clara.
-- La ventaja frente al rival más fuerte se mantiene con IC sin cero en tres de las cuatro combinaciones bloque × ámbito, y por zonas TimesFM gana en 32 o 33 de 33.
-- En la escalera de contexto, TimesFM queda por delante de los dos LLR en todos los inicios y en los dos bloques, con IC que excluyen el cero.
-- Frente a las estaciones, en anomalías TimesFM tiene 0,046 °C menos de RMSE que `tuned` (IC [−0,073; −0,019]).
-
-En contra:
-- Frente al LLR con rezagos seleccionado la ventaja es de 0,025 a 0,028 °C, y en el panel de `ll4` es −0,003 con los dos IC incluyendo el cero.
-- En la sensibilidad con Tmin y objetivo crudos (`tmin_td_full`), TimesFM no supera al LLR simple en `ll4b`.
-- La variante ganadora necesita una climatología desde 1981 para formar las anomalías (sección 5) y se eligió entre nueve configuraciones, lo que también es una decisión de diseño.
-- Sin T1, «sin diseño local» y «sin conocer el país» solo se han probado dentro de PISCO y del Perú.
-
-**C+A: la covariable hace el trabajo y el protocolo pesa más que el estimador.**
-
-A favor:
-- Con la Tmin barajada entre años TimesFM queda peor que la climatología.
-- La distancia climatología − LLR simple (+0,263 °C en `ll4b` y +0,360 °C en `ll4`, panel, `resultados_ll4_ll4b.txt`) es mucho mayor que la que separa al LLR simple de TimesFM anom (0,052 y 0,021 °C).
-- El diseño experto no mejora a un regresor simple: `tuned` queda por detrás del LLR simple en los dos bloques y ámbitos con IC sin cero, y sin rezagos de Td empata con él.
-- Varias decisiones de protocolo cambian la conclusión o mueven más que la diferencia entre estimadores:
-  - el esquema de IC decide la significación en el panel de `ll4`;
-  - el ámbito (panel frente a Perú) cambia el resultado de `ll4`;
-  - la ventana de la climatología explica la brecha de 0,044-0,062 °C entre `tmin_anom_med` y `tmin_anom_full`;
-  - sintonizar al rival reduce la brecha en 0,003-0,015 °C;
-  - la validación contra el Td grillado mide la reproducción de PISCO, no el Td atmosférico (A4).
-
-En contra:
-- `tmin_anom_full` conserva una brecha con IC mes-año sin cero frente al rival más fuerte en `ll4b` y en el Perú.
-- La regla, en su lectura sobre `ll4b`, no indica «la brecha desaparece» para esa variante.
-- «El protocolo cambia la conclusión más que el estimador» no se ha cuantificado como contraste formal; las magnitudes anteriores son comparaciones de órdenes de tamaño.
+El preprocesamiento compartido carece de cronometraje independiente completo. Se mantienen combinadas las etapas medidas juntas. No se atribuyen a los LLR seleccionados los tiempos de las versiones anteriores.
 
 ## 5. Hallazgos colaterales que el paper debería reportar
 
@@ -139,12 +82,12 @@ En contra:
 
 La versión sin rezagos gana a `tuned` en 32 de 33 zonas en `ll4` y en 30 de 33 en `ll4b` (panel). El efecto es mayor en el bloque con El Niño 2015-2016. Esto es consistente con que la recursión sobre Td predicho dentro del bloque cause la mayor parte de la desventaja de `tuned`. `HANDOFF.md` §5 (A2) ya señalaba un posible mecanismo: la selección puntúa con coseno sin centrar y a un paso, y el despliegue es autorregresivo y se puntúa con RMSE.
 
-**El LLR simple empata con `tuned` sin rezagos de Td o lo supera.** La brecha `tuned` sin rezagos − LLR simple es:
+**Comparación del LLR simple y `tuned` sin rezagos de Td.** La brecha `tuned` sin rezagos − LLR simple es:
 
 - `ll4`: −0,001 °C en el panel (espacial [−0,003; +0,002], mes-año [−0,012; +0,011]) y −0,004 °C en el Perú (mes-año [−0,011; +0,003]);
 - `ll4b`: +0,010 °C en el panel (espacial [+0,007; +0,012], mes-año [−0,003; +0,022]) y +0,007 °C en el Perú (mes-año [−0,000; +0,015]).
 
-Con el IC espacial, el LLR simple gana en `ll4b`; con el mes-año, empatan. El LLR con rezagos de Tmin queda por delante de `tuned` sin rezagos en 33 y 32 de 33 zonas. Las recetas por zona × día del año, el shapefile de 41 zonas y la búsqueda de `h` por zona no producen una mejora medible sobre un LLR con un solo `h` global.
+Con el IC espacial, el LLR simple gana en `ll4b`; con el mes-año, el IC contiene cero, sin prueba de equivalencia. El LLR con rezagos de Tmin queda por delante de `tuned` sin rezagos en 33 y 32 de 33 zonas. No se observó una reducción del RMSE de esta implementación de `tuned` frente al LLR simple. No se generaliza ese resultado a toda zonificación o familia LLR.
 
 **La brecha entre contexto completo y contexto corto se debía a la climatología.** La escalera se corrió sobre 1.092 celdas del panel de cribado con la climatología fija en 1981-train_end. Pasar el inicio del contexto de TimesFM de 1981 a 2002 costó +0,002 °C en `ll4b` (IC mes-año [−0,005; +0,009]) y +0,005 °C en `ll4` ([+0,002; +0,008]). Con el contexto desde 2002, recortar además la climatología costó:
 
@@ -167,7 +110,7 @@ Los LLR mejoraron al descartar 1981-1990: entre 0,017 y 0,024 °C con inicio en 
 | TimesFM anom, barajado entre años, semilla 2 | 1,5509 | −0,208 | −0,156 |
 | TimesFM anom, barajado entre celdas | 1,2656 | +0,014 | +0,079 |
 
-Con la Tmin de otro año TimesFM queda peor que la climatología en las tres semillas. Con la Tmin de otra celda, que conserva la señal temporal común entre celdas, queda a la altura de la climatología. Los resultados son consistentes con que la habilidad provenga de la covariable y no de estructura de Td en el contexto.
+Con la Tmin de otro año TimesFM queda peor que la climatología en las tres semillas. Con la Tmin de otra celda, que conserva la señal temporal común entre celdas, queda cerca del RMSE puntual de la climatología, sin prueba de equivalencia. Se observa sensibilidad a la Tmin correcta. No se aísla el aporte marginal de Td histórica y no se concluye que sea inútil.
 
 **Frente a las estaciones, los dos productos heredan el sesgo húmedo de PISCO.**
 

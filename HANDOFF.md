@@ -6,7 +6,7 @@ Contenido generado con asistencia de IA (Claude). Debe validarse con especialist
 
 > **Decisión del 2026-10-20:** el paper vigente (`reports/paper/`) y `PAPER_PLAN.md` no se modifican. El paper nuevo se escribe en `reports/paper_nuevo/` (carpeta propia con todos los `.qmd`). Beads: A1 `tdew-03g`, A2 `tdew-f6a`, A3 `tdew-077`, A4 `tdew-ra6`, T1 `tdew-kpp` (T1 al final). Respuesta de Palacios sobre Tmin y Td: Tmin no es insumo directo de Td, pero ambos usan LST de MODIS; ver nota en `tdew-ra6`.
 
-> **Estado de A1-A4 (2026-10-20):** la síntesis para la Decisión 1 está en `reports/paper_nuevo/resultados/sintesis_amenazas.md`, con la regla aplicada de forma literal y las dos lecturas posibles. A1 (`tdew-03g`) tiene resultados completos en `ll4` y `ll4b`, pero el bead sigue abierto. A2 y A3 están cerrados. A4 está cerrado con el contraste en puntos (estaciones ISD y ERA5-Land); el contraste grillado con ERA5 queda pendiente de credenciales. T1 sigue abierto y se hace al final.
+> **Orientación vigente (2026-10-21):** se responde cuándo conviene TimesFM sin ajuste de pesos y cuándo el LLR de Palacios, según precisión, preparación y costo. Se retiró la regla E/C+A. Véase `reports/paper_nuevo/ORIENTACION_PAPER.md` y la sección Paper del artefacto local. A1–A4 conservan sus resultados como registro; ERA5 no integra la comparación. T1 no se ejecuta en este encargo.
 
 ## 1. Tareas que cubre este handoff
 
@@ -68,7 +68,7 @@ Los análisis se hicieron con scripts en el scratchpad de la sesión anterior (`
 | climatología | 1,5352 | 1,3921 | 1,6658 | −0,363 |
 
 - El LLR simple apenas depende de `h`: 1,175 a 1,181 entre h = 7 y h = 60. Un OLS por celda sin ventana da 1,190.
-- Brecha `tuned` − TimesFM por año: 2013 = −0,055, 2014 = +0,059, 2015 = +0,165, 2016 = +0,126. En 2013-14 hay empate.
+- Brecha `tuned` − TimesFM por año: 2013 = −0,055, 2014 = +0,059, 2015 = +0,165, 2016 = +0,126. Esas magnitudes anuales no demuestran equivalencia entre métodos.
 - Bootstrap por bloques mes-año (48 bloques): brecha +0,074, IC [0,011; 0,140]; TimesFM mejor en 35 de 48 meses.
 - Frente al LLR simple, TimesFM gana +0,021: IC por bloques espaciales de 2° [0,012; 0,031], IC por bloques mes-año [−0,011; 0,053], que incluye el cero. Gana en 77 % de las celdas y en 32 de 33 zonas.
 - El sesgo no explica la ventaja: quitar el sesgo agranda la brecha (1,149 frente a 1,227). El 86 % de la diferencia de error cuadrático viene de |z| > 2 (6 % de los casos); en |z| < 1 gana `tuned`. Enero concentra más de un tercio del ΔMSE (aproximado).
@@ -77,44 +77,29 @@ Los análisis se hicieron con scripts en el scratchpad de la sesión anterior (`
 
 Por verificar: el subagente reimplementó el LLR simple y recalculó todo; Palacios y el equipo deben revisar esa reimplementación antes de usarla como rival oficial.
 
-## 4. Enfoques considerados y camino elegido
+## 4. Orientación del nuevo artículo
 
-| Narrativa | Idea | Estado |
-|---|---|---|
-| A | «La covariable hace el trabajo»: escalera climatología, LLR simple, `tuned`, TimesFM; casi todo el beneficio viene de Tmin y un regresor | adoptada como forma de la evidencia |
-| B | Dos productos 2017-2020 (LLR y TimesFM) con su desacuerdo como incertidumbre; descriptor de datos | segundo artículo, tras A4 |
-| C | Protocolo de validación de extensiones temporales de productos grillados (fuga de selección, marco de muestreo, soporte, año frente a horizonte) | adoptada como columna vertebral |
-| D | Híbrido LLR + TimesFM | descartado por ahora, sin evidencia de que aporte |
-| E | Un modelo de fundación como reemplazo sin diseño local: se compara costo de diseño y conocimiento del país, no solo cómputo | adoptada como tesis |
+Tesis E acotada (21 de octubre): sin ajustar pesos y con los mismos datos que Palacios, TimesFM reconstruye Td con menor error que el método diseñado por zona, sin zonificación, búsqueda de recetas ni entrenamiento; un LLR local sin zonas queda cerca y entra como control junto con la climatología. Se retiró la regla que elegía entre E y C+A según un IC; la tesis E se mantiene. La guía completa está en `reports/paper_nuevo/historia_paper.md` y la decisión breve en `reports/paper_nuevo/ORIENTACION_PAPER.md`.
 
-**Camino elegido: E como tesis, C como columna vertebral, A como estructura de la evidencia.** Frase objetivo, sujeta a lo que cierren A1–A3 y T1: un modelo de fundación zero-shot sin diseño local iguala o supera a una regresión diseñada por zona climática para reconstruir Td desde Tmin; un regresor simple queda muy cerca; el protocolo de validación cambia la conclusión más que el estimador.
-
-Argumento de E (aportado por el usuario): LLR es más rápido, pero exige diseñar y conocer el contexto del país (shapefile SENAMHI de 41 zonas, búsqueda de recetas por zona×doy, grilla de `h`, regrid de la Tmin 2017-2020, recursión autorregresiva, ≈39,5 h de GPU para seleccionar y entrenar). TimesFM solo necesita el checkpoint público, el historial de Td de cada celda y la Tmin futura. El eje relevante es el esfuerzo de diseño más el cómputo, no el cómputo solo.
-
-Matices que el paper debe sostener:
-- Frente al LLR simple la ventaja es ≈0,02 °C. «No hace falta diseñar» es cierto frente a `tuned`, pero un regresor simple también casi no necesita diseño. La comparación honesta tiene tres puntos: LLR experto, LLR simple, TimesFM.
-- «Sin conocer el país» no está probado: todo el benchmark es Perú y PISCO. Las celdas fuera de Perú (51,4 %) son el mismo producto y no cuentan como transferencia.
-- TimesFM no es independiente de los datos: necesita Tmin y entre 11 y 32 años de historial local de Td.
-- La licencia de los pesos es no comercial; limita cualquier recomendación de uso operativo.
-- El costo de cómputo comparado en la documentación mezcla hardware y etapas distintas (TimesFM en RTX A2000 sin selección; `tuned` con coeficientes ya entrenados). Hay que medir en la misma máquina y las mismas celdas, con y sin selección de recetas.
+TimesFM `tmin_anom_full` requiere historial local de Td y Tmin, climatologías y Tmin conocida durante el bloque. Las zonas SENAMHI y las recetas por zona × día del año pertenecen a `tuned`; los LLR simples no requieren zonas. Se mantienen datos, versiones, grilla, celdas, fechas y transformaciones comunes. Los rezagos pueden diferir.
 
 ## 5. Plan de resolución
 
-Orden recomendado: A1 y A2 en paralelo, A3, decisión 1, T1, A4, redacción.
+Registro del plan experimental anterior. A1–A4 cuentan con resultados; no se ejecutan experimentos nuevos en esta actualización. T1 queda fuera del encargo. La redacción sigue la orientación de §4.
 
 ### A1. Bloque 2009-2012
 
 Objetivo: separar efecto del estimador de efecto del año calendario (El Niño 2015-2016).
 
 - Definir un split nuevo en `experiments/timesfm/panel.py` (`SPLITS`, `SplitSpec`; hoy `ll1`, `ll2`, `ll4`): entrenar 1981-2008, predecir 2009-2012. Mantener la regla de que Td del bloque oculto no entra al contexto y Tmin sí.
-- Correr `experiments/timesfm/run.py` con `tmin_td_full` (variante primaria preregistrada, descrita en `variants.py` como «la comparación justa») y con `tmin_anom_full` (exploratoria), sobre las mismas 17.027 celdas del run limpio.
+- Correr `experiments/timesfm/run.py` con `tmin_anom_full` (referencia editorial actual) y con `tmin_td_full` (sensibilidad), sobre las mismas 17.027 celdas del run limpio.
 - `tuned` del mismo bloque: `HPC_code_tunning/select_backtest.py` con `--train-years` 1981-2008 y luego `HPC_code_tunning/backtest.py` (ver `reports/paper/scripts/backtest_clean_run.sh` para el recetario). Climatología con años de entrenamiento solamente. Verificar que la reproducción de ll4 siga dando 1,2279 antes de confiar en el nuevo bloque.
 - LLR simple: reimplementar a partir de `a1.py`–`a6.py` y registrarlo como rival oficial.
 - Evaluar con `experiments/timesfm/evaluate.py` y `HPC_code_tunning/effect_sizes.py`, `merge_predictions.py` para añadir la columna `pred_timesfm`.
 - Reportar siempre la brecha por año, además de la agregada. Reportar el RMSE restringido a las 8.272 celdas dentro de Perú y el RMSE macro por zona.
-- Nota: antes de 2000 no hay LST de MODIS en la construcción de PISCO; el bloque 2009-2012 con contexto desde 1981 mezcla regímenes del producto. `tmin_td_med` (contexto 2002-2012) ya existe como control.
+- Corrección: la escalera de contexto no demuestra un quiebre de PISCO en 2000 atribuible a MODIS. Se retira esa interpretación; se conservan las corridas como sensibilidad al inicio del contexto.
 
-Criterio de lectura: si TimesFM mantiene la ventaja sobre `tuned` y sobre el LLR simple en 2009-2012, E se sostiene; si la brecha con el LLR simple desaparece, el paper pasa a C+A.
+Criterio de lectura: reportar magnitudes, incertidumbre y costos de cada elección práctica; no seleccionar una tesis mediante el signo o la exclusión de cero del IC.
 
 ### A2. `tuned` sin rezagos de Td
 
@@ -126,19 +111,19 @@ Objetivo: medir cuánto cuestan la autorregresión y el criterio de selección. 
 
 ### A3. Control con Tmin barajada
 
-Objetivo: comprobar que la habilidad de TimesFM proviene de la covariable.
+Objetivo: medir la sensibilidad a la Tmin correcta. No se aísla el aporte marginal de Td histórica.
 
 - Sobre el panel de cribado (1.092 celdas, ≈5,5 min a 3,3 celdas/s), entregar a TimesFM la Tmin de otro año con el mismo día del año, o de otra celda de la misma zona.
-- Resultado esperado: el skill colapsa hacia la climatología. Si no colapsa, hay estructura de Td en el contexto que se está usando y hay que investigarla.
+- Lectura: el deterioro al barajar Tmin indica sensibilidad a su alineación correcta. No permite afirmar que Td histórica no aporta.
 - Reutilizar `run.py` con un parámetro de barajado; registrar proveniencia como el resto (`reports/metric_provenance.jsonl`).
 
 ### A4. Contraste externo 2017-2020
 
 Objetivo: dar alguna referencia de exactitud donde no hay Td observado en PISCO.
 
-- Contrastar ambos productos con ERA5-Land Td o con estaciones SENAMHI en 2017-2020, en anomalías y por año. Reportar el desacuerdo por año junto con el índice ONI.
+- Se dispone del contraste con aeropuertos ISD. No se comprobó su independencia frente a PISCO. ERA5 queda fuera de la comparación por decisión del usuario.
 - Verificar la distribución de la Tmin regridada 2017-2020 (`future_tmin_by_bucket`) frente a 2013-2016 en las mismas celdas: media, desviación y correlación en el solapamiento, si existe.
-- Pendiente de decidir: acceso a ERA5-Land y a estaciones SENAMHI con Td.
+- Pendiente: estaciones SENAMHI con Td e independencia verificable.
 
 ### T1. Prueba de transferencia
 
@@ -147,16 +132,15 @@ Objetivo: sostener «sin conocer el país».
 - Requisitos del conjunto: Td y Tmin diarias con al menos 15 años de historial común y un bloque de 4 años reservado; idealmente otro país o región climática distinta.
 - Candidatos a evaluar (no verificados): Tmin y Td de ERA5-Land en otro dominio (por ejemplo Colombia, Bolivia o Chile) con los mismos ajustes de TimesFM y una escalera idéntica; otra variable PISCO si existe con par comparable.
 - Mismos ajustes de TimesFM (variante, contexto, covariable), sin tocar nada por región. LLR simple y climatología como baselines; `tuned` solo si se dispone de zonas climáticas locales, lo cual es en sí mismo un dato sobre el costo de diseño.
-- Si no se encuentran datos, la tesis E se redacta como hipótesis con evidencia dentro de Perú y se declara la limitación.
+- No se generaliza fuera del dominio y producto evaluados. T1 no se ejecuta en esta actualización.
 
-### Decisión 1 (después de A1–A3)
+### Criterio editorial vigente
 
-- Si TimesFM sigue ganando en 2009-2012 y su brecha con el LLR simple se mantiene con intervalos que excluyan el cero por bloques mes-año: seguir con E como tesis.
-- Si la brecha desaparece: paper C + A, con el mensaje de que la covariable hace el trabajo y el diseño experto no mejora un regresor simple.
+Se retiró la regla E/C+A. Un IC con cero no prueba empate ni equivalencia. Se describen los dos bloques y ámbitos y las limitaciones del remuestreo, sin convertir significación estadística en regla de conveniencia.
 
 ## 6. Preguntas abiertas
 
-1. ¿Tmin entra como predictor en la construcción de Td PISCO v1.1? Si entra, parte de la habilidad compartida es circular. Preguntar a Palacios.
+1. Palacios indicó que Tmin no entra directamente en Td. Queda por cuantificar el efecto de los insumos compartidos de LST y verificar la independencia de las estaciones del contraste externo.
 2. ¿Hay dominio fuera de Perú con Td y Tmin disponibles para T1?
 3. ¿Qué evidencia de esfuerzo de diseño se puede cuantificar (horas-persona, componentes del pipeline) para la columna de costo?
 4. Acuerdo con Palacios sobre el cambio de historia: el paper y `PAPER_PLAN.md` son suyos.

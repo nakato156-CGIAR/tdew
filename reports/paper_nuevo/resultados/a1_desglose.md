@@ -1,3 +1,5 @@
+> Corrección editorial (2026-10-21): se conserva este resultado exploratorio como registro. La escalera no demuestra una ruptura de PISCO en 2000 atribuible a MODIS. Un IC que contiene cero no prueba equivalencia ni empate. Se sigue `../ORIENTACION_PAPER.md`; cualquier interpretación anterior incompatible queda retirada.
+
 # A1: desglose de la comparación TimesFM frente a LLR y `tuned`
 
 Bead `tdew-03g`. Script: `experiments/amenazas/desglose.py`
