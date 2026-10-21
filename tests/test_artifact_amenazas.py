@@ -7,6 +7,8 @@ de origen y que las afirmaciones fijas de los titulos de la seccion siguen siend
 import collections
 import json
 import re
+import shutil
+import subprocess
 from pathlib import Path
 
 import numpy as np
@@ -19,7 +21,7 @@ REPO = Path(__file__).resolve().parents[1]
 RES = REPO / aa.RES
 HTML = REPO / "reports/timesfm_benchmark/artifact/index.html"
 CLAVES = {"meta", "informacion", "porMetodo", "brechas", "victorias", "escalera", "escaleraBrechas",
-          "a4PorAnio", "a4PorPeriodo", "a4Delta", "a3"}
+          "a4PorAnio", "a4PorPeriodo", "a4Delta", "a3", "porZona", "costo"}
 
 
 @pytest.fixture(scope="module")
@@ -79,11 +81,16 @@ def test_titulos_fijos_siguen_siendo_ciertos(datos):
         for a in ("panel", "peru"):
             rm = {m: _m(datos, s, a, m)["rmse"] for m in cinco}
             assert min(rm, key=rm.get) == "timesfm_anom"
-            assert rm["tuned_sin_td"] < rm["tuned"]
+            # A2: sin rezagos de Td, tuned mejora y sigue con mayor RMSE que TimesFM.
+            assert rm["timesfm_anom"] < rm["tuned_sin_td"] < rm["tuned"]
             r = _b(datos, s, a, "timesfm_anom", "llr_rezagos_sel")
             assert abs(r["brecha"]) < 0.05
-            e = _b(datos, s, a, "tuned_sin_td", "llr_simple")
-            assert e["ic_lo"] <= 0 <= e["ic_hi"]
+            # Encabezado: frente a tuned, IC sin cero en los dos esquemas.
+            for e in ("espacial_2g", "mes_anio"):
+                assert _b(datos, s, a, "timesfm_anom", "tuned", e)["ic_hi"] < 0
+        # Robustez: con Td y Tmin crudas tambien supera a tuned en 2009-2012.
+    for a in ("panel", "peru"):
+        assert _m(datos, "ll4b", a, "timesfm_td")["rmse"] < _m(datos, "ll4b", a, "tuned")["rmse"]
     r = _b(datos, "ll4", "panel", "timesfm_anom", "llr_rezagos_sel")
     assert r["ic_lo"] <= 0 <= r["ic_hi"]
     # Escalera: TimesFM por delante de los dos LLR en todo inicio, IC mes-anio sin cero.
@@ -97,11 +104,6 @@ def test_titulos_fijos_siguen_siendo_ciertos(datos):
     clim = next(x for x in datos["a3"] if x["corrida"] == "pred_clim")["rmse"]
     anios = [x for x in datos["a3"] if x["modo"] == "year"]
     assert anios and all(x["rmse"] > clim for x in anios)
-    # A4: los productos heredan el sesgo humedo de PISCO en Td cruda.
-    td = {(x["fuente"], x["periodo"]): x for x in datos["a4PorPeriodo"] if x["kind"] == "td"}
-    pisco = td[("pisco", "2009-2016")]["sesgo"]
-    for f in ("palacios", "timesfm"):
-        assert td[(f, "2017-2020")]["sesgo"] > 1 and abs(td[(f, "2017-2020")]["sesgo"] - pisco) < 0.15
 
 
 def test_parse_a3():
@@ -133,3 +135,111 @@ def test_html_carga_los_dos_archivos_y_no_repite_ids():
     dup = [k for k, v in collections.Counter(ids).items() if v > 1]
     assert not dup, dup
     assert 'href="#amenazas"' in s and 'id="amenazas"' in s
+
+
+def test_paper_orden_y_fuentes(datos):
+    s = HTML.read_text(encoding="utf-8")
+    assert 'href="#paper"' in s
+    assert s.index('<section id="paper">') < s.index('<section id="amenazas">')
+    assert '<script src="paper.js"></script>' in s
+    assert 'am-t-regla' not in s
+    assert 'lectura("soloB")' not in s
+    # El tiempo de versiones iniciales no se reasigna al control seleccionado.
+    assert not any(r["metodo"] in {"llr_rezagos_sel", "llr_simple_sel"} for r in datos["costo"])
+    # Cada celda necesaria para las tablas anuales y por zona tiene rivales pareados.
+    methods = {"clim", "tuned", "llr_simple", "llr_rezagos_sel", "timesfm_anom"}
+    by_key = collections.defaultdict(set)
+    for r in datos["porMetodo"]:
+        by_key[(r["split"], r["ambito"], str(r["periodo"]))].add(r["metodo"])
+    assert by_key and all(methods <= m for m in by_key.values())
+    zones = collections.defaultdict(set)
+    for r in datos["porZona"]:
+        zones[(r["split"], r["ambito"], r["zone_id"])].add(r["metodo"])
+    assert zones and all(methods <= m for m in zones.values())
+
+
+def test_datos_publicados_coinciden_con_generador(datos):
+    text = (REPO / aa.OUT).read_text(encoding="utf-8")
+    assert json.loads(text.removeprefix("window.AMENAZAS = ").strip().removesuffix(";")) == datos
+
+
+SECCIONES = ["paper", "amenazas", "alcance", "limites", "protocolo"]
+RETIRADAS = ["resultado", "intervalo", "horizonte", "soporte", "sesgo-mensual", "escala", "divergencia",
+             "campo", "cola-larga", "anomalias", "am-a4", "am-fig-zonas", "am-fig-rmse", "am-fig-brechas",
+             "fig-heatmap", "lim-campo"]
+FUERA_DE_NARRATIVA = ["T1", "transferencia", "El Niño", "ERA5", "ISD", "TCN", "ganador universal", "E/C+A",
+                      "Amenazas A1–A4", "recibe más información"]
+
+
+def test_html_solo_tiene_las_secciones_de_la_tesis():
+    s = HTML.read_text(encoding="utf-8")
+    orden = [s.index(f'<section id="{x}"') for x in SECCIONES]
+    assert orden == sorted(orden)
+    assert re.findall(r'<section id="([^"]+)"', s) == SECCIONES
+    nav = re.search(r'<nav class="story-nav".*?</nav>', s, re.S).group(0)
+    assert re.findall(r'href="#([^"]+)"', nav) == SECCIONES
+    for x in RETIRADAS:
+        assert f'id="{x}"' not in s, x
+
+
+def test_texto_sin_temas_fuera_de_la_narrativa():
+    for f in (HTML, HTML.with_name("paper.js")):
+        s = f.read_text(encoding="utf-8")
+        for palabra in FUERA_DE_NARRATIVA:
+            assert palabra not in s, (f.name, palabra)
+
+
+def test_cribado_seis_de_nueve_superan_a_tuned():
+    t = pd.read_csv(REPO / "reports/timesfm_benchmark/cribado_limpio/leaderboard.csv")
+    tuned = t.loc[t.method == "tuned", "rmse"].item()
+    v = t[t.method.str.startswith("timesfm:")]
+    assert len(v) == 9
+    assert set(v.loc[v.rmse >= tuned, "method"]) == {"timesfm:tmin_td_short", "timesfm:uni_anom_full",
+                                                      "timesfm:uni_td_full"}
+
+
+def _dur(s):
+    """Mismo formato que dur() de paper.js."""
+    if s >= 72 * 3600:
+        return f"{s / 86400:.1f} días"
+    if s >= 3600:
+        h = int(s // 3600)
+        return f"{h} h {round((s - h * 3600) / 60)} min"
+    if s >= 60:
+        mi = int(s // 60)
+        return f"{mi} min {round(s - mi * 60)} s"
+    return f"{round(s)} s"
+
+
+CHROME = shutil.which("google-chrome") or shutil.which("chromium")
+
+
+@pytest.mark.skipif(CHROME is None, reason="sin Chrome")
+def test_pagina_se_dibuja_sin_errores_y_con_costos_del_csv():
+    r = subprocess.run(
+        [CHROME, "--headless=new", "--no-sandbox", "--disable-gpu", "--virtual-time-budget=15000",
+         "--enable-logging=stderr", "--v=0", "--dump-dom", HTML.as_uri()],
+        capture_output=True, text=True, timeout=120,
+    )
+    assert "Uncaught" not in r.stderr, r.stderr[-2000:]
+    dom = r.stdout
+    for svg in ("am-fig-anio", "am-fig-a2", "am-fig-escalera", "am-fig-a3"):
+        assert re.search(rf'<svg id="{svg}"[^>]*>.*?<(circle|line|path|rect)', dom, re.S), svg
+    assert "backtest, en el Perú" in dom          # leyenda del mapa
+    assert re.search(r'id="kpi-cribado">6 de 9<', dom)
+    tabla = re.search(r'<table id="paper-costos"[^>]*>(.*?)</table>', dom, re.S).group(1)
+    filas = [[re.sub(r"<[^>]+>", "", c) for c in re.findall(r"<td[^>]*>(.*?)</td>", f, re.S)]
+             for f in re.findall(r"<tr[^>]*>(.*?)</tr>", tabla, re.S)[1:]]
+    assert len(filas) == 6
+    c = pd.read_csv(RES / "costo.csv")
+    seg = lambda m, b, e: c[(c.metodo == m) & (c.bloque == b) & (c.etapa == e)].segundos_pared.item()
+    tuned_ll4b = seg("tuned", "ll4b", "seleccion de recetas (solo anios de entrenamiento)") + \
+        seg("tuned", "ll4b", "ajuste + prediccion (backtest)")
+    assert filas[0][1] == "Palacios (tuned)" and filas[0][-1] == _dur(tuned_ll4b)
+    assert filas[1][1] == "TimesFM" and filas[1][-1] == _dur(
+        seg("timesfm_anom", "ll4b", "prediccion (sin ajuste ni seleccion)"))
+    prod = seg("tuned", "produccion 1981-2016", "seleccion de recetas (grid completo)") + \
+        seg("tuned", "produccion 1981-2016", "ajuste (grid completo)") + \
+        seg("tuned", "real 2017-2020", "prediccion (grid completo)")
+    assert filas[4][-1] == _dur(prod)
+    assert filas[5][-1] == _dur(seg("timesfm_anom", "real 2017-2020", "prediccion producto completo"))

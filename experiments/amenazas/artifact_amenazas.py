@@ -45,20 +45,23 @@ FUENTES = {
     "a4PorPeriodo": ("a4_por_periodo.csv", ("muestra", "con_reanalisis")),
     "a4Delta": ("a4_delta_rmse_bootstrap.csv", ("muestra", "con_reanalisis")),
     "a3": ("a3_control_tmin_barajada.csv", None),
+    "porZona": ("a1_por_zona.csv", None),
+    "costo": ("costo.csv", None),
 }
 
-# Que informacion recibe cada metodo (descripcion del protocolo, no un resultado).
+# Como usa cada metodo el mismo historial de Td y Tmin, y que entra durante el
+# bloque reconstruido (descripcion del protocolo, no un resultado).
 INFORMACION = [
-    {"metodo": "timesfm_anom", "grupo": "b", "tmin_dia": "sí",
-     "tmin_otros": "todo el contexto y el horizonte", "td": "sí", "zona": "no"},
-    {"metodo": "llr_simple", "grupo": "a", "tmin_dia": "sí", "tmin_otros": "no",
-     "td": "no", "zona": "no"},
-    {"metodo": "llr_rezagos_sel", "grupo": "a", "tmin_dia": "sí", "tmin_otros": "rezagos {lags}",
-     "td": "no", "zona": "no"},
-    {"metodo": "tuned", "grupo": "b", "tmin_dia": "sí", "tmin_otros": "rezagos de Tmin",
-     "td": "rezagos de Td con recursión", "zona": "sí"},
-    {"metodo": "tuned_sin_td", "grupo": "a", "tmin_dia": "sí", "tmin_otros": "rezagos de Tmin",
-     "td": "no", "zona": "sí"},
+    {"metodo": "timesfm_anom", "historial": "contexto del modelo, sin ajustar pesos",
+     "durante": "Tmin de todo el bloque", "zona": "no"},
+    {"metodo": "llr_simple", "historial": "ajuste de coeficientes por celda",
+     "durante": "Tmin del día", "zona": "no"},
+    {"metodo": "llr_rezagos_sel", "historial": "ajuste de coeficientes por celda",
+     "durante": "Tmin del día y rezagos {lags}", "zona": "no"},
+    {"metodo": "tuned", "historial": "ajuste de coeficientes por celda con recetas por zona",
+     "durante": "Tmin, sus rezagos y rezagos de Td tomados de sus propias predicciones", "zona": "sí"},
+    {"metodo": "tuned_sin_td", "historial": "ajuste de coeficientes por celda con recetas por zona",
+     "durante": "Tmin y sus rezagos", "zona": "sí"},
 ]
 
 _LINEA_A3 = re.compile(r"^(\S+)\s+rmse\s+([\d.]+)\s+skill\s+([+-][\d.]+)\s+bias\s+([+-][\d.]+)\s*$")
@@ -108,7 +111,7 @@ def meta() -> dict:
 def payload(res: Path = RES) -> dict:
     datos = {"meta": meta()}
     lags = ", ".join(str(x) for x in datos["meta"]["rezagos"][:-1]) + f" y {datos['meta']['rezagos'][-1]}"
-    datos["informacion"] = [{**r, "tmin_otros": r["tmin_otros"].format(lags=lags)} for r in INFORMACION]
+    datos["informacion"] = [{**r, "durante": r["durante"].format(lags=lags)} for r in INFORMACION]
     for clave in FUENTES:
         datos[clave] = _registros(leer(clave, res))
     return datos
