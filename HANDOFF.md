@@ -6,6 +6,8 @@ Contenido generado con asistencia de IA (Claude). Debe validarse con especialist
 
 > **Decisión del 2026-10-20:** el paper vigente (`reports/paper/`) y `PAPER_PLAN.md` no se modifican. El paper nuevo se escribe en `reports/paper_nuevo/` (carpeta propia con todos los `.qmd`). Beads: A1 `tdew-03g`, A2 `tdew-f6a`, A3 `tdew-077`, A4 `tdew-ra6`, T1 `tdew-kpp` (T1 al final). Respuesta de Palacios sobre Tmin y Td: Tmin no es insumo directo de Td, pero ambos usan LST de MODIS; ver nota en `tdew-ra6`.
 
+> **Estado de A1-A4 (2026-10-20):** la síntesis para la Decisión 1 está en `reports/paper_nuevo/resultados/sintesis_amenazas.md`, con la regla aplicada de forma literal y las dos lecturas posibles. A1 (`tdew-03g`) tiene resultados completos en `ll4` y `ll4b`, pero el bead sigue abierto. A2 y A3 están cerrados. A4 está cerrado con el contraste en puntos (estaciones ISD y ERA5-Land); el contraste grillado con ERA5 queda pendiente de credenciales. T1 sigue abierto y se hace al final.
+
 ## 1. Tareas que cubre este handoff
 
 Se usan las etiquetas A1–A4 y T1 para no chocar con los E1–E12 ya usados en los PLAN_n.
