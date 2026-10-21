@@ -115,7 +115,8 @@ def test_html_has_the_two_new_sections_and_nav_links():
 def test_section_numbers_are_consecutive_and_unique():
     nums = re.findall(r'section-index">(\d\d) · ', _html())
     assert nums == [f"{i:02d}" for i in range(1, len(nums) + 1)]
-    assert len(nums) == 10  # se sumaron campo 2017-2020 y divergencia KL (tdew-214.13)
+    # se sumaron campo 2017-2020 y divergencia KL (tdew-214.13) y amenazas A1-A4 (tdew-03g)
+    assert len(nums) == 11
 
 
 def _exact_tier_gaps() -> dict[str, float]:

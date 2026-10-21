@@ -1,0 +1,45 @@
+{
+  "autoregressive": true,
+  "bead_id": "tdew-077",
+  "climatology_role": "baseline_and_anomaly_reference",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-10-21T13:49:05+00:00",
+  "git_commit": "60ae90df0357d5477b48336639063e9f5509f42f",
+  "inputs": [
+    "TMIN",
+    "TMIN_anom",
+    "TD_anom_context",
+    "doy"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest.yaml",
+  "mlflow_run_id": null,
+  "model_family": "comparison",
+  "model_id": "multi",
+  "notes": "Control negativo A3 (tdew-077): salida de `uv run python -m experiments.timesfm.control_tmin_barajada_eval` capturada por experiments.amenazas.artifact_amenazas --capturar-a3, sin recalcular. TimesFM 3.0 zero-shot (trained=False en el modelo; la climatologia y tuned si usan 1981-train_end) con la Tmin del bloque oculto real o barajada entre anios (semillas) o entre celdas; filas comunes con el run limpio de Palacios (ll4). Corridas: ['pred_clim', 'pred_tuned', 'real_td', 'real_anom', 'shuf_anom_cell_s0', 'shuf_td_year_s0', 'shuf_anom_year_s0', 'shuf_anom_year_s1', 'shuf_anom_year_s2']",
+  "output_files": [
+    "reports/paper_nuevo/resultados/a3_control_tmin_barajada.csv"
+  ],
+  "panel_cell_count": 1092,
+  "panel_file": "reports/timesfm_benchmark/panels/cribado_estratificado.csv",
+  "panel_id": "cribado_comun_tuned",
+  "run_id": "a4b8e2bf016e47d3b808227b770b434d",
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "split_id": "ll4",
+  "target_type": "td_raw",
+  "test_period": [
+    "2013-01-01",
+    "2016-12-31"
+  ],
+  "trained": true,
+  "training_period": [
+    "1981-01-01",
+    "2012-12-31"
+  ],
+  "validation_period": null,
+  "variant_label": "a3_control_tmin_barajada"
+}

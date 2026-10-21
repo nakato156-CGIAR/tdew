@@ -1,0 +1,10 @@
+corrida,metodo,variante,tmin,modo,semilla,celdas,filas,rmse,skill,sesgo
+pred_clim,clim,,,,,1092,1595412,1.284,0.0,-0.166
+pred_tuned,tuned,,real,,,1092,1595412,0.9326,0.274,0.089
+real_td,timesfm,td,real,,,1092,1595412,0.8718,0.321,0.124
+real_anom,timesfm,anom,real,,,1092,1595412,0.8389,0.347,0.065
+shuf_anom_cell_s0,timesfm,anom,barajada,cell,0,1092,1595412,1.2656,0.014,0.079
+shuf_td_year_s0,timesfm,td,barajada,year,0,1092,1595412,1.5079,-0.174,-0.176
+shuf_anom_year_s0,timesfm,anom,barajada,year,0,1092,1595412,1.5091,-0.175,-0.224
+shuf_anom_year_s1,timesfm,anom,barajada,year,1,1092,1595412,1.5062,-0.173,-0.281
+shuf_anom_year_s2,timesfm,anom,barajada,year,2,1092,1595412,1.5509,-0.208,-0.156

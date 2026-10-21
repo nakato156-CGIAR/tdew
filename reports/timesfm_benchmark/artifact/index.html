@@ -18,6 +18,7 @@
   --lima:#E69F00; --cusco:#0072B2; --loreto:#009E73; --sanmartin:#D55E00;
   --tfm:#008C6A; --tuned:#1769AA; --clim:#D89200; --tcn:#C95512;
   --ols:#56B4E9; --tmin:#CC79A7;
+  --tuned-sin:#5AA9E0; --llr:#D9962B; --llr-rez:#B8461B;
   --ramp0:#E3EFEC; --ramp1:#9CC9BE; --ramp2:#4E9E8B; --ramp3:#1D7460; --ramp4:#0A4A3C;
   --ok:#087A59; --warn:#A75B09; --crit:#A33A30;
   --measure:66ch;
@@ -32,6 +33,7 @@
   --sea:#101A22; --land:#3A4C5A; --land-ext:#1E2A34; --fuera:#E0776B;
   --tfm-suave:#1F6B5B; --campo:#17463C; --ramp0:#12322B; --ramp1:#1D6353; --ramp2:#2E8F77; --ramp3:#4DB89B; --ramp4:#86DCC3;
   --ok:#4DB89B; --warn:#E0A253; --crit:#E0776B;
+  --tuned-sin:#4A9CDA; --llr:#B98A1A;
 }}
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
@@ -71,6 +73,12 @@ h3{font-size:18px;line-height:1.3;font-weight:600}p{margin:0}.num{font-family:"I
 .details{margin-top:28px;border-top:1px solid var(--line)}details{border-bottom:1px solid var(--line);padding:16px 0}summary{cursor:pointer;font-weight:600}details p{color:var(--ink-soft);font-size:14px;max-width:var(--measure);margin-top:12px}code{font-family:"IBM Plex Mono",monospace;font-size:.92em;background:var(--surface-2);padding:1px 4px;border-radius:2px}
 footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1.6}
 @media(max-width:820px){body{overflow-x:hidden}.hero-grid,.section-head,.horizon-layout,.mapa-caja{grid-template-columns:1fr}.hero-grid{gap:34px}.hero{padding-top:48px}.section-head{gap:8px}.section-index{padding-top:0}.protocol-strip{grid-template-columns:1fr;gap:8px}.protocol-strip .arrow{display:none}.model-grid,.readout,.limit-grid{grid-template-columns:1fr}.story-nav{position:static}section{padding:54px 0;scroll-margin-top:0}.mapa-caja{margin-top:18px}#mapa{max-height:none}.hero-grid>*,.horizon-layout>*,.mapa-caja>*{min-width:0}.fig{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}.fig svg{width:620px;min-width:620px;max-width:none}.grafico{max-width:100%;overflow-x:auto;overscroll-behavior-inline:contain}#curva{width:620px;min-width:620px;max-width:none}.tabla-caja{max-width:100%;overflow-x:auto}.side-note{min-width:0}}
+.am-grid4{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:28px}.am-grid4 .model-card h3{font-size:16px}
+.am-glosario{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 32px;margin:30px 0 0;font-size:13.5px;line-height:1.5}.am-glosario>div{min-width:0}.am-glosario dt{font-weight:600;color:var(--ink)}.am-glosario dd{margin:3px 0 0;color:var(--ink-soft)}
+.am-grupo{display:inline-block;font-family:"IBM Plex Mono",ui-monospace,monospace;font-size:10.5px;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft);border:1px solid var(--line);border-radius:3px;padding:2px 7px;margin-top:8px}.am-grupo.mas{color:var(--warn);border-color:color-mix(in srgb,var(--warn) 45%,var(--line))}
+#am-t-info td{text-align:left;font-family:inherit;white-space:normal;min-width:90px}#am-t-info td:first-child{white-space:nowrap}
+.am-lista{margin:10px 0 0;padding-left:18px;font-size:13.5px;color:var(--ink-soft);max-width:var(--measure)}.am-lista li+li{margin-top:5px}.am-lista strong{color:var(--ink);font-weight:600}
+@media(max-width:820px){.am-grid4,.am-glosario{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto!important}}
 </style>
 </head>
@@ -99,7 +107,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
 </header>
 <nav class="story-nav" aria-label="Secciones">
   <div class="wrap">
-    <a href="#resultado">Resultado</a><a href="#intervalo">Intervalo de predicción</a><a href="#horizonte">Horizonte</a><a href="#soporte">Soporte</a><a href="#sesgo-mensual">Sesgo mensual</a><a href="#alcance">Alcance</a><a href="#escala">Escala</a><a href="#divergencia">Divergencia KL</a><a href="#campo">Campo 2017–2020</a><a href="#cola-larga">Cola larga</a><a href="#anomalias">Anomalías</a><a href="#limites">Límites</a><a href="#protocolo">Protocolo</a>
+    <a href="#resultado">Resultado</a><a href="#intervalo">Intervalo de predicción</a><a href="#horizonte">Horizonte</a><a href="#soporte">Soporte</a><a href="#sesgo-mensual">Sesgo mensual</a><a href="#alcance">Alcance</a><a href="#escala">Escala</a><a href="#divergencia">Divergencia KL</a><a href="#campo">Campo 2017–2020</a><a href="#cola-larga">Cola larga</a><a href="#anomalias">Anomalías</a><a href="#amenazas">Amenazas A1–A4</a><a href="#limites">Límites</a><a href="#protocolo">Protocolo</a>
   </div>
 </nav>
 
@@ -384,10 +392,166 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
   </div>
 </section>
 
+<section id="amenazas">
+  <div class="wrap">
+    <div class="section-head">
+      <p class="eyebrow section-index">09 · Amenazas A1–A4</p>
+      <div class="section-copy">
+        <h2>La ventaja de TimesFM resiste las cuatro revisiones; frente al mejor rival es de centésimas</h2>
+        <p>Antes de usar el resultado del backtest se revisaron cuatro amenazas a su validez. Cada una se presenta aquí con una frase. En adelante se cita solo por su etiqueta.</p>
+      </div>
+    </div>
+    <div class="am-grid4" aria-label="Las cuatro amenazas">
+      <article class="model-card"><span class="tag">A1 · Año o estimador</span><h3>¿La ventaja sobre Palacios viene de El Niño 2015–2016?</h3><p>Se repitió la comparación en un segundo bloque de prueba, <span data-am="bloque.ll4b"></span>, además del original, <span data-am="bloque.ll4"></span>.</p></article>
+      <article class="model-card"><span class="tag">A2 · Rezagos de Td</span><h3>¿Cuánto pesan los rezagos de Td en el método de Palacios?</h3><p>Se corrió <code>tuned</code> con el mismo protocolo, pero sin rezagos de Td entre sus candidatos.</p></article>
+      <article class="model-card"><span class="tag">A3 · Origen de la habilidad</span><h3>¿La habilidad de TimesFM viene de Tmin?</h3><p>Se repitió la predicción con la Tmin del bloque de prueba barajada.</p></article>
+      <article class="model-card"><span class="tag">A4 · Referencia externa</span><h3>¿Cómo se comparan los productos con observaciones externas?</h3><p>Se contrastaron con estaciones de aeropuerto ISD y con ERA5-Land en esos mismos puntos.</p></article>
+    </div>
+    <p class="nota" style="margin-top:14px">T1, que pregunta si el resultado se sostiene fuera del Perú, queda pendiente y no se trata aquí.</p>
+
+    <dl class="am-glosario" aria-label="Términos">
+      <div><dt>Bloque de prueba</dt><dd>Años ocultos al modelo: <span data-am="bloque.ll4"></span> o <span data-am="bloque.ll4b"></span> (<code>ll4</code> y <code>ll4b</code> en el código). El contexto termina el 31 de diciembre del año anterior.</dd></div>
+      <div><dt>Anomalía</dt><dd>Valor menos la climatología del día del año, calculada con los años de entrenamiento.</dd></div>
+      <div><dt>Panel frente a solo Perú</dt><dd>El panel son las <span data-am="celdas.panel"></span> celdas del backtest nacional; el <span data-am="celdas.pctFuera"></span> % cae fuera del país. «Solo Perú» son las <span data-am="celdas.peru"></span> que quedan dentro.</dd></div>
+      <div><dt>Brecha</dt><dd>RMSE de un método menos RMSE de otro, en °C, sobre las mismas filas celda × día. Negativa favorece al primero.</dd></div>
+      <div><dt>IC</dt><dd>Intervalo de confianza del 95 % de la brecha, por remuestreo de bloques mes-año (<span data-am="ic.bloques"></span> bloques, <span data-am="ic.replicas"></span> réplicas).</dd></div>
+      <div><dt>Zona</dt><dd>Clase climática de SENAMHI. El panel cubre <span data-am="zonas.panel"></span> zonas y el Perú, <span data-am="zonas.peru"></span>.</dd></div>
+      <div><dt>LLR</dt><dd>Regresión lineal local de la anomalía de Td sobre la anomalía de Tmin, ajustada por celda con una ventana de días del año de semiancho <em>h</em>.</dd></div>
+      <div><dt>Validación interna</dt><dd><em>h</em> y el año de inicio del ajuste se eligen con los últimos <span data-am="val.anios"></span> años de entrenamiento, sin mirar el bloque de prueba. El LLR así sintonizado lleva «sel.».</dd></div>
+      <div><dt><code>tuned</code></dt><dd>Método de Palacios: recetas de regresión elegidas por zona y día del año solo con años de entrenamiento. Sus rezagos de Td son, dentro del bloque, sus propias predicciones.</dd></div>
+      <div><dt>Barajada</dt><dd>La Tmin del bloque de prueba se reemplaza por la de otro año, el mismo día del año y la misma celda; en otra variante, por la de otra celda. Así se rompe la coincidencia día a día con la Td.</dd></div>
+      <div><dt>Escalera de contexto</dt><dd>TimesFM con el contexto iniciado en <span data-am="escalera.inicios"></span>, con la climatología fija desde <span data-am="escalera.clim"></span>.</dd></div>
+      <div><dt>ISD y ERA5-Land</dt><dd>ISD es el archivo horario de estaciones de NOAA; aquí, aeropuertos peruanos. ERA5-Land es el reanálisis terrestre de ECMWF.</dd></div>
+    </dl>
+
+    <figure class="fig">
+      <figcaption><span class="fig-titulo">Qué información recibe cada método</span><span class="fig-sub">Los métodos con la misma información se comparan entre sí. Cuando un gráfico junta métodos de grupos distintos, la etiqueta del gráfico lo dice.</span></figcaption>
+      <div class="tabla-caja"><table id="am-t-info"></table></div>
+      <ul class="am-lista">
+        <li><strong>(a) Solo Tmin:</strong> LLR simple, LLR con rezagos (sel.) y <code>tuned</code> sin rezagos de Td. Reciben información equivalente.</li>
+        <li><strong>(b) Con historial de Td:</strong> <code>tuned</code> completo y TimesFM. Es la comparación más cercana en información para TimesFM.</li>
+        <li><strong>(c) TimesFM frente al mejor rival solo Tmin:</strong> TimesFM recibe más información, el historial de Td y la Tmin futura del bloque.</li>
+      </ul>
+      <p class="fig-nota">La variante de TimesFM es <code>tmin_anom_full</code>: Tmin y objetivo en anomalía, contexto desde <span data-am="escalera.inicio0"></span>. En cada gráfico todos los métodos se evalúan sobre las mismas celdas y los mismos días.</p>
+    </figure>
+
+    <div class="section-head" id="am-a1" style="margin-top:64px">
+      <p class="eyebrow section-index">A1 · Dos bloques</p>
+      <div class="section-copy"><h2>TimesFM gana también en <span data-am="bloque.ll4b"></span>, sin El Niño fuerte</h2><p>Los cinco métodos se corrieron en los dos bloques de prueba, sobre el panel completo y sobre las celdas del Perú.</p></div>
+    </div>
+    <div class="chart-shell">
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">TimesFM tiene el menor RMSE de los cinco métodos en los dos bloques y los dos ámbitos</span><span class="fig-sub" data-am="sub.rmse"></span><span class="am-grupo">Grupos (a) y (b) · TimesFM recibe más información que (a)</span></figcaption>
+        <svg id="am-fig-rmse" viewBox="0 0 760 420" role="img" aria-label="RMSE por método, bloque y ámbito"></svg>
+        <p class="fig-nota" id="am-nota-rmse"></p>
+      </figure>
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">Frente al mejor rival solo Tmin la brecha es de centésimas, y en <span data-am="bloque.ll4"></span> sobre el panel incluye el cero</span><span class="fig-sub">Brecha TimesFM − rival en °C, con su IC. A la izquierda del cero gana TimesFM. Cada fila se mide sobre las mismas celdas y días que su rival.</span><span class="am-grupo">Grupo (b): frente a tuned</span> <span class="am-grupo mas">Grupo (c): frente a los rivales solo Tmin, TimesFM recibe más información</span></figcaption>
+        <svg id="am-fig-brechas" viewBox="0 0 760 380" role="img" aria-label="Brecha de RMSE de TimesFM frente a cada rival con intervalo de confianza"></svg>
+        <p class="fig-nota" id="am-nota-brechas"></p>
+      </figure>
+      <figure class="fig">
+        <figcaption><span class="fig-titulo" id="am-titulo-anio"></span><span class="fig-sub">RMSE por año calendario dentro de cada bloque. Cada punto es un año completo de las mismas celdas para los cinco métodos.</span><span class="am-grupo">Grupos (a) y (b)</span></figcaption>
+        <div class="capa-row" role="group" aria-label="Ámbito"><button type="button" id="am-anio-panel" aria-pressed="true">Panel</button><button type="button" id="am-anio-peru" aria-pressed="false">Solo Perú</button></div>
+        <svg id="am-fig-anio" viewBox="0 0 760 320" role="img" aria-label="RMSE por año en cada bloque de prueba"></svg>
+        <div class="leyenda-linea" id="am-leyenda-anio"></div>
+      </figure>
+      <figure class="fig">
+        <figcaption><span class="fig-titulo" id="am-titulo-zonas"></span><span class="fig-sub">Zonas en que el primer método tiene menor RMSE que el segundo. La barra llena es el total de zonas del ámbito.</span><span class="am-grupo">Cada fila indica su grupo</span></figcaption>
+        <svg id="am-fig-zonas" viewBox="0 0 760 260" role="img" aria-label="Zonas ganadas por comparación"></svg>
+      </figure>
+    </div>
+
+    <div class="section-head" id="am-a2" style="margin-top:64px">
+      <p class="eyebrow section-index">A2 · Rezagos de Td</p>
+      <div class="section-copy"><h2>Sin rezagos de Td, <code>tuned</code> mejora y queda a la altura del LLR simple</h2><p>La desventaja de Palacios frente a los LLR viene sobre todo de la recursión sobre su propia Td predicha dentro del bloque.</p></div>
+    </div>
+    <div class="chart-shell">
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">Quitar los rezagos de Td baja el RMSE de <code>tuned</code> en los cuatro casos</span><span class="fig-sub">RMSE en °C de los tres métodos por bloque y ámbito, sobre las mismas celdas y días. Cada columna tiene su propia escala.</span><span class="am-grupo">tuned es grupo (b); los otros dos, grupo (a)</span></figcaption>
+        <svg id="am-fig-a2" viewBox="0 0 760 240" role="img" aria-label="RMSE de tuned, tuned sin rezagos de Td y LLR simple"></svg>
+        <div class="leyenda-linea" id="am-leyenda-a2"></div>
+        <p class="fig-nota" id="am-nota-a2"></p>
+      </figure>
+    </div>
+
+    <div class="section-head" id="am-escalera" style="margin-top:64px">
+      <p class="eyebrow section-index">A1 · Escalera de contexto</p>
+      <div class="section-copy"><h2>TimesFM casi no depende del inicio del contexto</h2><p>La escalera corre sobre <span data-am="escalera.celdas"></span> celdas del panel de cribado. La climatología de las anomalías queda fija para que solo cambie el contexto.</p></div>
+    </div>
+    <div class="chart-shell">
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">TimesFM queda por delante de los dos LLR con cualquier año de inicio</span><span class="fig-sub">RMSE en °C frente al año de inicio del contexto (TimesFM) o del ajuste (LLR). Mismas celdas y días en cada bloque.</span><span class="am-grupo mas">Grupo (c): TimesFM recibe más información que los LLR</span></figcaption>
+        <svg id="am-fig-escalera" viewBox="0 0 760 320" role="img" aria-label="RMSE frente al año de inicio del contexto"></svg>
+        <div class="leyenda-linea" id="am-leyenda-escalera"></div>
+        <p class="fig-nota" id="am-nota-escalera"></p>
+      </figure>
+    </div>
+
+    <div class="section-head" id="am-a3" style="margin-top:64px">
+      <p class="eyebrow section-index">A3 · Tmin barajada</p>
+      <div class="section-copy"><h2>Sin la Tmin correcta, TimesFM pierde su habilidad</h2><p>Control negativo sobre <span data-am="a3.celdas"></span> celdas del panel de cribado y <span data-am="a3.filas"></span> filas celda × día, bloque <span data-am="bloque.ll4"></span>.</p></div>
+    </div>
+    <div class="chart-shell">
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">Con la Tmin de otro año, TimesFM queda peor que la climatología</span><span class="fig-sub">RMSE en °C de TimesFM con la Tmin real y con la barajada. La línea vertical es la climatología en las mismas filas; a su derecha, el método es peor que repetir la climatología.</span><span class="am-grupo">Un solo método: TimesFM con entradas distintas</span></figcaption>
+        <svg id="am-fig-a3" viewBox="0 0 760 220" role="img" aria-label="RMSE de TimesFM con Tmin real y barajada"></svg>
+        <p class="fig-nota" id="am-nota-a3"></p>
+      </figure>
+    </div>
+
+    <div class="section-head" id="am-a4" style="margin-top:64px">
+      <p class="eyebrow section-index">A4 · Estaciones</p>
+      <div class="section-copy"><h2>Frente a estaciones, los productos heredan el sesgo de PISCO</h2><p>El backtest mide cuánto reproduce cada método el Td grillado de PISCO. Las estaciones de aeropuerto miden el Td atmosférico. En cada período, todas las fuentes se comparan en las mismas estaciones y los mismos días.</p></div>
+    </div>
+    <div class="chart-shell">
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">En anomalías, los productos quedan frente a ERA5-Land a la misma distancia que PISCO</span><span class="fig-sub">RMSE de anomalía frente a estación, en °C, por año. PISCO llega hasta <span data-am="a4.pisco"></span>; los productos cubren <span data-am="a4.productos"></span>. ERA5-Land cubre los dos tramos.</span><span class="am-grupo">Palacios y TimesFM: grupo (b)</span></figcaption>
+        <svg id="am-fig-a4" viewBox="0 0 760 300" role="img" aria-label="RMSE de anomalía frente a estaciones por año"></svg>
+        <div class="leyenda-linea" id="am-leyenda-a4"></div>
+        <p class="fig-nota" id="am-nota-a4"></p>
+      </figure>
+      <figure class="fig">
+        <figcaption><span class="fig-titulo">En Td cruda, los dos productos repiten el sesgo húmedo de PISCO</span><span class="fig-sub">Sesgo medio fuente − estación, en °C. A la derecha del cero, la fuente es más húmeda que la estación.</span></figcaption>
+        <svg id="am-fig-a4-sesgo" viewBox="0 0 760 230" role="img" aria-label="Sesgo de Td cruda por fuente y período"></svg>
+      </figure>
+    </div>
+    <div class="scope-warning">
+      <h3>Independencia de las estaciones</h3>
+      <p>No se sabe si estos aeropuertos están entre las estaciones de SENAMHI que entraron en PISCO Td; no hay lista pública para comprobarlo. Si alguno entró, el error de PISCO en <span data-am="a4.pisco"></span> está subestimado en esa estación. ERA5 asimila datos de estaciones SYNOP, que incluyen estos aeropuertos, así que su ventaja es en parte consecuencia de esa asimilación.</p>
+    </div>
+
+    <div class="section-head" id="am-conclusion" style="margin-top:64px">
+      <p class="eyebrow section-index">Qué se concluye</p>
+      <div class="section-copy"><h2>La regla de la Decisión 1 depende de si se exigen los dos bloques</h2><p>La regla pide dos condiciones frente al rival: que TimesFM gane en <span data-am="bloque.ll4b"></span> y que el IC de la brecha excluya el cero. Se aplica frente al LLR simple, que nombra la regla, y frente al LLR con rezagos (sel.), el rival solo Tmin más fuerte.</p></div>
+    </div>
+    <div class="tabla-caja"><table id="am-t-regla"></table></div>
+    <div class="finding" id="am-hallazgo-regla"></div>
+    <div class="limit-grid">
+      <article class="limit"><span class="label">E</span><h3>Un modelo de fundación sin diseño local iguala o supera a la regresión diseñada por zona</h3><p>Es la narrativa que sigue si TimesFM conserva una brecha distinguible de cero frente a los LLR.</p></article>
+      <article class="limit"><span class="label">C+A</span><h3>La covariable hace el trabajo y el protocolo pesa más que el estimador</h3><p>Es la narrativa que sigue si la brecha con los LLR desaparece: el diseño experto no mejora a un regresor simple y la conclusión cambia más con el protocolo de validación.</p></article>
+    </div>
+    <div class="section-head" style="margin-top:44px">
+      <p class="eyebrow section-index">Límites y pendientes</p>
+      <div class="section-copy">
+        <ul class="am-lista">
+          <li><strong>IC posiblemente optimistas.</strong> El remuestreo mes-año no recoge la dependencia espacial y tiene solo <span data-am="ic.bloques"></span> bloques.</li>
+          <li><strong><code>tuned</code> corrido con el código del repositorio.</strong> El de <span data-am="bloque.ll4b"></span> y el de A2 no se corrieron en el entorno de Palacios.</li>
+          <li><strong>Insumos compartidos.</strong> Td y Tmin de PISCO usan LST de MODIS; parte de la habilidad de todos los métodos frente al Td grillado puede venir de ese error común.</li>
+          <li><strong>Independencia de las estaciones ISD.</strong> No comprobada frente a las estaciones de PISCO.</li>
+          <li><strong>Selección de la variante.</strong> <code>tmin_anom_full</code> se eligió en el cribado sobre <span data-am="bloque.ll4"></span>; <span data-am="bloque.ll4b"></span> es la evidencia fuera de muestra.</li>
+          <li><strong>Pendiente.</strong> A3 en <span data-am="bloque.ll4b"></span>, un IC que recoja a la vez la dependencia espacial y la temporal, el contraste grillado con ERA5-Land y T1.</li>
+        </ul>
+        <p class="nota" style="margin-top:16px">Esta sección se preparó con asistencia de IA generativa (Claude Code), que escribió el código del artefacto y reunió las cifras de los CSV de <code>reports/paper_nuevo/resultados/</code>. Los LLR y <code>tuned</code> sin rezagos de Td son rivales construidos en este proyecto. Todo debe validarse con Palacios y SENAMHI antes de usarse en el paper.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section id="limites">
   <div class="wrap">
     <div class="section-head">
-      <p class="eyebrow section-index">09 · Límites</p>
+      <p class="eyebrow section-index">10 · Límites</p>
       <div class="section-copy"><h2>El menor RMSE no resuelve la decisión de uso</h2><p>La mejora de precisión convive con cuatro restricciones que importan para producción y para interpretar el benchmark.</p></div>
     </div>
     <div class="limit-grid">
@@ -402,7 +566,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
 <section id="protocolo" style="border-bottom:none">
   <div class="wrap">
     <div class="section-head">
-      <p class="eyebrow section-index">10 · Protocolo</p>
+      <p class="eyebrow section-index">11 · Protocolo</p>
       <div class="section-copy"><h2>Qué entra al modelo y qué se mantiene oculto</h2><p>El contexto termina el 31 de diciembre del último año de entrenamiento. Ningún Td del bloque oculto entra al modelo. Tmin sí entra porque es exógeno y Palacios también lo utiliza.</p></div>
     </div>
     <div class="details">
@@ -415,6 +579,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
 </section>
 <footer><div class="wrap">Beads <code>tdew-214</code> y <code>tdew-214.13</code> (campo 2017–2020). Las cifras provienen de <code>reports/timesfm_benchmark/</code>; la página no recalcula resultados y aborta la construcción si algo se desvía de su CSV de origen. La implementación y el análisis se hicieron con asistencia de Claude Code y deben validarse con el equipo antes de considerarse definitivos, según la política de uso de IA del CIP.</div></footer>
 <script src="datos.js"></script>
+<script src="datos_amenazas.js"></script>
 <script>
 (function(){
   "use strict";
@@ -1536,7 +1701,438 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
   mq.addEventListener && mq.addEventListener("change", () => { if(capas) pintar(); });
 })();
 </script>
+<script>
+/* ---- amenazas A1-A4: todo sale de datos_amenazas.js (window.AMENAZAS) ---------- */
+(function(){
+  "use strict";
+  const A = window.AMENAZAS;
+  const sec = document.getElementById("amenazas");
+  if(!sec) return;
+  if(!A){
+    sec.querySelectorAll("svg[id^=am-fig]").forEach(svg => {
+      svg.setAttribute("viewBox", "0 0 760 120");
+      svg.innerHTML = `<text x="380" y="58" text-anchor="middle" font-family="IBM Plex Sans, sans-serif" font-size="14" fill="var(--ink-faint)">La figura se dibuja al cargar datos_amenazas.js</text>`;
+    });
+    return;
+  }
+  const W = 760, AX = 11;
+  const MONO = "IBM Plex Mono, ui-monospace, monospace";
+  const SANS = "IBM Plex Sans, system-ui, sans-serif";
+  const el = id => document.getElementById(id);
+  const F = (v, d = 3) => Number(v).toFixed(d);
+  const S = (v, d = 3) => (v >= 0 ? "+" : "−") + Math.abs(v).toFixed(d);
+  const IC = r => `[${S(r.ic_lo)}; ${S(r.ic_hi)}]`;
+  const miles = n => String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+  const esc = s => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;");
+  const enumera = xs => xs.length < 2 ? xs.join("") : xs.slice(0, -1).join(", ") + " y " + xs[xs.length - 1];
+  function ticks(lo, hi, n){
+    const bruto = (hi - lo) / n;
+    const mag = Math.pow(10, Math.floor(Math.log10(bruto)));
+    const paso = [1, 2, 2.5, 5, 10].map(m => m * mag).find(v => v >= bruto) || mag * 10;
+    const out = [];
+    for(let v = Math.ceil(lo / paso) * paso; v <= hi + 1e-9; v += paso) out.push(Number(v.toFixed(10)));
+    return out;
+  }
+  const dominio = (vals, pad = 0.12, incluirCero = false) => {
+    let lo = Math.min(...vals), hi = Math.max(...vals);
+    if(incluirCero){ lo = Math.min(lo, 0); hi = Math.max(hi, 0); }
+    const p = (hi - lo) * pad || 0.01;
+    return [lo - p, hi + p];
+  };
 
+  /* ---- consultas ---------------------------------------------------- */
+  const SPL = ["ll4b", "ll4"];                    // orden cronologico
+  const AMB = ["panel", "peru"];
+  const AMB_N = {panel: "Panel", peru: "Solo Perú"};
+  const AMB_EN = {panel: "el panel", peru: "el Perú"};
+  const CORTO = {tuned_sin_td: "tuned sin Td", llr_rezagos_sel: "LLR rezagos (sel.)"};
+  const NOM = {timesfm_anom: "TimesFM", timesfm: "TimesFM", tuned: "tuned", tuned_sin_td: "tuned sin rezagos de Td",
+    llr_simple: "LLR simple", llr_rezagos_sel: "LLR con rezagos (sel.)", llr_rezagos: "LLR con rezagos",
+    clim: "climatología", pisco: "PISCO", era5_land: "ERA5-Land", palacios: "Palacios (tuned)"};
+  const COL = {timesfm_anom: "--tfm", timesfm: "--tfm", tuned: "--tuned", palacios: "--tuned",
+    tuned_sin_td: "--tuned-sin", llr_simple: "--llr", llr_rezagos_sel: "--llr-rez", llr_rezagos: "--llr-rez",
+    clim: "--clim", pisco: "--ink-faint", era5_land: "--ink"};
+  const col = m => `var(${COL[m] || "--ink-soft"})`;
+  const rango = s => `${A.meta.bloques[s].prueba[0]}–${A.meta.bloques[s].prueba[1]}`;
+  const per = p => String(p).replace("-", "–");
+  const M = (s, a, m, p = "total") => A.porMetodo.find(r => r.split === s && r.ambito === a && r.metodo === m && String(r.periodo) === String(p));
+  const B = (s, a, x, y, e = "mes_anio") => A.brechas.find(r => r.split === s && r.ambito === a && r.metodo_a === x && r.metodo_b === y && r.esquema === e);
+  const Z = (s, a, x, y) => A.victorias.find(r => r.split === s && r.ambito === a && r.metodo_a === x && r.metodo_b === y);
+  const E = (s, m, i, p = "total") => A.escalera.find(r => r.split === s && r.metodo === m && Number(r.inicio) === i && String(r.periodo) === String(p));
+  const EB = (s, x, y, e = "mes_anio") => A.escaleraBrechas.find(r => r.split === s && r.esquema === e && r.metodo_a === x && r.metodo_b === y);
+  const A3 = c => A.a3.find(r => r.corrida === c);
+  const P4 = (kind, f) => A.a4PorPeriodo.find(r => r.kind === kind && r.fuente === f);
+  const D4 = (kind, a, b) => A.a4Delta.find(r => r.kind === kind && r.a === a && r.b === b);
+  const etiquetaSplit = s => `${rango(s)}`;
+
+  /* ---- cifras del texto -------------------------------------------- */
+  const panelT = M("ll4", "panel", "clim"), peruT = M("ll4", "peru", "clim");
+  const inicios = A.meta.escaleraInicios;
+  const V = {
+    "bloque.ll4": rango("ll4"), "bloque.ll4b": rango("ll4b"),
+    "celdas.panel": miles(panelT.celdas), "celdas.peru": miles(peruT.celdas),
+    "celdas.pctFuera": F((1 - peruT.celdas / panelT.celdas) * 100, 1),
+    "ic.bloques": B("ll4", "panel", "timesfm_anom", "tuned").bloques, "ic.replicas": miles(A.meta.bootstrap),
+    "zonas.panel": panelT.zonas, "zonas.peru": peruT.zonas,
+    "val.anios": A.meta.aniosValidacion,
+    "escalera.inicios": enumera(inicios.map(String)), "escalera.inicio0": inicios[0],
+    "escalera.clim": A.meta.escaleraClimInicio, "escalera.celdas": miles(E("ll4", "timesfm", inicios[0]).celdas),
+    "a3.celdas": miles(A.a3[0].celdas), "a3.filas": miles(A.a3[0].filas),
+    "a4.pisco": per(P4("anom", "pisco").periodo), "a4.productos": per(P4("anom", "palacios").periodo),
+    "sub.rmse": `RMSE en °C; menor es mejor. Las filas se agrupan por la información que recibe cada método. ` +
+      `En cada columna los cinco métodos usan las mismas celdas (${miles(panelT.celdas)} en el panel, ${miles(peruT.celdas)} en el Perú) y todos los días del bloque.`
+  };
+  sec.querySelectorAll("[data-am]").forEach(n => {
+    const v = V[n.dataset.am];
+    if(v === undefined) console.warn("amenazas: falta", n.dataset.am); else n.textContent = v;
+  });
+
+  /* ---- tabla de información ---------------------------------------- */
+  (function(){
+    const nombre = m => m === "timesfm_anom" ? "TimesFM <code>tmin_anom_full</code>" : (m === "tuned" ? "<code>tuned</code> de Palacios" : (m === "tuned_sin_td" ? "<code>tuned</code> sin rezagos de Td" : NOM[m]));
+    el("am-t-info").innerHTML = `<thead><tr><th>Método</th><th>Grupo</th><th>Tmin del día</th><th>Tmin de otros días</th><th>Historial de Td</th><th>Diseño por zona</th></tr></thead><tbody>` +
+      A.informacion.map(r => `<tr${r.metodo === "timesfm_anom" ? ' class="foco"' : ""}><td><span class="pill" style="background:${col(r.metodo)}"></span>${nombre(r.metodo)}</td><td>(${r.grupo})</td><td>${esc(r.tmin_dia)}</td><td>${esc(r.tmin_otros)}</td><td>${esc(r.td)}</td><td>${esc(r.zona)}</td></tr>`).join("") + "</tbody>";
+  })();
+
+  /* ---- matriz de puntos: filas por bloque y grupo, una columna por ámbito ---- */
+  function matriz(svg, {cols, bloques, dec = 3, cero = false, signo = false, ejeX = "", L = 214, filaH = 24, refs = []}){
+    const R = 8, GAP = 28, PADR = signo ? 58 : 44, nc = cols.length;
+    const cw = (W - L - R - GAP * (nc - 1)) / nc;
+    const top = cols.some(c => c.titulo) ? 30 : 10;
+    let y = top;
+    const filas = [];
+    bloques.forEach(b => {
+      if(b.titulo){ filas.push({tipo: "bloque", y: y + 15, t: b.titulo}); y += 24; }
+      let g = null;
+      b.filas.forEach(f => {
+        if(f.grupo && f.grupo !== g){ filas.push({tipo: "grupo", y: y + 12, t: f.grupo}); y += 17; g = f.grupo; }
+        filas.push({tipo: "fila", y: y + filaH / 2, f}); y += filaH;
+      });
+      y += 6;
+    });
+    const fondo = y, H = y + (ejeX ? 40 : 26);
+    let o = "";
+    cols.forEach((c, j) => {
+      const x0 = L + j * (cw + GAP), x1 = x0 + cw - PADR;
+      c.X = v => x0 + (v - c.dom[0]) / (c.dom[1] - c.dom[0]) * (x1 - x0);
+      if(c.titulo) o += `<text x="${x0}" y="16" font-size="12.5" font-weight="600" font-family="${SANS}" fill="var(--fig-highlight)">${c.titulo}</text>`;
+      ticks(c.dom[0], c.dom[1], 4).forEach(t => {
+        o += `<line x1="${c.X(t)}" y1="${top}" x2="${c.X(t)}" y2="${fondo}" stroke="var(--fig-grid)"/>`;
+        o += `<text x="${c.X(t)}" y="${fondo + 15}" text-anchor="middle" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${signo ? S(t, 2) : F(t, 2)}</text>`;
+      });
+      if(cero) o += `<line x1="${c.X(0)}" y1="${top}" x2="${c.X(0)}" y2="${fondo}" stroke="var(--fig-axis)" stroke-width="1.6"/>`;
+      refs.forEach(r => {
+        o += `<line x1="${c.X(r.v)}" y1="${top}" x2="${c.X(r.v)}" y2="${fondo}" stroke="var(--fig-secondary)" stroke-width="1.3" stroke-dasharray="4 3"/>`;
+        o += `<text x="${c.X(r.v) + 5}" y="${top + 10}" font-size="11" font-family="${SANS}" fill="var(--fig-secondary)">${r.t} ${F(r.v, dec)}</text>`;
+      });
+    });
+    filas.forEach(r => {
+      if(r.tipo === "bloque"){
+        o += `<line x1="0" y1="${r.y - 15}" x2="${W - R}" y2="${r.y - 15}" stroke="var(--fig-axis)"/>`;
+        o += `<text x="0" y="${r.y + 2}" font-size="10.5" font-family="${MONO}" letter-spacing=".08em" fill="var(--fig-muted)">${r.t.toUpperCase()}</text>`;
+        return;
+      }
+      if(r.tipo === "grupo"){
+        o += `<text x="10" y="${r.y}" font-size="10.5" font-family="${MONO}" fill="var(--fig-muted)">${r.t}</text>`;
+        return;
+      }
+      const f = r.f;
+      o += `<text x="${L - 12}" y="${r.y + 4}" text-anchor="end" font-size="12.5" font-family="${SANS}" fill="${f.focal ? "var(--fig-highlight)" : "var(--fig-secondary)"}" font-weight="${f.focal ? 600 : 400}">${f.n}</text>`;
+      f.vals.forEach((v, j) => {
+        if(!v) return;
+        const X = cols[j].X, x = X(v.v), c = f.color;
+        if(v.lo !== undefined){
+          o += `<line x1="${X(v.lo)}" y1="${r.y}" x2="${X(v.hi)}" y2="${r.y}" stroke="${c}" stroke-width="2" stroke-linecap="round" opacity=".55"/>`;
+        }
+        o += `<circle cx="${x}" cy="${r.y}" r="${f.focal ? 5.5 : 4.5}" fill="${c}" stroke="var(--surface)" stroke-width="2"/>`;
+        const xt = Math.max(x, v.hi !== undefined ? X(v.hi) : x) + 9;
+        o += `<text x="${xt}" y="${r.y + 4}" font-size="11.5" font-family="${MONO}" paint-order="stroke" stroke="var(--surface)" stroke-width="3" fill="${f.focal ? "var(--fig-highlight)" : "var(--fig-muted)"}">${signo ? S(v.v, dec) : F(v.v, dec)}</text>`;
+        o += `<circle cx="${x}" cy="${r.y}" r="11" fill="transparent"><title>${esc(v.tip || `${f.n}: ${F(v.v, dec)}`)}</title></circle>`;
+      });
+    });
+    if(ejeX) o += `<text x="${(L + W - R) / 2}" y="${H - 6}" text-anchor="middle" font-size="11.5" font-family="${SANS}" fill="var(--fig-muted)">${ejeX}</text>`;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.innerHTML = o;
+  }
+
+  /* ---- líneas por panel: x numérico, y compartido -------------------- */
+  function paneles(svg, {paneles: ps, series, yDom, yDec = 2, H = 320, ejeX = "", etiquetasFin = false, xTicks}){
+    const Mg = {t: 26, r: etiquetasFin ? 92 : 14, b: 44, l: 50}, GAP = 34;
+    const pw = (W - Mg.l - Mg.r - GAP * (ps.length - 1)) / ps.length;
+    const Y = v => Mg.t + (yDom[1] - v) / (yDom[1] - yDom[0]) * (H - Mg.t - Mg.b);
+    let o = "";
+    ticks(yDom[0], yDom[1], 5).forEach(t => {
+      o += `<line x1="${Mg.l}" y1="${Y(t)}" x2="${W - Mg.r}" y2="${Y(t)}" stroke="var(--fig-grid)"/>`;
+      o += `<text x="${Mg.l - 8}" y="${Y(t) + 4}" text-anchor="end" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${F(t, yDec)}</text>`;
+    });
+    ps.forEach((p, k) => {
+      const x0 = Mg.l + k * (pw + GAP) + 10, x1 = x0 + pw - 20;
+      const X = v => p.xs.length < 2 ? (x0 + x1) / 2 : x0 + (v - p.xs[0]) / (p.xs[p.xs.length - 1] - p.xs[0]) * (x1 - x0);
+      o += `<text x="${x0 - 10}" y="14" font-size="12.5" font-weight="600" font-family="${SANS}" fill="var(--fig-highlight)">${p.titulo}</text>`;
+      (xTicks ? xTicks(p) : p.xs).forEach(x => {
+        o += `<text x="${X(x)}" y="${H - Mg.b + 17}" text-anchor="middle" font-size="${AX}" font-family="${MONO}" fill="var(--fig-muted)">${x}</text>`;
+      });
+      const fin = [];
+      series.forEach(s => {
+        const pts = p.xs.map(x => ({x, v: s.valor(p, x)})).filter(q => q.v !== null && q.v !== undefined && isFinite(q.v));
+        if(!pts.length) return;
+        const d = pts.map((q, i) => `${i ? "L" : "M"}${X(q.x).toFixed(1)},${Y(q.v).toFixed(1)}`).join("");
+        o += `<path d="${d}" fill="none" stroke="${s.color}" stroke-width="2" stroke-linejoin="round"${s.dash ? ` stroke-dasharray="${s.dash}"` : ""}/>`;
+        pts.forEach(q => {
+          o += `<circle cx="${X(q.x)}" cy="${Y(q.v)}" r="4" fill="${s.color}" stroke="var(--surface)" stroke-width="2"/>`;
+          o += `<circle cx="${X(q.x)}" cy="${Y(q.v)}" r="10" fill="transparent"><title>${esc(s.n)}, ${q.x}: ${F(q.v, 3)}${s.tip ? s.tip(p, q.x) : ""}</title></circle>`;
+        });
+        if(etiquetasFin && k === ps.length - 1) fin.push({y: Y(pts[pts.length - 1].v), x: X(pts[pts.length - 1].x), n: s.corto || s.n});
+      });
+      fin.sort((a, b) => a.y - b.y);
+      let ult = -99;
+      fin.forEach(e => {
+        const yy = Math.max(e.y, ult + 13); ult = yy;
+        o += `<text x="${e.x + 10}" y="${yy + 4}" font-size="11.5" font-family="${SANS}" fill="var(--fig-secondary)">${e.n}</text>`;
+      });
+      if(p.extra) o += p.extra(X, Y, Mg, H);
+    });
+    if(ejeX) o += `<text x="${(Mg.l + W - Mg.r) / 2}" y="${H - 6}" text-anchor="middle" font-size="11.5" font-family="${SANS}" fill="var(--fig-muted)">${ejeX}</text>`;
+    svg.setAttribute("viewBox", `0 0 ${W} ${H}`);
+    svg.innerHTML = o;
+  }
+  const leyenda = (id, items) => {
+    el(id).innerHTML = items.map(i => `<span><i style="background:${i.color}${i.dash ? ";background:repeating-linear-gradient(90deg," + i.color + " 0 5px,transparent 5px 8px)" : ""}"></i>${i.n}</span>`).join("");
+  };
+
+  /* ---- A1: RMSE por método -------------------------------------------- */
+  const GRUPOS = [["(a) solo Tmin", ["llr_simple", "llr_rezagos_sel", "tuned_sin_td"]],
+                  ["(b) con historial de Td", ["tuned", "timesfm_anom"]]];
+  (function(){
+    const cols = AMB.map(a => {
+      const vals = SPL.flatMap(s => GRUPOS.flatMap(g => g[1].map(m => M(s, a, m).rmse)));
+      return {titulo: AMB_N[a], dom: dominio(vals, 0.08)};
+    });
+    const bloques = SPL.map(s => ({titulo: `Bloque ${rango(s)}`, filas: GRUPOS.flatMap(([g, ms]) => ms.map(m => ({
+      grupo: g, n: NOM[m], color: col(m), focal: m === "timesfm_anom",
+      vals: AMB.map(a => { const r = M(s, a, m); return {v: r.rmse, tip: `${NOM[m]}, ${rango(s)}, ${AMB_N[a]}: RMSE ${F(r.rmse)} · sesgo ${S(r.sesgo)} · ${miles(r.n)} filas`}; })
+    })))}));
+    matriz(el("am-fig-rmse"), {cols, bloques, ejeX: "RMSE, °C"});
+    const cl = SPL.flatMap(s => AMB.map(a => M(s, a, "clim").rmse));
+    const sesgos = SPL.map(s => `${S(M(s, "panel", "timesfm_anom").sesgo)} en ${rango(s)}`);
+    el("am-nota-rmse").innerHTML = `La climatología queda fuera de escala: entre ${F(Math.min(...cl))} y ${F(Math.max(...cl))} °C según bloque y ámbito. ` +
+      `El sesgo de TimesFM cambia de signo entre bloques en el panel (${enumera(sesgos)}). Cada escala horizontal es propia de su columna y no arranca en cero.`;
+  })();
+
+  /* ---- A1: brechas con IC ---------------------------------------------- */
+  const RIVALES = [["(b) con historial de Td", "tuned"], ["(c) frente a solo Tmin", "tuned_sin_td"],
+                   ["(c) frente a solo Tmin", "llr_simple"], ["(c) frente a solo Tmin", "llr_rezagos_sel"]];
+  (function(){
+    const todas = SPL.flatMap(s => AMB.flatMap(a => RIVALES.map(([, m]) => B(s, a, "timesfm_anom", m))));
+    const dom = dominio(todas.flatMap(r => [r.ic_lo, r.ic_hi]), 0.06, true);
+    const cols = AMB.map(a => ({titulo: AMB_N[a], dom}));
+    const bloques = SPL.map(s => ({titulo: `Bloque ${rango(s)}`, filas: RIVALES.map(([g, m]) => ({
+      grupo: g, n: `vs. ${NOM[m]}`, color: col(m),
+      vals: AMB.map(a => { const r = B(s, a, "timesfm_anom", m); return {v: r.brecha, lo: r.ic_lo, hi: r.ic_hi, tip: `TimesFM − ${NOM[m]}, ${rango(s)}, ${AMB_N[a]}: ${S(r.brecha)} ${IC(r)}`}; })
+    }))}));
+    matriz(el("am-fig-brechas"), {cols, bloques, cero: true, signo: true, ejeX: "brecha TimesFM − rival, °C · a la izquierda del cero gana TimesFM"});
+    const tu = SPL.flatMap(s => AMB.map(a => B(s, a, "timesfm_anom", "tuned")));
+    const rz = SPL.flatMap(s => AMB.map(a => B(s, a, "timesfm_anom", "llr_rezagos_sel")));
+    const rz0 = rz.filter(r => r.ic_lo <= 0 && r.ic_hi >= 0);
+    const td = AMB.map(a => B("ll4b", a, "timesfm_td", "llr_simple"));
+    el("am-nota-brechas").innerHTML = `Frente a <code>tuned</code>, TimesFM gana por ${F(-Math.max(...tu.map(r => r.brecha)))} a ${F(-Math.min(...tu.map(r => r.brecha)))} °C, ` +
+      `${tu.every(r => r.ic_hi < 0) ? "con IC sin cero en los cuatro casos" : "con algún IC que incluye el cero"}. ` +
+      `Frente al LLR con rezagos (sel.) la brecha va de ${S(Math.max(...rz.map(r => r.brecha)))} a ${S(Math.min(...rz.map(r => r.brecha)))} °C; ` +
+      (rz0.length ? `el IC incluye el cero en ${enumera(rz0.map(r => `${rango(r.split)} en ${AMB_EN[r.ambito]} (${S(r.brecha)} ${IC(r)})`))}. ` : "ningún IC incluye el cero. ") +
+      `<br>Sensibilidad, fuera del gráfico: con Tmin y objetivo en Td cruda (<code>tmin_td_full</code>, solo ${rango("ll4b")}), la brecha frente al LLR simple es ` +
+      `${enumera(td.map(r => `${S(r.brecha)} ${IC(r)} en ${AMB_EN[r.ambito]}`))}. ${td.every(r => r.ic_lo <= 0 && r.ic_hi >= 0) ? "Ningún IC excluye el cero." : ""}`;
+  })();
+
+  /* ---- A1: RMSE por año -------------------------------------------------- */
+  (function(){
+    const MS = GRUPOS.flatMap(g => g[1]);
+    const anios = s => { const [a, b] = A.meta.bloques[s].prueba; const o = []; for(let y = a; y <= b; y++) o.push(y); return o; };
+    let gana = 0, total = 0; const excep = [];
+    SPL.forEach(s => AMB.forEach(a => anios(s).forEach(y => {
+      total++;
+      const v = MS.map(m => M(s, a, m, y).rmse);
+      const i = v.indexOf(Math.min(...v));
+      if(MS[i] === "timesfm_anom") gana++; else excep.push(`${y} en ${a === "panel" ? "el panel" : "el Perú"}, donde gana ${NOM[MS[i]]}`);
+    })));
+    el("am-titulo-anio").textContent = `TimesFM tiene el menor RMSE en ${gana} de los ${total} años de los dos ámbitos` + (excep.length ? `; la excepción es ${enumera(excep)}` : "");
+    function dibuja(a){
+      const vals = SPL.flatMap(s => MS.flatMap(m => anios(s).map(y => M(s, a, m, y).rmse)));
+      paneles(el("am-fig-anio"), {
+        paneles: SPL.map(s => ({titulo: `Bloque ${rango(s)}`, xs: anios(s), s})),
+        series: MS.map(m => ({n: NOM[m], color: col(m), valor: (p, y) => M(p.s, a, m, y).rmse})),
+        yDom: dominio(vals, 0.1), ejeX: `año calendario · RMSE, °C · ${AMB_N[a].toLowerCase()}`
+      });
+    }
+    dibuja("panel");
+    leyenda("am-leyenda-anio", MS.slice().reverse().map(m => ({n: NOM[m], color: col(m)})));
+    const bP = el("am-anio-panel"), bR = el("am-anio-peru");
+    const elige = (b, a) => { bP.setAttribute("aria-pressed", String(b === bP)); bR.setAttribute("aria-pressed", String(b === bR)); dibuja(a); };
+    bP.addEventListener("click", () => elige(bP, "panel"));
+    bR.addEventListener("click", () => elige(bR, "peru"));
+  })();
+
+  /* ---- A1: victorias por zona -------------------------------------------- */
+  (function(){
+    const FILAS = [
+      ["(b)", "timesfm_anom", "tuned"], ["(c)", "timesfm_anom", "tuned_sin_td"], ["(c)", "timesfm_anom", "llr_simple"],
+      ["(c)", "timesfm_anom", "llr_rezagos_sel"], ["(a)", "llr_rezagos_sel", "tuned_sin_td"], ["(a)", "tuned_sin_td", "llr_simple"]];
+    const CS = SPL.flatMap(s => AMB.map(a => ({s, a})));
+    const L = 250, R = 8, GAP = 18, cw = (W - L - R - GAP * (CS.length - 1)) / CS.length, filaH = 30, top = 42;
+    const H = top + FILAS.length * filaH + 16;
+    let o = "";
+    CS.forEach((c, j) => {
+      const x0 = L + j * (cw + GAP);
+      o += `<text x="${x0}" y="14" font-size="12" font-weight="600" font-family="${SANS}" fill="var(--fig-highlight)">${rango(c.s)}</text>`;
+      o += `<text x="${x0}" y="30" font-size="11" font-family="${SANS}" fill="var(--fig-muted)">${AMB_N[c.a]}</text>`;
+    });
+    let maxPierde = 0;
+    FILAS.forEach(([g, x, y], i) => {
+      const yy = top + i * filaH + filaH / 2;
+      o += `<text x="${L - 12}" y="${yy + 4}" text-anchor="end" font-size="12.5" font-family="${SANS}" fill="${x === "timesfm_anom" ? "var(--fig-highlight)" : "var(--fig-secondary)"}">${CORTO[x] || NOM[x]} vs. ${CORTO[y] || NOM[y]} <tspan font-size="10" font-family="${MONO}" fill="var(--fig-muted)">${g}</tspan></text>`;
+      CS.forEach((c, j) => {
+        const r = Z(c.s, c.a, x, y);
+        if(x === "timesfm_anom") maxPierde = Math.max(maxPierde, r.zonas - r.zonas_a_gana);
+        const x0 = L + j * (cw + GAP), bw = cw - 44;
+        o += `<rect x="${x0}" y="${yy - 4}" width="${bw}" height="8" rx="4" fill="var(--fig-grid)"/>`;
+        o += `<rect x="${x0}" y="${yy - 4}" width="${Math.max(bw * r.zonas_a_gana / r.zonas, 0.5)}" height="8" rx="4" fill="${col(x)}"><title>${esc(`${NOM[x]} gana a ${NOM[y]} en ${r.zonas_a_gana} de ${r.zonas} zonas · ${rango(c.s)}, ${AMB_N[c.a]}`)}</title></rect>`;
+        o += `<text x="${x0 + bw + 6}" y="${yy + 4}" font-size="11.5" font-family="${MONO}" fill="var(--fig-muted)">${r.zonas_a_gana}/${r.zonas}</text>`;
+      });
+    });
+    el("am-fig-zonas").setAttribute("viewBox", `0 0 ${W} ${H}`);
+    el("am-fig-zonas").innerHTML = o;
+    el("am-titulo-zonas").textContent = `TimesFM pierde como máximo en ${maxPierde} zona${maxPierde === 1 ? "" : "s"} frente a cada rival`;
+  })();
+
+  /* ---- A2 ---------------------------------------------------------------- */
+  (function(){
+    const G2 = [["(b) con historial de Td", ["tuned"]], ["(a) solo Tmin", ["tuned_sin_td", "llr_simple"]]];
+    const cols = AMB.map(a => ({titulo: AMB_N[a], dom: dominio(SPL.flatMap(s => ["tuned", "tuned_sin_td", "llr_simple"].map(m => M(s, a, m).rmse)), 0.1)}));
+    const bloques = SPL.map(s => ({titulo: `Bloque ${rango(s)}`, filas: G2.flatMap(([g, ms]) => ms.map(m => ({
+      grupo: g, n: NOM[m], color: col(m),
+      vals: AMB.map(a => ({v: M(s, a, m).rmse, tip: `${NOM[m]}, ${rango(s)}, ${AMB_N[a]}: ${F(M(s, a, m).rmse)}`}))
+    })))}));
+    matriz(el("am-fig-a2"), {cols, bloques, ejeX: "RMSE, °C"});
+    leyenda("am-leyenda-a2", ["tuned", "tuned_sin_td", "llr_simple"].map(m => ({n: NOM[m], color: col(m)})));
+    const t = SPL.flatMap(s => AMB.map(a => B(s, a, "tuned", "tuned_sin_td")));
+    const e = SPL.flatMap(s => AMB.map(a => B(s, a, "tuned_sin_td", "llr_simple")));
+    const z = SPL.map(s => Z(s, "panel", "tuned_sin_td", "tuned"));
+    const lugar = r => `${rango(r.split)} en ${AMB_EN[r.ambito]}`;
+    el("am-nota-a2").innerHTML = `Brecha <code>tuned</code> − <code>tuned</code> sin rezagos de Td: ${enumera(t.map(r => `${S(r.brecha)} ${IC(r)} en ${lugar(r)}`))}. ` +
+      `El efecto es mayor en ${rango(t.reduce((m, r) => r.brecha > m.brecha ? r : m).split)}. Brecha <code>tuned</code> sin rezagos − LLR simple: ` +
+      `${e.every(r => r.ic_lo <= 0 && r.ic_hi >= 0) ? "el IC incluye el cero en los cuatro casos" : "no siempre incluye el cero"} (de ${S(Math.min(...e.map(r => r.brecha)))} a ${S(Math.max(...e.map(r => r.brecha)))} °C). ` +
+      `En el panel, la versión sin rezagos gana a <code>tuned</code> en ${enumera(z.map(r => `${r.zonas_a_gana} de ${r.zonas} zonas en ${rango(r.split)}`))}.`;
+  })();
+
+  /* ---- A1: escalera de contexto ------------------------------------------ */
+  (function(){
+    const MS = ["timesfm", "llr_simple", "llr_rezagos"];
+    const vals = SPL.flatMap(s => MS.flatMap(m => inicios.map(i => E(s, m, i).rmse)));
+    paneles(el("am-fig-escalera"), {
+      paneles: SPL.map(s => ({titulo: `Bloque ${rango(s)}`, xs: inicios, s})),
+      series: MS.map(m => ({n: NOM[m], corto: m === "llr_rezagos" ? "LLR rezagos" : NOM[m], color: col(m), valor: (p, i) => E(p.s, m, i).rmse})),
+      yDom: dominio(vals, 0.12), ejeX: "año de inicio del contexto o del ajuste · RMSE, °C", etiquetasFin: true
+    });
+    leyenda("am-leyenda-escalera", MS.map(m => ({n: NOM[m], color: col(m)})));
+    const ult = inicios[inicios.length - 1], pri = inicios[0];
+    const tf = SPL.map(s => EB(s, `timesfm@${ult}`, `timesfm@${pri}`));
+    const cp = SPL.map(s => EB(s, `timesfm_clim_propia@${ult}`, `timesfm@${ult}`));
+    const vs = SPL.flatMap(s => inicios.flatMap(i => ["llr_simple", "llr_rezagos"].map(m => EB(s, `timesfm@${i}`, `${m}@${i}`))));
+    const mejoraLLR = SPL.flatMap(s => ["llr_simple", "llr_rezagos"].flatMap(m => inicios.map(i => E(s, m, i).delta_rmse_vs_1981)));
+    el("am-nota-escalera").innerHTML = `Pasar el inicio de TimesFM de ${pri} a ${ult} cambia su RMSE en ${enumera(tf.map(r => `${S(r.brecha)} ${IC(r)} en ${rango(r.split)}`))}. ` +
+      `Los LLR mejoran hasta ${F(-Math.min(...mejoraLLR))} °C al empezar más tarde. TimesFM − LLR va de ${S(Math.max(...vs.map(r => r.brecha)))} a ${S(Math.min(...vs.map(r => r.brecha)))} °C, ` +
+      `${vs.every(r => r.ic_hi < 0) ? "con IC sin cero en todos los inicios y bloques" : "con algún IC que incluye el cero"}. ` +
+      `<br>La variante <code>tmin_anom_med</code> no se muestra como comparación de contexto: además de recortar el contexto recortaba la climatología, y ese recorte, con el contexto desde ${ult}, costó ${enumera(cp.map(r => `${S(r.brecha)} ${IC(r)} en ${rango(r.split)}`))}.`;
+  })();
+
+  /* ---- A3 ---------------------------------------------------------------- */
+  (function(){
+    const filas = [
+      {c: "real_anom", n: "Tmin real"},
+      {c: "shuf_anom_year_s0", n: "otro año · semilla 0", g: "barajada entre años"},
+      {c: "shuf_anom_year_s1", n: "otro año · semilla 1", g: "barajada entre años"},
+      {c: "shuf_anom_year_s2", n: "otro año · semilla 2", g: "barajada entre años"},
+      {c: "shuf_anom_cell_s0", n: "otra celda", g: "barajada entre celdas"}].filter(f => A3(f.c));
+    const clim = A3("pred_clim");
+    const dom = dominio([...filas.map(f => A3(f.c).rmse), clim.rmse], 0.1);
+    matriz(el("am-fig-a3"), {cols: [{dom}], L: 214, refs: [{v: clim.rmse, t: "climatología"}], ejeX: "RMSE, °C",
+      bloques: [{filas: filas.map(f => { const r = A3(f.c); return {grupo: f.g, n: f.n, color: col("timesfm"), focal: f.c === "real_anom",
+        vals: [{v: r.rmse, tip: `${f.g}, ${f.n}: RMSE ${F(r.rmse, 4)} · skill ${S(r.skill)} · sesgo ${S(r.sesgo)}`}]}; })}], dec: 3});
+    const yr = A.a3.filter(r => r.modo === "year" && r.variante === "anom");
+    const ce = A3("shuf_anom_cell_s0"), re = A3("real_anom"), tdY = A3("shuf_td_year_s0");
+    el("am-nota-a3").innerHTML = `Con la Tmin real, TimesFM tiene skill ${S(re.skill)} frente a la climatología. Barajada entre años, el RMSE sube a ${F(Math.min(...yr.map(r => r.rmse)))}–${F(Math.max(...yr.map(r => r.rmse)))} °C en las ${yr.length} semillas. ` +
+      (ce ? `Barajada entre celdas queda en ${F(ce.rmse)}, a la altura de la climatología (${F(clim.rmse)}): la Tmin de otra celda conserva la señal temporal común. Esa variante tiene una sola realización. ` : "") +
+      (tdY ? `Con <code>tmin_td_full</code> y Tmin de otro año (semilla 0), el RMSE es ${F(tdY.rmse)}.` : "");
+  })();
+
+  /* ---- A4 ---------------------------------------------------------------- */
+  (function(){
+    const anom = A.a4PorAnio.filter(r => r.kind === "anom");
+    const anios = [...new Set(anom.map(r => Number(r.anio)))].sort((a, b) => a - b);
+    const F4 = ["pisco", "era5_land", "palacios", "timesfm"];
+    const val = (f, y) => { const r = anom.find(q => q.fuente === f && Number(q.anio) === y); return r ? r.rmse : null; };
+    const corte = Math.max(...anom.filter(r => r.fuente === "pisco").map(r => Number(r.anio)));
+    paneles(el("am-fig-a4"), {
+      paneles: [{titulo: "", xs: anios, extra: (X, Y, Mg, H) =>
+        `<line x1="${(X(corte) + X(corte + 1)) / 2}" y1="${Mg.t}" x2="${(X(corte) + X(corte + 1)) / 2}" y2="${H - Mg.b}" stroke="var(--fig-axis)" stroke-width="1.4" stroke-dasharray="3 3"/>` +
+        `<text x="${X(anios[0])}" y="${Mg.t - 8}" font-size="11" font-family="${MONO}" fill="var(--fig-muted)">PISCO · ${per(P4("anom", "pisco").periodo)}</text>` +
+        `<text x="${X(corte + 1)}" y="${Mg.t - 8}" font-size="11" font-family="${MONO}" fill="var(--fig-muted)">PRODUCTOS · ${per(P4("anom", "palacios").periodo)}</text>`}],
+      series: F4.map(f => ({n: NOM[f], corto: f === "palacios" ? "Palacios" : NOM[f], color: col(f), dash: f === "era5_land" ? "5 3" : "", valor: (p, y) => val(f, y),
+        tip: (p, y) => { const r = anom.find(q => q.fuente === f && Number(q.anio) === y); return r ? ` · ${miles(r.n_dias)} días · ${r.n_estaciones} estaciones` : ""; }})),
+      yDom: dominio(anom.filter(r => F4.includes(r.fuente)).map(r => r.rmse), 0.1), H: 300, etiquetasFin: true,
+      ejeX: "año · RMSE de anomalía frente a estación, °C"
+    });
+    leyenda("am-leyenda-a4", F4.map(f => ({n: NOM[f], color: col(f), dash: f === "era5_land"})));
+    const eraP = A.a4PorPeriodo.filter(r => r.kind === "anom" && r.fuente === "era5_land");
+    const eraDe = per => eraP.find(r => r.periodo === per);
+    const pP = P4("anom", "pisco"), pa = P4("anom", "palacios"), tf = P4("anom", "timesfm");
+    const dA = D4("anom", "timesfm", "palacios"), dT = D4("td", "timesfm", "palacios");
+    const nd = anom.filter(r => r.fuente === "timesfm");
+    const minD = nd.reduce((a, r) => r.n_dias < a.n_dias ? r : a);
+    el("am-nota-a4").innerHTML = `Cociente de RMSE de anomalía frente a ERA5-Land: ${F(pP.rmse / eraDe(pP.periodo).rmse, 2)} para PISCO en ${per(pP.periodo)}; ` +
+      `${F(pa.rmse / eraDe(pa.periodo).rmse, 2)} para Palacios y ${F(tf.rmse / eraDe(tf.periodo).rmse, 2)} para TimesFM en ${per(pa.periodo)}. ` +
+      `TimesFM − Palacios: ${S(dA.delta_rmse)} °C [${S(dA.ic95_lo)}; ${S(dA.ic95_hi)}] en anomalías y ${S(dT.delta_rmse)} °C [${S(dT.ic95_lo)}; ${S(dT.ic95_hi)}] en Td cruda, ` +
+      `con ${dA.n_estaciones} estaciones y ${miles(dA.n_dias)} días. Este IC se obtiene remuestreando estaciones, no bloques mes-año. ` +
+      `En ${minD.anio} hay solo ${miles(minD.n_dias)} días válidos. El salto de 2019 aparece también en ERA5-Land, así que no es propio de los productos. ` +
+      `La climatología de las anomalías se ajustó en ${per(pP.periodo)}: en ese período el contraste está dentro de la muestra.`;
+
+    const td = A.a4PorPeriodo.filter(r => r.kind === "td");
+    const orden = [["pisco", pP.periodo], ["era5_land", pP.periodo], ["palacios", pa.periodo], ["timesfm", pa.periodo], ["era5_land", pa.periodo]];
+    const periodos = [...new Set(orden.map(o => o[1]))];
+    const fila = (f, p) => td.find(r => r.fuente === f && r.periodo === p);
+    const dom = dominio(td.filter(r => orden.some(o => o[0] === r.fuente && o[1] === r.periodo)).map(r => r.sesgo), 0.12, true);
+    matriz(el("am-fig-a4-sesgo"), {cols: [{dom}], cero: true, signo: true, dec: 2, ejeX: "sesgo de Td cruda, fuente − estación, °C",
+      bloques: periodos.map(p => ({titulo: per(p), filas: orden.filter(o => o[1] === p).map(([f]) => { const r = fila(f, p);
+        return {n: NOM[f], color: col(f), focal: f === "timesfm", vals: [{v: r.sesgo, tip: `${NOM[f]}, ${per(p)}: sesgo ${S(r.sesgo, 2)} · RMSE ${F(r.rmse, 2)} · ${r.n_estaciones} estaciones`}]}; })}))});
+  })();
+
+  /* ---- Decisión 1 ---------------------------------------------------------- */
+  (function(){
+    const RV = ["llr_simple", "llr_rezagos_sel"];
+    const sinCero = r => r.ic_hi < 0;
+    const filas = [];
+    const res = {};
+    AMB.forEach(a => {
+      res[a] = {soloB: true, ambos: true, falla: []};
+      RV.forEach(m => {
+        const b = B("ll4b", a, "timesfm_anom", m), c = B("ll4", a, "timesfm_anom", m);
+        const g1 = b.brecha < 0, g2 = sinCero(b), g3 = sinCero(c);
+        if(!(g1 && g2)) res[a].soloB = false;
+        if(!(g1 && g2 && g3)){ res[a].ambos = false; if(!g3) res[a].falla.push(NOM[m]); }
+        filas.push({alerta: !(g1 && g2 && g3), c: [NOM[m], AMB_N[a], `${g1 ? "sí" : "no"} (${S(b.brecha)})`, `${g2 ? "sí" : "no"} ${IC(b)}`, `${g3 ? "sí" : "no"} ${IC(c)}`]});
+      });
+    });
+    const tb = el("am-t-regla");
+    tb.innerHTML = `<thead><tr><th>Rival</th><th>Ámbito</th><th>(1) Gana en ${rango("ll4b")}</th><th>(2) IC sin cero en ${rango("ll4b")}</th><th>(2) IC sin cero en ${rango("ll4")}</th></tr></thead><tbody>` +
+      filas.map(f => `<tr${f.alerta ? ' class="alerta"' : ""}>${f.c.map(v => `<td>${v}</td>`).join("")}</tr>`).join("") + "</tbody>";
+    const lectura = k => { const e = AMB.filter(a => res[a][k]), c = AMB.filter(a => !res[a][k]);
+      return [e.length ? `E en ${enumera(e.map(a => a === "panel" ? "el panel" : "el Perú"))}` : "", c.length ? `C+A en ${enumera(c.map(a => a === "panel" ? "el panel" : "el Perú"))}` : ""].filter(Boolean).join(" y "); };
+    const fallas = AMB.filter(a => res[a].falla.length);
+    el("am-hallazgo-regla").innerHTML = `<strong>Con solo ${rango("ll4b")}, la regla indica ${lectura("soloB")}. Si se exigen los dos bloques, indica ${lectura("ambos")}.</strong> ` +
+      (fallas.length ? `La diferencia está en ${rango("ll4")}: en ${enumera(fallas.map(a => a === "panel" ? "el panel" : "el Perú"))} el IC incluye el cero frente a ${enumera(res[fallas[0]].falla)}. ` : "") +
+      `La regla no dice si «se mantiene» exige los dos bloques; es una pregunta abierta para Palacios. ${rango("ll4b")} no participó en la elección de la variante de TimesFM.`;
+  })();
+})();
+</script>
 
 </body>
 </html>

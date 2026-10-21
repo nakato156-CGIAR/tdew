@@ -108,6 +108,11 @@ _A1_ESCALERA_FILES = tuple(REPORTS_ROOT / "paper_nuevo/resultados" / f"a1_escale
                            for suffix in ("", "_brechas"))
 TRACKED_METRIC_FILES = TRACKED_METRIC_FILES + _A1_ESCALERA_FILES
 
+# A3, control de Tmin barajada (tdew-077): salida de experiments.timesfm.control_tmin_barajada_eval
+# capturada por experiments/amenazas/artifact_amenazas.py --capturar-a3.
+TRACKED_METRIC_FILES = TRACKED_METRIC_FILES + (
+    REPORTS_ROOT / "paper_nuevo/resultados/a3_control_tmin_barajada.csv",)
+
 # A4 del paper nuevo (tdew-ra6): experiments/a4_externo/compare.py, criterio principal y
 # sensibilidad _h4b2.
 _A4_DIR = REPORTS_ROOT / "paper_nuevo/resultados"
