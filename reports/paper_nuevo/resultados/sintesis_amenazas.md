@@ -16,7 +16,7 @@ Convenciones. Brecha = RMSE(A) − RMSE(B) en °C, pareada sobre las mismas 24.8
 | A1 (`tdew-03g`) | ¿La ventaja de TimesFM se debe al El Niño 2015-2016 o al estimador? | Bloque `ll4b` (prueba 2009-2012) con climatología, `tuned`, dos LLR propios (con y sin selección interna de `h` y año de inicio) y TimesFM (`tmin_anom_full`, `tmin_td_full`, `tmin_anom_med`); desglose por Perú y zona; escalera de inicio del contexto en el panel de cribado; costo en la misma máquina | TimesFM `tmin_anom_full` tiene el RMSE más bajo en los dos bloques y ámbitos. Frente al LLR con rezagos seleccionado, empate en el panel de `ll4` (−0,003) y ventaja de 0,025-0,028 °C con IC sin cero en `ll4b` y en el Perú. `tmin_td_full` no supera al LLR simple en `ll4b` | resultados completos en `ll4` y `ll4b`; bead abierto (`IN_PROGRESS`) |
 | A2 (`tdew-f6a`) | ¿Cuánto cuestan la autorregresión y el criterio de selección de `tuned`? | `tuned` con el pool sin rezagos de Td (`const`, `TMIN_anom` y sus rezagos), en `ll4` y `ll4b` | RMSE de 1,2279 a 1,1742 en `ll4` y de 1,1220 a 1,1082 en `ll4b`; sin rezagos de Td empata con el LLR simple | cerrado |
 | A3 (`tdew-077`) | ¿La habilidad de TimesFM viene de la covariable? | TimesFM con la Tmin del bloque oculto barajada entre años (tres semillas) o entre celdas, panel de cribado de 1.092 celdas, `ll4` | Con barajado entre años el RMSE sube de 0,8389 a 1,506-1,551, peor que la climatología (1,2840); con barajado entre celdas queda en 1,2656 | cerrado |
-| A4 (`tdew-ra6`) | ¿Qué exactitud tienen los productos 2017-2020 frente a Td atmosférico? | Contraste con 12-13 estaciones de aeropuerto ISD y con ERA5/ERA5-Land en puntos; chequeo de la Tmin regridada 2017-2020 | Los dos productos heredan el sesgo húmedo de PISCO (+1,4 °C); en anomalías TimesFM queda 0,046 °C por debajo de `tuned` (IC [−0,073; −0,019]); en Td no se distinguen | cerrado en puntos; el contraste grillado con ERA5 requiere credenciales |
+| A4 (`tdew-ra6`) | ¿Qué exactitud tienen los productos 2017-2020 frente a Td atmosférico? | Contraste con 12-13 estaciones de aeropuerto ISD; chequeo de la Tmin regridada 2017-2020 | Los dos productos heredan el sesgo húmedo de PISCO (+1,4 °C); en anomalías TimesFM queda 0,046 °C por debajo de `tuned` (IC [−0,073; −0,019]); en Td no se distinguen | cerrado; ERA5-Land no se usa como comparación (otro producto, otra grilla e insumos) |
 | T1 (`tdew-kpp`) | ¿Se sostiene «sin conocer el país»? | — | — | abierto; se hace al final por decisión del usuario |
 
 ## 2. Escalera de métodos
@@ -173,8 +173,7 @@ Con la Tmin de otro año TimesFM queda peor que la climatología en las tres sem
 
 - En 2009-2016 PISCO tiene sesgo de Td +1,42 °C y RMSE 3,06 °C frente a 13 aeropuertos ISD (Arequipa +5,91, Cusco +3,97, Andahuaylas +4,24).
 - En 2017-2020, `tuned` y TimesFM tienen sesgo +1,38 y +1,48 °C y repiten el patrón por estación (Arequipa +4,95 y +5,03).
-- ERA5-Land, en los mismos días, tiene sesgo +0,06 °C en 2009-2016 y +0,14 °C en 2017-2020.
-- En anomalías, el cociente de RMSE frente a ERA5-Land es 1,10 para PISCO en 2009-2016 y 1,11 (`tuned`) y 1,08 (TimesFM) en 2017-2020.
+- ERA5-Land no se usa como comparación. Es otro producto, con otra grilla (0,1° frente a 0,01°) y otros insumos, y cambiar de dataset queda reservado para la prueba de transferencia (T1). Sus cifras siguen en `a4_contraste_externo.md` solo como registro.
 
 El RMSE de ≈1,15-1,23 °C del backtest mide cuánto reproducen los productos el Td grillado, no cuánto se acercan al Td atmosférico. El chequeo de la Tmin regridada 2017-2020 no encontró cambios de nivel ni de distribución frente a 2013-2016 (r = 0,9991 en medias celda-mes). Queda abierta la mayor dispersión del salto de enero de 2017 (desviación 1,33 frente a 0,66-0,90).
 
@@ -215,7 +214,6 @@ Lo que falta:
 - Calcular la brecha `tmin_td_full` − LLR con rezagos seleccionado con sus dos IC. Hoy solo hay RMSE puntual.
 - Un esquema de IC que recoja a la vez la dependencia espacial y la temporal, o al menos una comprobación de cobertura de los dos esquemas actuales.
 - El barajado por celda con otras asignaciones de donante, y el control A3 en `ll4b`.
-- El contraste grillado con ERA5-Land en todo el Perú, que requiere una clave de Copernicus CDS, una cuenta de Google Earth Engine o lectura del bucket `s3://nsf-ncar-era5`.
 - Medir el costo de los LLR seleccionados y de `tuned` sin rezagos de Td en la misma máquina.
 - Cerrar el bead `tdew-03g` y actualizar su fila del Gantt en Notion.
 - T1 (`tdew-kpp`) queda fuera de alcance de esta síntesis. Se hace al final, según la decisión del usuario. El candidato anotado en el bead es ERA5-Land en India, con un control dentro del Perú con ERA5-Land y estaciones HadISD.

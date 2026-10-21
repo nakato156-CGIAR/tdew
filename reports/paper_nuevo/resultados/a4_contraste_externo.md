@@ -2,6 +2,8 @@
 
 Bead `tdew-ra6`. Código: `experiments/a4_externo/` (ver su `README.md`). Tablas: `a4_*.csv` en esta carpeta; las que terminan en `_h4b2` son la variante de sensibilidad del criterio diario. Fecha de cálculo: 2026-10-20, rama `tdew-214-real-2017-2020`, commit base `4a10f16` (sin commit propio).
 
+> **Nota del 2026-10-21.** ERA5 y ERA5-Land no se usan como comparación con los productos. Son otros productos, con otra grilla (0,25° y 0,1° frente a 0,01° de PISCO) y otros insumos; cambiar de dataset queda reservado para la prueba de transferencia (T1). Sus filas y la lectura 2 se conservan solo como registro de lo calculado y no se citan en el paper. Las comparaciones válidas de esta sección son productos frente a estaciones y TimesFM frente a Palacios sobre las mismas estaciones y días.
+
 ## Por qué hace falta una referencia externa
 
 En 2017-2020 no hay Td observado de PISCO. Los dos productos de Td (Palacios `tuned` y TimesFM `tmin_anom_full`) se validaron hasta ahora contra el Td grillado de PISCO v1.1 en bloques ocultos de 1981-2016. Según Huerta et al. (2022, tabla 1; 2023), el Td de PISCOeo_pm se interpola con LST_mean de MODIS y la Tmin de PISCOt (el predictor) con LST_night de MODIS. Los dos campos comparten insumos, así que un buen puntaje frente al Td grillado no prueba exactitud frente al Td atmosférico. Este contraste usa observaciones de estación que no pasan por la grilla.

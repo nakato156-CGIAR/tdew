@@ -407,7 +407,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
       <article class="model-card"><span class="tag">A1 · Año o estimador</span><h3>¿La ventaja sobre Palacios viene de El Niño 2015–2016?</h3><p>Se repitió la comparación en un segundo bloque de prueba, <span data-am="bloque.ll4b"></span>, además del original, <span data-am="bloque.ll4"></span>.</p></article>
       <article class="model-card"><span class="tag">A2 · Rezagos de Td</span><h3>¿Cuánto pesan los rezagos de Td en el método de Palacios?</h3><p>Se corrió <code>tuned</code> con el mismo protocolo, pero sin rezagos de Td entre sus candidatos.</p></article>
       <article class="model-card"><span class="tag">A3 · Origen de la habilidad</span><h3>¿La habilidad de TimesFM viene de Tmin?</h3><p>Se repitió la predicción con la Tmin del bloque de prueba barajada.</p></article>
-      <article class="model-card"><span class="tag">A4 · Referencia externa</span><h3>¿Cómo se comparan los productos con observaciones externas?</h3><p>Se contrastaron con estaciones de aeropuerto ISD y con ERA5-Land en esos mismos puntos.</p></article>
+      <article class="model-card"><span class="tag">A4 · Referencia externa</span><h3>¿Cómo se comparan los productos con observaciones externas?</h3><p>Se contrastaron con estaciones de aeropuerto ISD, en la celda PISCO que contiene a cada estación.</p></article>
     </div>
     <p class="nota" style="margin-top:14px">T1, que pregunta si el resultado se sostiene fuera del Perú, queda pendiente y no se trata aquí.</p>
 
@@ -423,7 +423,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
       <div><dt><code>tuned</code></dt><dd>Método de Palacios: recetas de regresión elegidas por zona y día del año solo con años de entrenamiento. Sus rezagos de Td son, dentro del bloque, sus propias predicciones.</dd></div>
       <div><dt>Barajada</dt><dd>La Tmin del bloque de prueba se reemplaza por la de otro año, el mismo día del año y la misma celda; en otra variante, por la de otra celda. Así se rompe la coincidencia día a día con la Td.</dd></div>
       <div><dt>Escalera de contexto</dt><dd>TimesFM con el contexto iniciado en <span data-am="escalera.inicios"></span>, con la climatología fija desde <span data-am="escalera.clim"></span>.</dd></div>
-      <div><dt>ISD y ERA5-Land</dt><dd>ISD es el archivo horario de estaciones de NOAA; aquí, aeropuertos peruanos. ERA5-Land es el reanálisis terrestre de ECMWF.</dd></div>
+      <div><dt>ISD</dt><dd>Archivo horario de estaciones de NOAA; aquí, aeropuertos peruanos con Td medido.</dd></div>
     </dl>
 
     <figure class="fig">
@@ -509,7 +509,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
     </div>
     <div class="chart-shell">
       <figure class="fig">
-        <figcaption><span class="fig-titulo">En anomalías, los productos quedan frente a ERA5-Land a la misma distancia que PISCO</span><span class="fig-sub">RMSE de anomalía frente a estación, en °C, por año. PISCO llega hasta <span data-am="a4.pisco"></span>; los productos cubren <span data-am="a4.productos"></span>. ERA5-Land cubre los dos tramos.</span><span class="am-grupo">Palacios y TimesFM: grupo (b)</span></figcaption>
+        <figcaption><span class="fig-titulo">En anomalías, Palacios y TimesFM se apartan de las estaciones casi lo mismo</span><span class="fig-sub">RMSE de anomalía frente a estación, en °C, por año. PISCO llega hasta <span data-am="a4.pisco"></span>; los productos cubren <span data-am="a4.productos"></span>. Palacios y TimesFM se comparan sobre las mismas estaciones y días; PISCO queda como referencia de otro tramo de años.</span><span class="am-grupo">Palacios y TimesFM: grupo (b)</span></figcaption>
         <svg id="am-fig-a4" viewBox="0 0 760 300" role="img" aria-label="RMSE de anomalía frente a estaciones por año"></svg>
         <div class="leyenda-linea" id="am-leyenda-a4"></div>
         <p class="fig-nota" id="am-nota-a4"></p>
@@ -521,7 +521,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
     </div>
     <div class="scope-warning">
       <h3>Independencia de las estaciones</h3>
-      <p>No se sabe si estos aeropuertos están entre las estaciones de SENAMHI que entraron en PISCO Td; no hay lista pública para comprobarlo. Si alguno entró, el error de PISCO en <span data-am="a4.pisco"></span> está subestimado en esa estación. ERA5 asimila datos de estaciones SYNOP, que incluyen estos aeropuertos, así que su ventaja es en parte consecuencia de esa asimilación.</p>
+      <p>No se sabe si estos aeropuertos están entre las estaciones de SENAMHI que entraron en PISCO Td; no hay lista pública para comprobarlo. Si alguno entró, el error de PISCO en <span data-am="a4.pisco"></span> está subestimado en esa estación.</p>
     </div>
 
     <div class="section-head" id="am-conclusion" style="margin-top:64px">
@@ -543,7 +543,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
           <li><strong>Insumos compartidos.</strong> Td y Tmin de PISCO usan LST de MODIS; parte de la habilidad de todos los métodos frente al Td grillado puede venir de ese error común.</li>
           <li><strong>Independencia de las estaciones ISD.</strong> No comprobada frente a las estaciones de PISCO.</li>
           <li><strong>Selección de la variante.</strong> <code>tmin_anom_full</code> se eligió en el cribado sobre <span data-am="bloque.ll4"></span>; <span data-am="bloque.ll4b"></span> es la evidencia fuera de muestra.</li>
-          <li><strong>Pendiente.</strong> A3 en <span data-am="bloque.ll4b"></span>, un IC que recoja a la vez la dependencia espacial y la temporal, el contraste grillado con ERA5-Land y T1.</li>
+          <li><strong>Pendiente.</strong> A3 en <span data-am="bloque.ll4b"></span>, un IC que recoja a la vez la dependencia espacial y la temporal, y T1.</li>
         </ul>
         <p class="nota" style="margin-top:16px">Esta sección se preparó con asistencia de IA generativa (Claude Code), que escribió el código del artefacto y reunió las cifras de los CSV de <code>reports/paper_nuevo/resultados/</code>. Los LLR y <code>tuned</code> sin rezagos de Td son rivales construidos en este proyecto. Todo debe validarse con Palacios y SENAMHI antes de usarse en el paper.</p>
       </div>
@@ -2071,7 +2071,7 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
   (function(){
     const anom = A.a4PorAnio.filter(r => r.kind === "anom");
     const anios = [...new Set(anom.map(r => Number(r.anio)))].sort((a, b) => a - b);
-    const F4 = ["pisco", "era5_land", "palacios", "timesfm"];
+    const F4 = ["pisco", "palacios", "timesfm"];
     const val = (f, y) => { const r = anom.find(q => q.fuente === f && Number(q.anio) === y); return r ? r.rmse : null; };
     const corte = Math.max(...anom.filter(r => r.fuente === "pisco").map(r => Number(r.anio)));
     paneles(el("am-fig-a4"), {
@@ -2091,15 +2091,16 @@ footer{padding:34px 0 52px;color:var(--ink-faint);font-size:12.5px;line-height:1
     const dA = D4("anom", "timesfm", "palacios"), dT = D4("td", "timesfm", "palacios");
     const nd = anom.filter(r => r.fuente === "timesfm");
     const minD = nd.reduce((a, r) => r.n_dias < a.n_dias ? r : a);
-    el("am-nota-a4").innerHTML = `Cociente de RMSE de anomalía frente a ERA5-Land: ${F(pP.rmse / eraDe(pP.periodo).rmse, 2)} para PISCO en ${per(pP.periodo)}; ` +
-      `${F(pa.rmse / eraDe(pa.periodo).rmse, 2)} para Palacios y ${F(tf.rmse / eraDe(tf.periodo).rmse, 2)} para TimesFM en ${per(pa.periodo)}. ` +
-      `TimesFM − Palacios: ${S(dA.delta_rmse)} °C [${S(dA.ic95_lo)}; ${S(dA.ic95_hi)}] en anomalías y ${S(dT.delta_rmse)} °C [${S(dT.ic95_lo)}; ${S(dT.ic95_hi)}] en Td cruda, ` +
+    el("am-nota-a4").innerHTML = `RMSE de anomalía: ${F(pP.rmse, 2)} °C para PISCO en ${per(pP.periodo)}; ${F(pa.rmse, 2)} para Palacios y ${F(tf.rmse, 2)} para TimesFM en ${per(pa.periodo)}. ` +
+      `PISCO y los productos se miden en años distintos, así que esa comparación es solo orientativa. ` +
+      `TimesFM − Palacios, sobre las mismas estaciones y días: ${S(dA.delta_rmse)} °C [${S(dA.ic95_lo)}; ${S(dA.ic95_hi)}] en anomalías y ${S(dT.delta_rmse)} °C [${S(dT.ic95_lo)}; ${S(dT.ic95_hi)}] en Td cruda, ` +
       `con ${dA.n_estaciones} estaciones y ${miles(dA.n_dias)} días. Este IC se obtiene remuestreando estaciones, no bloques mes-año. ` +
-      `En ${minD.anio} hay solo ${miles(minD.n_dias)} días válidos. El salto de 2019 aparece también en ERA5-Land, así que no es propio de los productos. ` +
+      `En ${minD.anio} hay solo ${miles(minD.n_dias)} días válidos. El salto de 2019 se concentra en la estación de Ayacucho. ` +
+      `ERA5-Land se dejó fuera: es otro producto, con otra grilla e insumos, y cambiar de dataset queda reservado para la prueba de transferencia (T1). ` +
       `La climatología de las anomalías se ajustó en ${per(pP.periodo)}: en ese período el contraste está dentro de la muestra.`;
 
     const td = A.a4PorPeriodo.filter(r => r.kind === "td");
-    const orden = [["pisco", pP.periodo], ["era5_land", pP.periodo], ["palacios", pa.periodo], ["timesfm", pa.periodo], ["era5_land", pa.periodo]];
+    const orden = [["pisco", pP.periodo], ["palacios", pa.periodo], ["timesfm", pa.periodo]];
     const periodos = [...new Set(orden.map(o => o[1]))];
     const fila = (f, p) => td.find(r => r.fuente === f && r.periodo === p);
     const dom = dominio(td.filter(r => orden.some(o => o[0] === r.fuente && o[1] === r.periodo)).map(r => r.sesgo), 0.12, true);
