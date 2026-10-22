@@ -1,0 +1,45 @@
+{
+  "autoregressive": false,
+  "bead_id": "tdew-214.19",
+  "climatology_role": "target_anomaly_base",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-10-22T15:28:05+00:00",
+  "git_commit": "e02de1d824ed716e74fd61f19f3391b786979558",
+  "inputs": [
+    "TMIN_anom"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest_addendum_2026-10-02.yaml",
+  "mlflow_run_id": null,
+  "model_family": "timesfm-3.0",
+  "model_id": "google/timesfm-3.0-pytorch",
+  "notes": "Divergencia calida: delta = P_pred(B) - P_obs(B) para B = [20.0, 24.0) y B' = [24.5, 27.0] C, share = n*delta / total nacional, contribucion de B a KL(obs || metodo) (bins de 0.5 C, Jeffreys 0.5), sesgo condicional, por zona, banda DEM, departamento, tier, anio, mes, anio-mes y zona x anio (zonas que suman 80% del deficit de TimesFM). Metodos: TimesFM tmin_anom_full, Palacios pred_tuned (llr) y pred_clim (referencia), backtest limpio 2013-2016, mismo filtro que kl.py. IC 95 % bootstrap de bloques (2 grados y mes-anio, 200 replicas, semilla 0) para delta_B por zona y anio. Palacios leido de /media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean/ll4/predictions.parquet, TimesFM de /home/cvelasquez/tdew_timesfm/preds_nacional/ll4__tmin_anom_full.parquet. Pesos de TimesFM de uso no comercial.",
+  "output_files": [
+    "reports/timesfm_benchmark/kl_calido/zona.csv",
+    "reports/timesfm_benchmark/kl_calido/dem.csv",
+    "reports/timesfm_benchmark/kl_calido/depto.csv",
+    "reports/timesfm_benchmark/kl_calido/tier.csv",
+    "reports/timesfm_benchmark/kl_calido/anio.csv",
+    "reports/timesfm_benchmark/kl_calido/mes.csv",
+    "reports/timesfm_benchmark/kl_calido/anio_mes.csv",
+    "reports/timesfm_benchmark/kl_calido/zona_anio.csv",
+    "reports/timesfm_benchmark/kl_calido/hist_nacional.csv"
+  ],
+  "panel_cell_count": 17027,
+  "panel_file": "/home/cvelasquez/tdew_timesfm/preds_nacional/ll4__tmin_anom_full.parquet",
+  "panel_id": "nacional_17027_limpio",
+  "run_id": "34c47200f4aa4d7ca5759ab705480d57",
+  "seeds": [
+    0
+  ],
+  "split_id": "ll4",
+  "target_type": "td_anomaly",
+  "test_period": [
+    "2013-01-01",
+    "2016-12-31"
+  ],
+  "trained": false,
+  "training_period": null,
+  "validation_period": null,
+  "variant_label": "tmin_anom_full"
+}
