@@ -1,4 +1,4 @@
-# Costo comparable de TimesFM, `tuned` y los LLR propios
+# Costos documentados de TimesFM, `tuned` y los LLR propios
 
 Bead `tdew-03g`. Datos en `costo.csv`. Todas las cifras salen de logs y archivos de
 tiempos de corridas reales; no se estimó ninguna salvo donde se indica. Estación de
@@ -50,13 +50,18 @@ single-GPU», pero no queda probado que usaran la misma tarjeta.
 
 ## Lectura
 
-En `ll4b`, con las etapas que cada método necesita para producir un pronóstico sin
-ver el bloque oculto, TimesFM tardó unos 73 min por variante en GPU, `tuned` 58 min
-en GPU y los LLR 2 y 8 min en un núcleo de CPU. La comparación justa para TimesFM
-debe sumar además la selección de variante (49 min sobre 1.106 celdas en `ll4`), que
-se hizo una sola vez y sobre el bloque de evaluación. A escala de producto, la
-predicción de TimesFM (≈5,1 días) es unas 370 veces más lenta que la de `tuned` (20
-min), pero `tuned` necesita antes 39 h de selección y ajuste que TimesFM no tiene.
+En `ll4b`, `tuned` suma 3.158 s de selección y 350 s de ajuste y predicción: 3.508 s, o 58 min 28 s. TimesFM `tmin_anom_full` emplea 4.389,8 s de inferencia (73 min 10 s redondeados) y su selección única costó 2.948 s (49 min 8 s). Incluyendo esa selección, el total es 7.337,8 s, o 122 min 18 s, ≈2,09 veces el de `tuned` en estas corridas. El cribado se realizó sobre `ll4` y se reutilizó sin cambios en `ll4b`; no se suma otra vez por bloque ni se confunde con selección hecha en `ll4b`.
+
+| Concepto en la evaluación `ll4b` | `tuned` | TimesFM `tmin_anom_full` |
+|---|---|---|
+| Selección de recetas del bloque | 52 min 38 s | no aplica |
+| Ajuste + predicción / inferencia | 5 min 50 s | 73 min 10 s |
+| Selección única de configuración realizada en `ll4` | no aplica | 49 min 8 s |
+| Total incluyendo selección una vez | 58 min 28 s | 122 min 18 s |
+
+Los LLR anteriores emplearon 2 y 8 min en CPU con una grilla menor y año de inicio fijo. No son los costos de `llr_simple_sel` o `llr_rezagos_sel`: los tiempos de esas versiones seleccionadas no se midieron.
+
+A escala de producto, la inferencia documentada de TimesFM (≈5,1 días) tardó unas 370 veces lo registrado para `tuned` (19 min 40 s). `tuned` necesitó antes unas 39 h de selección y ajuste. Son cocientes de corridas con hardware y carga de documentación desigual, no una comparación controlada general de velocidad. El preentrenamiento de TimesFM y las horas humanas no se cronometraron. El preprocesamiento compartido, incluido el regrillado y las climatologías, tampoco tiene una medición independiente completa.
 
 ## Insumos de diseño que requiere cada método
 
@@ -67,5 +72,6 @@ Columna cualitativa basada en el código; no se estiman horas-persona.
 | climatología | media por celda y día del año en los años de entrenamiento |
 | LLR simple (`experiments/llr_simple/llr.py`) | climatología de Td y Tmin por celda; núcleo tricúbico circular en el día del año; un único `h` global elegido en una grilla de 7 valores (7-60) con los últimos 4 años de entrenamiento; sin zonas ni rezagos |
 | LLR con rezagos (`llr_lags.py`) | lo mismo más rezagos fijos de la anomalía de Tmin (1, 2, 7 y 30 días) y una cresta de 1e-6 |
-| `tuned` (`HPC_code_tunning/`) | shapefile de zonas climáticas SENAMHI (`clasif_clima_peru.zip` → `zone_table.parquet`, 41 zonas); pool de 11 términos candidatos (constante, Tmin del día, rezagos de Tmin 1, 2, 7 y 30, rezagos de Td 1, 2, 3, 7 y 30); búsqueda de receta y `h` (grilla 7-45) por zona × día del año con muestreo de celdas por zona; pronóstico autorregresivo con sus propios rezagos de Td; implementación en GPU con CuPy |
-| TimesFM 3.0 (`experiments/timesfm/`) | checkpoint preentrenado `google/timesfm-3.0-pytorch` (330M parámetros, licencia no comercial); climatología para construir la anomalía; Tmin futura como covariable; elección entre 9 configuraciones de entrada, objetivo y contexto; GPU en la práctica (TF32, lote 16-32) |
+| LLR seleccionados (`llr_simple_sel`, `llr_rezagos_sel`) | misma familia de regresión local, con búsqueda conjunta de 10 ventanas (7–180) y 4 años de inicio (1981–1996) por validación interna; ajuste por celda; sin zonas; costo no medido |
+| `tuned` (`HPC_code_tunning/`) | shapefile de zonas climáticas SENAMHI (`clasif_clima_peru.zip` → `zone_table.parquet`, 41 unidades cartográficas: 38 tipos climáticos y tres unidades adicionales); pool de 11 términos candidatos (constante, Tmin del día, rezagos de Tmin 1, 2, 7 y 30, rezagos de Td 1, 2, 3, 7 y 30); búsqueda de receta y `h` (grilla 7-45) por zona × día del año con muestreo de celdas por zona; reconstrucción autorregresiva con sus propios rezagos de Td; implementación en GPU con CuPy |
+| TimesFM 3.0 (`experiments/timesfm/`) | checkpoint preentrenado `google/timesfm-3.0-pytorch` (330M parámetros, licencia no comercial); climatología para construir la anomalía; Tmin observada del bloque como covariable; elección entre 9 configuraciones de entrada, objetivo y contexto; GPU en la práctica (TF32, lote 16-32) |

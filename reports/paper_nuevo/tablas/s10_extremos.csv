@@ -1,0 +1,61 @@
+Bloque,Ámbito,Clase,Método,RMSE (°C),Sesgo (°C),Brecha TimesFM − método (°C)
+2009–2012,dominio completo,5 % inferior,TimesFM,1.69319,1.36918,—
+2009–2012,dominio completo,5 % inferior,tuned,1.90223,1.61173,-0.20904000000000011
+2009–2012,dominio completo,5 % inferior,tuned sin rezagos de Td,1.82752,1.45169,-0.13433000000000006
+2009–2012,dominio completo,5 % inferior,LLR con rezagos seleccionado,1.76657,1.40169,-0.07338
+2009–2012,dominio completo,5 % inferior,LLR simple seleccionado,1.77465,1.40772,-0.08146000000000009
+2009–2012,dominio completo,5 % superior,TimesFM,1.97849,-1.64226,—
+2009–2012,dominio completo,5 % superior,tuned,2.33681,-1.98698,-0.35831999999999975
+2009–2012,dominio completo,5 % superior,tuned sin rezagos de Td,2.1584,-1.75264,-0.1799099999999998
+2009–2012,dominio completo,5 % superior,LLR con rezagos seleccionado,2.088,-1.7146,-0.10951
+2009–2012,dominio completo,5 % superior,LLR simple seleccionado,2.11279,-1.74794,-0.13429999999999986
+2009–2012,dominio completo,90 % central,TimesFM,0.91423,-0.10436,—
+2009–2012,dominio completo,90 % central,tuned,0.94291,-0.15274,-0.02868000000000004
+2009–2012,dominio completo,90 % central,tuned sin rezagos de Td,0.95696,-0.12068,-0.042730000000000046
+2009–2012,dominio completo,90 % central,LLR con rezagos seleccionado,0.92897,-0.11283,-0.014739999999999975
+2009–2012,dominio completo,90 % central,LLR simple seleccionado,0.93607,-0.13405,-0.02183999999999997
+2009–2012,Perú,5 % inferior,TimesFM,1.28549,1.03046,—
+2009–2012,Perú,5 % inferior,tuned,1.54312,1.32729,-0.25763
+2009–2012,Perú,5 % inferior,tuned sin rezagos de Td,1.45325,1.1622,-0.1677599999999999
+2009–2012,Perú,5 % inferior,LLR con rezagos seleccionado,1.37367,1.09575,-0.08817999999999993
+2009–2012,Perú,5 % inferior,LLR simple seleccionado,1.36792,1.0895,-0.08243
+2009–2012,Perú,5 % superior,TimesFM,1.47732,-1.24361,—
+2009–2012,Perú,5 % superior,tuned,1.66802,-1.43383,-0.1907000000000001
+2009–2012,Perú,5 % superior,tuned sin rezagos de Td,1.52573,-1.2204,-0.048410000000000064
+2009–2012,Perú,5 % superior,LLR con rezagos seleccionado,1.50742,-1.23344,-0.030100000000000016
+2009–2012,Perú,5 % superior,LLR simple seleccionado,1.52439,-1.26383,-0.047069999999999945
+2009–2012,Perú,90 % central,TimesFM,0.70968,-0.08246,—
+2009–2012,Perú,90 % central,tuned,0.73031,-0.06097,-0.020630000000000037
+2009–2012,Perú,90 % central,tuned sin rezagos de Td,0.7516,-0.0346,-0.04192000000000007
+2009–2012,Perú,90 % central,LLR con rezagos seleccionado,0.72905,-0.061,-0.01937
+2009–2012,Perú,90 % central,LLR simple seleccionado,0.73316,-0.08302,-0.023480000000000056
+2013–2016,dominio completo,5 % inferior,TimesFM,2.1635,1.79234,—
+2013–2016,dominio completo,5 % inferior,tuned,2.24583,1.9429,-0.08233000000000024
+2013–2016,dominio completo,5 % inferior,tuned sin rezagos de Td,2.11658,1.72149,0.04692000000000007
+2013–2016,dominio completo,5 % inferior,LLR con rezagos seleccionado,2.13124,1.74689,0.032259999999999955
+2013–2016,dominio completo,5 % inferior,LLR simple seleccionado,2.13991,1.74334,0.02359
+2013–2016,dominio completo,5 % superior,TimesFM,2.21766,-1.84279,—
+2013–2016,dominio completo,5 % superior,tuned,2.791,-2.32595,-0.57334
+2013–2016,dominio completo,5 % superior,tuned sin rezagos de Td,2.45523,-1.99534,-0.23756999999999984
+2013–2016,dominio completo,5 % superior,LLR con rezagos seleccionado,2.36108,-1.9585,-0.14341999999999988
+2013–2016,dominio completo,5 % superior,LLR simple seleccionado,2.43065,-2.04721,-0.21299
+2013–2016,dominio completo,90 % central,TimesFM,0.96949,0.11903,—
+2013–2016,dominio completo,90 % central,tuned,0.97697,-0.01477,-0.007480000000000042
+2013–2016,dominio completo,90 % central,tuned sin rezagos de Td,0.97054,0.03135,-0.0010499999999999954
+2013–2016,dominio completo,90 % central,LLR con rezagos seleccionado,0.95837,0.05159,0.011119999999999908
+2013–2016,dominio completo,90 % central,LLR simple seleccionado,0.96784,0.0145,0.0016499999999999293
+2013–2016,Perú,5 % inferior,TimesFM,1.63227,1.35977,—
+2013–2016,Perú,5 % inferior,tuned,1.83673,1.60485,-0.20445999999999986
+2013–2016,Perú,5 % inferior,tuned sin rezagos de Td,1.71203,1.40478,-0.07975999999999983
+2013–2016,Perú,5 % inferior,LLR con rezagos seleccionado,1.68582,1.39114,-0.053549999999999986
+2013–2016,Perú,5 % inferior,LLR simple seleccionado,1.66757,1.36518,-0.03529999999999989
+2013–2016,Perú,5 % superior,TimesFM,1.61456,-1.35063,—
+2013–2016,Perú,5 % superior,tuned,1.94111,-1.63413,-0.3265499999999999
+2013–2016,Perú,5 % superior,tuned sin rezagos de Td,1.69891,-1.36094,-0.08434999999999993
+2013–2016,Perú,5 % superior,LLR con rezagos seleccionado,1.67258,-1.37652,-0.05801999999999996
+2013–2016,Perú,5 % superior,LLR simple seleccionado,1.76224,-1.47796,-0.14768000000000003
+2013–2016,Perú,90 % central,TimesFM,0.73189,0.05481,—
+2013–2016,Perú,90 % central,tuned,0.76786,0.0123,-0.035969999999999946
+2013–2016,Perú,90 % central,tuned sin rezagos de Td,0.7676,0.05035,-0.03570999999999991
+2013–2016,Perú,90 % central,LLR con rezagos seleccionado,0.75159,0.03658,-0.01969999999999994
+2013–2016,Perú,90 % central,LLR simple seleccionado,0.76278,-0.00924,-0.030889999999999973

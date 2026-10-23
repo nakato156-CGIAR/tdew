@@ -1,0 +1,26 @@
+Escala,Método,Etapa,Tiempo de pared,Segundos,Hardware
+"2009–2012, estación con GPU",tuned,Selección de recetas (solo años de entrenamiento),3158.0,3158.0,RTX A2000 12 GB + CPU
+"2009–2012, estación con GPU",tuned,Ajuste y predicción,350.0,350.0,RTX A2000 12 GB + CPU
+"2009–2012, estación con GPU",tuned,Total,3508.0,3508.0,—
+"2009–2012, estación con GPU",TimesFM,Inferencia (sin ajuste de pesos),4389.8,4389.8,RTX A2000 12 GB
+"2009–2012, estación con GPU",TimesFM,"Selección única de configuración (hecha en 2013–2016, suma de las variantes)",2948.0,2948.0,RTX A2000 12 GB
+"2009–2012, estación con GPU",TimesFM,Total incluyendo la selección una vez,7337.8,7337.8,—
+"2009–2012, estación con GPU",TimesFM / tuned,Cociente de totales,2.091733181299886,—,—
+"2009–2012, otra máquina, sin GPU",LLR simple seleccionado,Carga de datos,14.3,14.3,"Intel Core i9-14900K (32 hilos), 125 GB RAM"
+"2009–2012, otra máquina, sin GPU",LLR simple seleccionado,Selección conjunta de h y año de inicio (40 combinaciones),77.9,77.9,"Intel Core i9-14900K (32 hilos), 125 GB RAM"
+"2009–2012, otra máquina, sin GPU",LLR simple seleccionado,"Ajuste final, predicción y escritura",9.8,9.8,"Intel Core i9-14900K (32 hilos), 125 GB RAM"
+"2009–2012, otra máquina, sin GPU",LLR simple seleccionado,Total,102.0,102.0,"Intel Core i9-14900K (32 hilos), 125 GB RAM"
+"2009–2012, otra máquina, sin GPU",TimesFM / LLR simple seleccionado,Cociente de totales,71.93921568627451,—,—
+"2009–2012, otra máquina, sin GPU",tuned / LLR simple seleccionado,Cociente de totales,34.3921568627451,—,—
+"2009–2012, otra máquina, sin GPU",LLR con rezagos seleccionado,Carga de datos,14.4,14.4,"Intel Core i9-14900K (32 hilos), 125 GB RAM"
+"2009–2012, otra máquina, sin GPU",LLR con rezagos seleccionado,Selección conjunta de h y año de inicio (40 combinaciones),61.5,61.5,"Intel Core i9-14900K (32 hilos), 125 GB RAM"
+"2009–2012, otra máquina, sin GPU",LLR con rezagos seleccionado,"Ajuste final, predicción y escritura",9.7,9.7,"Intel Core i9-14900K (32 hilos), 125 GB RAM"
+"2009–2012, otra máquina, sin GPU",LLR con rezagos seleccionado,Total,85.6,85.6,"Intel Core i9-14900K (32 hilos), 125 GB RAM"
+"2009–2012, otra máquina, sin GPU",TimesFM / LLR con rezagos seleccionado,Cociente de totales,85.72196261682244,—,—
+"2009–2012, otra máquina, sin GPU",tuned / LLR con rezagos seleccionado,Cociente de totales,40.981308411214954,—,—
+Producto 2017–2020 (corridas no controladas),tuned,"Selección de recetas, producción 1981–2016",117698.0,117698.0,no registrado (una GPU local)
+Producto 2017–2020 (corridas no controladas),tuned,"Ajuste, producción 1981–2016",24293.0,24293.0,no registrado (una GPU local)
+Producto 2017–2020 (corridas no controladas),tuned,Selección y ajuste,141991.0,141991.0,—
+Producto 2017–2020 (corridas no controladas),tuned,Predicción 2017–2020,1180.0,1180.0,no registrado; 14 procesos
+Producto 2017–2020 (corridas no controladas),TimesFM,Inferencia 2017–2020,438074.0,438074.0,RTX A2000 12 GB
+Producto 2017–2020 (corridas no controladas),TimesFM / tuned,Cociente de inferencia,371.2491525423729,—,—

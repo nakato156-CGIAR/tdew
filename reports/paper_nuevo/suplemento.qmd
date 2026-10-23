@@ -1,0 +1,231 @@
+---
+title: "Suplemento: TimesFM sin ajuste de pesos frente a regresión local por zonas"
+subtitle: "BORRADOR: no citar ni difundir"
+author:
+  - name: "Piero Palacios"
+    corresponding: true
+    email: "piero.palacios@cgiar.org"
+    affiliations:
+      - ref: cip
+  - name: "Henry Juarez"
+    email: "h.juarez@cgiar.org"
+    affiliations:
+      - ref: cip
+  - name: "Christian Borasino"
+    orcid: "0009-0004-6341-6924"
+    email: "christian.velasquez@cgiar.org"
+    affiliations:
+      - ref: cip
+affiliations:
+  - id: cip
+    name: "International Potato Center (CIP)"
+    city: Lima
+    country: Perú
+number-sections: false
+crossref:
+  tbl-title: "Tabla S"
+  fig-title: "Figura S"
+  tbl-prefix: "Tabla S"
+  fig-prefix: "Figura S"
+format:
+  typst:
+    number-sections: false
+  html:
+    number-sections: false
+---
+
+Las tablas rotulan los bloques por sus años de prueba, 2009–2012 y 2013–2016, y los ámbitos como «dominio completo» y «Perú», igual que el cuerpo del artículo. Brecha = RMSE(A) − RMSE(B); un valor negativo favorece a A.
+
+# S1. tuned sin rezagos de Td {#sec-s1}
+
+::: {#tbl-s1}
+{{< include tablas/s1.md >}}
+
+Brechas de tuned sin rezagos de Td y de TimesFM frente a él, con IC al {{< var bootstrap.nivel >}} % por bloques espaciales de {{< var bootstrap.bloque_grados >}}° y por bloques mes-año.
+:::
+
+::: {#tbl-s1-anual}
+{{< include tablas/s1_anual.md >}}
+
+RMSE anual de tuned y de tuned sin rezagos de Td. La diferencia por año es descriptiva, sin IC.
+:::
+
+::: {#tbl-s1-victorias}
+{{< include tablas/s1_victorias.md >}}
+
+Zonas en que tuned sin rezagos de Td tiene menor RMSE que tuned y que el LLR simple, y zonas en que el LLR simple tiene menor RMSE que tuned sin rezagos de Td.
+:::
+
+Tuned sin rezagos de Td repite el protocolo de tuned con un pool sin rezagos de Td, de modo que cambian el pool y las recetas y ventanas que la selección elige en consecuencia. Su RMSE es menor que el de tuned en el dominio completo por {{< var brecha.ll4.panel.tuned_vs_tuned_sin_td.abs >}} °C en 2013–2016 (IC mes-año {{< var brecha.ll4.panel.tuned_vs_tuned_sin_td.ma_ic >}}) y por {{< var brecha.ll4b.panel.tuned_vs_tuned_sin_td.abs >}} °C en 2009–2012 (IC mes-año {{< var brecha.ll4b.panel.tuned_vs_tuned_sin_td.ma_ic >}}, que incluye cero). Por año, su RMSE fue mayor que el de tuned en el dominio completo en {{< var a2.anios_sin_td_peor >}} y menor en los demás (@tbl-s1-anual). Fue menor en {{< var victorias.ll4.panel.tuned_sin_td_vs_tuned >}} de {{< var zonas.ll4.panel.n_zonas >}} zonas en 2013–2016 y en {{< var victorias.ll4b.panel.tuned_sin_td_vs_tuned >}} de {{< var zonas.ll4b.panel.n_zonas >}} en 2009–2012. Frente al LLR simple, la brecha es de {{< var brecha.ll4.panel.tuned_sin_td_vs_llr_simple.v >}} °C en 2013–2016 (IC mes-año {{< var brecha.ll4.panel.tuned_sin_td_vs_llr_simple.ma_ic >}}) y de {{< var brecha.ll4b.panel.tuned_sin_td_vs_llr_simple.v >}} °C en 2009–2012. La brecha de TimesFM frente a tuned sin rezagos de Td en 2013–2016 con dominio completo es de {{< var brecha.ll4.panel.timesfm_vs_tuned_sin_td.v >}} °C, con IC mes-año {{< var brecha.ll4.panel.timesfm_vs_tuned_sin_td.ma_ic >}}. Las tablas no aíslan qué componente causa la reducción.
+
+# S2. Tmin barajada {#sec-s2}
+
+::: {#tbl-s2}
+{{< include tablas/s2.md >}}
+
+Corridas del control de Tmin barajada en 2013–2016, en el subconjunto de cribado. «Entre años» y «entre celdas» son los modos de barajado de la Tmin del bloque. «—» indica que el campo no aplica: la climatología y tuned no tienen variante de TimesFM, y las corridas con Tmin observada no tienen modo de barajado.
+:::
+
+Con la Tmin alineada, TimesFM en anomalías tuvo un RMSE de {{< var a3.real_anom.rmse >}} °C, frente a {{< var a3.pred_tuned.rmse >}} de tuned y {{< var a3.pred_clim.rmse >}} de la climatología (@fig-s-a3). Con la Tmin barajada entre años, las {{< var a3.barajado_anio.n_corridas >}} corridas ({{< var a3.barajado_anio.n_semillas >}} semillas en la variante en anomalías) quedaron entre {{< var a3.barajado_anio.rmse_min >}} y {{< var a3.barajado_anio.rmse_max >}} °C, todas peores que la climatología. Con el barajado entre celdas, determinista y de una sola realización, el RMSE fue {{< var a3.shuf_anom_cell_s0.rmse >}} °C. TimesFM es sensible a que la Tmin esté alineada con el bloque. El control no aísla el aporte de la Td histórica.
+
+![RMSE total (°C) de TimesFM con la Tmin del bloque y con la Tmin barajada, frente a climatología y tuned, en {{< var a3.n_celdas >}} celdas del subconjunto de cribado. Con la Tmin barajada entre años, el RMSE superó al de la climatología ({{< var a3.pred_clim.rmse >}}); con la barajada entre celdas fue {{< var a3.shuf_anom_cell_s0.rmse >}}, con una sola realización.](figuras/sfig_a3_tmin_barajada.png){#fig-s-a3 width=100%}
+
+# S3. Escalera de contexto {#sec-s3}
+
+::: {#tbl-s3}
+{{< include tablas/s3.md >}}
+
+Escalera de inicio del contexto, en el subconjunto de cribado de {{< var cribado.n_celdas >}} celdas (no en las {{< var panel.celdas >}} del dominio completo). La climatología se mantiene en 1981–fin del entrenamiento, salvo en TimesFM con contexto desde 2002, que usa climatología y contexto desde 2002.
+:::
+
+::: {#tbl-s3-brechas}
+{{< include tablas/s3_brechas.md >}}
+
+Brechas de RMSE de la escalera de contexto, con IC al {{< var bootstrap.nivel >}} % por bloques espaciales de {{< var bootstrap.bloque_grados >}}° y por bloques mes-año, en el mismo subconjunto de cribado.
+:::
+
+Con la climatología fija, recortar el contexto de TimesFM hasta 2002 cambia el RMSE en {{< var escalera.ll4b.timesfm.i2002.delta >}} °C en 2009–2012 (de {{< var escalera.ll4b.timesfm.i1981.rmse >}} a {{< var escalera.ll4b.timesfm.i2002.rmse >}}) y en {{< var escalera.ll4.timesfm.i2002.delta >}} °C en 2013–2016 (de {{< var escalera.ll4.timesfm.i1981.rmse >}} a {{< var escalera.ll4.timesfm.i2002.rmse >}}), en las {{< var cribado.n_celdas >}} celdas del subconjunto (@fig-s-escalera). El RMSE del LLR con rezagos cambia {{< var escalera.ll4b.llr_rezagos.i1991.delta >}} °C en 2009–2012 y {{< var escalera.ll4.llr_rezagos.i1991.delta >}} °C en 2013–2016 al iniciar en 1991. Cambiar también la climatología pesa más: el RMSE de TimesFM con contexto desde 2002 cambia {{< var escalera.ll4b.timesfm_clim_propia.i2002.delta >}} °C en 2009–2012 y {{< var escalera.ll4.timesfm_clim_propia.i2002.delta >}} °C en 2013–2016. En el dominio completo ({{< var panel.celdas >}} celdas), esa variante tuvo un RMSE de {{< var rmse.ll4b.panel.timesfm_med >}} °C en 2009–2012 y de {{< var rmse.ll4.panel.timesfm_med >}} °C en 2013–2016, frente a {{< var rmse.ll4b.panel.timesfm >}} y {{< var rmse.ll4.panel.timesfm >}} °C de la referencia. La escalera mide la sensibilidad al inicio del historial y de la climatología; no identifica un quiebre del producto en 2000 ni determina el historial mínimo.
+
+![RMSE total (°C) según el año de inicio del historial, en las {{< var cribado.n_celdas >}} celdas del subconjunto de cribado. La climatología se mantuvo fija en 1981–fin del entrenamiento. La línea punteada es tuned con su configuración de producción.](figuras/sfig_escalera_contexto.png){#fig-s-escalera width=100%}
+
+# S4. Contraste con estaciones ISD y productos 2017–2020 {#sec-s4}
+
+::: {#tbl-s4}
+{{< include tablas/s4.md >}}
+
+Contraste con estaciones de aeropuerto ISD [@smith2011], por producto, período y métrica. Los conteos de estaciones y días-estación difieren entre métricas. Error = fuente − estación.
+:::
+
+::: {#tbl-s4-delta}
+{{< include tablas/s4_delta.md >}}
+
+Diferencia de RMSE entre TimesFM y tuned (columna «palacios») sobre los mismos días de 2017–2020, con IC al {{< var bootstrap.nivel >}} % por bootstrap de estaciones.
+:::
+
+En los bloques se mide cuánto reproduce cada método la Td grillada de PISCO; aquí, cuánto se aproxima cada producto a la Td atmosférica en puntos de aeropuerto. Para PISCO en 2009–2016 hay {{< var a4.td.pisco_2009_2016.n_estaciones >}} estaciones y {{< var a4.td.pisco_2009_2016.n_dias >}} días-estación en Td absoluta, y {{< var a4.anom.pisco_2009_2016.n_estaciones >}} y {{< var a4.anom.pisco_2009_2016.n_dias >}} en anomalías; para los dos productos de 2017–2020, {{< var a4.td.timesfm_2017_2020.n_estaciones >}} estaciones y {{< var a4.td.timesfm_2017_2020.n_dias >}} días-estación en ambas métricas. Los tres productos tienen sesgo positivo en Td: {{< var a4.td.pisco_2009_2016.sesgo >}} °C para PISCO, {{< var a4.td.palacios_2017_2020.sesgo >}} para tuned y {{< var a4.td.timesfm_2017_2020.sesgo >}} para TimesFM. En 2017–2020, la diferencia de RMSE de TimesFM frente a tuned es de {{< var a4.delta_rmse.td.timesfm_vs_palacios.v >}} °C en Td, con IC {{< var a4.delta_rmse.td.timesfm_vs_palacios.ic >}} que incluye cero, y de {{< var a4.delta_rmse.anom.timesfm_vs_palacios.v >}} °C en anomalías, con IC {{< var a4.delta_rmse.anom.timesfm_vs_palacios.ic >}} que excluye cero. El acuerdo entre productos no equivale a exactitud, y no se verificó la independencia de las estaciones respecto de PISCO.
+
+# S5. LLR no seleccionados y seleccionados {#sec-s5}
+
+::: {#tbl-s5}
+{{< include tablas/s5.md >}}
+
+RMSE de cada LLR y brecha de TimesFM frente a él, con IC al {{< var bootstrap.nivel >}} % por bloques espaciales de {{< var bootstrap.bloque_grados >}}° y por bloques mes-año. Brecha = RMSE(TimesFM) − RMSE(LLR); negativa favorece a TimesFM.
+:::
+
+La brecha de TimesFM frente a las {{< var diseno.llr.n_variantes >}} LLR sin zonas es negativa en los {{< var sesgo_conteo.n_casos >}} casos de cada bloque y ámbito, y su tamaño depende de la variante. En 2009–2012 ambos IC excluyen cero frente a las {{< var diseno.llr.n_variantes >}}. En 2013–2016 con dominio completo, la brecha es de {{< var brecha.ll4.panel.timesfm_vs_llr_simple.v >}} °C frente al LLR simple, de {{< var brecha.ll4.panel.timesfm_vs_llr_simple_sel.v >}} °C frente al LLR simple seleccionado (IC mes-año {{< var brecha.ll4.panel.timesfm_vs_llr_simple_sel.ma_ic >}}) y de {{< var brecha.ll4.panel.timesfm_vs_llr_rezagos_sel.v >}} °C frente al LLR con rezagos seleccionado. El IC mes-año incluye cero frente a las {{< var diseno.llr.n_variantes >}} (excluye cero en {{< var brecha_conteo.llr_ll4_panel.n_ma_excluyen >}}), y el IC espacial excluye cero frente a {{< var brecha_conteo.llr_ll4_panel.esp_excluyen >}}. Frente a cada variante, los dos IC excluyen cero en {{< var brecha_conteo.timesfm_vs_llr_simple.n_excluyen >}} de {{< var sesgo_conteo.n_casos >}} combinaciones de bloque y ámbito. La cercanía de las LLR a TimesFM no depende de una sola variante.
+
+# S6. Conteo de zonas con menor RMSE de TimesFM {#sec-s6}
+
+::: {#tbl-s6}
+{{< include tablas/s6.md >}}
+
+Zonas en que TimesFM tiene menor RMSE que cada rival, con la brecha por zona más y menos negativa frente a tuned. Las brechas por zona son descriptivas, sin IC.
+:::
+
+El conteo es un registro secundario que no pondera por celdas ni por magnitud. TimesFM tiene menor RMSE que tuned en {{< var victorias.ll4b.panel.timesfm_vs_tuned >}} de {{< var zonas.ll4b.panel.n_zonas >}} zonas en 2009–2012, con brechas entre {{< var zonas.ll4b.panel.vs_tuned.mas_negativa >}} y {{< var zonas.ll4b.panel.vs_tuned.menos_negativa >}} °C, y en {{< var victorias.ll4.panel.timesfm_vs_tuned >}} de {{< var zonas.ll4.panel.n_zonas >}} en 2013–2016, con brechas entre {{< var zonas.ll4.panel.vs_tuned.mas_negativa >}} y {{< var zonas.ll4.panel.vs_tuned.menos_negativa >}} °C. Frente al LLR con rezagos seleccionado, tiene menor RMSE en {{< var victorias.ll4b.panel.timesfm_vs_llr_rezagos_sel >}} zonas en 2009–2012 y en {{< var victorias.ll4.panel.timesfm_vs_llr_rezagos_sel >}} en 2013–2016; la excepción es la zona {{< var zonas.ll4.panel.vs_llr_rezagos_sel.peor_zona >}} ({{< var zonas.ll4.panel.vs_llr_rezagos_sel.peor_zona_celdas >}} celdas), con una brecha de {{< var zonas.ll4.panel.vs_llr_rezagos_sel.peor_zona_gap >}} °C.
+
+# S7. Detalle de costo y lista completa de corridas {#sec-s7}
+
+::: {#tbl-s7-detalle}
+{{< include tablas/tab6.md >}}
+
+Tiempo de pared por etapa y método, en 2009–2012 y a escala de producto 2017–2020 (corridas no controladas). Los cocientes son redondeados. La selección de TimesFM se hizo una vez, en 2013–2016, y se suma una sola vez al total. Las filas de las LLR seleccionadas se midieron en una corrida única, en otra máquina y sin GPU (Intel Core i9-14900K), y no son controladas frente a tuned y TimesFM. La tabla de costo del cuerpo resume esta.
+:::
+
+::: {#tbl-s7}
+{{< include tablas/s7.md >}}
+
+Corridas de costo documentadas, con celdas, tiempo de pared, hardware y observaciones. Los tiempos de las LLR corresponden a la versión sin selección conjunta de h y año de inicio. «No registrado» indica que el log de la corrida no consigna el hardware.
+:::
+
+La lista incluye corridas que la tabla anterior no usa: la inferencia de TimesFM en Td cruda, las corridas de 2013–2016 de ambos métodos, la pasada de escala de TimesFM y las etapas de las LLR sin selección conjunta. La inferencia de TimesFM en 2009–2012 procesó {{< var costo.timesfm_ll4b_inferencia.celdas_por_s >}} celdas por segundo, menos que la pasada de escala ({{< var costo.timesfm_ll4_escala.celdas_por_s >}}); no se identificó la causa. La corrida de tuned en 2013–2016 es de Palacios y su log no registra el host. Los tiempos de las LLR no se leen junto al RMSE de las versiones seleccionadas, cuyo costo no se midió.
+
+# S8. Insumos de diseño {#sec-s8}
+
+::: {#tbl-s-insumos}
+{{< include tablas/tab1_insumos.md >}}
+
+Insumos y decisiones previas de cada método. Las cifras de diseño del cuerpo se calculan con código.
+:::
+
+El pool de tuned tiene {{< var diseno.tuned.pool_terminos >}} términos: la constante, la anomalía de Tmin del día, {{< var diseno.tuned.pool_rezagos_tmin >}} rezagos de Tmin ({{< var diseno.tuned.rezagos_tmin >}} días) y {{< var diseno.tuned.pool_rezagos_td >}} rezagos de Td ({{< var diseno.tuned.rezagos_td >}} días); tuned sin rezagos de Td conserva {{< var diseno.tuned.pool_sin_td >}}. Las LLR sin selección conjunta eligen h entre {{< var diseno.llr.h_n >}} valores ({{< var diseno.llr.h_min >}} a {{< var diseno.llr.h_max >}}) con los últimos {{< var diseno.llr.validacion_anios >}} años de entrenamiento como validación. Las seleccionadas evalúan {{< var diseno.llr_sel.combinaciones >}} combinaciones de {{< var diseno.llr_sel.h_n >}} valores de h ({{< var diseno.llr_sel.h_min >}} a {{< var diseno.llr_sel.h_max >}}) y {{< var diseno.llr_sel.inicios_n >}} años de inicio ({{< var diseno.llr_sel.inicio_min >}} a {{< var diseno.llr_sel.inicio_max >}}). La grilla de h de tuned proviene de la documentación de costos y no de los valores por defecto del código, por lo que no se calculó como cifra.
+
+# S9. Habilidad frente a climatología, razón de varianzas y correlación {#sec-s9}
+
+::: {#tbl-s9}
+{{< include tablas/s9_skill.md >}}
+
+Habilidad (1 − MSE/MSE de la climatología), razón de varianzas de la anomalía predicha respecto de la observada y correlación de anomalías, por bloque, ámbito y método.
+:::
+
+TimesFM tiene la mayor habilidad, la mayor razón de varianzas y la mayor correlación en los cuatro casos. En el dominio completo de 2009–2012 la habilidad es de {{< var skill.ll4b.panel.timesfm.skill >}} para TimesFM y de {{< var skill.ll4b.panel.tuned.skill >}} para tuned; en 2013–2016, de {{< var skill.ll4.panel.timesfm.skill >}} y {{< var skill.ll4.panel.tuned.skill >}}. La razón de varianzas es menor que uno en todas las filas, y ningún método reproduce la variabilidad de las anomalías observadas. En 2013–2016 con dominio completo, la de TimesFM es {{< var skill.ll4.panel.timesfm.razon_varianza >}} y la de tuned, {{< var skill.ll4.panel.tuned.razon_varianza >}}. Las diferencias son descriptivas, sin IC.
+
+# S10. Error en las colas de la anomalía {#sec-s10}
+
+::: {#tbl-s10}
+{{< include tablas/s10_extremos.md >}}
+
+RMSE y sesgo por clase de la anomalía observada (cola inferior, cuerpo central y cola superior de la distribución de anomalías) y brecha TimesFM − método, por bloque y ámbito.
+:::
+
+En la cola cálida (5 % superior) el sesgo de todos los métodos es negativo: subestiman las anomalías positivas. En 2013–2016 con dominio completo, el RMSE de esa clase es de {{< var extremos.ll4.panel.sup5.timesfm.rmse >}} °C para TimesFM y de {{< var extremos.ll4.panel.sup5.tuned.rmse >}} °C para tuned; en la cola fría (5 % inferior), de {{< var extremos.ll4.panel.inf5.timesfm.rmse >}} y {{< var extremos.ll4.panel.inf5.tuned.rmse >}} °C. Las brechas de la cola cálida son mayores en magnitud que las del cuerpo central, y no tienen IC. Las clases se definen por la anomalía observada, es decir, condicionan por el resultado, y eso produce un sesgo de signo por construcción: que todos los métodos subestimen la cola cálida es en parte efecto de esa definición.
+
+# S11. Calibración de los cuantiles de TimesFM {#sec-s11}
+
+::: {#tbl-s11}
+{{< include tablas/s11_calibracion.md >}}
+
+Cobertura del intervalo q10–q90, anchura media, CRPS aproximado por cuadratura de los nueve cuantiles y fracción de observaciones bajo q10 y sobre q90, por bloque, ámbito y año. Solo TimesFM entrega cuantiles.
+:::
+
+La cobertura nominal del intervalo es {{< var calib.nominal >}} %. En el dominio completo la cobertura total fue de {{< var calib.ll4b.panel.total.cobertura >}} % en 2009–2012 y de {{< var calib.ll4.panel.total.cobertura >}} % en 2013–2016, con una anchura media de {{< var calib.ll4b.panel.total.anchura >}} y {{< var calib.ll4.panel.total.anchura >}} °C. Las colas son asimétricas: en 2009–2012 el {{< var calib.ll4b.panel.total.frac_bajo_q10 >}} % de las observaciones quedó bajo q10 y el {{< var calib.ll4b.panel.total.frac_sobre_q90 >}} % sobre q90, frente a un {{< var calib.cola_nominal >}} % nominal en cada cola. La cobertura varía por año. Los rivales no tienen salida probabilística y no hay comparación de calibración.
+
+# S12. Brecha por banda de altitud {#sec-s12}
+
+::: {#tbl-s12}
+{{< include tablas/s12_altitud.md >}}
+
+Celdas por banda, RMSE de TimesFM y brecha TimesFM − rival por banda de altitud, bloque y ámbito. Las brechas son descriptivas, sin IC.
+:::
+
+Frente a tuned, la brecha es negativa en todas las bandas y mayor en magnitud en la más alta: en Perú y 2009–2012, {{< var altitud.ll4b.peru.b3500_mas.brecha.tuned >}} °C en esa banda y {{< var altitud.ll4b.peru.b0_500.brecha.tuned >}} °C en la más baja. Frente al LLR con rezagos seleccionado, la brecha de la banda más baja en el dominio completo de 2013–2016 es de {{< var altitud.ll4.panel.b0_500.brecha.llr_rezagos_sel >}} °C, de signo positivo, y en las bandas superiores es negativa. Las celdas por banda son muy desiguales: la más baja reúne {{< var altitud.ll4.panel.b0_500.celdas >}} celdas en el dominio completo.
+
+# S13. Brecha por fase ENSO {#sec-s13}
+
+::: {#tbl-s13}
+{{< include tablas/s13_enso.md >}}
+
+RMSE y sesgo de TimesFM y brecha frente a cada rival por clase ONI (El Niño, La Niña, neutral) y número de meses de cada clase, por bloque y ámbito. La clasificación usa el ONI de NOAA CPC.
+:::
+
+Los estratos están desbalanceados: en 2013–2016 hay {{< var enso.ll4.panel.el_nino.meses >}} meses de El Niño, {{< var enso.ll4.panel.neutral.meses >}} neutrales y {{< var enso.ll4.panel.la_nina.meses >}} de La Niña. La fila de un único mes refleja ese mes y no se interpreta. La fase ENSO no se usa para explicar el resultado de 2013 ni de 2015–2016, y las brechas por clase no tienen IC.
+
+# S14. Contribución de la zona dominante {#sec-s14}
+
+::: {#tbl-s14}
+{{< include tablas/s14_zona_dominante.md >}}
+
+Brecha total, brecha dentro de la zona SENAMHI con más celdas y brecha en el resto de las celdas, por rival, bloque y ámbito, con el porcentaje de celdas de la zona.
+:::
+
+La zona A(r)A' reúne el {{< var zdom.ll4b.panel.pct_celdas >}} % de las celdas del dominio completo ({{< var zdom.ll4b.peru.pct_celdas >}} % en Perú) y aporta el {{< var zdom.ll4b.panel.timesfm.pct_sse_zona >}} % del error cuadrático de TimesFM en 2009–2012. Frente a tuned, la brecha en 2013–2016 con dominio completo es de {{< var zdom.ll4.panel.brecha.tuned.total >}} °C en total, {{< var zdom.ll4.panel.brecha.tuned.zona >}} °C dentro de la zona y {{< var zdom.ll4.panel.brecha.tuned.sin_zona >}} °C en el resto. Frente al LLR con rezagos seleccionado es de {{< var zdom.ll4.panel.brecha.llr_rezagos_sel.zona >}} °C dentro de la zona, donde TimesFM no mejora, y de {{< var zdom.ll4.panel.brecha.llr_rezagos_sel.sin_zona >}} °C en el resto. La descomposición es descriptiva, sin IC.
+
+# S15. Detalle de la inferencia {#sec-s15}
+
+Los IC se obtuvieron con cuatro esquemas de bootstrap por bloques, pareados y con las mismas réplicas para todas las parejas. El esquema espacial usa cuadrículas de {{< var bootstrap.bloque_grados >}}° ({{< var bootstrap.bloques.espacial.panel >}} bloques en el dominio completo y {{< var bootstrap.bloques.espacial.peru >}} en Perú) y conserva la serie temporal de cada celda. El esquema mes-año ({{< var bootstrap.bloques.mes_anio.panel >}} bloques) conserva la dependencia espacial dentro del mes. El esquema espacio-tiempo usa una cuadrícula de {{< var bootstrap.bloque_grados >}}° durante un año ({{< var robustez.ll4.panel.tuned.esa_bloques >}} bloques en el dominio completo y {{< var robustez.ll4.peru.tuned.esa_bloques >}} en Perú) y rompe la dependencia entre años de una misma cuadrícula. El esquema trimestre-año ({{< var robustez.ll4.panel.tuned.ta_bloques >}} bloques) es solo temporal: conserva la dependencia espacial completa y, con pocos bloques, produce los IC más anchos. La prueba de Diebold–Mariano usa la serie diaria del diferencial de error cuadrático promediado entre celdas, varianza de Newey–West con núcleo de Bartlett, corrección de Harvey–Leybourne–Newbold para horizonte uno, p-valores de una t con T − 1 grados de libertad y ajuste de Holm sobre {{< var dm.familia >}} pruebas, por separado para cada rezago ({{< var dm.rezago_corto >}} y {{< var dm.rezago_largo >}} días). Contrasta el MSE y no el RMSE.
+
+::: {#tbl-s15}
+{{< include tablas/tab7_robustez.md >}}
+
+Brecha pareada de RMSE, TimesFM − rival (°C), con IC al {{< var bootstrap.nivel >}} % bajo bloques espaciales de {{< var bootstrap.bloque_grados >}}°, de {{< var bootstrap.bloque_grados >}}° × año y trimestre-año, y p de la prueba de Diebold–Mariano con corrección de Harvey–Leybourne–Newbold, ajustado por Holm sobre la familia de {{< var dm.familia >}}, con rezagos de {{< var dm.rezago_corto >}} y {{< var dm.rezago_largo >}} días. Un IC que incluye cero o un p ajustado alto indica que no se distinguió una diferencia; no establece empate.
+:::
+
+Las {{< var dm.familia >}} pruebas mezclan ámbitos anidados y bloques que comparten celdas, de modo que no son independientes y el ajuste de Holm es conservador. Los recuentos de IC que excluyen cero son sobre comparaciones solapadas. El rezago no se eligió con un criterio basado en los datos; el largo es una sensibilidad.
+
+# S16. Brechas por año y por zona {#sec-s16}
+
+![Brecha anual de RMSE, TimesFM − rival (°C), 2009–2016, por ámbito. Un valor negativo favorece a TimesFM. La línea discontinua separa los bloques 2009–2012 y 2013–2016, evaluados con contextos y selecciones distintos. No se muestran IC por año.](figuras/fig3_anual.png){#fig-anual width=100%}
+
+![Brecha de RMSE por zona SENAMHI, TimesFM − rival (°C), dominio completo. Entre paréntesis, el número de celdas de la zona; el tamaño del punto es proporcional a su raíz. Las zonas se ordenan por la brecha frente a tuned en 2013–2016. La brecha de una zona con pocas celdas es la de esas celdas. No se muestran IC por zona.](figuras/fig4_zonas.png){#fig-zonas width=100%}
+
+Frente a tuned, la brecha en el dominio completo fue negativa en {{< var anual_resumen.ll4b.panel.timesfm_vs_tuned.n_negativas >}} de {{< var anual_resumen.ll4b.panel.timesfm_vs_tuned.n_anios >}} años de 2009–2012 y en {{< var anual_resumen.ll4.panel.timesfm_vs_tuned.n_negativas >}} de {{< var anual_resumen.ll4.panel.timesfm_vs_tuned.n_anios >}} de 2013–2016 (@fig-anual). El año {{< var inversion.anio >}} es el único en que se invierte, con una brecha de {{< var inversion.gap_tuned >}} °C, y solo en el dominio completo. Por zona, TimesFM tuvo menor RMSE que tuned en las {{< var zonas.ll4b.panel.vs_tuned.n_negativas >}} zonas de 2009–2012 y en las {{< var zonas.ll4.panel.vs_tuned.n_negativas >}} de 2013–2016 (@fig-zonas). Frente al LLR con rezagos seleccionado, en 2013–2016, {{< var zonas.ll4.panel.vs_llr_rezagos_sel.n_negativas >}} zonas tienen brecha negativa y {{< var zonas.ll4.panel.vs_llr_rezagos_sel.n_positivas >}} positiva. Los extremos corresponden a zonas con pocas celdas y no se interpretan como característica de la zona. Estas brechas son descriptivas y no se corrigen por comparaciones múltiples.

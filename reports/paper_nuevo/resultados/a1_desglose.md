@@ -1,4 +1,4 @@
-> Corrección editorial (2026-10-21): se conserva este resultado exploratorio como registro. La escalera no demuestra una ruptura de PISCO en 2000 atribuible a MODIS. Un IC que contiene cero no prueba equivalencia ni empate. Se sigue `../ORIENTACION_PAPER.md`; cualquier interpretación anterior incompatible queda retirada.
+> Revisión de coherencia (2026-10-21): se sigue `../ORIENTACION_PAPER.md`. Se presenta primero `ll4b` en el artículo; las tablas de este informe mantienen el orden de salida del generador. Se corrigió la interpretación sin recalcular ni modificar las tablas generadas.
 
 # A1: desglose de la comparación TimesFM frente a LLR y `tuned`
 
@@ -22,8 +22,8 @@ Desde esta corrida entran también `tuned` sin rezagos de Td (`tuned_sin_td`: mi
 protocolo que `tuned`, pero con el pool de candidatos reducido a `const`, `TMIN_anom` y
 sus rezagos; script `experiments/timesfm/scripts/10_tuned_sin_rezagos_td.sh`, bead
 `tdew-f6a`) y TimesFM con objetivo anomalía y contexto desde 2002 (`timesfm_anom_med`,
-variante `tmin_anom_med`: 11 años de contexto en `ll4` y 7 en `ll4b`, solo el período
-en que PISCO usa LST de MODIS). Por último, `llr_simple_sel` y `llr_rezagos_sel` son
+variante `tmin_anom_med`: 11 años de contexto en `ll4` y 7 en `ll4b`, con
+climatologías también recortadas desde 2002). Por último, `llr_simple_sel` y `llr_rezagos_sel` son
 los dos LLR con el semiancho `h` y el año de inicio del ajuste elegidos juntos por
 validación interna: `h` en (7, 11, 15, 21, 31, 45, 60, 90, 120, 180) y el inicio en
 (1981, 1986, 1991, 1996), con coeficientes ajustados en [inicio, train_end − 4],
@@ -41,7 +41,10 @@ unión de los contornos de `reports/timesfm_benchmark/geo/peru_departamental_sim
 evaluada en el centro de cada celda de la rejilla de 0,01°. Es la misma máscara que
 dio 8.272 dentro y 8.755 fuera (bead `tdew-214.8`); la prueba
 `tests/test_amenazas_desglose.py` comprueba ese conteo. Dentro del Perú quedan 32 de
-las 33 zonas del panel: «Lago Titicaca» no tiene celdas dentro.
+las 33 unidades cartográficas del panel: «Lago Titicaca» no tiene celdas dentro.
+Se usa «zona» como nombre operativo: el mapa contiene 38 tipos climáticos y tres
+unidades adicionales, 41 en total. La máscara política usada aquí difiere del
+ámbito clasificado del artículo previo de Palacios.
 
 El RMSE macro por zona es el promedio simple de los RMSE de cada zona SENAMHI; da a
 cada zona el mismo peso, de modo que zonas con 1 o 3 celdas (dos casos en el ámbito
@@ -49,9 +52,11 @@ Perú) pesan igual que la que tiene 2.147. Los intervalos son percentiles 2,5 y 
 de 2.000 réplicas (semilla 0) de un bootstrap que remuestrea bloques completos con
 sus sumas de error cuadrático: bloques espaciales de 2° × 2° de lon/lat (74 en el
 panel, 45 en el Perú) o bloques mes-año (48). Las réplicas son las mismas para todas
-las parejas, de modo que la comparación es pareada. El bloque espacial no recoge la
-dependencia temporal y el mes-año no recoge la espacial; ninguno cubre ambas, y el
-más ancho de los dos es la lectura prudente.
+las parejas, de modo que la comparación es pareada. El esquema espacial conserva las
+series completas dentro del bloque y rompe dependencia entre bloques; el mes-año
+conserva todas las celdas y días del mes y rompe dependencia entre meses. Se informan
+ambos como sensibilidades; ninguno representa conjuntamente toda la dependencia
+espacial y temporal.
 
 <!-- tablas:inicio -->
 ### RMSE y sesgo por método, bloque `ll4` (°C)
@@ -246,28 +251,27 @@ Quitar los rezagos de Td a `tuned` baja su RMSE en los dos bloques: de 1,228 a 1
 en `ll4` (brecha `tuned − tuned_sin_td` de +0,054 °C, IC mes-año [+0,019; +0,096]) y de
 1,122 a 1,108 °C en `ll4b` (+0,014 °C, IC mes-año [−0,000; +0,027]). En el Perú las
 mejoras son de +0,036 y +0,005 °C, y en `ll4b` el intervalo mes-año incluye el cero.
-Sin rezagos de Td, `tuned` queda a la par del LLR simple (−0,001 °C en `ll4`, +0,010 °C
-en `ll4b`, ambos con intervalos mes-año que incluyen el cero) y por detrás del LLR con
-rezagos de Tmin en 33 y 32 de 33 zonas. Es consistente con que la mayor parte de la
-desventaja de `tuned` frente al LLR simple (+0,053 °C en `ll4`, +0,024 °C en `ll4b`)
-venga de la recursión sobre Td predicho dentro del bloque; el efecto es mayor en `ll4`,
-el bloque con El Niño 2015-2016.
+Sin rezagos de Td, la brecha de `tuned` frente al LLR simple es pequeña (−0,001 °C en `ll4`, +0,010 °C
+en `ll4b`, ambos con intervalos mes-año que incluyen el cero). La variante queda por
+detrás del LLR con rezagos de Tmin en 33 y 32 de 33 zonas, respectivamente. La reducción es mayor en `ll4`. Al reducir el pool se vuelven a elegir recetas y
+ventanas; no se aisló la recursión como causa de la diferencia ni se atribuye el
+resultado al evento El Niño de ese bloque.
 
-TimesFM sigue por delante de `tuned_sin_td`, que es el rival con entradas equiparables
-(solo Tmin, sin Td observado en el bloque). La brecha `timesfm_anom − tuned_sin_td` es
+El RMSE puntual de TimesFM es menor que el de `tuned_sin_td`, que también usa Tmin observada y no recibe
+Td observada durante el bloque; se mantienen diferencias en el uso del historial. La brecha `timesfm_anom − tuned_sin_td` es
 de −0,021 °C en `ll4` sobre el panel, con IC espacial [−0,029; −0,013] y mes-año
 [−0,056; +0,015], y de −0,062 °C en `ll4b` (mes-año [−0,084; −0,043]). En el Perú es de
 −0,043 °C en `ll4` (mes-año [−0,060; −0,027]) y −0,052 °C en `ll4b` (mes-año
 [−0,064; −0,040]). La lectura prudente es la misma que frente al LLR con rezagos:
 ventaja clara en `ll4b` y en el Perú, no concluyente en el panel de `ll4`.
 
-Acortar el contexto de TimesFM a los años con MODIS empeora el resultado:
+La variante que recorta contexto y climatología desde 2002 tiene mayor RMSE:
 `timesfm_anom_med − timesfm_anom` es de +0,047 °C en `ll4` (mes-año [+0,027; +0,068])
 y +0,062 °C en `ll4b` ([+0,024; +0,100]), y el sesgo pasa a ser positivo en ambos bloques
 (+0,201 y +0,089 °C en el panel). Con esa variante TimesFM no supera al LLR con
 rezagos: la brecha es de +0,040 °C en `ll4` y +0,019 °C en `ll4b` sobre el panel, con
 intervalos mes-año que incluyen el cero, y de +0,005 °C en el Perú en ambos bloques.
-Esa pérdida no se debe al contexto corto. `tmin_anom_med` recorta también la
+La comparación siguiente separa el recorte de contexto del de climatología en una muestra menor. `tmin_anom_med` recorta también la
 climatología con la que se forman y deshacen las anomalías (2002-2012 en `ll4`,
 2002-2008 en `ll4b`). En la escalera de contexto sobre el panel de cribado
 (`a1_escalera_contexto.md`, 1.092 celdas), con la climatología fija en 1981-train_end,
@@ -275,9 +279,9 @@ pasar el inicio del contexto de 1981 a 2002 costó +0,005 °C en `ll4` y +0,002 
 `ll4b`. Con el contexto desde 2002, recortar además la climatología costó +0,022 °C en
 `ll4` (IC mes-año [+0,015; +0,029]) y +0,044 °C en `ll4b` ([+0,035; +0,053]). En esa
 muestra la climatología explica unas cuatro quintas partes de la diferencia en `ll4` y
-casi toda en `ll4b`. La ventaja de `timesfm_anom` depende, por tanto, de estimar la
-climatología con los años desde 1981, y mucho menos de la longitud del contexto o de que
-incluya años sin MODIS.
+casi toda en `ll4b`. En esa muestra el cambio de climatología tiene mayor efecto que el de contexto.
+No se determinó un mínimo de años necesario ni se identificó un cambio de producto
+asociado a MODIS.
 
 Con los LLR elegidos por validación interna la ventaja de TimesFM se reduce en todos los
 casos, y en el panel de `ll4` deja de distinguirse de cero. La selección mejora a los dos LLR en los dos
@@ -286,15 +290,15 @@ sobre el panel (IC espacial [−0,008; −0,002] y [−0,017; −0,012]), y de �
 en el Perú; `llr_rezagos_sel` gana a `llr_rezagos` en 27 y 31 de 33 zonas. Frente a ese
 rival, `timesfm_anom − llr_rezagos_sel` es de −0,003 °C en `ll4` sobre el panel, con IC
 espacial [−0,011; +0,004] y mes-año [−0,029; +0,021]; en `ll4b` es de −0,028 °C
-(espacial [−0,031; −0,026], mes-año [−0,044; −0,014]). En el Perú es de −0,026 °C en
+(espacial [−0,031; −0,026], mes-año [−0,044; −0,013]). En el Perú es de −0,026 °C en
 `ll4` (espacial [−0,033; −0,018], mes-año [−0,038; −0,014]) y −0,025 °C en `ll4b`
 (espacial [−0,028; −0,023], mes-año [−0,034; −0,016]). Frente al LLR simple seleccionado
 las brechas son de −0,018 y −0,037 °C en el panel y −0,041 y −0,030 °C en el Perú; solo
 la de `ll4` en el panel tiene un intervalo mes-año que incluye el cero
 ([−0,045; +0,007]). Por zonas, TimesFM gana a `llr_rezagos_sel` en 32 de 33 en `ll4` y
 en todas en `ll4b`. La lectura queda como antes, con brechas más pequeñas: en el
-panel de `ll4` TimesFM y el LLR con rezagos son indistinguibles en RMSE agregado (1,154
-contra 1,157 °C), y en `ll4b` y en el Perú TimesFM queda por delante en 0,025 a
+panel de `ll4` la brecha de RMSE agregado es −0,003 °C (1,154
+contra 1,157 °C) y ambos IC contienen cero, sin establecer equivalencia, y en `ll4b` y en el Perú TimesFM queda por delante en 0,025 a
 0,028 °C con intervalos que excluyen el cero. En 2013 el LLR seleccionado sigue por
 delante de TimesFM en el panel (1,145 contra 1,205 °C) y apenas por detrás en el Perú
 (0,869 contra 0,858 °C).

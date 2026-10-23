@@ -1,0 +1,8 @@
+| Método | Insumos y decisiones previas |
+|:------------------|:-------------------------|
+| Climatología | Media por celda y día del año en los años de entrenamiento. |
+| LLR simple | Climatología de Td y Tmin por celda; núcleo tricúbico circular en el día del año; un único semiancho global elegido en una grilla de 7 valores (7 a 60) con los últimos 4 años de entrenamiento; sin zonas ni rezagos. |
+| LLR con rezagos | Lo mismo, más rezagos fijos de la anomalía de Tmin (1, 2, 7 y 30 días) y una regularización de cresta mínima. |
+| LLR seleccionados | Misma familia de regresión local, con búsqueda conjunta de 10 semianchos (7 a 180) y 4 años de inicio (1981 a 1996) por validación interna; ajuste por celda; sin zonas; costo no medido. |
+| tuned | Zonas climáticas de SENAMHI (41 unidades cartográficas: 38 tipos climáticos y 3 unidades adicionales); pool de 11 términos candidatos (constante, Tmin del día, rezagos de Tmin de 1, 2, 7 y 30 días y rezagos de Td de 1, 2, 3, 7 y 30 días); búsqueda de receta y semiancho por zona y día del año con muestreo de celdas por zona; reconstrucción autorregresiva con sus propios rezagos de Td; implementación en GPU. |
+| TimesFM 3.0 | Checkpoint preentrenado (unos 330 millones de parámetros, licencia no comercial); climatología para construir la anomalía; Tmin observada del bloque como covariable; elección entre 9 configuraciones de entrada, objetivo y contexto; GPU en la práctica. |

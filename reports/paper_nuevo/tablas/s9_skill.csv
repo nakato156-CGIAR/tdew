@@ -1,0 +1,21 @@
+Bloque,Ámbito,Método,Habilidad frente a climatología,Razón de varianzas,Correlación de anomalías
+2009–2012,dominio completo,TimesFM,0.40974,0.45573,0.62357
+2009–2012,dominio completo,tuned,0.32117,0.28171,0.54834
+2009–2012,dominio completo,tuned sin rezagos de Td,0.33775,0.42121,0.56535
+2009–2012,dominio completo,LLR con rezagos seleccionado,0.37747,0.43498,0.59775
+2009–2012,dominio completo,LLR simple seleccionado,0.36744,0.42227,0.59106
+2009–2012,Perú,TimesFM,0.45282,0.53414,0.66599
+2009–2012,Perú,tuned,0.37331,0.3437,0.59488
+2009–2012,Perú,tuned sin rezagos de Td,0.38034,0.52227,0.60967
+2009–2012,Perú,LLR con rezagos seleccionado,0.41774,0.53117,0.63883
+2009–2012,Perú,LLR simple seleccionado,0.41163,0.51611,0.63512
+2013–2016,dominio completo,TimesFM,0.43529,0.37169,0.63846
+2013–2016,dominio completo,tuned,0.36022,0.22109,0.57843
+2013–2016,dominio completo,tuned sin rezagos de Td,0.41496,0.33525,0.61805
+2013–2016,dominio completo,LLR con rezagos seleccionado,0.43232,0.33744,0.63417
+2013–2016,dominio completo,LLR simple seleccionado,0.4174,0.32481,0.62094
+2013–2016,Perú,TimesFM,0.52992,0.42456,0.71199
+2013–2016,Perú,tuned,0.43996,0.27021,0.65074
+2013–2016,Perú,tuned sin rezagos de Td,0.48231,0.40929,0.67365
+2013–2016,Perú,LLR con rezagos seleccionado,0.5017,0.41035,0.68907
+2013–2016,Perú,LLR simple seleccionado,0.48428,0.39335,0.67503

@@ -1,0 +1,45 @@
+# Resultados agregados {#sec-resultados}
+
+TimesFM tiene el menor RMSE puntual entre los métodos de @tbl-metricas en {{< var rmse_min.n_casos_timesfm_menor >}} de {{< var sesgo_conteo.n_casos >}} casos (dos bloques por dos ámbitos). Los tres métodos que usan la Tmin observada del bloque (tuned, LLR con rezagos seleccionado y TimesFM) tienen menor RMSE que la climatología en los cuatro casos; como la climatología no usa esa Tmin, la comparación no aísla su efecto. Los resultados se dan primero para Perú, el ámbito primario, y después para el dominio completo.
+
+::: {#tbl-metricas}
+{{< include tablas/tab3.md >}}
+
+RMSE, MAE y sesgo (°C) por bloque, ámbito y método. El sesgo es la media de estimado menos observado.
+:::
+
+## Bloque 2009–2012 (ajeno a la selección)
+
+TimesFM tuvo menor RMSE que los cuatro rivales en los dos ámbitos. Frente a tuned, la brecha fue {{< var robustez.ll4b.peru.tuned.v >}} °C en Perú y {{< var robustez.ll4b.panel.tuned.v >}} °C en el dominio completo. Frente a los rivales sin recursión fue menor: en Perú, {{< var robustez.ll4b.peru.tuned_sin_td.v >}} °C frente a tuned sin rezagos de Td, {{< var robustez.ll4b.peru.llr_rezagos_sel.v >}} frente al LLR con rezagos seleccionado y {{< var robustez.ll4b.peru.llr_simple_sel.v >}} frente al LLR simple seleccionado; en el dominio completo, {{< var robustez.ll4b.panel.tuned_sin_td.v >}}, {{< var robustez.ll4b.panel.llr_rezagos_sel.v >}} y {{< var robustez.ll4b.panel.llr_simple_sel.v >}} °C. Los IC excluyen cero frente a los {{< var robustez_conteo.esp.ll4b.panel.n_comparaciones >}} rivales, en los dos ámbitos y con los tres esquemas (@fig-brechas, @fig-robustez). Frente al LLR con rezagos seleccionado, el rival más cercano, el IC más ancho (trimestre-año) en el dominio completo fue {{< var robustez.ll4b.panel.llr_rezagos_sel.ta_ic >}} °C.
+
+## Bloque 2013–2016 (usado en el cribado)
+
+Frente a tuned, la brecha fue {{< var robustez.ll4.peru.tuned.v >}} °C en Perú y {{< var robustez.ll4.panel.tuned.v >}} °C en el dominio completo, con IC que excluyen cero en los tres esquemas. Frente a los rivales sin recursión, el resultado depende del ámbito. En Perú las brechas fueron {{< var robustez.ll4.peru.tuned_sin_td.v >}} °C frente a tuned sin rezagos de Td, {{< var robustez.ll4.peru.llr_rezagos_sel.v >}} frente al LLR con rezagos seleccionado y {{< var robustez.ll4.peru.llr_simple_sel.v >}} frente al LLR simple seleccionado, y los IC excluyen cero con todos los esquemas. En el dominio completo fueron {{< var robustez.ll4.panel.tuned_sin_td.v >}}, {{< var robustez.ll4.panel.llr_rezagos_sel.v >}} y {{< var robustez.ll4.panel.llr_simple_sel.v >}} °C. Con bloques espaciales el IC incluye cero solo frente al {{< var robustez_conteo.esp.ll4.panel.incluyen >}}, y con bloques trimestre-año, frente a {{< var robustez_conteo.ta.ll4.panel.incluyen >}}; en esos casos el análisis no distinguió una diferencia.
+
+![Brecha pareada de RMSE, TimesFM − rival (°C), por bloque y ámbito, con dos IC al {{< var bootstrap.nivel >}} %: bloques espaciales de {{< var bootstrap.bloque_grados >}}° (línea gruesa) y bloques mes-año (línea fina). El número impreso en cada fila es la brecha puntual. Un valor negativo indica menor RMSE de TimesFM. La lectura de un IC que incluye cero se explica en @sec-protocolo.](figuras/fig2_brechas.png){#fig-brechas width=100%}
+
+## Robustez a la inferencia
+
+La ventaja sobre tuned resiste todos los esquemas de bootstrap en los cuatro casos. @fig-robustez muestra, para los cuatro rivales, la brecha puntual con los IC bajo tres esquemas de bloques. El IC excluye cero en {{< var robustez_conteo.esp.texto >}} comparaciones con bloques espaciales, en {{< var robustez_conteo.esa.texto >}} con bloques de 2° × año y en {{< var robustez_conteo.ta.texto >}} con trimestre-año. La prueba de Diebold–Mariano, con p de Holm menor que 5 %, resulta significativa en {{< var dm_conteo.lag7.texto >}} comparaciones con el rezago de {{< var dm.rezago_corto >}} días y en {{< var dm_conteo.lag30.texto >}} con el de {{< var dm.rezago_largo >}} días. Estos recuentos son sobre comparaciones solapadas y no son evidencia agregada; los p-valores completos están en el suplemento (S15).
+
+![Brecha pareada de RMSE, TimesFM − rival (°C), por bloque, ámbito y rival, con tres IC al {{< var bootstrap.nivel >}} % por bootstrap de bloques: espaciales de {{< var bootstrap.bloque_grados >}}° (trazo grueso), de {{< var bootstrap.bloque_grados >}}° × año (medio) y trimestre-año (fino). El círculo es la brecha puntual y un valor negativo favorece a TimesFM. Los IC espaciales dejan fijos los días y son los más estrechos.](figuras/fig6_robustez.png){#fig-robustez width=100%}
+
+La prueba de Diebold–Mariano confirma la ventaja sobre tuned salvo en 2013–2016 con dominio completo y rezago largo (p de Holm {{< var dm.ll4.panel.tuned.lag30.p_holm >}}; con el rezago corto, {{< var dm.ll4.panel.tuned.lag7.p_holm >}}). Frente a los rivales sin recursión, las brechas de 2009–2012 y las de Perú excluyen cero bajo todos los esquemas y en esa prueba. En 2013–2016 con dominio completo no se distinguen de cero con bloques trimestre-año ni con la prueba (p de Holm de {{< var dm.ll4.panel.llr_rezagos_sel.lag7.p_holm >}} frente al LLR con rezagos seleccionado con el rezago corto). Los IC espaciales son los más estrechos porque no recogen los choques que afectan a todas las celdas en un mismo período, y los de trimestre-año sí los recogen.
+
+## MAE y sesgo
+
+TimesFM tiene menor MAE que tuned y que el LLR con rezagos seleccionado en los cuatro casos (@tbl-metricas). El sesgo no sigue el mismo orden: el de TimesFM tuvo mayor magnitud que el de tuned en {{< var sesgo_conteo.n_mayor >}} de {{< var sesgo_conteo.n_casos >}} casos ({{< var sesgo_conteo.casos_mayor >}}), y en el dominio completo cambia de signo entre bloques ({{< var sesgo.ll4.panel.timesfm >}} °C en 2013–2016 y {{< var sesgo.ll4b.panel.timesfm >}} °C en 2009–2012).
+
+## Contraste con estaciones
+
+Los bloques miden cuánto reproduce cada método la Td grillada de PISCO; el contraste con estaciones de aeropuerto ISD mide la Td atmosférica observada en puntos. Con {{< var a4.td.pisco_2009_2016.n_estaciones >}} estaciones en 2009–2016, la Td de PISCO tuvo un RMSE de {{< var a4.td.pisco_2009_2016.rmse >}} °C y un sesgo de {{< var a4.td.pisco_2009_2016.sesgo >}} °C. En 2017–2020, sin Td de PISCO, TimesFM tuvo un RMSE de {{< var a4.td.timesfm_2017_2020.rmse >}} °C frente a {{< var a4.td.palacios_2017_2020.rmse >}} °C de tuned ({{< var a4.td.timesfm_2017_2020.n_estaciones >}} estaciones); la diferencia fue {{< var a4.delta_rmse.td.timesfm_vs_palacios.v >}} °C, con IC {{< var a4.delta_rmse.td.timesfm_vs_palacios.ic >}}, que incluye cero.
+
+El error de PISCO se concentra en pocas estaciones (@tbl-isd): {{< var a4.td.pisco_2009_2016.n_sesgo_gt2 >}} de las {{< var a4.td.pisco_2009_2016.n_estaciones_tabla >}} estaciones tienen un sesgo de PISCO superior a 2 °C, con los mayores en {{< var a4.td.pisco_2009_2016.estacion_sesgo1_nombre >}} ({{< var a4.td.pisco_2009_2016.estacion_sesgo1_elev >}} m, {{< var a4.td.pisco_2009_2016.estacion_sesgo1 >}} °C), {{< var a4.td.pisco_2009_2016.estacion_sesgo2_nombre >}} ({{< var a4.td.pisco_2009_2016.estacion_sesgo2_elev >}} m, {{< var a4.td.pisco_2009_2016.estacion_sesgo2 >}} °C) y {{< var a4.td.pisco_2009_2016.estacion_sesgo3_nombre >}} ({{< var a4.td.pisco_2009_2016.estacion_sesgo3_elev >}} m, {{< var a4.td.pisco_2009_2016.estacion_sesgo3 >}} °C). En esas estaciones tuned y TimesFM reproducen un sesgo del mismo signo y magnitud similar; no se examinó el mecanismo. Las columnas de PISCO corresponden a 2009–2016 y las de tuned y TimesFM a 2017–2020, con días distintos, y no se comparan entre sí.
+
+::: {#tbl-isd}
+{{< include tablas/tab8_isd_estaciones.md >}}
+
+Sesgo y RMSE (°C) de la Td frente a cada estación ISD (error = producto − estación), ordenadas por elevación. Las columnas de PISCO usan 2009–2016 y las de tuned y TimesFM, 2017–2020, con días distintos (primera columna de días: PISCO / 2017–2020); Andahuaylas no tiene valores en 2017–2020. Las estaciones son aeropuertos y no se pudo comprobar su independencia respecto de PISCO.
+:::
+
+Las brechas entre métodos son mucho menores que el error de PISCO frente a las estaciones. La muestra es pequeña y de aeropuertos, y el contraste no valida el producto (S4, @sec-limites).

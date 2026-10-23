@@ -1,0 +1,39 @@
+{
+  "autoregressive": false,
+  "bead_id": "tdew-4w2",
+  "climatology_role": "baseline_and_anomaly_reference",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-10-23T15:10:36+00:00",
+  "git_commit": "2899ffd879f7d386ea7ab2175ef0de50afe3bf73",
+  "inputs": [
+    "experiments.llr_simple.llr",
+    "experiments.llr_simple.llr_lags"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest.yaml",
+  "mlflow_run_id": null,
+  "model_family": "llr",
+  "model_id": "llr_simple_sel,llr_rezagos_sel",
+  "notes": "Tiempos de pared de 15_llr_seleccion.sh (mismos comandos, --workers 12 --chunk 1000) re-corridos el 2026-10-23 en tmux con costo_llr_sel_wrap.py; salidas en $WORK/costo_llr_sel/ y comparadas fila a fila con $WORK/llr_simple/ (reproduce_max_abs_diff). Sin metricas de error; estacion compartida con otras sesiones (carga ~0,5-1 antes de iniciar).",
+  "output_files": [
+    "reports/paper_nuevo/resultados/r3_costo_llr_sel.csv"
+  ],
+  "panel_cell_count": 17027,
+  "panel_file": "reports/timesfm_benchmark/panels/nacional_17027.csv",
+  "panel_id": "nacional_17027",
+  "run_id": "2d5977cc250043baa2925d32796cf53d",
+  "seeds": [],
+  "split_id": "ll4b,ll4",
+  "target_type": "td_raw",
+  "test_period": [
+    "2009-01-01",
+    "2012-12-31"
+  ],
+  "trained": true,
+  "training_period": [
+    "1981-01-01",
+    "2012-12-31"
+  ],
+  "validation_period": null,
+  "variant_label": "r3_costo_llr_sel"
+}

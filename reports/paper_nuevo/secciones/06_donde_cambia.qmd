@@ -1,0 +1,21 @@
+# Dónde cambia la ventaja {#sec-donde-cambia}
+
+Las brechas de esta sección son descriptivas: no tienen corrección por comparaciones múltiples, los estratos están desbalanceados y se cruzan.
+
+## Por horizonte y año
+
+El primer año de cada bloque es el menos favorable a TimesFM frente a los cuatro rivales (@fig-horizonte). En 2013–2016 con dominio completo, la brecha del primer año fue {{< var horizonte.ll4.panel.tuned.anio1.v >}} °C frente a tuned (IC {{< var horizonte.ll4.panel.tuned.anio1.ic >}}), y fue más negativa en los años segundo a cuarto sin crecer de forma monótona. TimesFM decodifica los {{< var panel.dias_por_celda >}} días en una sola pasada, y tuned los reconstruye día a día con sus propios valores anteriores de Td. Frente a tuned, el patrón es compatible con acumulación de error en un método autorregresivo, pero también aparece frente a rivales sin Td rezagada. Como cada bloque tiene un solo primer año, el efecto del horizonte no se separa del de esos años (2009 y 2013) ni se atribuye a la recursión.
+
+El año {{< var inversion.anio >}} es el único de los {{< var bloques.n_anios_total >}} evaluados en que se invierte el orden frente a tuned en el dominio completo (brecha de {{< var inversion.gap_tuned >}} °C). En Perú las brechas anuales frente a tuned fueron negativas en todos los años (en 2013, {{< var brecha_anual.ll4.peru.timesfm_vs_tuned.a2013 >}} °C). No se identificó una causa: con un solo bloque por período no se separa si la inversión es propia de ese año, de las celdas fuera de Perú o del primer año del bloque. Las brechas por año y por zona están en el suplemento (S16).
+
+![Brecha pareada de RMSE, TimesFM − rival (°C), por mes desde el inicio del bloque. Un valor negativo favorece a TimesFM. Las líneas verticales marcan los límites de año; la banda es el IC al {{< var bootstrap.nivel >}} % de cada mes (bloques espaciales de {{< var bootstrap.bloque_grados >}}°). En 2013–2016 y dominio completo, la brecha del primer año es positiva frente a los cuatro rivales ({{< var horizonte.ll4.panel.tuned.anios_positivos >}} de los {{< var bloques.ll4.n_anios >}} años); en los otros tres casos todas las brechas anuales son negativas.](figuras/fig5_horizonte.png){#fig-horizonte width=100%}
+
+## Dónde se concentra
+
+Las descomposiciones por año, zona, altitud, cola de anomalías y fase ENSO se presentan en el suplemento (S6, S10 a S14 y S16) sin IC y sin interpretarlas como hallazgos. Dos rasgos afectan la lectura del dominio completo.
+
+La zona {{< var zdom.ll4.panel.etiqueta >}} reúne el {{< var zdom.ll4.panel.pct_celdas >}} % de las celdas y el {{< var zdom.ll4b.panel.timesfm.pct_sse_zona >}} % del error cuadrático de TimesFM en 2009–2012. Frente al LLR con rezagos seleccionado, la brecha dentro de ella fue {{< var zdom.ll4b.panel.brecha.llr_rezagos_sel.zona >}} °C en 2009–2012 y {{< var zdom.ll4.panel.brecha.llr_rezagos_sel.zona >}} °C en 2013–2016; fuera de ella fue {{< var zdom.ll4b.panel.brecha.llr_rezagos_sel.sin_zona >}} y {{< var zdom.ll4.panel.brecha.llr_rezagos_sel.sin_zona >}} °C. La ventaja global frente a ese rival depende entonces de cómo se pondere esa zona.
+
+Además, en 2013–2016 la brecha frente al LLR con rezagos seleccionado fue {{< var altitud.ll4.panel.peru.brecha.llr_rezagos_sel >}} °C dentro de Perú y {{< var altitud.ll4.panel.fuera_peru.brecha.llr_rezagos_sel >}} °C fuera, de modo que el resultado del dominio completo mezcla ámbitos distintos. Las dos descomposiciones se solapan y no son aditivas.
+
+Frente a tuned, la brecha fue negativa en todas las bandas de altitud, en las zonas con celdas de Perú y en los dos ámbitos. Tiene mayor magnitud en la cola cálida que en el tramo central, y todos los métodos subestiman esa cola (S10). La fase ENSO no permite atribuir diferencias a esa fase (S13).

@@ -1,0 +1,21 @@
+Bloque,Ámbito,Método,RMSE (°C),Brecha TimesFM − método (°C),IC 95 % espacial 2°,IC 95 % mes-año
+2009–2012,dominio completo,tuned,1.122,-0.07576,"[−0,084; −0,068]","[−0,102; −0,050]"
+2009–2012,dominio completo,tuned sin rezagos de Td,1.10821,-0.06197,"[−0,068; −0,056]","[−0,084; −0,043]"
+2009–2012,dominio completo,LLR con rezagos seleccionado,1.07446,-0.02822,"[−0,031; −0,026]","[−0,044; −0,013]"
+2009–2012,dominio completo,TimesFM en Td cruda,1.10584,-0.05959000000000003,n. d.,n. d.
+2009–2012,dominio completo,TimesFM,1.04625,—,—,—
+2009–2012,Perú,tuned,0.86073,-0.05645,"[−0,065; −0,049]","[−0,073; −0,040]"
+2009–2012,Perú,tuned sin rezagos de Td,0.8559,-0.05161,"[−0,058; −0,045]","[−0,064; −0,040]"
+2009–2012,Perú,LLR con rezagos seleccionado,0.82966,-0.02538,"[−0,028; −0,023]","[−0,034; −0,016]"
+2009–2012,Perú,TimesFM en Td cruda,0.83981,-0.03552999999999995,n. d.,n. d.
+2009–2012,Perú,TimesFM,0.80428,—,—,—
+2013–2016,dominio completo,tuned,1.22793,-0.07429,"[−0,080; −0,069]","[−0,140; −0,015]"
+2013–2016,dominio completo,tuned sin rezagos de Td,1.17421,-0.02058,"[−0,029; −0,013]","[−0,056; +0,015]"
+2013–2016,dominio completo,LLR con rezagos seleccionado,1.15666,-0.00302,"[−0,011; +0,004]","[−0,029; +0,021]"
+2013–2016,dominio completo,TimesFM en Td cruda,n. d.,n. d.,n. d.,n. d.
+2013–2016,dominio completo,TimesFM,1.15364,—,—,—
+2013–2016,Perú,tuned,0.94425,-0.07916,"[−0,087; −0,071]","[−0,109; −0,052]"
+2013–2016,Perú,tuned sin rezagos de Td,0.90784,-0.04275,"[−0,054; −0,033]","[−0,060; −0,027]"
+2013–2016,Perú,LLR con rezagos seleccionado,0.89068,-0.02559,"[−0,033; −0,018]","[−0,038; −0,014]"
+2013–2016,Perú,TimesFM en Td cruda,n. d.,n. d.,n. d.,n. d.
+2013–2016,Perú,TimesFM,0.86509,—,—,—

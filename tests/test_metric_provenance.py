@@ -103,6 +103,20 @@ _A1_FILES = tuple(REPORTS_ROOT / "paper_nuevo/resultados" / f"a1_{name}.csv"
                   for name in ("por_metodo", "por_zona", "victorias_zona", "brechas"))
 TRACKED_METRIC_FILES = TRACKED_METRIC_FILES + _A1_FILES
 
+# R1, inferencia adicional (tdew-4w2): experiments/paper_nuevo/analisis_inferencia.py.
+TRACKED_METRIC_FILES = TRACKED_METRIC_FILES + tuple(
+    REPORTS_ROOT / "paper_nuevo/resultados" / name
+    for name in ("r1_brecha_horizonte.csv", "r1_bootstrap_espaciotemporal.csv", "r1_diebold_mariano.csv"))
+
+# R2, analisis descriptivo (tdew-4w2): experiments/paper_nuevo/analisis_descriptivo.py.
+TRACKED_METRIC_FILES = TRACKED_METRIC_FILES + tuple(
+    REPORTS_ROOT / "paper_nuevo/resultados" / name
+    for name in ("r2_skill.csv", "r2_extremos.csv", "r2_calibracion.csv", "r2_estratos_altitud.csv",
+                 "r2_sin_zona_dominante.csv", "r2_enso.csv"))
+
+# R3, costo de pared de los LLR seleccionados (tdew-4w2): experiments/paper_nuevo/costo_llr_sel.py.
+TRACKED_METRIC_FILES = TRACKED_METRIC_FILES + (REPORTS_ROOT / "paper_nuevo/resultados/r3_costo_llr_sel.csv",)
+
 # A1, escalera de inicio del contexto (tdew-03g): experiments/amenazas/escalera_contexto.py.
 _A1_ESCALERA_FILES = tuple(REPORTS_ROOT / "paper_nuevo/resultados" / f"a1_escalera_contexto{suffix}.csv"
                            for suffix in ("", "_brechas"))
@@ -123,6 +137,15 @@ _A4_METRIC_NAMES = (
 )
 _A4_FILES = tuple(_A4_DIR / f"a4_{name}{suffix}.csv" for name in _A4_METRIC_NAMES for suffix in ("", "_h4b2"))
 TRACKED_METRIC_FILES = TRACKED_METRIC_FILES + _A4_FILES
+
+# Cifras y tablas del paper nuevo (tdew-tpu): experiments/paper_nuevo/{cifras,tablas}.py.
+_PAPER_TABLAS = (
+    "tab1", "tab1_insumos", "tab2", "tab3", "tab4", "tab5", "tab6", "tab6_resumen",
+    "s1", "s1_anual", "s1_victorias", "s2", "s3", "s3_brechas", "s4", "s4_delta", "s5", "s6", "s7",
+    "tab7_robustez", "tab8_isd_estaciones", "s9_skill", "s10_extremos", "s11_calibracion", "s12_altitud", "s13_enso", "s14_zona_dominante",
+)
+TRACKED_METRIC_FILES = TRACKED_METRIC_FILES + (REPORTS_ROOT / "paper_nuevo/cifras/cifras.csv",) + tuple(
+    REPORTS_ROOT / "paper_nuevo/tablas" / f"{name}.csv" for name in _PAPER_TABLAS)
 
 # CSV/parquet bajo reports/ que existen hoy pero cuyo script de origen no
 # está instrumentado todavía (bead de seguimiento tdew-z39.7), o que no son

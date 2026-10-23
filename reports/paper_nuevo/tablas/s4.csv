@@ -1,0 +1,7 @@
+Magnitud,Fuente,Período,Estaciones,Días-estación,Sesgo (°C),RMSE (°C),MAE (°C)
+anomalía de Td,palacios,2017-2020,12.0,14666.0,0.184,1.6768,1.0453
+anomalía de Td,pisco,2009-2016,12.0,30751.0,0.0179,1.3305,0.8638
+anomalía de Td,timesfm,2017-2020,12.0,14666.0,0.2859,1.6306,1.0241
+Td,palacios,2017-2020,12.0,14666.0,1.376,2.8771,1.9794
+Td,pisco,2009-2016,13.0,31326.0,1.4241,3.0618,2.1131
+Td,timesfm,2017-2020,12.0,14666.0,1.4779,2.8866,2.0283

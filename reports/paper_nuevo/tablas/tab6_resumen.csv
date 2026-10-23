@@ -1,0 +1,8 @@
+Método,Selección de configuración,Ajuste o inferencia,Total,Hardware
+tuned,3158.0,350.0,3508.0,RTX A2000 12 GB + CPU
+TimesFM,2948.0,4389.8,7337.8,RTX A2000 12 GB
+LLR simple seleccionado,77.9,9.8,102.0,"Intel Core i9-14900K, sin GPU"
+LLR con rezagos seleccionado,61.5,9.7,85.6,"Intel Core i9-14900K, sin GPU"
+TimesFM / tuned (cociente de totales),—,—,2.091733181299886,—
+TimesFM / LLR simple seleccionado (cociente de totales),—,—,71.93921568627451,—
+TimesFM / LLR con rezagos seleccionado (cociente de totales),—,—,85.72196261682244,—

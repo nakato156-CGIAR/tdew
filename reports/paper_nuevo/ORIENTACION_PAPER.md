@@ -1,31 +1,39 @@
-# TimesFM sin entrenamiento frente al método diseñado de Palacios
+# Orientación del paper nuevo: TimesFM frente al método de Palacios
 
-Orientación editorial del 21 de octubre de 2026, actualizada el mismo día para adoptar la tesis E acotada (ver `historia_paper.md`). Se retiró la regla que elegía entre E y C+A según un IC; la tesis E se mantiene. El paper vigente en `reports/paper/` y `PAPER_PLAN.md` quedan fuera de este encargo.
+Orientación editorial consolidada el 21 de octubre de 2026. Se conserva la tesis E acotada: con los insumos locales de PISCO, TimesFM sin ajuste de pesos locales obtuvo menor RMSE agregado que `tuned` en ambos bloques y ámbitos. No necesita selección de recetas por unidad cartográfica y día del año; sí requiere preparación local y selección de configuración. Un LLR local sin zonas queda cerca. La regla E/C+A queda retirada y no se elige la narrativa mediante un umbral estadístico.
 
-Tesis: sin ajustar pesos y con los mismos datos que Palacios, TimesFM reconstruye Td con menor error que la regresión diseñada por zona climática, sin zonificación, búsqueda de recetas ni entrenamiento. Un LLR local sin zonas queda cerca y entra como control. La tesis vale para PISCO y los dos bloques evaluados; no se decide con un umbral estadístico y la discusión indica cuándo sigue conviniendo `tuned`.
+## Datos, evaluación y alcance
 
-Se conservarán los datos y versiones de Palacios, su grilla, las celdas y fechas comunes y sus transformaciones. Los rezagos pueden diferir entre métodos. La referencia TimesFM es `tmin_anom_full`: requiere historial local de Td y Tmin y sus climatologías de entrenamiento. Se conoce Tmin durante todo el bloque por reconstruir; no se trata de pronosticar sin covariables futuras. «Sin ajuste de pesos» no significa ausencia de preparación local ni ausencia de selección de configuración. Las zonas y recetas por zona × día del año son requisitos de `tuned`, no de toda la familia LLR.
+Se usan Td PISCO v1.1 (1981–2016), Tmin PISCO v1.2 (1981–2020), la grilla de 0,01° y las climatologías de entrenamiento del protocolo de Palacios. La comparación principal usa TimesFM `tmin_anom_full`, con contexto desde 1981 y Tmin observada durante todo el bloque reconstruido. Se trata de reconstrucción con covariable observada. Los métodos comparten productos, celdas y fechas puntuadas; difieren en cómo usan el historial, los rezagos y la selección.
 
-| Evidencia | Destino | Uso editorial |
+Se presenta primero `ll4b`, prueba 2009–2012 con contexto hasta 2008, porque no participó en la elección de la configuración de TimesFM. `ll4`, prueba 2013–2016 con contexto hasta 2012, se informa con la salvedad de que el cribado de nueve variantes se hizo sobre ese bloque. Ambos son retrospectivos y pertenecen al mismo producto.
+
+El dominio completo tiene 17.027 celdas puntuadas; Perú, 8.272 centros de celda dentro del contorno político; 8.755 quedan fuera. Esta máscara de Perú difiere del ámbito clasificado del artículo previo. Las 41 unidades cartográficas SENAMHI comprenden 38 tipos climáticos y tres unidades adicionales (dos lagos y lomas costeras); 33 unidades están representadas en el panel y 32 en Perú. La zonificación es propia de `tuned`, no de toda regresión local.
+
+Los resultados incluyen RMSE, MAE y sesgo. TimesFM tiene mayor sesgo absoluto que `tuned` en tres de las cuatro combinaciones agregadas. En 2013 el orden del RMSE se invierte en el dominio completo. La ventaja frente al LLR con rezagos seleccionado es menor; en el dominio completo de `ll4` sus dos IC incluyen cero. Esto no establece equivalencia.
+
+## Reparto de la evidencia
+
+| Evidencia | Destino | Uso |
 |---|---|---|
-| Climatología, Palacios, LLR simple, LLR con rezagos seleccionado y TimesFM de referencia | Cuerpo | Comparación de RMSE, MAE y sesgo en 2009–2012 y 2013–2016, separando Perú y dominio completo |
-| Brechas pareadas, ambos esquemas de IC, magnitudes anuales y por zona | Cuerpo | Precisar cuánto cambia el error y con qué incertidumbre |
-| Requisitos de diseño y costo de entrenamiento, inferencia y total | Cuerpo | Palacios paga en el entrenamiento y TimesFM en la inferencia; el argumento es eliminar diseño y entrenamiento, no el cómputo |
-| Robustez: 6 de 9 configuraciones del cribado superan a `tuned`; `tmin_td_full` también lo supera en 2009–2012 | Cuerpo | La ventaja no depende de una configuración; condiciones de uso: Tmin del período e historial largo |
-| A2, A3, escalera de contexto y otras variantes | Suplemento | Sensibilidades del mecanismo y la configuración, sin convertirlas en prueba causal completa |
-| Contraste ISD y comparación entre productos 2017–2020 | Suplemento | Alcance externo limitado: independencia de estaciones sin verificar; acuerdo entre productos no equivale a exactitud |
-| Regla E/C+A; supuesto quiebre MODIS en 2000; IC con cero como empate; barajado como prueba de inutilidad de Td histórica | Retirado | Ninguna de estas interpretaciones queda respaldada por los controles disponibles |
+| Climatología, `tuned`, LLR con rezagos seleccionado y TimesFM | Cuerpo | RMSE, MAE y sesgo, primero `ll4b`; Perú y dominio completo separados |
+| Inventario de preparación y selección | Cuerpo | Describir qué requiere cada método, sin atribuir horas humanas no medidas |
+| Brechas pareadas con ambos IC; magnitudes anuales y por zona | Cuerpo | Tamaño y variación de las diferencias, incluido 2013 |
+| Cribado de nueve variantes; control de representación cruda | Cuerpo | Sensibilidad observada, sin garantizar independencia de configuración |
+| A2, `tuned_sin_td` | Resumen en cuerpo; detalle en suplemento | La reducción del RMSE es mayor en `ll4`; no se aisló una causa |
+| Costo por etapa, selección única e inferencia | Cuerpo | Comparar las corridas documentadas con sus condiciones |
+| A3, escalera de contexto y variantes adicionales LLR | Suplemento | Sensibilidades; no se determinó el historial mínimo |
+| A4, estaciones ISD y acuerdo entre productos 2017–2020 | Suplemento | Contraste externo limitado; acuerdo no equivale a exactitud |
+| Conteos de victorias por zona y lista completa de costos | Suplemento | Detalle junto a las magnitudes del cuerpo |
 
-Las cifras se consultan en la sección «Paper» del artefacto local, generada desde `a1_por_metodo.csv`, `a1_brechas.csv`, `a1_por_zona.csv` y `costo.csv` de `resultados/`. Se evitan copias numéricas en este documento. El generador `experiments/amenazas/artifact_amenazas.py` conserva las filas de origen en `datos_amenazas.js`; las brechas descriptivas por año y zona se calculan restando RMSE sobre la misma clave. No se calculan intervalos nuevos.
+Los IC pareados existentes usan 2.000 réplicas por bloques espaciales de 2° o mes-año. El espacial conserva las series completas dentro del bloque y rompe dependencia entre bloques; el mensual conserva todas las celdas y días del mes y rompe dependencia entre meses. Ninguno representa toda la dependencia espacial y temporal conjuntamente. Las brechas anuales y zonales son descriptivas, sin IC propios.
 
-Los IC existentes son del RMSE pareado, por bootstrap espacial de 2° o por mes-año, con el número de réplicas declarado en el generador. Son dos remuestreos separados; ninguno representa conjuntamente la dependencia espacial y temporal. Un intervalo que contiene cero admite diferencias de ambos signos; no demuestra equivalencia. Las brechas anuales y zonales son descriptivas, sin IC. Las victorias por zona quedan como registro secundario frente a las magnitudes.
+## Costo y condiciones de uso
 
-TimesFM presenta menor RMSE puntual que Palacios en ambos períodos y ámbitos. Frente al LLR con rezagos seleccionado, la diferencia es pequeña y en el dominio completo de 2013–2016 los intervalos incluyen cero. La elección práctica exige valorar también MAE, sesgo y costo. La configuración de TimesFM se eligió en el cribado de 2013–2016; 2009–2012 no participó en esa elección, pero sigue siendo una evaluación retrospectiva en el mismo producto.
+En `ll4b`, `tuned` suma 58 min 28 s de selección de recetas, ajuste y predicción. TimesFM emplea 73 min 10 s de inferencia y 49 min 8 s de cribado único: 122 min 18 s incluyendo selección. El cribado se realizó en `ll4` y se reutilizó; no se vuelve a sumar a cada bloque ni se atribuye a datos de `ll4b`. Los tiempos seleccionados de los LLR no se midieron. El preprocesamiento compartido carece de cronometraje independiente completo.
 
-TimesFM puede convenir cuando se dispone de contexto local largo y Tmin del bloque, se acepta el costo de inferencia y se prioriza la reducción observada del error sin diseñar recetas por zona. Palacios puede convenir cuando ya están disponibles sus recetas y coeficientes y se requiere reconstruir grandes volúmenes con la rapidez de su inferencia medida. Los LLR simples constituyen controles competitivos sin zonificación; sus costos seleccionados no se han medido. No se atribuyen a esos modelos los tiempos de las versiones anteriores con una grilla menor.
+A escala de producto, `tuned` necesitó unas 39 h de selección y ajuste y 19 min 40 s de inferencia; TimesFM empleó unos 5,1 días de inferencia. El hardware y la carga no están controlados entre todas las corridas. No se afirma una ventaja general de velocidad o costo para TimesFM.
 
-El preprocesamiento de PISCO, regrillado y climatologías se reconoce como preparación compartida y no dispone de un cronometraje independiente completo. Algunas filas de costo reúnen ajuste e inferencia; no se separan artificialmente. Los tiempos de producto completo usan corridas y hardware con documentación desigual y no constituyen una comparación controlada de velocidad.
+La referencia de TimesFM usa historial local de Td y Tmin, climatologías y Tmin del bloque. La escalera muestra cambios pequeños al recortar el contexto hasta 2002 con climatología fija; no demuestra que el historial largo sea un requisito mínimo. El barajado muestra sensibilidad a Tmin alineada, sin aislar el aporte marginal de Td histórica. No se probaron ausencia o error sistemático de Tmin ni transferencia a otro producto. Las condiciones de licencia de los pesos deben comprobarse antes de recomendar un uso operativo.
 
-No se ha probado el desempeño sin historial local de Td, ausencia o error sistemático de Tmin futura, ni una comparación de costos completamente homogénea. El barajado de Tmin muestra sensibilidad a la covariable correcta, pero no aísla el aporte marginal de Td histórica. La escalera cambia inicios de contexto y no prueba un quiebre de producto en 2000. No se incorporan ERA5 ni experimentos nuevos. Se conservan los resultados exploratorios como registro.
-
-La actualización corresponde al artefacto local. No se realizó publicación remota, commit ni push.
+No se incorporan comparaciones con ERA5 ni mecanismos MODIS o ENSO no probados. Las referencias bibliográficas sin comprobar se identifican como tales. Se conservan los CSV existentes; el artículo previo y el artefacto externo a esta carpeta quedan fuera de esta actualización.

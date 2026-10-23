@@ -1,0 +1,22 @@
+<header id="title-block-header" class="quarto-title-block default">
+$if(title)$<h1 class="title">$title$</h1>$endif$
+$if(subtitle)$
+<p class="subtitle lead">$subtitle$</p>
+$endif$
+$if(by-author)$
+<p class="author" style="margin-bottom:.3em">$for(by-author)$$it.name.literal$<sup>$for(it.affiliations)$$it.number$$sep$,$endfor$$if(it.attributes.corresponding)$,*$endif$</sup>$sep$, $endfor$</p>
+$endif$
+$if(by-affiliation)$
+<p class="affiliation" style="font-size:.9em;margin:0">$for(by-affiliation)$<sup>$it.number$</sup> $it.name$$if(it.city)$, $it.city$$endif$$if(it.country)$, $it.country$$endif$<br>$endfor$
+$for(by-author)$$if(it.attributes.corresponding)$<sup>*</sup> Autor de correspondencia: <a href="mailto:$it.email$">$it.email$</a>$endif$$endfor$</p>
+$endif$
+$if(date)$
+<p class="date">$date$</p>
+$endif$
+$if(abstract)$
+<div class="abstract">
+<div class="abstract-title">$abstract-title$</div>
+$abstract$
+</div>
+$endif$
+</header>

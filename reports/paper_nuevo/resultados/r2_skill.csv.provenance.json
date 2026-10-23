@@ -1,0 +1,51 @@
+{
+  "autoregressive": true,
+  "bead_id": "tdew-4w2",
+  "climatology_role": "baseline_and_anomaly_reference",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-10-23T15:00:55+00:00",
+  "git_commit": "2899ffd879f7d386ea7ab2175ef0de50afe3bf73",
+  "inputs": [
+    "clim",
+    "dem",
+    "llr_rezagos_sel",
+    "llr_simple_sel",
+    "oni",
+    "timesfm_anom",
+    "timesfm_cuantiles",
+    "tuned",
+    "tuned_sin_td"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest.yaml",
+  "mlflow_run_id": null,
+  "model_family": "comparison",
+  "model_id": "multi",
+  "notes": "R2 descriptivo (revisores 1.5 y 2.3-2.5): skill vs clim, razon de varianzas, correlacion de anomalias, extremos (umbrales por celda 0.05/0.95 sobre TD_obs - clim del bloque), calibracion de deciles de TimesFM, estratos de altitud (DEM), peso de la zona dominante y clases ENSO (ONI >= 0.5 El Nino, <= -0.5 La Nina; trimestre movil en su mes central). Metodos ['timesfm_anom', 'tuned', 'tuned_sin_td', 'llr_rezagos_sel', 'llr_simple_sel', 'clim']; brecha = RMSE(timesfm_anom) - RMSE(metodo). Filas comunes de desglose.load_split; mascara Peru = peru_mask. Entradas: {'ll4': {'timesfm_anom': '/home/cvelasquez/tdew_timesfm/preds_nacional/ll4__tmin_anom_full.parquet', 'tuned': '/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean/ll4/predictions.parquet', 'tuned_sin_td': '/home/cvelasquez/tdew_timesfm/tuning_sin_td_ll4/ll4/predictions.parquet', 'llr_rezagos_sel': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4__llr_tmin_lags_sel.parquet', 'llr_simple_sel': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4__llr_simple_sel.parquet', 'clim': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4__llr_simple.parquet', 'timesfm_cuantiles': '/home/cvelasquez/tdew_timesfm/preds_nacional/ll4__tmin_anom_full.parquet', 'dem': 'Data/silver/static_covariates.parquet', 'oni': '/home/cvelasquez/tdew_timesfm/a4/isd_meta/oni.ascii.txt'}, 'll4b': {'timesfm_anom': '/home/cvelasquez/tdew_timesfm/preds_nacional_ll4b/ll4b__tmin_anom_full.parquet', 'tuned': '/home/cvelasquez/tdew_timesfm/tuning_ll4b/ll4b/predictions.parquet', 'tuned_sin_td': '/home/cvelasquez/tdew_timesfm/tuning_sin_td_ll4b/ll4b/predictions.parquet', 'llr_rezagos_sel': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4b__llr_tmin_lags_sel.parquet', 'llr_simple_sel': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4b__llr_simple_sel.parquet', 'clim': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4b__llr_simple.parquet', 'timesfm_cuantiles': '/home/cvelasquez/tdew_timesfm/preds_nacional_ll4b/ll4b__tmin_anom_full.parquet', 'dem': 'Data/silver/static_covariates.parquet', 'oni': '/home/cvelasquez/tdew_timesfm/a4/isd_meta/oni.ascii.txt'}}",
+  "output_files": [
+    "reports/paper_nuevo/resultados/r2_skill.csv",
+    "reports/paper_nuevo/resultados/r2_extremos.csv",
+    "reports/paper_nuevo/resultados/r2_calibracion.csv",
+    "reports/paper_nuevo/resultados/r2_estratos_altitud.csv",
+    "reports/paper_nuevo/resultados/r2_sin_zona_dominante.csv",
+    "reports/paper_nuevo/resultados/r2_enso.csv"
+  ],
+  "panel_cell_count": 17027,
+  "panel_file": "reports/timesfm_benchmark/panels/nacional_17027.csv",
+  "panel_id": "nacional_17027",
+  "run_id": "59bb27fc579c46f09346da5788b280e7",
+  "seeds": [],
+  "split_id": "ll4,ll4b",
+  "target_type": "td_raw",
+  "test_period": [
+    "2009-01-01",
+    "2016-12-31"
+  ],
+  "trained": true,
+  "training_period": [
+    "1981-01-01",
+    "2012-12-31"
+  ],
+  "validation_period": null,
+  "variant_label": "r2_descriptivo"
+}

@@ -1,20 +1,20 @@
 # Síntesis de A1–A4 para la elección práctica de método
 
-Actualización editorial del 21 de octubre de 2026. Se sigue `../ORIENTACION_PAPER.md`: precisión, preparación específica y costo por etapa, sin ganador universal. La regla E/C+A queda retirada.
+Actualización editorial del 21 de octubre de 2026. Se sigue `../ORIENTACION_PAPER.md`: precisión, preparación específica y costo por etapa, sin ganador universal. La regla E/C+A queda retirada. Se presenta primero `ll4b` en el artículo; las tablas de esta síntesis conservan su orden comparativo. El resumen de A2 va en el cuerpo y el detalle en el suplemento.
 
 No se corrió ningún experimento nuevo. Las cifras se copiaron de `a1_desglose.md`, `a1_brechas.csv`, `a1_escalera_contexto.md`, `a4_contraste_externo.md`, `costo.md`, `experiments/llr_simple/resultados_ll4_ll4b.txt` y las notas de los beads. Las del control A3 salen de volver a ejecutar el script de evaluación sobre predicciones ya existentes (`uv run python -m experiments.timesfm.control_tmin_barajada_eval`). Los intervalos de `resultados_ll4_ll4b.txt` provienen de otro sorteo de bloques mes-año y difieren de los de `a1_brechas.csv` en la tercera cifra decimal; aquí se usan los de `a1_brechas.csv`.
 
-Convenciones. Brecha = RMSE(A) − RMSE(B) en °C, pareada sobre las mismas 24.876.447 filas celda × día; negativo favorece a A. «Panel» son las 17.027 celdas del panel nacional; «Perú» son las 8.272 que caen dentro del país. `ll4` evalúa 2013-2016 con contexto hasta 2012; `ll4b` evalúa 2009-2012 con contexto hasta 2008. IC 95 % por bootstrap de 2.000 réplicas sobre bloques espaciales de 2° (74 en el panel, 45 en el Perú) o bloques mes-año (48).
+Convenciones. Brecha = RMSE(A) − RMSE(B) en °C, pareada sobre las mismas 24.876.447 filas celda × día; negativo favorece a A. Las 24.876.447 filas corresponden al dominio completo de cada bloque; Perú se evalúa sobre su subconjunto. «Panel» son las 17.027 celdas del dominio completo; «Perú» son las 8.272 que caen dentro del país. `ll4` evalúa 2013-2016 con contexto hasta 2012; `ll4b` evalúa 2009-2012 con contexto hasta 2008. IC 95 % por bootstrap de 2.000 réplicas sobre bloques espaciales de 2° (74 en el panel, 45 en el Perú) o bloques mes-año (48).
 
 ## 1. Qué se hizo
 
 | Etiqueta (bead) | Pregunta | Experimento | Resultado | Estado |
 |---|---|---|---|---|
-| A1 (`tdew-03g`) | ¿La ventaja de TimesFM se debe al El Niño 2015-2016 o al estimador? | Bloque `ll4b` (prueba 2009-2012) con climatología, `tuned`, dos LLR propios (con y sin selección interna de `h` y año de inicio) y TimesFM (`tmin_anom_full`, `tmin_td_full`, `tmin_anom_med`); desglose por Perú y zona; escalera de inicio del contexto en el panel de cribado; costo en la misma máquina | TimesFM `tmin_anom_full` tiene el RMSE más bajo en los dos bloques y ámbitos. Frente al LLR con rezagos seleccionado, brecha puntual de −0,003 en el panel de `ll4`, con IC que incluyen cero y sin prueba de equivalencia y ventaja de 0,025-0,028 °C con IC sin cero en `ll4b` y en el Perú. `tmin_td_full` no supera al LLR simple en `ll4b` | resultados completos en `ll4` y `ll4b`; bead abierto (`IN_PROGRESS`) |
-| A2 (`tdew-f6a`) | ¿Cuánto cuestan la autorregresión y el criterio de selección de `tuned`? | `tuned` con el pool sin rezagos de Td (`const`, `TMIN_anom` y sus rezagos), en `ll4` y `ll4b` | RMSE de 1,2279 a 1,1742 en `ll4` y de 1,1220 a 1,1082 en `ll4b`; sin rezagos de Td tiene una brecha con el LLR simple cuyo IC mes-año contiene cero, sin prueba de equivalencia | cerrado |
-| A3 (`tdew-077`) | ¿La habilidad de TimesFM viene de la covariable? | TimesFM con la Tmin del bloque oculto barajada entre años (tres semillas) o entre celdas, panel de cribado de 1.092 celdas, `ll4` | Con barajado entre años el RMSE sube de 0,8389 a 1,506-1,551, peor que la climatología (1,2840); con barajado entre celdas queda en 1,2656 | cerrado |
-| A4 (`tdew-ra6`) | ¿Qué exactitud tienen los productos 2017-2020 frente a Td atmosférico? | Contraste con 12-13 estaciones de aeropuerto ISD; chequeo de la Tmin regridada 2017-2020 | Los dos productos heredan el sesgo húmedo de PISCO (+1,4 °C); en anomalías TimesFM queda 0,046 °C por debajo de `tuned` (IC [−0,073; −0,019]); en Td no se distinguen | cerrado; ERA5-Land no se usa como comparación (otro producto, otra grilla e insumos) |
-| T1 (`tdew-kpp`) | ¿Se sostiene «sin conocer el país»? | — | — | abierto; se hace al final por decisión del usuario |
+| A1 (`tdew-03g`) | ¿Se observa también la ventaja agregada en 2009–2012? | Bloque `ll4b` (prueba 2009-2012) con climatología, `tuned`, dos LLR propios (con y sin selección interna de `h` y año de inicio) y TimesFM (`tmin_anom_full`, `tmin_td_full`, `tmin_anom_med`); desglose por Perú y zona; escalera de inicio del contexto en el panel de cribado; costo en la misma máquina | TimesFM `tmin_anom_full` tiene el RMSE más bajo en los dos bloques y ámbitos. Frente al LLR con rezagos seleccionado, brecha puntual de −0,003 en el panel de `ll4`, con IC que incluyen cero y sin prueba de equivalencia y ventaja de 0,025-0,028 °C con IC sin cero en `ll4b` y en el Perú. `tmin_td_full` tiene mayor RMSE que el LLR simple en dominio completo de `ll4b` y menor en Perú; ambos IC de esas brechas contienen cero | resultados disponibles en `ll4` y `ll4b` |
+| A2 (`tdew-f6a`) | ¿Cómo cambia el RMSE al reducir el pool de `tuned`? | `tuned` con el pool sin rezagos de Td (`const`, `TMIN_anom` y sus rezagos), en `ll4` y `ll4b` | RMSE de 1,2279 a 1,1742 en `ll4` y de 1,1220 a 1,1082 en `ll4b`; sin rezagos de Td tiene una brecha con el LLR simple cuyo IC mes-año contiene cero, sin prueba de equivalencia | cerrado |
+| A3 (`tdew-077`) | ¿Cómo cambia TimesFM al desalinear Tmin? | TimesFM con la Tmin del bloque oculto barajada entre años (tres semillas) o entre celdas, panel de cribado de 1.092 celdas, `ll4` | Con barajado entre años el RMSE sube de 0,8389 a 1,506-1,551, peor que la climatología (1,2840); con barajado entre celdas queda en 1,2656 | cerrado |
+| A4 (`tdew-ra6`) | ¿Qué exactitud tienen los productos 2017-2020 frente a Td atmosférico? | Contraste con 12-13 estaciones de aeropuerto ISD; chequeo de la Tmin regridada 2017-2020 | Los dos productos muestran sesgos húmedos compatibles con el patrón de PISCO (≈+1,4 °C); en anomalías TimesFM queda 0,046 °C por debajo de `tuned` (IC [−0,073; −0,019]); en Td el IC de la diferencia incluye cero, sin equivalencia establecida | cerrado; ERA5-Land no se usa como comparación (otro producto, otra grilla e insumos) |
+| T1 (`tdew-kpp`) | ¿Se transfiere el resultado a otro producto? | Fuera del alcance de esta carpeta | No evaluado aquí | No se usa para sostener la tesis actual |
 
 ## 2. Escalera de métodos
 
@@ -68,9 +68,9 @@ Por zonas, TimesFM anom gana al LLR con rezagos seleccionado en 32 de 33 zonas d
 
 TimesFM presenta menor RMSE puntual que Palacios en ambos bloques y ámbitos. Frente al LLR con rezagos seleccionado, las diferencias son menores; en el dominio completo de 2013–2016 ambos IC incluyen cero. Esto no prueba equivalencia. Se consideran también MAE, sesgo, recursos disponibles y costos por etapa, según la sección Paper del artefacto.
 
-Los LLR simples no necesitan zonas. La zonificación y las recetas por zona × día del año son de Palacios. TimesFM requiere historial local de Td y Tmin, climatologías y Tmin del bloque. Se eligió su configuración en el cribado de 2013–2016; 2009–2012 no participó en esa selección. No se ha probado transferencia.
+La referencia TimesFM usa contexto desde 1981; la escalera con climatología fija no determina un historial mínimo necesario. Los LLR simples no necesitan zonas. La zonificación y las recetas por zona × día del año son de Palacios. TimesFM requiere historial local de Td y Tmin, climatologías y Tmin del bloque. Se eligió su configuración en el cribado de 2013–2016; 2009–2012 no participó en esa selección. No se ha probado transferencia.
 
-El preprocesamiento compartido carece de cronometraje independiente completo. Se mantienen combinadas las etapas medidas juntas. No se atribuyen a los LLR seleccionados los tiempos de las versiones anteriores.
+En `ll4b`, `tuned` suma 58 min 28 s. TimesFM emplea 73 min 10 s de inferencia y 49 min 8 s de cribado único realizado en `ll4`: 122 min 18 s incluyendo esa selección una vez. El cribado se reutiliza y no se vuelve a cargar por bloque. El preprocesamiento compartido carece de cronometraje independiente completo. Se mantienen combinadas las etapas medidas juntas. No se atribuyen a los LLR seleccionados los tiempos de las versiones anteriores.
 
 ## 5. Hallazgos colaterales que el paper debería reportar
 
@@ -80,7 +80,7 @@ El preprocesamiento compartido carece de cronometraje independiente completo. Se
 - `ll4b`, panel: +0,014 °C (espacial [+0,011; +0,017], mes-año [−0,000; +0,027]);
 - Perú: +0,036 °C en `ll4` (mes-año [+0,019; +0,057]) y +0,005 °C en `ll4b` (mes-año [−0,005; +0,014]).
 
-La versión sin rezagos gana a `tuned` en 32 de 33 zonas en `ll4` y en 30 de 33 en `ll4b` (panel). El efecto es mayor en el bloque con El Niño 2015-2016. Esto es consistente con que la recursión sobre Td predicho dentro del bloque cause la mayor parte de la desventaja de `tuned`. `HANDOFF.md` §5 (A2) ya señalaba un posible mecanismo: la selección puntúa con coseno sin centrar y a un paso, y el despliegue es autorregresivo y se puntúa con RMSE.
+La versión sin rezagos gana a `tuned` en 32 de 33 zonas en `ll4` y en 30 de 33 en `ll4b` (panel). La reducción de RMSE es mayor en `ll4`. Al reducir el pool se vuelven a seleccionar recetas y ventanas; no se aisló la recursión como causa ni se atribuye el efecto a ENSO. La selección por coseno sobre anomalías y la evaluación por RMSE describen objetivos distintos, sin identificar por sí solos el origen de la diferencia.
 
 **Comparación del LLR simple y `tuned` sin rezagos de Td.** La brecha `tuned` sin rezagos − LLR simple es:
 
@@ -89,7 +89,7 @@ La versión sin rezagos gana a `tuned` en 32 de 33 zonas en `ll4` y en 30 de 33 
 
 Con el IC espacial, el LLR simple gana en `ll4b`; con el mes-año, el IC contiene cero, sin prueba de equivalencia. El LLR con rezagos de Tmin queda por delante de `tuned` sin rezagos en 33 y 32 de 33 zonas. No se observó una reducción del RMSE de esta implementación de `tuned` frente al LLR simple. No se generaliza ese resultado a toda zonificación o familia LLR.
 
-**La brecha entre contexto completo y contexto corto se debía a la climatología.** La escalera se corrió sobre 1.092 celdas del panel de cribado con la climatología fija en 1981-train_end. Pasar el inicio del contexto de TimesFM de 1981 a 2002 costó +0,002 °C en `ll4b` (IC mes-año [−0,005; +0,009]) y +0,005 °C en `ll4` ([+0,002; +0,008]). Con el contexto desde 2002, recortar además la climatología costó:
+**El recorte de climatología tuvo mayor efecto que el de contexto en la muestra de sensibilidad.** La escalera se corrió sobre 1.092 celdas del panel de cribado con la climatología fija en 1981-train_end. Pasar el inicio del contexto de TimesFM de 1981 a 2002 costó +0,002 °C en `ll4b` (IC mes-año [−0,005; +0,009]) y +0,005 °C en `ll4` ([+0,002; +0,008]). Con el contexto desde 2002, recortar además la climatología costó:
 
 - `ll4b`: +0,044 °C (IC [+0,035; +0,053]), casi toda la diferencia;
 - `ll4`: +0,022 °C (IC [+0,015; +0,029]), unas cuatro quintas partes.
@@ -112,23 +112,23 @@ Los LLR mejoraron al descartar 1981-1990: entre 0,017 y 0,024 °C con inicio en 
 
 Con la Tmin de otro año TimesFM queda peor que la climatología en las tres semillas. Con la Tmin de otra celda, que conserva la señal temporal común entre celdas, queda cerca del RMSE puntual de la climatología, sin prueba de equivalencia. Se observa sensibilidad a la Tmin correcta. No se aísla el aporte marginal de Td histórica y no se concluye que sea inútil.
 
-**Frente a las estaciones, los dos productos heredan el sesgo húmedo de PISCO.**
+**Frente a las estaciones, los dos productos muestran sesgos húmedos compatibles con el patrón de PISCO.**
 
 - En 2009-2016 PISCO tiene sesgo de Td +1,42 °C y RMSE 3,06 °C frente a 13 aeropuertos ISD (Arequipa +5,91, Cusco +3,97, Andahuaylas +4,24).
 - En 2017-2020, `tuned` y TimesFM tienen sesgo +1,38 y +1,48 °C y repiten el patrón por estación (Arequipa +4,95 y +5,03).
-- ERA5-Land no se usa como comparación. Es otro producto, con otra grilla (0,1° frente a 0,01°) y otros insumos, y cambiar de dataset queda reservado para la prueba de transferencia (T1). Sus cifras siguen en `a4_contraste_externo.md` solo como registro.
+- ERA5 y ERA5-Land quedan fuera de este contraste editorial. Sus filas en los CSV se conservan como registro histórico y no se usan como escala ni comparación.
 
-El RMSE de ≈1,15-1,23 °C del backtest mide cuánto reproducen los productos el Td grillado, no cuánto se acercan al Td atmosférico. El chequeo de la Tmin regridada 2017-2020 no encontró cambios de nivel ni de distribución frente a 2013-2016 (r = 0,9991 en medias celda-mes). Queda abierta la mayor dispersión del salto de enero de 2017 (desviación 1,33 frente a 0,66-0,90).
+El RMSE de ≈1,15-1,23 °C del backtest mide cuánto reproducen los productos el Td grillado, no cuánto se acercan al Td atmosférico. Los resúmenes de la Tmin regridada 2017–2020 no muestran un desplazamiento global grande frente a 2013–2016, sin establecer equivalencia de distribuciones (r = 0,9991 en medias celda-mes). Queda abierta la mayor dispersión del salto de enero de 2017 (desviación 1,33 frente a 0,66-0,90).
 
 ## 6. Limitaciones y salvedades
 
-- **Intervalos.** Un subagente hizo una revisión independiente del código en la sesión del 2026-10-20. No encontró fugas ni errores de alineación. Sus hallazgos fueron la climatología recortada en `tmin_anom_med` (ya corregida con la escalera), el docstring de `shuffle_tmin` (corregido), la rejilla de `h` asimétrica y los IC posiblemente optimistas. Esa revisión señaló que los IC pueden ser optimistas y que los bloques espaciales de 2° no capturan forzantes comunes a todo el dominio, como ENSO. El bloque espacial no recoge la dependencia temporal y el mes-año no recoge la espacial; ninguno cubre ambas (`a1_desglose.md`). El esquema mes-año tiene solo 48 bloques. Se tomó el IC mes-año como lectura prudente, como pide la regla, pero ni siquiera ese está libre de esta salvedad.
+- **Intervalos.** El bootstrap espacial conserva las series completas dentro de los bloques de 2° y rompe dependencia entre bloques; el mes-año conserva todas las celdas y días del mes y rompe dependencia entre meses. Se informan ambos como sensibilidades; ninguno representa toda la dependencia espacial y temporal conjuntamente. Solo hay 48 bloques mes-año. No se utiliza un IC para decidir entre narrativas ni para probar equivalencia.
 - **Grillas de `h` distintas.** `tuned` busca `h` en 7-45 por zona × día del año (`costo.md`); los LLR sin selección usan 7 valores entre 7 y 60, y los seleccionados llegan hasta 180 y eligieron 45, 60 y 90. La comparación entre `tuned` y los LLR seleccionados no se hizo con el mismo espacio de búsqueda de `h`.
 - **Entorno de `tuned`.** El `tuned` de `ll4b` y el `tuned` sin rezagos de Td (A2) se corrieron con el código del repositorio, no con el entorno de Palacios (nota del bead `tdew-03g`). En `ll4` la reproducción dio 1,2279, igual a la cifra limpia de referencia.
 - **Barajado por celda.** El modo `cell` es determinista: desplaza la anomalía de Tmin la mitad de las celdas del lote (`np.roll` en `experiments/timesfm/panel.py`), sin usar la semilla, y depende de la composición del lote. Hay una sola realización, en `ll4` y solo para `tmin_anom_full`. El modo `year` tiene tres semillas, solo en `ll4`.
-- **Insumos compartidos.** Td y Tmin de PISCO comparten insumos de LST de MODIS (Huerta et al. 2022, tabla 1; 2023; nota en el bead `tdew-ra6`). Palacios indicó que Tmin no es insumo directo de Td, pero ambos usan LST de MODIS. Un corte temporal no elimina ese error correlado, y parte de la habilidad compartida de todos los métodos frente al Td grillado puede deberse a él.
-- **Estaciones ISD.** No se sabe si los 13 aeropuertos ISD son independientes de las 182 estaciones SENAMHI de PISCO Td v1.1; no hay una lista pública para comprobarlo. Si alguno entró en PISCO, el error de PISCO en 2009-2016 está subestimado en esa estación. La muestra es pequeña y sesgada: solo aeropuertos, ninguno en el altiplano con el criterio principal, y un salto aparente en Ayacucho en 2019.
-- **Ámbito.** El 51,4 % del panel (8.755 de 17.027 celdas) cae fuera del Perú (bead `tdew-214.8`), y el panel agregado no es un promedio del país. Esas celdas son el mismo producto PISCO y no cuentan como transferencia. El resultado de `ll4` cambia entre panel y Perú, y con un solo bloque por período no se puede separar si eso es propio de 2013 o de la región fuera del país.
+- **Insumos compartidos.** El artículo previo describe covariables espaciales compartidas entre Td y Tmin. El detalle de LST de MODIS y la referencia Huerta 2023 se mantienen como bibliografía por comprobar en texto completo. Un corte temporal no demuestra independencia de los errores entre productos; no se atribuye un mecanismo concreto sin esa comprobación.
+- **Estaciones ISD.** No se sabe si los 13 aeropuertos ISD son independientes de las 182 estaciones SENAMHI de PISCO Td v1.1; no hay una lista pública para comprobarlo. Si alguno entró en PISCO, el error de PISCO en 2009-2016 está subestimado en esa estación. La falta de Td de PISCO en 2017–2020 evita solapamiento temporal del objetivo, pero no demuestra independencia espacial de las estaciones utilizadas para construir el producto de entrenamiento. La muestra es pequeña y sesgada: solo aeropuertos, ninguno en el altiplano con el criterio principal, y un salto aparente en Ayacucho en 2019.
+- **Ámbito.** El 51,4 % del panel (8.755 de 17.027 celdas) cae fuera del Perú (bead `tdew-214.8`), y el panel agregado no es un promedio del país. Esas celdas son el mismo producto PISCO y no cuentan como transferencia. La máscara política de Perú usada aquí difiere del ámbito clasificado del artículo previo. El resultado de `ll4` cambia entre panel y Perú, y con un solo bloque por período no se puede separar si eso es propio de 2013 o de la región fuera del país.
 - **Variante de TimesFM.** `tmin_anom_full` es la variante de referencia por decisión del usuario, pero se eligió entre nueve en el cribado de `ll4` (bead `tdew-214.11.8`). Las cifras de `ll4` para esa variante están expuestas a ese sesgo de selección; `ll4b` no.
 - **Rivales propios.** Los LLR y `tuned` sin rezagos de Td son variantes construidas en este proyecto que Palacios no ha revisado.
 - **Costo.** `costo.md` tiene varias salvedades:
@@ -140,27 +140,14 @@ El RMSE de ≈1,15-1,23 °C del backtest mide cuánto reproducen los productos e
   - El `tuned` sin rezagos de Td no figura en la tabla de costo.
   - El esfuerzo de diseño se describe de forma cualitativa, sin horas-persona.
 
-## 7. Preguntas abiertas y lo que falta
+## 7. Alcance de la revisión científica
 
-Para Palacios:
+Se requiere revisión científica de los LLR propios y de A2 antes de tratarlos como rivales oficiales. Las corridas de `ll4b` y A2 usaron el código del repositorio; su reproducción en el entorno de Palacios no se da por realizada. Las ventanas de búsqueda distintas y la independencia de los aeropuertos frente a PISCO se conservan como límites de comparabilidad.
 
-1. Si «se mantiene» exige los dos bloques o solo `ll4b`. Con `tmin_anom_full`, el resultado de la regla en el panel depende de esta respuesta (sección 4).
-2. Revisión de los LLR propios (`experiments/llr_simple/llr.py`, `llr_lags.py`) y de `tuned` sin rezagos de Td antes de tratarlos como rivales oficiales.
-3. Si el `tuned` de `ll4b` y el de A2, corridos con el código del repositorio, se reproducen en su entorno.
-4. Si la grilla de `h` de 7-45 en `tuned` es una decisión de diseño o una restricción de cómputo, y si se justifica ampliarla para igualar la de los LLR.
-5. Si hay forma de saber qué estaciones SENAMHI entraron en PISCO Td v1.1, para confirmar la independencia de los aeropuertos ISD.
-6. Qué componentes del pipeline y qué horas-persona de diseño se pueden documentar para la comparación de costo (`HANDOFF.md` §6, pregunta 3).
-7. Acuerdo sobre el cambio de historia del paper (`HANDOFF.md` §6, pregunta 4).
+No se dispone de IC para la brecha entre Td cruda y el LLR con rezagos seleccionado, de un esquema de incertidumbre que cubra toda la dependencia espacial y temporal conjuntamente, de asignaciones adicionales de donantes por celda o del control A3 en `ll4b`. Tampoco se midieron costos de los LLR seleccionados ni de A2. Estos límites no se presentan como experimentos realizados ni como condiciones para elegir entre E y C+A.
 
-Lo que falta:
-
-- Calcular la brecha `tmin_td_full` − LLR con rezagos seleccionado con sus dos IC. Hoy solo hay RMSE puntual.
-- Un esquema de IC que recoja a la vez la dependencia espacial y la temporal, o al menos una comprobación de cobertura de los dos esquemas actuales.
-- El barajado por celda con otras asignaciones de donante, y el control A3 en `ll4b`.
-- Medir el costo de los LLR seleccionados y de `tuned` sin rezagos de Td en la misma máquina.
-- Cerrar el bead `tdew-03g` y actualizar su fila del Gantt en Notion.
-- T1 (`tdew-kpp`) queda fuera de alcance de esta síntesis. Se hace al final, según la decisión del usuario. El candidato anotado en el bead es ERA5-Land en India, con un control dentro del Perú con ERA5-Land y estaciones HadISD.
+La transferencia T1 queda fuera del artículo y de esta actualización documental. No se incorporan aquí comparaciones con productos de otra grilla o insumos. El seguimiento operativo corresponde a los beads, no a este informe.
 
 ---
 
-Este documento se preparó con asistencia de IA generativa (Claude), que reunió y copió cifras de los reportes y CSV del repositorio. Antes de usarlo en el paper, debe validarse con Palacios y SENAMHI, en especial la lectura de la regla y los rivales construidos en este proyecto. El paper debe declarar el uso de IA generativa.
+Este documento se preparó con asistencia de IA generativa (Claude; revisión con Codex), que reunió y copió cifras de los reportes y CSV del repositorio. Antes de usarlo en el paper, debe validarse con Palacios y SENAMHI, en especial la interpretación estadística y los rivales construidos en este proyecto. El paper debe declarar el uso de IA generativa.

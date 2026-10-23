@@ -1,0 +1,17 @@
+# Datos y problema de reconstrucción {#sec-datos}
+
+## Productos y grilla
+
+El objetivo es la Td diaria de PISCO v1.1, disponible de 1981 a 2016 [@huerta2022]. El predictor exógeno es la Tmin diaria de PISCO v1.2, de 1981 a 2020 [@huerta2023]. Ambos comparten la grilla nacional de 0,01°. Todos los métodos parten de las mismas series diarias por celda, de la misma climatología con los años de entrenamiento de cada bloque y de la misma conversión de anomalías a °C. El «observado» de todas las métricas es la Td de PISCO, un campo interpolado a partir de estaciones; su error frente a estaciones ISD se trata aparte (@sec-resultados). No se examinó si Td y Tmin comparten insumos espaciales en su interpolación (@sec-limites).
+
+## Celdas de evaluación
+
+Se evalúan las {{< var panel.celdas >}} celdas que tuned puntúa en cada bloque, un subconjunto de la grilla nacional, con {{< var panel.dias_por_celda >}} días por celda y bloque. Perú, el ámbito primario, incluye las {{< var panel.celdas_peru >}} celdas cuyo centro cae dentro del contorno político departamental. El dominio completo, el ámbito secundario, suma las {{< var panel.celdas_fuera >}} restantes ({{< var panel.pct_fuera >}} % del dominio): son el mismo producto PISCO fuera del país y no constituyen una prueba de transferencia.
+
+![Casi la mitad de las celdas del dominio de evaluación ({{< var panel.celdas_fuera >}} de {{< var panel.celdas >}}) está fuera de Perú, y la zona SENAMHI A (r) A′ concentra la mayor parte de ellas. Gris oscuro: celdas dentro de Perú; gris claro: fuera; violeta: zona A (r) A′. Cada punto es una celda de 0,01°; el panel es un subconjunto de la grilla nacional, y la caja envolvente no es el territorio peruano.](figuras/fig1_panel.png){#fig-panel width=100%}
+
+Esta máscara difiere de la del artículo de Palacios [@palacios_enprep], cuyo ámbito es el dominio clasificado por el mapa climático. La zonificación proviene de la clasificación climática de SENAMHI [@senamhi2021], con {{< var panel.unidades_total >}} unidades cartográficas ({{< var panel.tipos_climaticos >}} tipos climáticos y {{< var panel.unidades_extra >}} unidades adicionales). El dominio completo representa {{< var panel.zonas_panel >}} y Perú, {{< var panel.zonas_peru >}}; Lago Titicaca no tiene celdas con centro dentro del contorno. «Zona» designa una unidad cartográfica. Solo tuned usa la zonificación.
+
+## Reconstrucción con Tmin observada
+
+Cada bloque de prueba tiene {{< var bloques.ll4.n_anios >}} años y lo precede un contexto de entrenamiento: {{< var bloques.ll4b.contexto_ini >}}–{{< var bloques.ll4b.contexto_fin >}} para 2009–2012 y {{< var bloques.ll4.contexto_ini >}}–{{< var bloques.ll4.contexto_fin >}} para 2013–2016. Durante el bloque ningún método recibe Td observada, y los que usan Tmin reciben la observada de cada día. La tarea es reconstruir la Td de un período con Td ausente y Tmin conocida, que es la situación real de 2017–2020. Un pronóstico meteorológico no dispondría de la Tmin futura.

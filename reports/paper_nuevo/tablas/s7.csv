@@ -1,0 +1,38 @@
+Método,Bloque,Etapa,Celdas,Segundos,Tiempo,Hardware,Observaciones
+TimesFM,2009–2012,prediccion (sin ajuste ni seleccion),17041.0,4389.8,4389.8,RTX A2000 12 GB,contexto 10.227 d; horizonte 1.461 d; lote efectivo 16; el comando no quedo registrado
+TimesFM en Td cruda,2009–2012,prediccion (sin ajuste ni seleccion),17041.0,4380.6,4380.6,RTX A2000 12 GB,contexto 10.227 d; horizonte 1.461 d
+TimesFM,2013–2016,prediccion (sin ajuste ni seleccion),17041.0,5154.9,5154.9,RTX A2000 12 GB,contexto 11.688 d; no consta si con TF32
+TimesFM (todas las variantes del cribado),2013–2016,seleccion de variante (cribado),1106.0,2948.0,2948.0,RTX A2000 12 GB,suma de las 9 variantes de 3.0 en su ultima corrida (sin una variante adicional ni repeticiones); la eleccion se hizo sobre el mismo bloque 2013–2016
+TimesFM,2013–2016,prediccion pasada de escala,436519.0,85686.0,85686.0,RTX A2000 12 GB,cronometrada
+TimesFM,producto 2017–2020,prediccion producto completo,2178827.0,438074.0,438074.0,RTX A2000 12 GB,suma de segundos por bucket (pared 438.303 s); 8.192 buckets; 157.5 GB; GPU compartida con procesos ajenos en tramos
+tuned,2009–2012,seleccion de recetas (solo anios de entrenamiento),5506.0,3158.0,3158.0,RTX A2000 12 GB + CPU,16 buckets; 200 celdas por zona; grilla h 7-45; 41 zonas x 366 dias; 12.444 recetas; LLR con rezagos corrio en paralelo en CPU 14:24-14:41
+tuned,2009–2012,ajuste + prediccion (backtest),17027.0,350.0,350.0,RTX A2000 12 GB + CPU,64 buckets; incluye escritura de 24.876.447 filas y metricas
+tuned,2013–2016,seleccion de recetas (solo anios de entrenamiento),5506.0,3194.0,3194.0,no registrado (GPU con CuPy),corrida de Palacios; el log no registra el host
+tuned,2013–2016,ajuste + prediccion (backtest),17027.0,402.0,402.0,no registrado (GPU con CuPy),corrida de Palacios
+tuned,producción 1981–2016,seleccion de recetas (grid completo),2818404.0,117698.0,117698.0,no registrado (una GPU local),2000 celdas por zona; grilla h extendida
+tuned,producción 1981–2016,ajuste (grid completo),2818404.0,24293.0,24293.0,no registrado (una GPU local),8.192 buckets; 8.127 millones de filas de coeficientes
+tuned,producto 2017–2020,prediccion (grid completo),2178827.0,1180.0,1180.0,no registrado; 14 procesos,8.184 buckets ok y 8 omitidos; 3.180 millones de filas
+LLR simple,2009–2012,carga de datos,17027.0,17.0,17.0,32 nucleos CPU,aprox.: inicio del proceso hasta el comienzo de la grilla; incluye el arranque del entorno; otro proceso usaba CPU y GPU en paralelo
+LLR simple,2009–2012,seleccion de h (7 valores; ultimos 4 anios de entrenamiento),17027.0,92.0,92.0,32 nucleos CPU,h unico global = 31; 121 % de CPU en promedio
+LLR simple,2009–2012,ajuste final + prediccion,17027.0,19.0,19.0,32 nucleos CPU,RMSE 1.0984 igual a la corrida original
+LLR simple,2009–2012,total,17027.0,128.1,128.1,32 nucleos CPU,pico RSS 14.6 GB
+LLR con rezagos,2009–2012,carga de datos,17027.0,14.0,14.0,32 nucleos CPU,aprox.; otro proceso usaba CPU y GPU en paralelo
+LLR con rezagos,2009–2012,seleccion de h (7 valores),17027.0,403.0,403.0,32 nucleos CPU,h = 31; 104 % de CPU en promedio
+LLR con rezagos,2009–2012,ajuste final + prediccion,17027.0,91.0,91.0,32 nucleos CPU,RMSE 1.0891 igual a la corrida original
+LLR con rezagos,2009–2012,total,17027.0,508.4,508.4,32 nucleos CPU,pico RSS 7.9 GB
+LLR simple seleccionado,2009–2012,carga de datos,17027.0,14.3,14.3,"Intel Core i9-14900K (32 hilos), 125 GB RAM",inicio del proceso hasta fin de la lectura; sin el arranque del entorno
+LLR simple seleccionado,2009–2012,seleccion conjunta de h y train_start (10 x 4 = 40 combinaciones),17027.0,77.9,77.9,"Intel Core i9-14900K (32 hilos), 125 GB RAM",1 proceso; validacion 4 anios finales
+LLR simple seleccionado,2009–2012,ajuste final + prediccion + escritura,17027.0,9.8,9.8,"Intel Core i9-14900K (32 hilos), 125 GB RAM",incluye la escritura de 24.876.447 filas
+LLR simple seleccionado,2009–2012,total,17027.0,102.0,102.0,"Intel Core i9-14900K (32 hilos), 125 GB RAM","1:42.37 (incluye el arranque del entorno); CPU promedio 127 %; pico RSS 12.5 GB; carga del sistema al terminar 1,26, 1,08, 0,81; elegido año de inicio=1981, h=7"
+LLR simple seleccionado,2013–2016,carga de datos,17027.0,14.4,14.4,"Intel Core i9-14900K (32 hilos), 125 GB RAM",inicio del proceso hasta fin de la lectura; sin el arranque del entorno
+LLR simple seleccionado,2013–2016,seleccion conjunta de h y train_start (10 x 4 = 40 combinaciones),17027.0,81.0,81.0,"Intel Core i9-14900K (32 hilos), 125 GB RAM",1 proceso; validacion 4 anios finales
+LLR simple seleccionado,2013–2016,ajuste final + prediccion + escritura,17027.0,11.0,11.0,"Intel Core i9-14900K (32 hilos), 125 GB RAM",incluye la escritura de 24.876.447 filas
+LLR simple seleccionado,2013–2016,total,17027.0,106.4,106.4,"Intel Core i9-14900K (32 hilos), 125 GB RAM","1:46.82 (incluye el arranque del entorno); CPU promedio 126 %; pico RSS 12.8 GB; carga del sistema al terminar 2,25, 2,60, 1,54; elegido año de inicio=1981, h=7"
+LLR con rezagos seleccionado,2009–2012,carga de datos,17027.0,14.4,14.4,"Intel Core i9-14900K (32 hilos), 125 GB RAM",inicio del proceso hasta fin de la lectura; sin el arranque del entorno
+LLR con rezagos seleccionado,2009–2012,seleccion conjunta de h y train_start (10 x 4 = 40 combinaciones),17027.0,61.5,61.5,"Intel Core i9-14900K (32 hilos), 125 GB RAM","12 procesos, bloques de 1000 celdas; validacion 4 anios finales"
+LLR con rezagos seleccionado,2009–2012,ajuste final + prediccion + escritura,17027.0,9.7,9.7,"Intel Core i9-14900K (32 hilos), 125 GB RAM",incluye la escritura de 24.876.447 filas
+LLR con rezagos seleccionado,2009–2012,total,17027.0,85.6,85.6,"Intel Core i9-14900K (32 hilos), 125 GB RAM","1:25.94 (incluye el arranque del entorno); CPU promedio 828 %; pico RSS 7.9 GB; carga del sistema al terminar 7,02, 3,02, 1,52; elegido año de inicio=1991, h=45"
+LLR con rezagos seleccionado,2013–2016,carga de datos,17027.0,14.5,14.5,"Intel Core i9-14900K (32 hilos), 125 GB RAM",inicio del proceso hasta fin de la lectura; sin el arranque del entorno
+LLR con rezagos seleccionado,2013–2016,seleccion conjunta de h y train_start (10 x 4 = 40 combinaciones),17027.0,63.4,63.4,"Intel Core i9-14900K (32 hilos), 125 GB RAM","12 procesos, bloques de 1000 celdas; validacion 4 anios finales"
+LLR con rezagos seleccionado,2013–2016,ajuste final + prediccion + escritura,17027.0,10.5,10.5,"Intel Core i9-14900K (32 hilos), 125 GB RAM",incluye la escritura de 24.876.447 filas
+LLR con rezagos seleccionado,2013–2016,total,17027.0,88.4,88.4,"Intel Core i9-14900K (32 hilos), 125 GB RAM","1:28.79 (incluye el arranque del entorno); CPU promedio 829 %; pico RSS 7.8 GB; carga del sistema al terminar 7,70, 4,22, 2,20; elegido año de inicio=1991, h=90"

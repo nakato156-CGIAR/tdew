@@ -1,0 +1,37 @@
+# Protocolo de evaluación {#sec-protocolo}
+
+## Bloques de evaluación
+
+La comparación usa dos bloques retrospectivos de {{< var bloques.ll4.n_anios >}} años (@tbl-bloques; contextos en @sec-datos). El bloque 2009–2012 es el ajeno a la selección: no intervino en la elección de la configuración de TimesFM ni en la selección de ventana y año de inicio de las LLR, y las recetas de tuned no usaron años de prueba. Su contexto termina en {{< var bloques.ll4b.contexto_fin >}}. El bloque 2013–2016 es el usado en el cribado: allí se cribaron las {{< var cribado.n_variantes >}} variantes de TimesFM (@sec-sensibilidad), de modo que la configuración elegida ya vio ese bloque.
+
+El diseño no se registró antes de los análisis. La designación indica qué bloque quedó fuera de la selección, y ninguno de los dos es una evaluación confirmatoria. Tampoco consta en qué orden se conocieron los resultados de cada bloque para tuned sin rezagos de Td y las LLR sin zonas. Los bloques no son réplicas independientes: sus contextos se solapan (el de 2013–2016 incluye los años de prueba de 2009–2012) y comparten celdas, producto y método de selección, de modo que su acuerdo no cuenta como evidencia independiente. Cada resultado se lee primero en 2009–2012.
+
+::: {#tbl-bloques}
+{{< include tablas/tab2.md >}}
+
+Bloques de evaluación, contexto, filas puntuadas y selección que vio cada bloque.
+:::
+
+El tuned de 2009–2012 se corrió con el código del repositorio y no con el entorno de Palacios, y no tiene cifra de referencia de Palacios. En 2013–2016 el mismo código reprodujo la cifra de la corrida limpia de Palacios, con un RMSE de {{< var rmse4.ll4.panel.tuned >}} °C en el dominio completo.
+
+## Dos comparaciones
+
+La primera es frente a tuned, cuyo pool incluye rezagos autorregresivos de Td. La segunda es frente a los rivales sin recursión sobre Td (tuned sin rezagos de Td, LLR con rezagos seleccionado y LLR simple seleccionado), que usan la Tmin observada del bloque como TimesFM y no propagan errores de un día al siguiente; es la prueba más exigente. Se leen por separado. Tuned sin rezagos de Td repite la selección de recetas sin los rezagos, por lo que no aísla la recursión (@sec-sensibilidad).
+
+## Métricas e inferencia
+
+Sea $\hat{y}_i$ la Td estimada y $y_i$ la de PISCO en la fila $i$ (celda × día), con $i = 1, \dots, N$. Las métricas son la raíz del error cuadrático medio (RMSE), el error absoluto medio (MAE) y el sesgo, en °C:
+
+$$
+\mathrm{RMSE}=\sqrt{\frac{1}{N}\sum_{i=1}^{N}(\hat{y}_i-y_i)^2},\qquad
+\mathrm{MAE}=\frac{1}{N}\sum_{i=1}^{N}\lvert\hat{y}_i-y_i\rvert,\qquad
+\mathrm{sesgo}=\frac{1}{N}\sum_{i=1}^{N}(\hat{y}_i-y_i).
+$$
+
+Cada método se puntúa sobre las mismas filas: {{< var filas.ll4.peru >}} en Perú ({{< var celdas.ll4.peru >}} celdas) y {{< var filas.ll4.panel >}} en el dominio completo ({{< var celdas.ll4.panel >}} celdas). La brecha entre A y B es RMSE(A) − RMSE(B) sobre las mismas filas; con A igual a TimesFM, un valor negativo indica menor RMSE de TimesFM. Perú está contenido en el dominio completo y los bloques comparten celdas, de modo que los ámbitos y las comparaciones no son independientes.
+
+Los intervalos de confianza (IC) al {{< var bootstrap.nivel >}} % usan los percentiles {{< var bootstrap.percentil_inf >}} y {{< var bootstrap.percentil_sup >}} de {{< var bootstrap.replicas >}} réplicas de un bootstrap por bloques pareado, con semilla {{< var bootstrap.semilla >}} [@kunsch1989; @lahiri2003]. Los cuatro esquemas de bloques son cuadrículas espaciales de {{< var bootstrap.bloque_grados >}}° (conservan la serie temporal de cada celda), meses-año (conservan la dependencia espacial dentro del mes), cuadrícula de {{< var bootstrap.bloque_grados >}}° por año (espacio-tiempo) y trimestres-año (solo temporales; tienen pocos bloques y los IC más anchos). Ninguno recoge toda la dependencia espacio-temporal. Una brecha es estable a la inferencia si su IC excluye cero con los esquemas espacial, espacio-tiempo y trimestre-año. Los detalles están en el suplemento (S15).
+
+Como contraste independiente, una prueba de Diebold–Mariano se aplicó a la serie diaria del diferencial de error cuadrático promediado sobre las celdas del ámbito ({{< var panel.dias_por_celda >}} días por bloque y ámbito), con varianza de Newey–West, corrección de Harvey–Leybourne–Newbold y ajuste de Holm sobre la familia de {{< var dm.familia >}} pruebas. Se usaron dos rezagos: el automático, de {{< var dm.rezago_corto >}} días, y uno largo de {{< var dm.rezago_largo >}} días como sensibilidad ante dependencia temporal persistente. La prueba contrasta el MSE y no recoge la dependencia espacial, ya promediada. Las pruebas mezclan ámbitos anidados y bloques que comparten celdas, de modo que no son independientes.
+
+Un IC que incluye cero, o un p ajustado sobre 5 %, indica que el análisis no distinguió una diferencia; no establece empate ni equivalencia, y no se definió un margen de equivalencia. Un IC que excluye cero vale para estas celdas, bloques y esquemas. Las brechas por horizonte, año y zona son descriptivas y no se corrigen por comparaciones múltiples.

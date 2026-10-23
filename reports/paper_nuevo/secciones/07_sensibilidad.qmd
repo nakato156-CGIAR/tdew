@@ -1,0 +1,35 @@
+# Sensibilidad del resultado {#sec-sensibilidad}
+
+Tres controles examinan si la ventaja depende de la configuración de TimesFM, de la representación de la entrada o de una decisión de diseño de tuned. Ninguno aísla un mecanismo.
+
+## Configuración elegida en el cribado
+
+{{< var cribado.n_menor_tuned >}} de las {{< var cribado.n_variantes >}} variantes de TimesFM tuvieron menor RMSE que tuned en las {{< var cribado.n_celdas >}} celdas del subconjunto de cribado (2013–2016), donde tuned tuvo un RMSE de {{< var cribado.tuned.rmse >}} °C (@tbl-cribado). La mejor tuvo {{< var cribado.v.tmin_anom_full.rmse >}} °C. Las {{< var cribado.n_mayor_tuned >}} restantes fueron las univariadas, sin Tmin, y la de contexto corto.
+
+::: {#tbl-cribado}
+{{< include tablas/tab4.md >}}
+
+Cribado de {{< var cribado.n_variantes >}} variantes de TimesFM en 2013–2016 (subconjunto de cribado): RMSE, MAE y sesgo (°C) y diferencia de RMSE con tuned, sin IC. La variante de referencia es la primera.
+:::
+
+El cribado se hizo en el bloque usado en el cribado, sin IC y sin validación previa a ambos bloques, de modo que la configuración elegida pudo ajustarse a 2013–2016; repetirlo con una validación previa queda pendiente (@sec-limites). Dos variantes en Td, con z-score externo o sin él, difieren en {{< var cribado.dif_td_full_znorm >}} °C de RMSE y se conservaron como dos, sin comprobar si sus predicciones coinciden. En 2009–2012, que no participó en la elección, la ventaja se midió con la configuración ya fijada (@sec-resultados). Recortar el inicio del historial hasta 2002 cambió el RMSE de TimesFM en {{< var escalera.ll4b.timesfm.i2002.delta >}} °C en 2009–2012 y en {{< var escalera.ll4.timesfm.i2002.delta >}} °C en 2013–2016 (S3); no se determinó el historial mínimo necesario.
+
+## Td cruda
+
+TimesFM en Td cruda recibe Td y Tmin sin convertirlas a anomalías y solo se evaluó en 2009–2012 (@tbl-sensibilidad). Frente a tuned, RMSE(TimesFM en Td cruda) − RMSE(rival) fue {{< var puntual.ll4b.peru.timesfm_td_vs_tuned >}} °C en Perú y {{< var puntual.ll4b.panel.timesfm_td_vs_tuned >}} °C en el dominio completo, es decir, menor RMSE que tuned. Frente al LLR con rezagos seleccionado fue {{< var puntual.ll4b.peru.timesfm_td_vs_llr_rezagos_sel >}} y {{< var puntual.ll4b.panel.timesfm_td_vs_llr_rezagos_sel >}} °C, mayor RMSE que ese control. Sin anomalías, la ventaja sobre tuned se mantiene en menor magnitud. Las diferencias son puntuales, sin IC, y el control no prueba que la representación sea irrelevante en general.
+{{< pagebreak >}}
+
+
+::: {#tbl-sensibilidad}
+{{< include tablas/tab5.md >}}
+
+tuned, tuned sin rezagos de Td, LLR con rezagos seleccionado, TimesFM en Td cruda y TimesFM de referencia, por bloque y ámbito. La brecha es RMSE(TimesFM de referencia) − RMSE(método); en las filas de TimesFM en Td cruda es una diferencia puntual, sin IC. «n. d.» significa no calculado: esa variante solo se evaluó en 2009–2012.
+:::
+
+## tuned sin rezagos de Td
+
+Quitar los rezagos de Td reduce parte de la brecha de TimesFM. El RMSE de tuned sin rezagos de Td fue {{< var rmse.ll4.panel.tuned_sin_td >}} °C en 2013–2016 y dominio completo, frente a {{< var rmse.ll4.panel.tuned >}} °C de tuned, y {{< var rmse.ll4b.panel.tuned_sin_td >}} frente a {{< var rmse.ll4b.panel.tuned >}} °C en 2009–2012. En Perú, la brecha de TimesFM pasa de {{< var robustez.ll4.peru.tuned.v >}} a {{< var robustez.ll4.peru.tuned_sin_td.v >}} °C en 2013–2016 y de {{< var robustez.ll4b.peru.tuned.v >}} a {{< var robustez.ll4b.peru.tuned_sin_td.v >}} °C en 2009–2012 (@sec-resultados). Esta variante repite además la selección de recetas y ventanas, por lo que no demuestra que la recursión explique la distancia con TimesFM ni descarta un aporte del diseño por zona. La brecha por horizonte tampoco la identifica (@sec-donde-cambia).
+
+## Habilidad, dispersión y calibración
+
+Todos los métodos subdispersan: la razón entre la varianza de las anomalías predichas y la de las observadas es menor que uno en cada método y bloque (S9). En 2013–2016 y dominio completo fue {{< var skill.ll4.panel.timesfm.razon_varianza >}} para TimesFM y {{< var skill.ll4.panel.tuned.razon_varianza >}} para tuned. TimesFM entrega además cuantiles: el intervalo q10–q90, de cobertura nominal {{< var calib.nominal >}} %, cubrió el {{< var calib.ll4b.panel.total.cobertura >}} % de las observaciones en 2009–2012 y el {{< var calib.ll4.panel.total.cobertura >}} % en 2013–2016 en el dominio completo, con colas asimétricas (S11). Los rivales no tienen salida probabilística; el estudio no evaluó si esos cuantiles sirven en alguna aplicación. El control de Tmin barajada y la escalera de contexto están en S2 y S3.

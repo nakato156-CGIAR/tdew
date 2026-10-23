@@ -1,0 +1,40 @@
+project:
+  type: default
+  render:
+    - paper.qmd
+    - suplemento.qmd
+
+lang: es
+bibliography: references.bib
+reference-section-title: "Referencias"
+csl: apa.csl
+
+crossref:
+  fig-title: "Figura"
+  tbl-title: "Tabla"
+  fig-prefix: "Figura"
+  tbl-prefix: "Tabla"
+  sec-prefix: "Sección"
+  eq-prefix: "Ecuación"
+  lof-title: "Lista de figuras"
+  lot-title: "Lista de tablas"
+
+format:
+  typst:
+    papersize: a4
+    fontsize: 11pt
+    margin:
+      x: 2.5cm
+      y: 2.5cm
+    number-sections: true
+    include-in-header: typst-preamble.typ
+    template-partials:
+      - typst-template.typ
+      - typst-show.typ
+  html:
+    toc: true
+    number-sections: true
+    embed-resources: true
+    title-block-style: none
+    template-partials:
+      - title-block.html

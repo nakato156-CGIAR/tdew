@@ -1,0 +1,46 @@
+{
+  "autoregressive": true,
+  "bead_id": "tdew-4w2",
+  "climatology_role": "baseline_and_anomaly_reference",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-10-23T14:57:07+00:00",
+  "git_commit": "2899ffd879f7d386ea7ab2175ef0de50afe3bf73",
+  "inputs": [
+    "llr_rezagos_sel",
+    "llr_simple_sel",
+    "timesfm_anom",
+    "tuned",
+    "tuned_sin_td"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest.yaml",
+  "mlflow_run_id": null,
+  "model_family": "comparison",
+  "model_id": "multi",
+  "notes": "Inferencia R1 (tdew-4w2): brecha por horizonte, bootstrap espacio-tiempo (2000 replicas, semilla 0, bloques 2 grados x anio y trimestre-anio) y Diebold-Mariano HAC (rezago floor(4(T/100)^(2/9)) y 30, HLN, Holm). Filas comunes a todos los metodos (desglose.load_split); mascara Peru = peru_mask. Entradas: {'ll4': {'llr_rezagos_sel': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4__llr_tmin_lags_sel.parquet', 'llr_simple_sel': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4__llr_simple_sel.parquet', 'timesfm_anom': '/home/cvelasquez/tdew_timesfm/preds_nacional/ll4__tmin_anom_full.parquet', 'tuned': '/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean/ll4/predictions.parquet', 'tuned_sin_td': '/home/cvelasquez/tdew_timesfm/tuning_sin_td_ll4/ll4/predictions.parquet'}, 'll4b': {'llr_rezagos_sel': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4b__llr_tmin_lags_sel.parquet', 'llr_simple_sel': '/home/cvelasquez/tdew_timesfm/llr_simple/ll4b__llr_simple_sel.parquet', 'timesfm_anom': '/home/cvelasquez/tdew_timesfm/preds_nacional_ll4b/ll4b__tmin_anom_full.parquet', 'tuned': '/home/cvelasquez/tdew_timesfm/tuning_ll4b/ll4b/predictions.parquet', 'tuned_sin_td': '/home/cvelasquez/tdew_timesfm/tuning_sin_td_ll4b/ll4b/predictions.parquet'}}",
+  "output_files": [
+    "reports/paper_nuevo/resultados/r1_brecha_horizonte.csv",
+    "reports/paper_nuevo/resultados/r1_bootstrap_espaciotemporal.csv",
+    "reports/paper_nuevo/resultados/r1_diebold_mariano.csv"
+  ],
+  "panel_cell_count": 17027,
+  "panel_file": "reports/timesfm_benchmark/panels/nacional_17027.csv",
+  "panel_id": "nacional_17027",
+  "run_id": "72391e886edf485eb005ae0d12d29c15",
+  "seeds": [
+    0
+  ],
+  "split_id": "ll4,ll4b",
+  "target_type": "td_raw",
+  "test_period": [
+    "2009-01-01",
+    "2016-12-31"
+  ],
+  "trained": true,
+  "training_period": [
+    "1981-01-01",
+    "2012-12-31"
+  ],
+  "validation_period": null,
+  "variant_label": "r1_inferencia"
+}

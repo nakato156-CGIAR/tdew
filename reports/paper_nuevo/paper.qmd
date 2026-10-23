@@ -1,0 +1,66 @@
+---
+title: "Reconstrucción diaria de la temperatura de punto de rocío en Perú con un modelo fundacional de series temporales: comparación con regresiones locales"
+subtitle: "Borrador para revisión de Palacios y SENAMHI: no citar ni difundir"
+author:
+  - name: "Piero Palacios"
+    corresponding: true
+    email: "piero.palacios@cgiar.org"
+    affiliations:
+      - ref: cip
+  - name: "Henry Juarez"
+    email: "h.juarez@cgiar.org"
+    affiliations:
+      - ref: cip
+  - name: "Christian Borasino"
+    orcid: "0009-0004-6341-6924"
+    email: "christian.velasquez@cgiar.org"
+    affiliations:
+      - ref: cip
+affiliations:
+  - id: cip
+    name: "International Potato Center (CIP)"
+    city: Lima
+    country: Perú
+date: "2026-10-22 (borrador)"
+---
+
+::: {.callout-warning title="BORRADOR"}
+Este documento es un borrador sin validar. El texto, la interpretación estadística y los rivales construidos en este proyecto deben ser revisados por Palacios y SENAMHI antes de cualquier uso. Las cifras se calculan con código a partir de los resultados agregados. Ver la declaración de uso de IA generativa al final.
+:::
+
+{{< include secciones/00_resumen.qmd >}}
+
+{{< include secciones/01_introduccion.qmd >}}
+
+{{< include secciones/02_datos.qmd >}}
+
+{{< include secciones/03_metodos.qmd >}}
+
+{{< include secciones/04_protocolo.qmd >}}
+
+{{< include secciones/05_resultados.qmd >}}
+
+{{< include secciones/06_donde_cambia.qmd >}}
+
+{{< include secciones/07_sensibilidad.qmd >}}
+
+{{< include secciones/08_costo.qmd >}}
+
+{{< include secciones/09_discusion.qmd >}}
+
+{{< include secciones/10_limites.qmd >}}
+
+{{< include secciones/11_conclusion.qmd >}}
+
+# Disponibilidad de código y datos {.unnumbered #sec-disponibilidad}
+
+El método tuned y la producción de la Td a escala nacional están en el repositorio del proyecto [@tdew_estimation_repo]. El repositorio de trabajo de este artículo [@tdew_paper_repo] contiene el código que genera las cifras, tablas y figuras, los análisis de amenazas a la validez y la inferencia con TimesFM, incluidos el cribado y los controles. Los resultados agregados en que se apoyan las cifras del texto, con un registro de procedencia por archivo, acompañan a ese código [[PENDIENTE: confirmar que el código y los resultados agregados estén subidos al repositorio]]. Las predicciones por celda y día residen en la estación de trabajo y no están publicadas [[PENDIENTE: depósito de predicciones]].
+
+La Td y la Tmin de PISCO son productos de SENAMHI [[PENDIENTE: licencia y condiciones de acceso de PISCO]]. Los pesos de TimesFM 3.0 se distribuyen con licencia no comercial, distinta de la licencia de código abierto Apache del código del paquete timesfm. El checkpoint y la revisión usados se indican en @sec-metodos.
+
+# Validación y firma {.unnumbered #sec-validacion}
+
+| Rol | Nombre | Institución | Fecha | Firma |
+|:---|:---|:---|:---|:---|
+| Autor del método tuned; validación científica | Palacios | [pendiente] | [pendiente] | [pendiente] |
+| Validación de la zonificación y del contexto climático | [pendiente] | SENAMHI | [pendiente] | [pendiente] |

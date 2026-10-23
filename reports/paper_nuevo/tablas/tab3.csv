@@ -1,0 +1,17 @@
+Bloque,Ámbito,Método,RMSE (°C),MAE (°C),Sesgo (°C)
+2009–2012,dominio completo,climatología,1.3618,1.01583,-0.30008
+2009–2012,dominio completo,tuned,1.122,0.82043,-0.15627
+2009–2012,dominio completo,LLR con rezagos seleccionado,1.07446,0.78728,-0.11725
+2009–2012,dominio completo,TimesFM,1.04625,0.76795,-0.10762
+2009–2012,Perú,climatología,1.08728,0.82928,-0.20321
+2009–2012,Perú,tuned,0.86073,0.64354,-0.06019
+2009–2012,Perú,LLR con rezagos seleccionado,0.82966,0.62202,-0.06179
+2009–2012,Perú,TimesFM,0.80428,0.60233,-0.0849
+2013–2016,dominio completo,climatología,1.53517,1.13633,-0.36271
+2013–2016,dominio completo,tuned,1.22793,0.88101,-0.03268
+2013–2016,dominio completo,LLR con rezagos seleccionado,1.15666,0.83988,0.03564
+2013–2016,dominio completo,TimesFM,1.15364,0.82984,0.10442
+2013–2016,Perú,climatología,1.26176,0.95381,-0.30061
+2013–2016,Perú,tuned,0.94425,0.69516,0.00957
+2013–2016,Perú,LLR con rezagos seleccionado,0.89068,0.66092,0.03361
+2013–2016,Perú,TimesFM,0.86509,0.63804,0.04972

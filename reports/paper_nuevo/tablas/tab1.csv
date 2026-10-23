@@ -1,0 +1,6 @@
+Método,Zonas SENAMHI,Búsqueda previa,Ajuste de pesos o coeficientes,Datos por celda,Hardware,Licencia de pesos
+Climatología,No,Ninguna,Media por celda y día del año,Td de los años de entrenamiento,n. d.,No aplica
+LLR simple y con rezagos de Tmin,No,Un semiancho h global en una grilla corta,Coeficientes por celda,Climatología de Td y Tmin; anomalía de Tmin del bloque (con rezagos en la segunda variante),32 nucleos CPU; GPU: no,No aplica
+LLR seleccionados,No,"Semiancho h y año de inicio, por validación interna",Coeficientes por celda,Igual que el LLR correspondiente,n. d. (tiempo no medido),No aplica
+tuned,Sí: unidades cartográficas SENAMHI,Receta y h por zona × día del año (validación dejando un año fuera),Coeficientes por celda; despliegue autorregresivo con rezagos de Td,"Td y Tmin históricos, rezagos de Td y de Tmin; zona de la celda",RTX A2000 12 GB + CPU; GPU: sí (CuPy),No aplica
+TimesFM,No,"Elección de una configuración entre 9 (cribado único, en 2013–2016)",Ninguno: pesos preentrenados sin modificar,"Historial local de Td y Tmin, climatologías y Tmin observada del bloque",RTX A2000 12 GB; GPU: sí (TF32 por defecto),No comercial (checkpoint preentrenado)

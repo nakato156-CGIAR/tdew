@@ -1,0 +1,67 @@
+{
+  "autoregressive": true,
+  "bead_id": "tdew-tpu",
+  "climatology_role": "baseline_and_anomaly_reference",
+  "climatology_used": true,
+  "dataset_hash": null,
+  "generated_at": "2026-10-23T15:55:02+00:00",
+  "git_commit": "2899ffd879f7d386ea7ab2175ef0de50afe3bf73",
+  "inputs": [
+    "reports/paper_nuevo/bib_verificacion.md",
+    "reports/paper_nuevo/notas_preentrenamiento.md",
+    "reports/paper_nuevo/resultados/a1_brechas.csv",
+    "reports/paper_nuevo/resultados/a1_brechas.csv.provenance.json",
+    "reports/paper_nuevo/resultados/a1_escalera_contexto.csv",
+    "reports/paper_nuevo/resultados/a1_escalera_contexto_brechas.csv",
+    "reports/paper_nuevo/resultados/a1_por_metodo.csv",
+    "reports/paper_nuevo/resultados/a1_por_zona.csv",
+    "reports/paper_nuevo/resultados/a1_victorias_zona.csv",
+    "reports/paper_nuevo/resultados/a3_control_tmin_barajada.csv",
+    "reports/paper_nuevo/resultados/a4_delta_rmse_bootstrap.csv",
+    "reports/paper_nuevo/resultados/a4_estaciones.csv",
+    "reports/paper_nuevo/resultados/a4_por_estacion.csv",
+    "reports/paper_nuevo/resultados/a4_por_periodo.csv",
+    "reports/paper_nuevo/resultados/costo.csv",
+    "reports/paper_nuevo/resultados/costo.md",
+    "reports/paper_nuevo/resultados/r1_bootstrap_espaciotemporal.csv",
+    "reports/paper_nuevo/resultados/r1_brecha_horizonte.csv",
+    "reports/paper_nuevo/resultados/r1_diebold_mariano.csv",
+    "reports/paper_nuevo/resultados/r2_calibracion.csv",
+    "reports/paper_nuevo/resultados/r2_enso.csv",
+    "reports/paper_nuevo/resultados/r2_estratos_altitud.csv",
+    "reports/paper_nuevo/resultados/r2_extremos.csv",
+    "reports/paper_nuevo/resultados/r2_sin_zona_dominante.csv",
+    "reports/paper_nuevo/resultados/r2_skill.csv",
+    "reports/paper_nuevo/resultados/r3_costo_llr_sel.csv",
+    "reports/timesfm_benchmark/cribado_limpio/leaderboard.csv",
+    "reports/timesfm_benchmark/panels/nacional_17027.csv"
+  ],
+  "manifest_ref": "docs/protocol/timesfm_manifest.yaml",
+  "mlflow_run_id": null,
+  "model_family": "comparison",
+  "model_id": "multi",
+  "notes": "Cifras del paper nuevo calculadas por experiments/paper_nuevo/cifras.py desde los CSV de resultados; ver fuente_archivo y fuente_filtro por clave. sha256=edf367a6a6da1e83",
+  "output_files": [
+    "reports/paper_nuevo/cifras/cifras.csv"
+  ],
+  "panel_cell_count": 17027,
+  "panel_file": "reports/timesfm_benchmark/panels/nacional_17027.csv",
+  "panel_id": "nacional_17027",
+  "run_id": "549379052ccf48588ef26b9eaaa5b75a",
+  "seeds": [
+    0
+  ],
+  "split_id": "ll4,ll4b",
+  "target_type": "td_raw",
+  "test_period": [
+    "2009-01-01",
+    "2016-12-31"
+  ],
+  "trained": true,
+  "training_period": [
+    "1981-01-01",
+    "2012-12-31"
+  ],
+  "validation_period": null,
+  "variant_label": "paper_nuevo_cifras"
+}

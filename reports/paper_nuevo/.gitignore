@@ -1,0 +1,15 @@
+# Salidas de render de Quarto (se regeneran con `quarto render`).
+paper.pdf
+paper.html
+paper.typ
+paper_files/
+suplemento.pdf
+suplemento.html
+suplemento.typ
+suplemento_files/
+*_files/
+.quarto/
+/.quarto
+
+/.quarto/
+**/*.quarto_ipynb

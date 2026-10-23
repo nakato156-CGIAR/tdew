@@ -1,0 +1,57 @@
+# Métodos y lo que exige cada uno {#sec-metodos}
+
+## Anomalías respecto de la climatología
+
+Sea $X_i(t)$ la Td o la Tmin de la celda $i$ el día $t$, y $d(t)$ el día del año. La climatología $\bar{X}_i(d)$ es el promedio de $X_i$ en el día del año $d$ sobre los años de entrenamiento $\mathcal{Y}$ del bloque, y la anomalía es
+
+$$
+X'_i(t) \;=\; X_i(t) - \bar{X}_i\big(d(t)\big).
+$$
+
+Los años de $\mathcal{Y}$ terminan donde empieza el bloque de prueba, de modo que la climatología no contiene información del bloque. La predicción de Td es la anomalía predicha más la climatología de Td. La climatología sola, que equivale a predecir anomalía nula, es el primer control y el único método que no usa la Tmin del bloque.
+
+## tuned
+
+El método de Palacios [@palacios_enprep] modela la anomalía de Td de la celda $i$ en el día del año $d$ como una combinación lineal de un subconjunto $\mathcal{S}$ de predictores,
+
+$$
+Td'_i(t) \;=\; \mathbf{x}_{\mathcal{S}}(t)^{\top}\boldsymbol{\beta}_{i,d} + \varepsilon_i(t).
+$$
+
+Los predictores salen de un pool de {{< var diseno.tuned.pool_terminos >}} términos: la constante, la anomalía de Tmin del día y sus rezagos de {{< var diseno.tuned.rezagos_tmin >}} días, y los rezagos de {{< var diseno.tuned.rezagos_td >}} días de la anomalía de Td. Los coeficientes de cada celda y día del año se estiman por mínimos cuadrados ponderados sobre todos los años de entrenamiento, con un núcleo tricúbico circular en el día del año, de semiancho $h$ [@cleveland1988],
+
+$$
+w_h(\delta) \;=\; \big[1-(\delta/h)^3\big]^3\,\mathbf{1}\{\delta\le h\},
+$$
+
+donde $\delta$ es la distancia circular, en días, entre $d(t)$ y $d$.
+
+La selección de $\mathcal{S}$ y de $h$ se hace por zona y día del año, no por celda, con la estructura multitarea de @hwang2019. Para cada una de las {{< var panel.unidades_total >}} unidades cartográficas y cada día del año se busca la receta que maximiza el coseno entre la anomalía observada y la predicha en validación dejando un año fuera, con eliminación hacia atrás de predictores, sobre una muestra de celdas de la zona. Con la receta fijada, los coeficientes se ajustan en cada celda.
+
+La reconstrucción es autorregresiva. Los rezagos de Td provienen de la Td observada mientras caen dentro del contexto y de la propia predicción una vez dentro del bloque. La Tmin es observada durante todo el bloque.
+
+## TimesFM 3.0
+
+TimesFM 3.0 es un modelo fundacional de series de tiempo de tipo decodificador [@das2024]. No se encontró un artículo específico de la versión 3.0, y se cita el checkpoint de unos {{< var timesfm.parametros_millones >}} millones de parámetros [@timesfm3_checkpoint]. Los pesos no se modifican y tienen licencia no comercial, distinta de la del código (@sec-discusion).
+
+La configuración de referencia procesa cada celda como una serie independiente. El contexto es la anomalía diaria de Td desde 1981 hasta el final del contexto del bloque. La covariable es la anomalía diaria de Tmin respecto de la misma climatología, entregada en el contexto y en el horizonte mediante la interfaz de covariables pasadas y futuras del paquete timesfm. El horizonte es el bloque completo, de {{< var panel.dias_por_celda >}} días, y se decodifica en una sola pasada, sin reintroducir las predicciones como entrada. La predicción puntual es la mediana de los nueve cuantiles del modelo, convertida a °C con la climatología de Td. Se desactivó el recorte a valores no negativos, porque la Td es negativa en parte de Cusco. El modelo no recibe la zona ni las coordenadas de la celda. La documentación de TimesFM 3.0 no muestra resultados a un horizonte de esta magnitud a escala diaria.
+
+La configuración se eligió entre {{< var cribado.n_variantes >}} variantes en un cribado sobre las {{< var cribado.n_celdas >}} celdas del bloque 2013–2016 que tuned también puntúa (subconjunto de cribado). Las variantes difieren en el objetivo (Td o su anomalía), las covariables, el año de inicio del contexto ({{< var variantes.inicios_cribado >}}) y la inferencia. La variante de referencia tuvo el menor RMSE y se reutilizó en los dos bloques. Por eso 2013–2016 es el bloque usado en el cribado y 2009–2012, el ajeno a la selección (@sec-protocolo).
+
+El corpus de preentrenamiento, según la ficha del checkpoint, es GiftEvalPretrain (sin los conjuntos que se solapan con fev-bench), visitas de Wikipedia, Google Trends y series sintéticas [@timesfm3_checkpoint; @shchur2025]. GiftEvalPretrain contiene ERA5 horario de {{< var preentrenamiento.reanalisis_anio_ini >}} a {{< var preentrenamiento.reanalisis_anio_fin >}} en una grilla global de {{< var preentrenamiento.reanalisis_grilla_grados >}}° [@aksu2024; @woo2024], que cubre Perú y los años evaluados. El corpus documentado no menciona PISCO ni SENAMHI, y la exposición posible no puede confirmarse ni descartarse (@sec-limites).
+
+## Controles
+
+Los demás métodos quitan o cambian componentes de tuned. Las LLR sin zonas son regresiones locales lineales por celda y día del año con el mismo núcleo tricúbico, en {{< var diseno.llr.n_variantes >}} variantes. El LLR simple regresa la anomalía de Td sobre la de Tmin del mismo día; el LLR con rezagos añade los rezagos de {{< var diseno.llr.rezagos_tmin >}} días de la anomalía de Tmin. Ninguno incluye rezagos de Td, de modo que no hay recursión. El semiancho $h$ es único para todas las celdas y se elige minimizando el RMSE de validación en los últimos {{< var diseno.llr.validacion_anios >}} años de entrenamiento. Las versiones seleccionadas (LLR simple seleccionado y LLR con rezagos seleccionado) eligen en conjunto $h$ y el año de inicio del ajuste con esa validación. El control principal es el LLR con rezagos seleccionado. Son implementaciones de este proyecto, no el código de Palacios, y Palacios aún no las revisó.
+
+El control tuned sin rezagos de Td repite el protocolo de selección y ajuste de tuned con un pool sin rezagos de Td, de modo que la reconstrucción deja de ser autorregresiva. TimesFM en Td cruda alimenta al modelo con Td y Tmin sin anomalías, con contexto desde 1981, y solo se evaluó en 2009–2012.
+
+## Lo que exige cada método
+
+@tbl-inventario resume la información, la búsqueda previa, el ajuste y los datos por celda que requiere cada método, y el hardware de las corridas. tuned necesita la zonificación, una búsqueda de receta y semiancho por zona y día del año, y un ajuste de coeficientes por celda. TimesFM no ajusta pesos ni usa zonas, pero requiere el historial local, las climatologías, la Tmin observada del bloque y la elección previa de una configuración entre {{< var cribado.n_variantes >}}. Las LLR sin zonas ajustan coeficientes por celda y eligen una ventana global, y en las versiones seleccionadas también un año de inicio. El inventario no mide el esfuerzo humano de diseño ni el costo de preentrenar el checkpoint.
+
+::: {#tbl-inventario}
+{{< include tablas/tab1.md >}}
+
+Inventario de diseño por método. «Búsqueda previa» es la selección de recetas, ventanas o configuración hecha antes de reconstruir el bloque; la de TimesFM se realizó una vez, sobre el bloque 2013–2016. «n. d.» indica que el dato no se registró.
+:::
