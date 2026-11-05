@@ -1,0 +1,28 @@
+{
+  "interval": [
+    20,
+    24
+  ],
+  "n": 12085392,
+  "bead": "tdew-6pe",
+  "palacios": "/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean/ll4/predictions.parquet",
+  "timesfm": "/home/cvelasquez/tdew_timesfm/preds_nacional/ll4__tmin_anom_full.parquet",
+  "scope": "Perú",
+  "filter": "Solo Perú; mismos pares ID–FECHA con observación y ambos modelos presentes",
+  "criterion": "Menos valores en [20,24) que los observados; diferencia estrictamente negativa",
+  "years": [
+    2013,
+    2014,
+    2015,
+    2016
+  ],
+  "cells": 8272,
+  "counts": "n: pares válidos; obs/timesfm/llr: conteos en [20,24)",
+  "sources": [
+    "/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean/ll4/predictions.parquet",
+    "/home/cvelasquez/tdew_timesfm/preds_nacional/ll4__tmin_anom_full.parquet",
+    "/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/zone_table.parquet",
+    "reports/timesfm_benchmark/geo/peru_departamental_simple.geojson"
+  ],
+  "validation": "Paridad de conteos y diferencias con anio.csv para los dos modelos y los cuatro años"
+}

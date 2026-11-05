@@ -63,5 +63,6 @@ def test_afirmaciones_del_texto():
 
 def test_pagina_carga_el_archivo():
     s = HTML.read_text(encoding="utf-8")
-    assert s.index('<script src="datos.js">') < s.index('<script src="datos_kl_calido.js">')
+    assert s.index('<script src="datos.js">') < s.index('<script src="datos_kl_localizacion.js">')
+    assert s.index('<script src="datos_kl_localizacion.js">') < s.index('<script src="kl_zonas.js">')
     assert 'id="kl-calido"' in s and 'href="#kl-calido"' in s

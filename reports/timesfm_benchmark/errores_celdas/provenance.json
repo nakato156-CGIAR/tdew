@@ -1,0 +1,29 @@
+{
+  "bead": "tdew-06n",
+  "generated_at": "2026-10-22T19:25:08.740740+00:00",
+  "sources": [
+    "/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean/ll4/predictions.parquet",
+    "/home/cvelasquez/tdew_timesfm/preds_nacional/ll4__tmin_anom_full.parquet",
+    "/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/zone_table.parquet",
+    "reports/timesfm_benchmark/geo/peru_departamental_simple.geojson"
+  ],
+  "scope": "Perú; mismos ID y FECHA, con observación y ambas predicciones presentes",
+  "error": "TimesFM menos Td observada, en grados Celsius; magnitud = valor absoluto",
+  "threshold": 2.7331683349609364,
+  "quantile": 0.99,
+  "inclusive": true,
+  "quantile_method": "linear",
+  "peak_fields": [
+    "date",
+    "obs",
+    "pred",
+    "error"
+  ],
+  "recurrence": "Al menos un día con error absoluto >= umbral fijo en ese año",
+  "warm_definition": "Sufijo térmico A': cálido, SENAMHI 2020",
+  "warm_source": "https://www.senamhi.gob.pe/load/file/01404SENA-4.pdf",
+  "n": 12085392,
+  "cells": 8272,
+  "checks": "Unicidad ID/FECHA; paridad de conteos, eventos y suma de errores cuadrados entre datos diarios y agregados",
+  "artifact_sha256": "c236809eadd22a2e8fbc6afb1c45cc54088c970817eedcbb28e38d7bcf430684"
+}

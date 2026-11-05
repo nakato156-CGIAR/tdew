@@ -1,0 +1,30 @@
+{
+  "bead": "tdew-rey",
+  "generated_at": "2026-10-22T19:49:58.582401+00:00",
+  "scope": "Perú",
+  "n": 12085392,
+  "cells": 8272,
+  "width": 0.5,
+  "alpha": 0.5,
+  "normalizer": 12085462.0,
+  "n_bins": 140,
+  "selected_bins": [
+    82,
+    83,
+    84,
+    91,
+    92,
+    93
+  ],
+  "sources": [
+    "/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/tuning/backtest_clean/ll4/predictions.parquet",
+    "/home/cvelasquez/tdew_timesfm/preds_nacional/ll4__tmin_anom_full.parquet",
+    "/media/ppalacios/Data1/henry_simcast_peru_full/results_tuning/zone_table.parquet",
+    "reports/timesfm_benchmark/geo/peru_departamental_simple.geojson"
+  ],
+  "selection": "Tres mayores aportes positivos y tres más negativos de la curva KL(obs||TimesFM), bins 0.5°C",
+  "attribution": "A_gb=(O_gb-Q_gb)/(N+B*alpha)*w_b; w_b=p_b*ln(p_b/q_b)/(p_b-q_b), con límite 1 si p_b=q_b",
+  "interpretation": "Aporte firmado al bin de la KL global; no es KL calculada por celda ni error diario",
+  "validation": "Histogramas coinciden con kl._hist; cuentas por celda/año suman las globales; aportes suman cada pico; curva completa suma KL 0.5°C de la tabla, mismos pares de Perú",
+  "sha256": "b1116f464ed1e96978842c6bccb8a9724c35ed9065962b54f3d8b1af09f6c1f8"
+}

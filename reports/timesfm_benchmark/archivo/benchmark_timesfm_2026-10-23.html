@@ -1,0 +1,487 @@
+<title>TimesFM contra el método de Palacios</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    color-scheme: light;
+    --ground: #f4f6f5;
+    --surface: #ffffff;
+    --surface-2: #eaeeed;
+    --ink: #131b19;
+    --ink-2: #3f4b48;
+    --muted: #6d7976;
+    --line: #d7dedc;
+    --line-soft: #e7eceb;
+
+    --s-timesfm: #0a8f7a;
+    --s-palacios: #2563c9;
+    --s-tcn: #b8802a;
+    --s-clim: #8b5fbf;
+    --s-pobre: #c04a5e;
+
+    --limite: #a8502a;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --ground: #0e1412;
+      --surface: #161d1b;
+      --surface-2: #1e2725;
+      --ink: #e7ecea;
+      --ink-2: #b4c0bc;
+      --muted: #8a9692;
+      --line: #2b3533;
+      --line-soft: #212b29;
+
+      --s-timesfm: #19a08c;
+      --s-palacios: #5583e5;
+      --s-tcn: #b8800f;
+      --s-clim: #9d63c9;
+      --s-pobre: #d4596e;
+
+      --limite: #d08a5e;
+    }
+  }
+
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --ground: #0e1412;
+    --surface: #161d1b;
+    --surface-2: #1e2725;
+    --ink: #e7ecea;
+    --ink-2: #b4c0bc;
+    --muted: #8a9692;
+    --line: #2b3533;
+    --line-soft: #212b29;
+
+    --s-timesfm: #19a08c;
+    --s-palacios: #5583e5;
+    --s-tcn: #b8800f;
+    --s-clim: #9d63c9;
+    --s-pobre: #d4596e;
+
+    --limite: #d08a5e;
+  }
+
+  body {
+    background: var(--ground);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    font-size: 16px;
+    line-height: 1.62;
+    margin: 0;
+  }
+
+  .hoja {
+    max-width: 1060px;
+    margin: 0 auto;
+    padding-inline: 20px;
+    padding-block: 0 72px;
+  }
+
+  .medida { max-width: 64ch; }
+
+  .cabecera {
+    padding-block: 52px 34px;
+    border-bottom: 1px solid var(--line);
+  }
+  .eyebrow {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11.5px;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin: 0 0 18px;
+  }
+  h1 {
+    font-family: "Fraunces", Georgia, serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-size: clamp(30px, 5.2vw, 46px);
+    line-height: 1.12;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+    margin: 0 0 20px;
+  }
+  .entradilla {
+    font-size: clamp(16.5px, 2.2vw, 18.5px);
+    color: var(--ink-2);
+    margin: 0;
+    max-width: 62ch;
+  }
+  .entradilla strong { color: var(--ink); font-weight: 600; }
+
+  .veredicto {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(212px, 1fr));
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    margin-block: 38px;
+  }
+  .celda { background: var(--surface); padding: 20px 22px 22px; }
+  .celda .rotulo {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 12px;
+  }
+  .celda .cifra {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 30px;
+    font-weight: 500;
+    line-height: 1;
+    display: block;
+    color: var(--s-timesfm);
+  }
+  .celda .pie { font-size: 13.5px; color: var(--ink-2); margin: 10px 0 0; }
+
+  h2 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600;
+    font-size: clamp(21px, 3.2vw, 26px);
+    line-height: 1.22;
+    letter-spacing: -0.01em;
+    text-wrap: balance;
+    margin: 54px 0 6px;
+  }
+  h3 {
+    font-family: "IBM Plex Sans", sans-serif;
+    font-weight: 600;
+    font-size: 16.5px;
+    margin: 32px 0 8px;
+  }
+  .sub {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 0 0 20px;
+    letter-spacing: 0.02em;
+  }
+  p { margin: 0 0 16px; max-width: 64ch; }
+  strong { font-weight: 600; }
+  .num {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 0.94em;
+  }
+
+  .tabla-caja { overflow-x: auto; margin-block: 22px 8px; }
+  table { border-collapse: collapse; width: 100%; min-width: 560px; font-size: 14.5px; }
+  caption {
+    caption-side: bottom;
+    text-align: left;
+    font-size: 12.5px;
+    color: var(--muted);
+    padding-top: 12px;
+    max-width: 78ch;
+  }
+  th, td { padding: 9px 12px; text-align: right; border-bottom: 1px solid var(--line-soft); }
+  th:first-child, td:first-child { text-align: left; padding-left: 0; }
+  thead th {
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 1px solid var(--line);
+  }
+  tbody td { font-variant-numeric: tabular-nums; font-family: "IBM Plex Mono", ui-monospace, monospace; }
+  tbody td:first-child { font-family: "IBM Plex Sans", sans-serif; }
+  tr.destacada td { background: var(--surface-2); font-weight: 500; }
+  tr.destacada td:first-child { font-weight: 600; }
+  .marca {
+    display: inline-block;
+    width: 9px; height: 9px;
+    border-radius: 2px;
+    margin-right: 9px;
+  }
+
+  figure { margin: 26px 0 8px; }
+  figcaption { font-size: 12.5px; color: var(--muted); margin-top: 12px; max-width: 66ch; }
+  svg { display: block; width: 100%; height: auto; max-width: 100%; }
+  .g-eje { stroke: var(--line); stroke-width: 1; }
+  .g-rejilla { stroke: var(--line-soft); stroke-width: 1; }
+  .g-texto { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 11px; fill: var(--muted); }
+  .g-valor { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px; fill: var(--ink); font-variant-numeric: tabular-nums; }
+  .g-nombre { font-family: "IBM Plex Sans", sans-serif; font-size: 12.5px; fill: var(--ink-2); }
+
+  .limite {
+    border-left: 3px solid var(--limite);
+    padding: 2px 0 2px 20px;
+    margin-block: 26px;
+    max-width: 66ch;
+  }
+  .limite h3 { margin-top: 0; color: var(--limite); }
+  .limite p:last-child { margin-bottom: 0; }
+
+  .nota {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 20px 22px;
+    margin-block: 30px;
+    font-size: 14.5px;
+    max-width: 70ch;
+  }
+  .nota p:last-child { margin-bottom: 0; }
+
+  ul { margin: 0 0 16px; padding-left: 20px; max-width: 64ch; }
+  li { margin-bottom: 7px; }
+
+  .estado {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    font-family: "IBM Plex Mono", ui-monospace, monospace;
+    font-size: 12px;
+    color: var(--muted);
+    border-top: 1px solid var(--line);
+    padding-top: 22px;
+    margin-top: 58px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div class="hoja">
+
+  <header class="cabecera">
+    <p class="eyebrow">Reconstrucción de punto de rocío · PISCO · bloque oculto 2013–2016</p>
+    <h1>TimesFM contra el método de Palacios</h1>
+    <p class="entradilla">Un modelo de fundación de Google, <strong>usado sin entrenar ni ajustar</strong>, se comparó con el método publicado de Palacios y con la red convolucional del proyecto, bajo el mismo protocolo: mismos bloques de años, mismas celdas, mismos días, mismas métricas. Gana los tres duelos.</p>
+  </header>
+
+  <section class="veredicto">
+    <div class="celda">
+      <span class="rotulo">Contra Palacios</span>
+      <span class="cifra">−0,066 °C</span>
+      <p class="pie">RMSE 1,1536 contra 1,2194 sobre las 17.041 celdas del backtest. Gana en el 99,2 % de ellas.</p>
+    </div>
+    <div class="celda">
+      <span class="rotulo">Contra la TCN</span>
+      <span class="cifra">−0,042 °C</span>
+      <p class="pie">RMSE 0,7996 contra 0,8412 de media entre tres semillas. Gana en el 96,2 % de las celdas.</p>
+    </div>
+    <div class="celda">
+      <span class="rotulo">Contra climatología</span>
+      <span class="cifra">−0,382 °C</span>
+      <p class="pie">Skill 0,249 donde el método publicado alcanza 0,206. Gana en el 100 % de las celdas.</p>
+    </div>
+  </section>
+
+  <div class="medida">
+    <h2>Qué se comparó y bajo qué reglas</h2>
+    <p class="sub">Protocolo congelado · docs/protocol/timesfm_manifest.yaml</p>
+    <p>Los bloques de años no se inventaron para este trabajo: son los mismos que define el backtest de Palacios y bajo los que él reporta sus cifras. El bloque <span class="num">ll4</span> entrena con 1981–2012 y predice 2013–2016, que son 1.461 días seguidos — el mismo régimen del hueco real 2017–2020 que hay que rellenar.</p>
+    <p>Ningún valor de punto de rocío del bloque oculto llega al modelo, ni directamente ni a través de la climatología. La temperatura mínima sí, porque es exógena, existe en todo el rango y <strong>el método de Palacios también la usa</strong>: igualar la entrada hace que la comparación mida el modelo y no el acceso a datos.</p>
+  </div>
+
+  <h2>La escalera nacional</h2>
+  <p class="sub">17.041 celdas · 24.896.901 pares observación–predicción · bloque 2013–2016</p>
+
+  <figure>
+    <svg viewBox="0 0 720 268" role="img" aria-label="Error cuadrático medio de cinco métodos sobre las 17.041 celdas del backtest nacional. TimesFM 1,154; método de Palacios 1,219; climatología 1,535; recta por zona 2,329; Td igual a Tmin 3,551.">
+      <line class="g-rejilla" x1="290.5" y1="26" x2="290.5" y2="226" />
+      <line class="g-rejilla" x1="421" y1="26" x2="421" y2="226" />
+      <line class="g-rejilla" x1="551.5" y1="26" x2="551.5" y2="226" />
+
+      <rect x="160" y="34" width="150.5" height="26" fill="var(--s-timesfm)" />
+      <text class="g-nombre" x="152" y="52" text-anchor="end">TimesFM</text>
+      <text class="g-valor" x="319" y="52">1,154</text>
+
+      <rect x="160" y="74" width="159.1" height="26" fill="var(--s-palacios)" />
+      <text class="g-nombre" x="152" y="92" text-anchor="end">Palacios</text>
+      <text class="g-valor" x="328" y="92">1,219</text>
+
+      <rect x="160" y="114" width="200.4" height="26" fill="var(--s-clim)" />
+      <text class="g-nombre" x="152" y="132" text-anchor="end">climatología</text>
+      <text class="g-valor" x="369" y="132">1,535</text>
+
+      <rect x="160" y="154" width="303.9" height="26" fill="var(--s-pobre)" />
+      <text class="g-nombre" x="152" y="172" text-anchor="end">recta por zona</text>
+      <text class="g-valor" x="473" y="172">2,329</text>
+
+      <rect x="160" y="194" width="463.4" height="26" fill="var(--s-pobre)" opacity="0.5" />
+      <text class="g-nombre" x="152" y="212" text-anchor="end">Td = Tmin</text>
+      <text class="g-valor" x="632" y="212">3,551</text>
+
+      <line class="g-eje" x1="160" y1="232" x2="640" y2="232" />
+      <text class="g-texto" x="160" y="250" text-anchor="middle">0</text>
+      <text class="g-texto" x="290.5" y="250" text-anchor="middle">1</text>
+      <text class="g-texto" x="421" y="250" text-anchor="middle">2</text>
+      <text class="g-texto" x="551.5" y="250" text-anchor="middle">3</text>
+      <text class="g-texto" x="700" y="250" text-anchor="end">RMSE (°C)</text>
+    </svg>
+    <figcaption>Menor es mejor. Las dos últimas barras son las líneas base ingenuas del protocolo, incluidas porque fijan la escala del problema.</figcaption>
+  </figure>
+
+  <div class="tabla-caja">
+    <table>
+      <caption>Reproducción previa: las filas de Palacios y climatología dan 1,219433 y 1,535218, idénticas a las publicadas en el plan del paper. Esa coincidencia es la que autoriza a poner las demás filas en la misma tabla.</caption>
+      <thead>
+        <tr><th>método</th><th>RMSE °C</th><th>MAE</th><th>sesgo</th><th>r</th><th>skill</th></tr>
+      </thead>
+      <tbody>
+        <tr class="destacada"><td><span class="marca" style="background:#0a8f7a"></span>TimesFM</td><td>1,1536</td><td>0,8299</td><td>+0,105</td><td>0,9914</td><td>0,249</td></tr>
+        <tr><td><span class="marca" style="background:#2563c9"></span>Palacios</td><td>1,2194</td><td>0,8743</td><td>−0,046</td><td>0,9904</td><td>0,206</td></tr>
+        <tr><td><span class="marca" style="background:#8b5fbf"></span>climatología</td><td>1,5352</td><td>1,1364</td><td>−0,362</td><td>0,9856</td><td>0</td></tr>
+        <tr><td><span class="marca" style="background:#c04a5e"></span>recta por zona</td><td>2,3290</td><td>1,7425</td><td>+0,086</td><td>0,9641</td><td>−0,517</td></tr>
+        <tr><td><span class="marca" style="background:#c04a5e;opacity:.5"></span>Td = Tmin</td><td>3,5512</td><td>2,7350</td><td>−2,126</td><td>0,9462</td><td>−1,313</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="medida">
+    <p>La ventaja no descansa en el promedio. Con remuestreo por celda y test de permutación, TimesFM supera al método de Palacios en <strong>16.908 de las 17.041 celdas</strong>, con ΔRMSE <span class="num">+0,0658</span> °C, intervalo de confianza <span class="num">[0,065; 0,066]</span>, d de Cohen <span class="num">1,91</span> y <span class="num">p = 0,0002</span>, el mínimo alcanzable con 5.000 permutaciones. Gana además en <strong>las 38 zonas climáticas SENAMHI sin excepción</strong>, con margen mínimo de <span class="num">+0,031</span> °C.</p>
+  </div>
+
+  <h2>Por qué gana: el horizonte</h2>
+  <p class="sub">Mismas celdas, tres longitudes de bloque oculto</p>
+
+  <figure>
+    <svg viewBox="0 0 720 300" role="img" aria-label="Skill frente a climatología según la longitud del bloque oculto. TimesFM pasa de 0,302 a un año, a 0,308 a dos años y a 0,249 a cuatro. El método de Palacios decae de 0,249 a 0,235 y a 0,206.">
+      <line class="g-rejilla" x1="96" y1="78" x2="656" y2="78" />
+      <line class="g-rejilla" x1="96" y1="141.3" x2="656" y2="141.3" />
+      <line class="g-rejilla" x1="96" y1="204.7" x2="656" y2="204.7" />
+      <text class="g-texto" x="88" y="82" text-anchor="end">0,30</text>
+      <text class="g-texto" x="88" y="145" text-anchor="end">0,25</text>
+      <text class="g-texto" x="88" y="209" text-anchor="end">0,20</text>
+
+      <line x1="104" y1="142.9" x2="628" y2="142.9" stroke="var(--muted)" stroke-width="1" stroke-dasharray="3 4" />
+
+      <polyline points="116,76.1 376,67.9 636,143.1" fill="none" stroke="var(--s-timesfm)" stroke-width="2.5" stroke-linejoin="round" />
+      <circle cx="116" cy="76.1" r="4.5" fill="var(--s-timesfm)" />
+      <circle cx="376" cy="67.9" r="4.5" fill="var(--s-timesfm)" />
+      <circle cx="636" cy="143.1" r="4.5" fill="var(--s-timesfm)" />
+      <text class="g-valor" x="116" y="59" text-anchor="middle" fill="var(--s-timesfm)">0,302</text>
+      <text class="g-valor" x="376" y="51" text-anchor="middle" fill="var(--s-timesfm)">0,308</text>
+      <text class="g-valor" x="646" y="135" fill="var(--s-timesfm)">0,249</text>
+
+      <polyline points="116,142.6 376,159.7 636,197.4" fill="none" stroke="var(--s-palacios)" stroke-width="2.5" stroke-linejoin="round" />
+      <circle cx="116" cy="142.6" r="4.5" fill="var(--s-palacios)" />
+      <circle cx="376" cy="159.7" r="4.5" fill="var(--s-palacios)" />
+      <circle cx="636" cy="197.4" r="4.5" fill="var(--s-palacios)" />
+      <text class="g-valor" x="116" y="163" text-anchor="middle" fill="var(--s-palacios)">0,249</text>
+      <text class="g-valor" x="376" y="180" text-anchor="middle" fill="var(--s-palacios)">0,235</text>
+      <text class="g-valor" x="646" y="201" fill="var(--s-palacios)">0,206</text>
+
+      <text class="g-nombre" x="116" y="42" text-anchor="middle" fill="var(--s-timesfm)">TimesFM</text>
+      <text class="g-nombre" x="116" y="222" text-anchor="middle" fill="var(--s-palacios)">Palacios</text>
+
+      <line class="g-eje" x1="96" y1="234" x2="656" y2="234" />
+      <text class="g-texto" x="116" y="252" text-anchor="middle">1 año</text>
+      <text class="g-texto" x="376" y="252" text-anchor="middle">2 años</text>
+      <text class="g-texto" x="636" y="252" text-anchor="middle">4 años</text>
+      <text class="g-texto" x="376" y="278" text-anchor="middle">longitud del bloque oculto · skill frente a climatología, mayor es mejor</text>
+    </svg>
+    <figcaption>La línea de puntos une los dos extremos que coinciden: <strong>TimesFM a cuatro años alcanza el mismo skill que el método de Palacios a uno</strong>. Importa porque el hueco real que hay que rellenar, 2017–2020, son exactamente cuatro años seguidos.</figcaption>
+  </figure>
+
+  <div class="medida">
+    <p>El mecanismo no es el tamaño del modelo. Los dos rivales son <strong>autorregresivos</strong> dentro del bloque oculto: alimentan sus propios rezagos de punto de rocío y su error se realimenta día a día. TimesFM produce los 1.461 días en una sola pasada, sin consumir su propia salida.</p>
+    <p>Eso se ve en los datos. En el primer trimestre del bloque, cuando el método de Palacios todavía tiene observaciones cerca, la diferencia es de apenas <span class="num">+0,011</span> °C. Al cuarto año es de <span class="num">+0,094</span>.</p>
+  </div>
+
+  <div class="limite">
+    <h3>Pero a un año la ventaja es mucho menos uniforme</h3>
+    <p>A horizonte de un año TimesFM gana en el <strong>77,2 %</strong> de las celdas, no en el 99 %, y el tamaño del efecto cae a la mitad (<span class="num">d = 0,74</span> frente a <span class="num">1,91</span>). Encaja con el mecanismo: a un año la autorregresión del rival aún no ha acumulado deriva. El resultado es sólido para el régimen de cuatro años del entregable; para horizontes cortos, mucho menos.</p>
+  </div>
+
+  <h2>La mesa departamental, con la red del proyecto</h2>
+  <p class="sub">2.048 celdas · 512 por departamento · 2.992.128 pares</p>
+
+  <div class="tabla-caja">
+    <table>
+      <caption>La TCN se corrió con tres semillas, como exige el criterio de aprobación del protocolo. La diferencia entre semillas es 0,0159 °C de rango; la ventaja de TimesFM sobre la mejor de ellas es 0,0329 °C, cuatro veces mayor.</caption>
+      <thead>
+        <tr><th>método</th><th>RMSE °C</th><th>MAE</th><th>sesgo</th><th>skill</th><th>celdas ganadas por TimesFM</th></tr>
+      </thead>
+      <tbody>
+        <tr class="destacada"><td><span class="marca" style="background:#0a8f7a"></span>TimesFM</td><td>0,7996</td><td>0,5919</td><td>+0,070</td><td>0,301</td><td>—</td></tr>
+        <tr><td><span class="marca" style="background:#b8802a"></span>TCN, media de 3 semillas</td><td>0,8412</td><td>0,6253</td><td>+0,075</td><td>0,265</td><td>96,2 %</td></tr>
+        <tr><td><span class="marca" style="background:#2563c9"></span>Palacios</td><td>0,8669</td><td>0,6406</td><td>+0,023</td><td>0,242</td><td>98,5 %</td></tr>
+        <tr><td><span class="marca" style="background:#8b5fbf"></span>climatología</td><td>1,1440</td><td>0,8638</td><td>−0,259</td><td>0</td><td>100 %</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="tabla-caja">
+    <table>
+      <caption>RMSE en °C por departamento. TimesFM gana en los cuatro. La TCN gana en tres y pierde en Lima por 0,003 °C, la clase de detalle que el agregado esconde y que justifica que el criterio de aprobación del protocolo mire departamento por departamento.</caption>
+      <thead>
+        <tr><th>departamento</th><th>TimesFM</th><th>TCN</th><th>Palacios</th><th>climatología</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Cusco</td><td>0,6807</td><td>0,7227</td><td>0,7337</td><td>0,9909</td></tr>
+        <tr><td>Lima</td><td>0,7104</td><td>0,7724</td><td>0,7696</td><td>1,0643</td></tr>
+        <tr><td>Loreto</td><td>1,0909</td><td>1,1220</td><td>1,1656</td><td>1,5089</td></tr>
+        <tr><td>San Martín</td><td>0,6320</td><td>0,6729</td><td>0,7189</td><td>0,9183</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Qué hace falta para que funcione</h2>
+  <p class="sub">Nueve configuraciones probadas sobre un panel de 1.106 celdas estratificado por zona</p>
+
+  <div class="medida">
+    <p><strong>La covariable Tmin no es un refinamiento, es la condición de entrada.</strong> Sin ella ninguna cantidad de contexto alcanza a la climatología: <span class="num">1,3171</span> sobre punto de rocío crudo y <span class="num">1,2825</span> sobre anomalías, contra <span class="num">1,2884</span> de la media histórica. Un modelo de 330 millones de parámetros llega, a 1.461 días de horizonte y sin covariable, a la misma conclusión que la media por día del año.</p>
+    <p><strong>Quitarle la estacionalidad al problema sale gratis y ayuda más que explicársela.</strong> Expresar objetivo y covariable en anomalías gana <span class="num">0,033</span> °C; entregarle el día del año como seno y coseno gana <span class="num">0,010</span> °C y casi duplica el cómputo. Ambas atacan lo mismo —el modelo no tiene noción de calendario— y la primera lo hace mejor y sin coste.</p>
+    <p><strong>El contexto tiene un umbral, no una pendiente suave.</strong> Con dos años de historia TimesFM queda por debajo del método de Palacios (<span class="num">0,9509</span> contra <span class="num">0,9292</span>); con once años lo supera (<span class="num">0,8834</span>); con treinta y dos gana <span class="num">0,007</span> °C más. El cruce está entre dos y once años, y a partir de ahí los rendimientos se agotan.</p>
+  </div>
+
+  <h2>Las tres objeciones, medidas</h2>
+
+  <div class="limite">
+    <h3>Licencia: no hay alternativa permisiva que funcione</h3>
+    <p>Los pesos de TimesFM 3.0 se distribuyen bajo una licencia <strong>no comercial y no productiva</strong>. La versión 2.5, que sí es Apache-2.0, se corrió precisamente para medir cuánto se pierde al usarla. No se pierde una parte: se pierde todo. Da <span class="num">1,5257</span> °C frente a <span class="num">1,2884</span> de la climatología, es decir <strong>skill negativo</strong>.</p>
+    <p>La causa es arquitectónica. La 3.0 procesa las covariables dentro del modelo; la 2.5 no puede, y las resuelve con una regresión lineal externa. Se probaron sus dos modos y ninguno alcanza a la climatología. Como la ventaja de TimesFM depende por completo de la covariable Tmin, <strong>la restricción de licencia recae sobre la única parte que hace útil al modelo</strong>. Para publicar un paper alcanza; para el entregable operativo, o se autoriza la 3.0 o TimesFM no es una vía.</p>
+  </div>
+
+  <div class="limite">
+    <h3>Coste: de dos a tres órdenes de magnitud</h3>
+    <p>Una pasada de TimesFM sobre las 2,8 millones de celdas del grid nacional cuesta unos <strong>siete días de GPU</strong>. El método de Palacios cubre ese mismo grid en <strong>veinte minutos</strong>.</p>
+    <p>La tarjeta ya está en su techo: el límite de potencia de 70 W es a la vez el valor por defecto y el máximo que admite el firmware, con el recorte por potencia activo y el reloj sostenido en 1.627 de 2.100 MHz. Activar TF32 dio 1,44×; repartir el trabajo entre procesos concurrentes resultó un 15 % <em>peor</em>, porque el cuello son vatios y no ocupación. No queda margen en la configuración del software.</p>
+  </div>
+
+  <div class="limite">
+    <h3>Sesgo: gana en error cuadrático y pierde en centrado</h3>
+    <p>El sesgo de TimesFM varía con el periodo — <span class="num">+0,180</span>, <span class="num">−0,126</span> y <span class="num">+0,105</span> °C según el bloque — mientras el método de Palacios se mantiene cerca de cero. Produce además algo más de predicciones fuera del rango de control de calidad de PISCO que la red del proyecto: 0,12 % contra 0,08 %. Es poco, pero va en la dirección esperable de un modelo que no conoce las restricciones físicas del problema.</p>
+  </div>
+
+  <h2>Qué se verificó antes de comparar</h2>
+
+  <div class="medida">
+    <p>Una comparación entre métodos vale lo que valga la garantía de que están sobre el mismo terreno. Estos controles se corrieron antes de añadir ninguna cifra nueva:</p>
+    <ul>
+      <li>El RMSE del método de Palacios y de la climatología reproduce <span class="num">1,219433</span> y <span class="num">1,535218</span>, las cifras publicadas.</li>
+      <li>La climatología, la temperatura mínima y el punto de rocío observado del panel nuevo coinciden con los archivos originales de Palacios: diferencia máxima <span class="num">0,0</span>.</li>
+      <li>El contexto termina el 2012-12-31 y el bloque oculto empieza el 2013-01-01, con 1.461 días exactos por celda y cero valores ausentes.</li>
+      <li>El recorte de negativos quedó desactivado, comprobado con 11.524 predicciones negativas en celdas de Cusco, donde el punto de rocío lo es buena parte del año.</li>
+      <li>La fusión no perdió celdas en ninguno de los tres bloques: 17.041 de 17.041.</li>
+      <li>47 pruebas automáticas, incluidas las diez originales del pipeline de Palacios, que siguen pasando.</li>
+    </ul>
+  </div>
+
+  <div class="nota">
+    <p><strong>Sobre la procedencia del método rival.</strong> Lo que aquí se llama «Palacios» es su método, su código y sus predicciones, sin modificar. Para la comparación nacional ni siquiera se reejecutó: se usó su archivo del 16 de julio tal cual. Se modificaron dos archivos de su carpeta, para poder restringir la corrida a una lista de celdas y para que el módulo de estadística admita un método distinto de <span class="num">tuned</span> como foco. Ninguno toca el modelo, y ambos se verificaron reproduciendo sus números publicados.</p>
+  </div>
+
+  <div class="estado">
+    <span>5 de 6 fases cerradas</span>
+    <span>Pendiente: pasada de escala sobre 436.519 celdas</span>
+    <span>Análisis y escritura con asistencia de Claude Code</span>
+    <span>Conviene validar con el equipo antes de tomarlo como definitivo</span>
+  </div>
+
+</div>
